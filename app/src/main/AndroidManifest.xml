@@ -1,25 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="me.rutrackersearch.app">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
+    <uses-sdk tools:overrideLibrary="androidx.security.ktx" />
+
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
 
     <application
         android:name=".FlowApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:banner="@drawable/ill_banner"
         android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Flow">
+        android:theme="@style/Theme.Flow"
+        android:usesCleartextTraffic="true"
+        tools:ignore="UnusedAttribute">
 
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Flow">
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Flow"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="rutracker.org"
+                    android:pathPrefix="/forum"
+                    android:scheme="http" />
+                <data
+                    android:host="rutracker.org"
+                    android:pathPrefix="/forum"
+                    android:scheme="https" />
+                <data
+                    android:host="rutracker.net"
+                    android:pathPrefix="/forum"
+                    android:scheme="http" />
+                <data
+                    android:host="rutracker.net"
+                    android:pathPrefix="/forum"
+                    android:scheme="https" />
+            </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.TvActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Flow.Leanback">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 </manifest>

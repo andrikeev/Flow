@@ -1,0 +1,97 @@
+[versions]
+androidSdk-compileSdk = "32"
+androidSdk-minSdk = "21"
+androidSdk-targetSdk = "32"
+androidSdk-buildTools = "31.0.0"
+
+java = "1.8"
+
+accompanist = "0.24.8-beta"
+androidGradlePlugin = "7.2.1"
+androidxActivity = "1.4.0"
+androidxCompose = "1.2.0-beta02"
+androidxComposeMaterial3 = "1.0.0-alpha12"
+androidxCore = "1.7.0"
+androidxDataStore = "1.0.0"
+androidxHiltNavigationCompose = "1.0.0"
+androidxLifecycle = "2.5.0-beta01"
+androidxNavigation = "2.4.0-rc01"
+androidxPaging = "1.0.0-alpha14"
+androidxSavedState = "1.1.0"
+androidxSecurity = "1.1.0-alpha03"
+androidxStartup = "1.1.1"
+androidxWork = "2.7.1"
+coil = "2.0.0-rc01"
+hilt = "2.41"
+hiltExt = "1.0.0"
+kotlin = "1.6.21"
+kotlinxCoroutines = "1.6.0"
+kotlinxDatetime = "0.3.1"
+kotlinxSerializationJson = "1.3.1"
+material3 = "1.7.0-alpha01"
+okhttp = "4.9.3"
+retrofit = "2.9.0"
+room = "2.4.1"
+
+[libraries]
+accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "accompanist" }
+accompanist-pager = { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "accompanist" }
+accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
+androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "androidxCompose" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "androidxCompose" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "androidxCompose" }
+androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "androidxCompose" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxComposeMaterial3" }
+androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "androidxComposeMaterial3" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "androidxCompose" }
+androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "androidxCompose" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "androidxCompose" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "androidxCompose" }
+androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util", version.ref = "androidxCompose" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
+androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidxPaging" }
+androidx-security-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "androidxSecurity" }
+androidx-savedstate-ktx = { group = "androidx.savedstate", name = "savedstate-ktx", version.ref = "androidxSavedState" }
+androidx-startup = { group = "androidx.startup", name = "startup-runtime", version.ref = "androidxStartup" }
+androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
+coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
+coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil-kt-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
+hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
+javax-inject = { group = "javax.inject" , name = "javax.inject", version= "1"}
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-serializationPlugin = { group = "org.jetbrains.kotlin", name = "kotlin-serialization", version.ref = "kotlin" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+material3 = { group = "com.google.android.material", name = "material", version.ref = "material3" }
+okhttp-client = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+[bundles]
+accompanist = ["accompanist-flowlayout", "accompanist-pager", "accompanist-permissions", "accompanist-systemuicontroller"]
+coil = ["coil-kt", "coil-kt-compose", "coil-kt-svg"]
+compose = ["androidx-activity-compose", "androidx-compose-animation", "androidx-compose-foundation", "androidx-compose-foundation-layout", "androidx-compose-material-iconsExtended", "androidx-compose-material3", "androidx-compose-material3-windowSizeClass", "androidx-paging-compose", "androidx-compose-runtime", "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-compose-ui-util"]
+composeDebug = ["androidx-compose-ui-testManifest", "androidx-compose-ui-tooling"]
+hilt = ["hilt-android"]
+hiltCompiler = ["hilt-compiler", "hilt-ext-compiler"]
+network = ["okhttp-logging", "retrofit-core"]
+navigation = ["androidx-hilt-navigation-compose", "androidx-navigation-compose"]
+room = ["room-runtime", "room-ktx"]
+roomCompile = ["room-compiler"]
+work = ["androidx-work-ktx", "hilt-ext-work"]
