@@ -1,7 +1,7 @@
 package me.rutrackersearch.app.ui.menu
 
-import me.rutrackersearch.domain.entity.settings.SyncPeriod
-import me.rutrackersearch.domain.entity.settings.Theme
+import me.rutrackersearch.models.settings.SyncPeriod
+import me.rutrackersearch.models.settings.Theme
 
 sealed interface MenuAction {
     object ClearBookmarksClick : MenuAction

@@ -1,9 +1,9 @@
 package me.rutrackersearch.app.ui.forum.category
 
 import me.rutrackersearch.app.ui.common.PageResult
-import me.rutrackersearch.domain.entity.CategoryModel
-import me.rutrackersearch.domain.entity.TopicModel
-import me.rutrackersearch.domain.entity.topic.Topic
+import me.rutrackersearch.models.forum.CategoryModel
+import me.rutrackersearch.models.topic.TopicModel
+import me.rutrackersearch.models.topic.Topic
 
 data class CategoryState(
     val category: CategoryModel,

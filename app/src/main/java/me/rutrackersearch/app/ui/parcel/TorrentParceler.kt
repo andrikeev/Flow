@@ -2,8 +2,8 @@ package me.rutrackersearch.app.ui.parcel
 
 import android.os.Parcel
 import kotlinx.parcelize.Parceler
-import me.rutrackersearch.domain.entity.topic.Torrent
-import me.rutrackersearch.domain.entity.topic.TorrentStatus
+import me.rutrackersearch.models.topic.Torrent
+import me.rutrackersearch.models.topic.TorrentStatus
 
 object TorrentParceler : Parceler<Torrent> {
     override fun create(parcel: Parcel) = Torrent(

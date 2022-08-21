@@ -4,7 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.rutrackersearch.data.auth.AuthObservable
+import me.rutrackersearch.auth.AuthService
+import me.rutrackersearch.auth.AuthServiceImpl
 import me.rutrackersearch.data.repository.AccountRepositoryImpl
 import javax.inject.Singleton
 
@@ -13,5 +14,9 @@ import javax.inject.Singleton
 interface AuthModule {
     @Binds
     @Singleton
-    fun bindAuthObservable(impl: AccountRepositoryImpl): AuthObservable
+    fun bindAuthService(impl: AuthServiceImpl): AuthService
+
+    @Binds
+    @Singleton
+    fun bindAuthObservable(impl: AccountRepositoryImpl): me.rutrackersearch.auth.AuthObservable
 }

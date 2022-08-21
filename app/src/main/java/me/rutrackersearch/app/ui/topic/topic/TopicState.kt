@@ -1,9 +1,9 @@
 package me.rutrackersearch.app.ui.topic.topic
 
 import me.rutrackersearch.app.ui.common.PageResult
-import me.rutrackersearch.domain.entity.TopicModel
-import me.rutrackersearch.domain.entity.topic.Post
-import me.rutrackersearch.domain.entity.topic.Topic
+import me.rutrackersearch.models.topic.Post
+import me.rutrackersearch.models.topic.Topic
+import me.rutrackersearch.models.topic.TopicModel
 
 data class TopicState(
     val topic: TopicModel<Topic>,

@@ -16,22 +16,20 @@ tasks.register("clean", Delete::class) {
 }
 
 allprojects {
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
-        kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + listOf(
-                // Avoid having to stutter experimental annotations all over the codebase
-                "-Xopt-in=androidx.compose.animation.ExperimentalAnimationApi",
-                "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-                "-Xopt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-                "-Xopt-in=androidx.compose.runtime.ExperimentalComposeApi",
-                "-Xopt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-                "-Xopt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi",
-                "-Xopt-in=com.google.accompanist.pager.ExperimentalPagerApi",
-                "-Xopt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi",
-                "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
-                "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-Xopt-in=kotlinx.coroutines.InternalCoroutinesApi"
-            )
-        }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions.freeCompilerArgs += listOf(
+            // Avoid having to stutter experimental annotations all over the codebase
+            "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
+            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.runtime.ExperimentalComposeApi",
+            "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+            "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi",
+            "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi",
+            "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi",
+            "-opt-in=kotlin.ExperimentalUnsignedTypes",
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=kotlinx.coroutines.InternalCoroutinesApi"
+        )
     }
 }

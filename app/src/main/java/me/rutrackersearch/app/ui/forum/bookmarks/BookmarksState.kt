@@ -1,6 +1,6 @@
 package me.rutrackersearch.app.ui.forum.bookmarks
 
-import me.rutrackersearch.domain.entity.CategoryModel
+import me.rutrackersearch.models.forum.CategoryModel
 
 sealed interface BookmarksState {
     object Initial : BookmarksState

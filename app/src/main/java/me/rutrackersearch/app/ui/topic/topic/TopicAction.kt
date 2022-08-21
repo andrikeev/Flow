@@ -1,7 +1,7 @@
 package me.rutrackersearch.app.ui.topic.topic
 
-import me.rutrackersearch.domain.entity.TopicModel
-import me.rutrackersearch.domain.entity.topic.Topic
+import me.rutrackersearch.models.topic.TopicModel
+import me.rutrackersearch.models.topic.Topic
 
 sealed interface TopicAction {
     object BackClick : TopicAction

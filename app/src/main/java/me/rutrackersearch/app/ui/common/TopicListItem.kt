@@ -22,12 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import me.rutrackersearch.domain.entity.TopicModel
-import me.rutrackersearch.domain.entity.forum.Category
-import me.rutrackersearch.domain.entity.topic.Author
-import me.rutrackersearch.domain.entity.topic.Topic
-import me.rutrackersearch.domain.entity.topic.Torrent
-import me.rutrackersearch.domain.entity.topic.TorrentStatus
+import me.rutrackersearch.models.forum.Category
+import me.rutrackersearch.models.topic.Author
+import me.rutrackersearch.models.topic.Topic
+import me.rutrackersearch.models.topic.TopicModel
+import me.rutrackersearch.models.topic.Torrent
+import me.rutrackersearch.models.topic.TorrentStatus
 
 @Composable
 fun TopicListItem(

@@ -29,7 +29,7 @@ import me.rutrackersearch.app.R
 import me.rutrackersearch.app.ui.common.ConfirmationDialog
 import me.rutrackersearch.app.ui.common.ConfirmationDialogState
 import me.rutrackersearch.app.ui.common.TextButton
-import me.rutrackersearch.domain.entity.user.AuthState
+import me.rutrackersearch.models.user.AuthState
 
 @Composable
 fun AccountItem(

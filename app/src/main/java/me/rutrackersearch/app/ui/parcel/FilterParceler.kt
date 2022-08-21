@@ -2,7 +2,7 @@ package me.rutrackersearch.app.ui.parcel
 
 import android.os.Parcel
 import kotlinx.parcelize.Parceler
-import me.rutrackersearch.domain.entity.search.Filter
+import me.rutrackersearch.models.search.Filter
 
 object FilterParceler : Parceler<Filter> {
     override fun create(parcel: Parcel) = Filter(

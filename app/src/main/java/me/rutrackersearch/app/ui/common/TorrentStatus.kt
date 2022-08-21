@@ -21,11 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.rutrackersearch.app.ui.theme.TopicColors
-import me.rutrackersearch.domain.entity.forum.Category
-import me.rutrackersearch.domain.entity.topic.Author
-import me.rutrackersearch.domain.entity.topic.Torrent
-import me.rutrackersearch.domain.entity.topic.TorrentStatus
-import me.rutrackersearch.domain.entity.topic.isValid
+import me.rutrackersearch.models.forum.Category
+import me.rutrackersearch.models.topic.Author
+import me.rutrackersearch.models.topic.Torrent
+import me.rutrackersearch.models.topic.isValid
 
 @Composable
 fun TorrentStatus(
@@ -127,7 +126,7 @@ fun TorrentStatusPreview() {
             author = Author(name = "qooble"),
             category = Category(id = "1", name = "UHD Video"),
             tags = "[1980, США, ужасы, триллер, UHD BDRemux 2160p] [US Version]",
-            status = TorrentStatus.APPROVED,
+            status = me.rutrackersearch.models.topic.TorrentStatus.APPROVED,
             date = 1632306880063,
             size = "92.73 GB",
             seeds = 28,

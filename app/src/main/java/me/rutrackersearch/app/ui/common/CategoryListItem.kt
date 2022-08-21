@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import me.rutrackersearch.domain.entity.forum.Category
+import me.rutrackersearch.models.forum.Category
 
 @Composable
 fun CategoryListItem(

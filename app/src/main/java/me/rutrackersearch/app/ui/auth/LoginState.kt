@@ -1,6 +1,6 @@
 package me.rutrackersearch.app.ui.auth
 
-import me.rutrackersearch.domain.entity.auth.Captcha
+import me.rutrackersearch.auth.models.Captcha
 
 sealed interface LoginStatus {
     object Initial : LoginStatus

@@ -27,11 +27,11 @@ import me.rutrackersearch.app.ui.topic.topic.TopicAction.EndOfListReached
 import me.rutrackersearch.app.ui.topic.topic.TopicAction.FirstVisibleItemIndexChanged
 import me.rutrackersearch.app.ui.topic.topic.TopicAction.ListTopReached
 import me.rutrackersearch.app.ui.topic.topic.TopicAction.RetryClick
-import me.rutrackersearch.domain.entity.TopicModel
-import me.rutrackersearch.domain.entity.topic.Post
 import me.rutrackersearch.domain.usecase.AddCommentUseCase
 import me.rutrackersearch.domain.usecase.LoadTopicPageUseCase
 import me.rutrackersearch.domain.usecase.VisitTopicUseCase
+import me.rutrackersearch.models.topic.Post
+import me.rutrackersearch.models.topic.TopicModel
 import javax.inject.Inject
 
 @HiltViewModel

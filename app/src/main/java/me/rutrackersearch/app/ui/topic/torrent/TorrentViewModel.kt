@@ -20,15 +20,15 @@ import me.rutrackersearch.app.ui.common.Result.Loading
 import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.FavoriteClick
 import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.RetryClick
 import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.TorrentFileClick
-import me.rutrackersearch.domain.entity.TopicModel
-import me.rutrackersearch.domain.entity.topic.Torrent
-import me.rutrackersearch.domain.entity.user.AuthState
 import me.rutrackersearch.domain.usecase.DownloadTorrentUseCase
 import me.rutrackersearch.domain.usecase.EnrichTopicUseCase
 import me.rutrackersearch.domain.usecase.EnrichTorrentUseCase
 import me.rutrackersearch.domain.usecase.ObserveAuthStateUseCase
 import me.rutrackersearch.domain.usecase.UpdateFavoriteUseCase
 import me.rutrackersearch.domain.usecase.VisitTopicUseCase
+import me.rutrackersearch.models.topic.TopicModel
+import me.rutrackersearch.models.topic.Torrent
+import me.rutrackersearch.models.user.AuthState
 import javax.inject.Inject
 
 @HiltViewModel

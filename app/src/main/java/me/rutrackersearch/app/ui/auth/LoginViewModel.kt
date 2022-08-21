@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import me.rutrackersearch.domain.entity.auth.AuthResponse
-import me.rutrackersearch.domain.entity.auth.Captcha
-import me.rutrackersearch.domain.entity.user.Account
+import me.rutrackersearch.auth.models.AuthResponse
+import me.rutrackersearch.auth.models.Captcha
+import me.rutrackersearch.models.user.Account
 import me.rutrackersearch.domain.usecase.LoginUseCase
 import me.rutrackersearch.domain.usecase.SaveAccountUseCase
 import javax.inject.Inject

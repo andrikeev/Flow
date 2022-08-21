@@ -64,8 +64,8 @@ import me.rutrackersearch.app.ui.menu.MenuAction.SetFavoritesSyncPeriod
 import me.rutrackersearch.app.ui.menu.MenuAction.SetTheme
 import me.rutrackersearch.app.ui.platform.LocalOpenLinkHandler
 import me.rutrackersearch.app.ui.theme.availableThemes
-import me.rutrackersearch.domain.entity.settings.SyncPeriod
-import me.rutrackersearch.domain.entity.settings.Theme
+import me.rutrackersearch.models.settings.SyncPeriod
+import me.rutrackersearch.models.settings.Theme
 
 private const val informationForRightOwnersURL = "http://flow.rutrackersearch.me/rights"
 private const val privacyPolicyURL = "http://flow.rutrackersearch.me/privacy-policy"
@@ -187,22 +187,22 @@ private fun MenuScreen(
                 }
             )
             menuSectionLabel { Text(stringResource(R.string.menu_label_misc)) }
-            menuItem(
-                text = { Text(stringResource(R.string.menu_misc_rights)) },
-                onClick = {
-                    coroutineScope.launch {
-                        openLinkHandler.openLink(informationForRightOwnersURL)
-                    }
-                }
-            )
-            menuItem(
-                text = { Text(stringResource(R.string.menu_misc_privacy)) },
-                onClick = {
-                    coroutineScope.launch {
-                        openLinkHandler.openLink(privacyPolicyURL)
-                    }
-                }
-            )
+//            menuItem(
+//                text = { Text(stringResource(R.string.menu_misc_rights)) },
+//                onClick = {
+//                    coroutineScope.launch {
+//                        openLinkHandler.openLink(informationForRightOwnersURL)
+//                    }
+//                }
+//            )
+//            menuItem(
+//                text = { Text(stringResource(R.string.menu_misc_privacy)) },
+//                onClick = {
+//                    coroutineScope.launch {
+//                        openLinkHandler.openLink(privacyPolicyURL)
+//                    }
+//                }
+//            )
             menuItem(
                 text = { Text(stringResource(R.string.menu_misc_contacts)) },
                 onClick = {

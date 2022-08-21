@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.TypeParceler
 import me.rutrackersearch.app.ui.parcel.CategoryParceler
-import me.rutrackersearch.domain.entity.forum.Category
+import me.rutrackersearch.models.forum.Category
 
 @Parcelize
 @TypeParceler<Category, CategoryParceler>()

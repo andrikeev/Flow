@@ -1,26 +1,11 @@
-@file:Suppress("unused")
-
 package me.rutrackersearch.app.ui.parcel
 
 import android.os.Parcel
 import kotlinx.parcelize.Parceler
-import java.io.Serializable
-import java.util.*
-
-fun Parcel.writeBooleanCompat(value: Boolean) {
-    writeInt(if (value) 1 else 0)
-}
-
-fun Parcel.readBooleanCompat(): Boolean {
-    return readInt() == 1
-}
+import java.util.EnumSet
 
 fun Parcel.requireString(): String {
     return checkNotNull(readString()) { "required string value is null or missing" }
-}
-
-fun Parcel.requireSerializable(): Serializable {
-    return checkNotNull(readSerializable()) { "required serializable value is null or missing" }
 }
 
 fun <T> Parcel.write(value: T, parceler: Parceler<T>, flags: Int) {

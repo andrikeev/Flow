@@ -1,7 +1,7 @@
 package me.rutrackersearch.app.ui.search.input
 
 import androidx.compose.ui.text.input.TextFieldValue
-import me.rutrackersearch.domain.entity.search.Suggest
+import me.rutrackersearch.models.search.Suggest
 
 sealed interface SearchInputAction {
     object BackClick : SearchInputAction

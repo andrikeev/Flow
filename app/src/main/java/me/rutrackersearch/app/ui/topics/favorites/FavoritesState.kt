@@ -1,7 +1,7 @@
 package me.rutrackersearch.app.ui.topics.favorites
 
-import me.rutrackersearch.domain.entity.TopicModel
-import me.rutrackersearch.domain.entity.topic.Topic
+import me.rutrackersearch.models.topic.TopicModel
+import me.rutrackersearch.models.topic.Topic
 
 sealed interface FavoritesState {
     object Initial : FavoritesState

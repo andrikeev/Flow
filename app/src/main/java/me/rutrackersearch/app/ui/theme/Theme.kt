@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.material.color.ColorRoles
 import com.google.android.material.color.MaterialColors
 import me.rutrackersearch.app.ui.common.ContentElevation
-import me.rutrackersearch.domain.entity.settings.Theme
+import me.rutrackersearch.models.settings.Theme
 import kotlin.math.ln
 
 @Composable

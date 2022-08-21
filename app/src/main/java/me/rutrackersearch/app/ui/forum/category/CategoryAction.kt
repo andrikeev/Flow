@@ -1,10 +1,10 @@
 package me.rutrackersearch.app.ui.forum.category
 
-import me.rutrackersearch.domain.entity.CategoryModel
-import me.rutrackersearch.domain.entity.TopicModel
-import me.rutrackersearch.domain.entity.forum.Category
-import me.rutrackersearch.domain.entity.topic.Topic
-import me.rutrackersearch.domain.entity.topic.Torrent
+import me.rutrackersearch.models.forum.Category
+import me.rutrackersearch.models.forum.CategoryModel
+import me.rutrackersearch.models.topic.Topic
+import me.rutrackersearch.models.topic.TopicModel
+import me.rutrackersearch.models.topic.Torrent
 
 sealed interface CategoryAction {
     object BackClick : CategoryAction

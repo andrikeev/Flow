@@ -21,9 +21,9 @@ import me.rutrackersearch.app.ui.forum.category.CategoryAction.RetryClick
 import me.rutrackersearch.app.ui.paging.LoadState
 import me.rutrackersearch.app.ui.paging.PagingAction
 import me.rutrackersearch.app.ui.paging.PagingDataLoader
-import me.rutrackersearch.domain.entity.CategoryModel
-import me.rutrackersearch.domain.entity.forum.ForumCategory
-import me.rutrackersearch.domain.entity.forum.ForumTopic
+import me.rutrackersearch.models.forum.CategoryModel
+import me.rutrackersearch.models.forum.ForumCategory
+import me.rutrackersearch.models.forum.ForumTopic
 import me.rutrackersearch.domain.usecase.EnrichCategoriesUseCase
 import me.rutrackersearch.domain.usecase.EnrichCategoryUseCase
 import me.rutrackersearch.domain.usecase.EnrichTopicsUseCase

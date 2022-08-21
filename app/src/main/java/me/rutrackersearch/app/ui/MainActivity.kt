@@ -38,7 +38,7 @@ import me.rutrackersearch.app.ui.platform.PlatformType
 import me.rutrackersearch.app.ui.platform.ShareLinkHandlerImpl
 import me.rutrackersearch.app.ui.theme.FlowTheme
 import me.rutrackersearch.app.ui.theme.isLight
-import me.rutrackersearch.domain.entity.settings.Theme
+import me.rutrackersearch.models.settings.Theme
 
 @AndroidEntryPoint
 open class MainActivity : ComponentActivity() {

@@ -2,8 +2,8 @@ package me.rutrackersearch.app.ui.parcel
 
 import android.os.Parcel
 import kotlinx.parcelize.Parceler
-import me.rutrackersearch.domain.entity.topic.PostContent
-import me.rutrackersearch.domain.entity.topic.TorrentDescription
+import me.rutrackersearch.models.topic.PostContent
+import me.rutrackersearch.models.topic.TorrentDescription
 
 object OptionTorrentDescriptionParceler :
     OptionalParceler<TorrentDescription>(TorrentDescriptionParceler)

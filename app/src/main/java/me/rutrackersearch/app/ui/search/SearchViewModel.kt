@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.rutrackersearch.app.ui.common.Result
-import me.rutrackersearch.domain.entity.search.Search
-import me.rutrackersearch.domain.entity.user.isAuthorized
+import me.rutrackersearch.models.search.Search
+import me.rutrackersearch.models.user.isAuthorized
 import me.rutrackersearch.domain.usecase.ObserveAuthStateUseCase
 import me.rutrackersearch.domain.usecase.ObserveSearchHistoryUseCase
 import javax.inject.Inject

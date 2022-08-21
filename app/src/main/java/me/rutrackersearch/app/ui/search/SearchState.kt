@@ -1,6 +1,6 @@
 package me.rutrackersearch.app.ui.search
 
-import me.rutrackersearch.domain.entity.search.Search
+import me.rutrackersearch.models.search.Search
 
 sealed interface SearchState {
     object Initial : SearchState

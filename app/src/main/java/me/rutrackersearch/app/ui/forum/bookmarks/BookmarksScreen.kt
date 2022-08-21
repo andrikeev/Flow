@@ -30,8 +30,8 @@ import me.rutrackersearch.app.ui.common.LazyColumn
 import me.rutrackersearch.app.ui.common.Loading
 import me.rutrackersearch.app.ui.common.dividedItems
 import me.rutrackersearch.app.ui.common.focusableItems
-import me.rutrackersearch.domain.entity.CategoryModel
-import me.rutrackersearch.domain.entity.forum.Category
+import me.rutrackersearch.models.forum.Category
+import me.rutrackersearch.models.forum.CategoryModel
 
 @Composable
 fun BookmarksScreen(

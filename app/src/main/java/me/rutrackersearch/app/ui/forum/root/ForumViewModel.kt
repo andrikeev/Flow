@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.rutrackersearch.app.ui.common.Result
-import me.rutrackersearch.domain.entity.forum.Forum
 import me.rutrackersearch.domain.usecase.LoadForumUseCase
+import me.rutrackersearch.models.forum.Forum
 import javax.inject.Inject
 
 @HiltViewModel

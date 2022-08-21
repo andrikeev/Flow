@@ -1,7 +1,7 @@
 package me.rutrackersearch.app.ui.forum.root
 
-import me.rutrackersearch.domain.entity.forum.Category
-import me.rutrackersearch.domain.entity.forum.RootCategory
+import me.rutrackersearch.models.forum.Category
+import me.rutrackersearch.models.forum.RootCategory
 
 sealed interface ForumAction {
     data class CategoryClick(val category: Category) : ForumAction

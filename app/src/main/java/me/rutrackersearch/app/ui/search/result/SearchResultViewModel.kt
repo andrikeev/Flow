@@ -19,11 +19,11 @@ import me.rutrackersearch.app.ui.paging.LoadState
 import me.rutrackersearch.app.ui.paging.PagingAction
 import me.rutrackersearch.app.ui.paging.PagingData
 import me.rutrackersearch.app.ui.paging.PagingDataLoader
-import me.rutrackersearch.domain.entity.forum.Category
 import me.rutrackersearch.domain.usecase.AddSearchHistoryUseCase
 import me.rutrackersearch.domain.usecase.EnrichTopicsUseCase
 import me.rutrackersearch.domain.usecase.LoadSearchPageUseCase
 import me.rutrackersearch.domain.usecase.UpdateFavoriteUseCase
+import me.rutrackersearch.models.forum.Category
 import javax.inject.Inject
 
 @HiltViewModel

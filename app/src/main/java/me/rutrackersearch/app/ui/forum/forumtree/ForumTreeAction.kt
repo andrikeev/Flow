@@ -1,6 +1,6 @@
 package me.rutrackersearch.app.ui.forum.forumtree
 
-import me.rutrackersearch.domain.entity.forum.Category
+import me.rutrackersearch.models.forum.Category
 
 sealed interface ForumTreeAction {
     object RetryClick : ForumTreeAction

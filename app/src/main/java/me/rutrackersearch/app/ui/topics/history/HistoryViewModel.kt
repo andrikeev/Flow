@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import me.rutrackersearch.domain.entity.TopicModel
-import me.rutrackersearch.domain.entity.topic.Topic
+import me.rutrackersearch.models.topic.TopicModel
+import me.rutrackersearch.models.topic.Topic
 import me.rutrackersearch.domain.usecase.EnrichTopicsUseCase
 import me.rutrackersearch.domain.usecase.ObserveHistoryUseCase
 import me.rutrackersearch.domain.usecase.UpdateFavoriteUseCase

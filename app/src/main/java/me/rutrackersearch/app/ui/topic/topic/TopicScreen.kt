@@ -101,7 +101,7 @@ import me.rutrackersearch.app.ui.topic.topic.TopicAction.FirstVisibleItemIndexCh
 import me.rutrackersearch.app.ui.topic.topic.TopicAction.GoToPage
 import me.rutrackersearch.app.ui.topic.topic.TopicAction.LoginClick
 import me.rutrackersearch.app.ui.topic.topic.TopicAction.RetryClick
-import me.rutrackersearch.domain.entity.topic.Post
+import me.rutrackersearch.models.topic.Post
 
 @Composable
 fun TopicScreen(

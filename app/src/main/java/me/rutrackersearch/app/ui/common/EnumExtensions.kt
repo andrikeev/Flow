@@ -13,12 +13,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import me.rutrackersearch.app.R
 import me.rutrackersearch.app.ui.theme.TopicColors
-import me.rutrackersearch.domain.entity.search.Order
-import me.rutrackersearch.domain.entity.search.Period
-import me.rutrackersearch.domain.entity.search.Sort
-import me.rutrackersearch.domain.entity.settings.SyncPeriod
-import me.rutrackersearch.domain.entity.settings.Theme
-import me.rutrackersearch.domain.entity.topic.TorrentStatus
+import me.rutrackersearch.models.search.Order
+import me.rutrackersearch.models.search.Period
+import me.rutrackersearch.models.search.Sort
+import me.rutrackersearch.models.settings.SyncPeriod
+import me.rutrackersearch.models.settings.Theme
+import me.rutrackersearch.models.topic.TorrentStatus
 
 val Period.resId: Int
     get() = when (this) {

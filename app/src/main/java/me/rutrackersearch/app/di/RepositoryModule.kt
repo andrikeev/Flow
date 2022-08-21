@@ -4,7 +4,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.rutrackersearch.data.auth.AuthServiceImpl
 import me.rutrackersearch.data.repository.AccountRepositoryImpl
 import me.rutrackersearch.data.repository.BookmarksRepositoryImpl
 import me.rutrackersearch.data.repository.FavoritesRepositoryImpl
@@ -17,7 +16,6 @@ import me.rutrackersearch.data.repository.TopicHistoryRepositoryImpl
 import me.rutrackersearch.data.repository.TopicRepositoryImpl
 import me.rutrackersearch.data.repository.TorrentRepositoryImpl
 import me.rutrackersearch.domain.repository.AccountRepository
-import me.rutrackersearch.domain.repository.AuthService
 import me.rutrackersearch.domain.repository.BookmarksRepository
 import me.rutrackersearch.domain.repository.FavoritesRepository
 import me.rutrackersearch.domain.repository.ForumRepository
@@ -33,10 +31,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 interface RepositoryModule {
-
-    @Binds
-    @Singleton
-    fun bindAuthService(impl: AuthServiceImpl): AuthService
 
     @Binds
     @Singleton

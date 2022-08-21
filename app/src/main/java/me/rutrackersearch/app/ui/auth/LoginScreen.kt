@@ -74,8 +74,7 @@ import me.rutrackersearch.app.ui.common.DynamicBox
 import me.rutrackersearch.app.ui.common.Placeholder
 import me.rutrackersearch.app.ui.platform.LocalPlatformType
 import me.rutrackersearch.app.ui.platform.PlatformType
-import me.rutrackersearch.domain.entity.auth.Captcha
-import me.rutrackersearch.domain.entity.error.Failure
+import me.rutrackersearch.auth.models.Captcha
 
 @Composable
 fun LoginScreen(onSuccess: () -> Unit) {
@@ -119,9 +118,9 @@ private fun LoginScreen(
 
     if (state.error != null) {
         val errorMessage = when (state.error) {
-            is Failure.ConnectionError -> stringResource(R.string.error_no_internet)
-            is Failure.ServerError -> stringResource(R.string.error_proxy_server)
-            is Failure.ServiceUnavailable -> stringResource(R.string.error_site_connection)
+            is me.rutrackersearch.models.error.Failure.ConnectionError -> stringResource(R.string.error_no_internet)
+            is me.rutrackersearch.models.error.Failure.ServerError -> stringResource(R.string.error_proxy_server)
+            is me.rutrackersearch.models.error.Failure.ServiceUnavailable -> stringResource(R.string.error_site_connection)
             else -> stringResource(R.string.error_something_goes_wrong)
         }
         LaunchedEffect(state.error) {

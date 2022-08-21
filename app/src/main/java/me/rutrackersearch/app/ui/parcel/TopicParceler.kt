@@ -2,8 +2,8 @@ package me.rutrackersearch.app.ui.parcel
 
 import android.os.Parcel
 import kotlinx.parcelize.Parceler
-import me.rutrackersearch.domain.entity.topic.BaseTopic
-import me.rutrackersearch.domain.entity.topic.Topic
+import me.rutrackersearch.models.topic.BaseTopic
+import me.rutrackersearch.models.topic.Topic
 
 object TopicParceler : Parceler<Topic> {
     override fun create(parcel: Parcel) = BaseTopic(

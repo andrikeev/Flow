@@ -1,8 +1,8 @@
 package me.rutrackersearch.app.ui.search.input
 
 import androidx.compose.ui.text.input.TextFieldValue
-import me.rutrackersearch.domain.entity.search.Filter
-import me.rutrackersearch.domain.entity.search.Suggest
+import me.rutrackersearch.models.search.Filter
+import me.rutrackersearch.models.search.Suggest
 
 data class SearchInputState(
     val filter: Filter,

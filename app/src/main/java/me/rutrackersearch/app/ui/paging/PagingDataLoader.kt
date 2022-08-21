@@ -1,5 +1,6 @@
 package me.rutrackersearch.app.ui.paging
 
+import android.annotation.SuppressLint
 import androidx.paging.CombinedLoadStates
 import androidx.paging.DifferCallback
 import androidx.paging.NullPaddedList
@@ -15,8 +16,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import me.rutrackersearch.domain.entity.Page
+import me.rutrackersearch.models.Page
 
+@SuppressLint("RestrictedApi")
 class PagingDataLoader<T : Any>(
     initialPage: Int = 1,
     pageSize: Int,

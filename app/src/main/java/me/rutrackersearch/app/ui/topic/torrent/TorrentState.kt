@@ -1,8 +1,8 @@
 package me.rutrackersearch.app.ui.topic.torrent
 
 import android.net.Uri
-import me.rutrackersearch.domain.entity.TopicModel
-import me.rutrackersearch.domain.entity.topic.Torrent
+import me.rutrackersearch.models.topic.TopicModel
+import me.rutrackersearch.models.topic.Torrent
 
 sealed interface TorrentState {
     val data: TopicModel<Torrent>

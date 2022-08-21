@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import me.rutrackersearch.domain.entity.user.AuthState
+import me.rutrackersearch.models.user.AuthState
 import me.rutrackersearch.domain.usecase.LogoutUseCase
 import me.rutrackersearch.domain.usecase.ObserveAuthStateUseCase
 import javax.inject.Inject

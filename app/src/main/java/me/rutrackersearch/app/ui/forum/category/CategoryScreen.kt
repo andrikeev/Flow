@@ -50,11 +50,11 @@ import me.rutrackersearch.app.ui.forum.category.CategoryAction.RetryClick
 import me.rutrackersearch.app.ui.forum.category.CategoryAction.SearchClick
 import me.rutrackersearch.app.ui.forum.category.CategoryAction.TopicClick
 import me.rutrackersearch.app.ui.forum.category.CategoryAction.TorrentClick
-import me.rutrackersearch.domain.entity.CategoryModel
-import me.rutrackersearch.domain.entity.TopicModel
-import me.rutrackersearch.domain.entity.forum.Category
-import me.rutrackersearch.domain.entity.topic.Topic
-import me.rutrackersearch.domain.entity.topic.Torrent
+import me.rutrackersearch.models.forum.Category
+import me.rutrackersearch.models.forum.CategoryModel
+import me.rutrackersearch.models.topic.Topic
+import me.rutrackersearch.models.topic.TopicModel
+import me.rutrackersearch.models.topic.Torrent
 
 @Composable
 fun CategoryScreen(

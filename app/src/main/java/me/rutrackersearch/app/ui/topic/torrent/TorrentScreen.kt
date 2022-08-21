@@ -94,14 +94,14 @@ import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.MagnetClick
 import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.RetryClick
 import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.ShareClick
 import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.TorrentFileClick
-import me.rutrackersearch.domain.entity.forum.Category
-import me.rutrackersearch.domain.entity.topic.Author
-import me.rutrackersearch.domain.entity.topic.Content
-import me.rutrackersearch.domain.entity.topic.PostContent
-import me.rutrackersearch.domain.entity.topic.Topic
-import me.rutrackersearch.domain.entity.topic.TorrentDescription
-import me.rutrackersearch.domain.entity.topic.isValid
-import me.rutrackersearch.domain.entity.user.isAuthorized
+import me.rutrackersearch.models.forum.Category
+import me.rutrackersearch.models.topic.Author
+import me.rutrackersearch.models.topic.Content
+import me.rutrackersearch.models.topic.PostContent
+import me.rutrackersearch.models.topic.Topic
+import me.rutrackersearch.models.topic.TorrentDescription
+import me.rutrackersearch.models.topic.isValid
+import me.rutrackersearch.models.user.isAuthorized
 import me.rutrackersearch.app.ui.common.ContentScale as FocusableContentScale
 
 @Composable

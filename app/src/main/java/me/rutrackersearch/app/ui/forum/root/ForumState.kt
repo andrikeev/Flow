@@ -1,6 +1,6 @@
 package me.rutrackersearch.app.ui.forum.root
 
-import me.rutrackersearch.domain.entity.forum.RootCategory
+import me.rutrackersearch.models.forum.RootCategory
 
 sealed interface ForumState {
     object Loading : ForumState

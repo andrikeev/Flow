@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 enableFeaturePreview("VERSION_CATALOGS")
 
 pluginManagement {
@@ -29,5 +27,3 @@ dependencyResolutionManagement {
 rootProject.name = "Flow"
 
 include(":app")
-include(":domain")
-include(":data")

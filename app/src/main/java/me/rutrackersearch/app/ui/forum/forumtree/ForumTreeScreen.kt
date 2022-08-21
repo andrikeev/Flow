@@ -35,7 +35,7 @@ import me.rutrackersearch.app.ui.common.dividedItems
 import me.rutrackersearch.app.ui.forum.forumtree.ForumTreeAction.CategoryClick
 import me.rutrackersearch.app.ui.forum.forumtree.ForumTreeAction.ExpandClick
 import me.rutrackersearch.app.ui.forum.forumtree.ForumTreeAction.RetryClick
-import me.rutrackersearch.domain.entity.forum.Category
+import me.rutrackersearch.models.forum.Category
 
 @Composable
 fun ForumTreeScreen(

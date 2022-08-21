@@ -10,8 +10,8 @@ import kotlinx.coroutines.launch
 import me.rutrackersearch.app.ui.args.requireId
 import me.rutrackersearch.app.ui.args.requirePid
 import me.rutrackersearch.app.ui.common.Result
-import me.rutrackersearch.domain.entity.topic.Topic
 import me.rutrackersearch.domain.usecase.LoadTopicUseCase
+import me.rutrackersearch.models.topic.Topic
 import javax.inject.Inject
 
 @HiltViewModel

@@ -21,8 +21,8 @@ import me.rutrackersearch.app.ui.search.input.SearchInputAction.InputChanged
 import me.rutrackersearch.app.ui.search.input.SearchInputAction.SubmitClick
 import me.rutrackersearch.app.ui.search.input.SearchInputAction.SuggestClick
 import me.rutrackersearch.app.ui.search.input.SearchInputAction.SuggestSelected
-import me.rutrackersearch.domain.entity.search.Filter
-import me.rutrackersearch.domain.entity.search.Suggest
+import me.rutrackersearch.models.search.Filter
+import me.rutrackersearch.models.search.Suggest
 import me.rutrackersearch.domain.usecase.AddSuggestUseCase
 import me.rutrackersearch.domain.usecase.ObserveSuggestsUseCase
 import javax.inject.Inject

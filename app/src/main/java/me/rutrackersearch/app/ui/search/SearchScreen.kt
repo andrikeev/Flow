@@ -44,8 +44,8 @@ import me.rutrackersearch.app.ui.common.dividedItems
 import me.rutrackersearch.app.ui.common.focusableItems
 import me.rutrackersearch.app.ui.common.loadingItem
 import me.rutrackersearch.app.ui.common.resId
-import me.rutrackersearch.domain.entity.search.Filter
-import me.rutrackersearch.domain.entity.search.Search
+import me.rutrackersearch.models.search.Filter
+import me.rutrackersearch.models.search.Search
 
 @Composable
 fun SearchScreen(

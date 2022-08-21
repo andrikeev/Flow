@@ -62,8 +62,8 @@ import me.rutrackersearch.app.ui.forum.root.ForumAction.CategoryClick
 import me.rutrackersearch.app.ui.forum.root.ForumAction.ExpandClick
 import me.rutrackersearch.app.ui.forum.root.ForumAction.RetryClick
 import me.rutrackersearch.app.ui.theme.surfaceColorAtElevation
-import me.rutrackersearch.domain.entity.forum.Category
-import me.rutrackersearch.domain.entity.forum.RootCategory
+import me.rutrackersearch.models.forum.Category
+import me.rutrackersearch.models.forum.RootCategory
 
 @Composable
 fun ForumScreen(

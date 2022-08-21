@@ -83,11 +83,11 @@ import me.rutrackersearch.app.ui.topic.topic.TopicScreen
 import me.rutrackersearch.app.ui.topic.torrent.TorrentScreen
 import me.rutrackersearch.app.ui.topics.favorites.FavoritesScreen
 import me.rutrackersearch.app.ui.topics.history.HistoryScreen
-import me.rutrackersearch.domain.entity.forum.Category
-import me.rutrackersearch.domain.entity.search.Filter
-import me.rutrackersearch.domain.entity.topic.Author
-import me.rutrackersearch.domain.entity.topic.Topic
-import me.rutrackersearch.domain.entity.topic.Torrent
+import me.rutrackersearch.models.forum.Category
+import me.rutrackersearch.models.search.Filter
+import me.rutrackersearch.models.topic.Author
+import me.rutrackersearch.models.topic.Topic
+import me.rutrackersearch.models.topic.Torrent
 
 typealias Destination = @Composable (NavHostController, NavBackStackEntry) -> Unit
 

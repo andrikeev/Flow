@@ -2,7 +2,7 @@ package me.rutrackersearch.app.ui.parcel
 
 import android.os.Parcel
 import kotlinx.parcelize.Parceler
-import me.rutrackersearch.domain.entity.topic.Author
+import me.rutrackersearch.models.topic.Author
 
 object OptionalAuthorParceler : OptionalParceler<Author>(AuthorParceler)
 

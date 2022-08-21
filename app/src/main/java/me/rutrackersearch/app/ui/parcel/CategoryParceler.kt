@@ -2,7 +2,7 @@ package me.rutrackersearch.app.ui.parcel
 
 import android.os.Parcel
 import kotlinx.parcelize.Parceler
-import me.rutrackersearch.domain.entity.forum.Category
+import me.rutrackersearch.models.forum.Category
 
 object OptionalCategoryParceler : OptionalParceler<Category>(CategoryParceler)
 

@@ -50,9 +50,9 @@ import kotlinx.coroutines.launch
 import me.rutrackersearch.app.R
 import me.rutrackersearch.app.ui.platform.LocalOpenLinkHandler
 import me.rutrackersearch.app.ui.theme.borders
-import me.rutrackersearch.domain.entity.topic.Content
-import me.rutrackersearch.domain.entity.topic.PostContent
-import me.rutrackersearch.domain.entity.topic.TextContent
+import me.rutrackersearch.models.topic.Content
+import me.rutrackersearch.models.topic.PostContent
+import me.rutrackersearch.models.topic.TextContent
 
 @Composable
 fun Post(

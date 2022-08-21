@@ -112,13 +112,13 @@ import me.rutrackersearch.app.ui.search.result.SearchResultAction.SetSort
 import me.rutrackersearch.app.ui.search.result.SearchResultAction.TorrentClick
 import me.rutrackersearch.app.ui.theme.borders
 import me.rutrackersearch.app.ui.theme.surfaceColorAtElevation
-import me.rutrackersearch.domain.entity.forum.Category
-import me.rutrackersearch.domain.entity.search.Filter
-import me.rutrackersearch.domain.entity.search.Order
-import me.rutrackersearch.domain.entity.search.Period
-import me.rutrackersearch.domain.entity.search.Sort
-import me.rutrackersearch.domain.entity.topic.Author
-import me.rutrackersearch.domain.entity.topic.Torrent
+import me.rutrackersearch.models.forum.Category
+import me.rutrackersearch.models.search.Filter
+import me.rutrackersearch.models.search.Order
+import me.rutrackersearch.models.search.Period
+import me.rutrackersearch.models.search.Sort
+import me.rutrackersearch.models.topic.Author
+import me.rutrackersearch.models.topic.Torrent
 
 @Composable
 fun SearchResultScreen(

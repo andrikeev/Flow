@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.TypeParceler
 import me.rutrackersearch.app.ui.parcel.TorrentParceler
-import me.rutrackersearch.domain.entity.topic.Torrent
+import me.rutrackersearch.models.topic.Torrent
 
 @Parcelize
 @TypeParceler<Torrent, TorrentParceler>()

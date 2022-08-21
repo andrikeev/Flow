@@ -13,9 +13,9 @@ import me.rutrackersearch.app.ui.common.BackButton
 import me.rutrackersearch.app.ui.common.Error
 import me.rutrackersearch.app.ui.common.Loading
 import me.rutrackersearch.app.ui.common.Result
-import me.rutrackersearch.domain.entity.topic.BaseTopic
-import me.rutrackersearch.domain.entity.topic.Topic
-import me.rutrackersearch.domain.entity.topic.Torrent
+import me.rutrackersearch.models.topic.BaseTopic
+import me.rutrackersearch.models.topic.Topic
+import me.rutrackersearch.models.topic.Torrent
 
 @Composable
 fun OpenTopicScreen(
