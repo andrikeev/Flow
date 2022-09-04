@@ -14,8 +14,8 @@ android {
         applicationId = "me.rutrackersearch.app"
         minSdk = libs.versions.androidSdk.minSdk.get().toInt()
         targetSdk = libs.versions.androidSdk.targetSdk.get().toInt()
-        versionCode = 22
-        versionName = "4.0.0"
+        versionCode = 23
+        versionName = "4.0.1"
         vectorDrawables {
             useSupportLibrary = true
         }
