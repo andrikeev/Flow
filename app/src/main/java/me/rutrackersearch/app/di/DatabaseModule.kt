@@ -8,6 +8,11 @@ import dagger.hilt.components.SingletonComponent
 import me.rutrackersearch.data.database.AppDatabase
 import me.rutrackersearch.data.database.DatabaseFactory
 import me.rutrackersearch.data.database.DatabaseFactoryImpl
+import me.rutrackersearch.data.database.dao.BookmarkDao
+import me.rutrackersearch.data.database.dao.FavoriteTopicDao
+import me.rutrackersearch.data.database.dao.HistoryTopicDao
+import me.rutrackersearch.data.database.dao.SearchHistoryDao
+import me.rutrackersearch.data.database.dao.SuggestDao
 import javax.inject.Singleton
 
 @Module
@@ -21,5 +26,25 @@ interface DatabaseModule {
         @Provides
         @Singleton
         fun provideDatabase(factory: DatabaseFactory): AppDatabase = factory.get()
+
+        @Provides
+        @Singleton
+        fun provideSuggestDao(db: AppDatabase): SuggestDao = db.suggestDao()
+
+        @Provides
+        @Singleton
+        fun provideSearchHistoryDao(db: AppDatabase): SearchHistoryDao = db.searchHistoryDao()
+
+        @Provides
+        @Singleton
+        fun provideHistoryTopicDao(db: AppDatabase): HistoryTopicDao = db.historyTopicDao()
+
+        @Provides
+        @Singleton
+        fun provideFavoriteTopicDao(db: AppDatabase): FavoriteTopicDao = db.favoriteTopicDao()
+
+        @Provides
+        @Singleton
+        fun provideBookmarkDao(db: AppDatabase): BookmarkDao = db.bookmarkDao()
     }
 }

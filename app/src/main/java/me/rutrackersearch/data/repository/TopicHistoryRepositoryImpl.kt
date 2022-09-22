@@ -2,7 +2,7 @@ package me.rutrackersearch.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import me.rutrackersearch.data.database.AppDatabase
+import me.rutrackersearch.data.database.dao.HistoryTopicDao
 import me.rutrackersearch.data.database.entity.HistoryTopicEntity
 import me.rutrackersearch.domain.repository.TopicHistoryRepository
 import me.rutrackersearch.models.topic.Topic
@@ -11,10 +11,8 @@ import javax.inject.Singleton
 
 @Singleton
 class TopicHistoryRepositoryImpl @Inject constructor(
-    db: AppDatabase,
+    private val dao: HistoryTopicDao,
 ) : TopicHistoryRepository {
-    private val dao = db.historyTopicDao()
-
     override fun observeTopics(): Flow<List<Topic>> {
         return dao.observerAll().map { entities ->
             entities.map(HistoryTopicEntity::toTopic)

@@ -10,4 +10,10 @@ data class Filter(
     val period: Period = Period.ALL_TIME,
     val author: Author? = null,
     val categories: List<Category>? = null,
-)
+) {
+    fun isDefault(): Boolean {
+        return period == Period.ALL_TIME &&
+                author == null &&
+                categories.isNullOrEmpty()
+    }
+}

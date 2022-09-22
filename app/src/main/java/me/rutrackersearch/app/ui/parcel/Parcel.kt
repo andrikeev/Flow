@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package me.rutrackersearch.app.ui.parcel
 
 import android.os.Parcel

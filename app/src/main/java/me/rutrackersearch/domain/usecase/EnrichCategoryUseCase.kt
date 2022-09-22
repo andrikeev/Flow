@@ -18,7 +18,7 @@ class EnrichCategoryUseCase @Inject constructor(
             bookmarksRepository.observeNewTopics(category.id),
         ) { bookmarks, newTopics ->
             CategoryModel(
-                data = category,
+                category = category,
                 isBookmark = bookmarks.contains(category.id),
                 newTopicsCount = newTopics.size,
             )

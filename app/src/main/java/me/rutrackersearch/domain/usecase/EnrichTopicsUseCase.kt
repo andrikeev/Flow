@@ -25,7 +25,7 @@ class EnrichTopicsUseCase @Inject constructor(
         ) { favoriteTopics, updatedTopics, visitedTopics, newTopics ->
             topics.map { topic ->
                 TopicModel(
-                    data = topic,
+                    topic = topic,
                     isVisited = visitedTopics.contains(topic.id),
                     isFavorite = favoriteTopics.contains(topic.id),
                     isNew = newTopics.contains(topic.id),

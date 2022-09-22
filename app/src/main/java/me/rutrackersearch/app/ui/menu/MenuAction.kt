@@ -8,6 +8,9 @@ sealed interface MenuAction {
     object ClearFavoritesClick : MenuAction
     object ClearHistoryClick : MenuAction
     object LoginClick : MenuAction
+    object PrivacyPolicyClick : MenuAction
+    object RightsClick : MenuAction
+    object SendFeedbackClick : MenuAction
     data class SetBookmarksSyncPeriod(val syncPeriod: SyncPeriod) : MenuAction
     data class SetFavoritesSyncPeriod(val syncPeriod: SyncPeriod) : MenuAction
     data class SetTheme(val theme: Theme) : MenuAction

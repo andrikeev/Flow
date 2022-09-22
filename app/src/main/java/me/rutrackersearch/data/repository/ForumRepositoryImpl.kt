@@ -13,8 +13,10 @@ class ForumRepositoryImpl @Inject constructor(
     private val api: NetworkApi,
 ) : ForumRepository {
 
+    private var cache: ForumTree? = null
+
     override suspend fun loadForumTree(): ForumTree {
-        return api.forumTree()
+        return cache ?: api.forumTree().also { cache = it }
     }
 
     override suspend fun loadCategoryPage(id: String, page: Int): Page<ForumItem> {

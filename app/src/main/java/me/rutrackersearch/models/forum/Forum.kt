@@ -1,7 +1,5 @@
 package me.rutrackersearch.models.forum
 
-import me.rutrackersearch.models.topic.Topic
-
 data class Forum(
     val children: List<RootCategory>,
 )
@@ -11,6 +9,7 @@ data class RootCategory(
     val children: List<Category>,
 )
 
-sealed interface ForumItem
-data class ForumCategory(val category: Category) : ForumItem
-data class ForumTopic(val topic: Topic) : ForumItem
+sealed interface ForumItem {
+    data class Category(val category: me.rutrackersearch.models.forum.Category) : ForumItem
+    data class Topic(val topic: me.rutrackersearch.models.topic.Topic) : ForumItem
+}

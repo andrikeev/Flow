@@ -21,11 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +36,6 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.job
-import kotlinx.coroutines.launch
 import me.rutrackersearch.app.BuildConfig
 import me.rutrackersearch.app.R
 import me.rutrackersearch.app.ui.common.AppBar
@@ -51,7 +48,7 @@ import me.rutrackersearch.app.ui.common.FocusableLazyColumn
 import me.rutrackersearch.app.ui.common.FocusableLazyListScope
 import me.rutrackersearch.app.ui.common.LazyColumn
 import me.rutrackersearch.app.ui.common.TextButton
-import me.rutrackersearch.app.ui.common.auth.AccountItem
+import me.rutrackersearch.app.ui.common.account.AccountItem
 import me.rutrackersearch.app.ui.common.focusableSpec
 import me.rutrackersearch.app.ui.common.rememberFocusRequester
 import me.rutrackersearch.app.ui.common.resId
@@ -66,37 +63,34 @@ import me.rutrackersearch.app.ui.platform.LocalOpenLinkHandler
 import me.rutrackersearch.app.ui.theme.availableThemes
 import me.rutrackersearch.models.settings.SyncPeriod
 import me.rutrackersearch.models.settings.Theme
-
-private const val informationForRightOwnersURL = "http://flow.rutrackersearch.me/rights"
-private const val privacyPolicyURL = "http://flow.rutrackersearch.me/privacy-policy"
-private const val developerEmailURI = "mailto:rutracker.search@gmail.com"
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun MenuScreen(onLoginClick: () -> Unit) {
+fun MenuScreen(openLogin: () -> Unit) {
     MenuScreen(
         viewModel = hiltViewModel(),
-        onLoginClick = onLoginClick,
+        openLogin = openLogin,
     )
 }
 
 @Composable
 private fun MenuScreen(
     viewModel: MenuViewModel,
-    onLoginClick: () -> Unit,
+    openLogin: () -> Unit,
 ) {
-    val state by viewModel.state.collectAsState(null)
-    val onAction: (MenuAction) -> Unit = { action ->
-        when (action) {
-            is LoginClick -> onLoginClick()
-            else -> viewModel.perform(action)
+    val openLinkHandler = LocalOpenLinkHandler.current
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is MenuSideEffect.OpenLogin -> openLogin()
+            is MenuSideEffect.OpenLink -> openLinkHandler.openLink(sideEffect.link)
         }
     }
-    state?.let {
-        DynamicBox(
-            mobileContent = { MenuScreen(it, onAction) },
-            tvContent = { TVMenuScreen(it, onAction) },
-        )
-    }
+    val state by viewModel.collectAsState()
+    DynamicBox(
+        mobileContent = { MenuScreen(state, viewModel::perform) },
+        tvContent = { TVMenuScreen(state, viewModel::perform) },
+    )
 }
 
 @Composable
@@ -105,8 +99,6 @@ private fun MenuScreen(
     onAction: (MenuAction) -> Unit,
 ) {
     val (theme, favoritesSyncPeriod, bookmarksSyncPeriod) = state
-    val openLinkHandler = LocalOpenLinkHandler.current
-    val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -164,56 +156,44 @@ private fun MenuScreen(
                 onClick = {
                     confirmationDialogState = ConfirmationDialogState.Show(
                         message = R.string.menu_data_clear_history_confirmation,
-                        onConfirm = { onAction(ClearHistoryClick) }
+                        onConfirm = { onAction(ClearHistoryClick) },
                     )
-                }
+                },
             )
             menuItem(
                 text = { Text(stringResource(R.string.menu_data_clear_bookmarks)) },
                 onClick = {
                     confirmationDialogState = ConfirmationDialogState.Show(
                         message = R.string.menu_data_clear_bookmarks_confirmation,
-                        onConfirm = { onAction(ClearBookmarksClick) }
+                        onConfirm = { onAction(ClearBookmarksClick) },
                     )
-                }
+                },
             )
             menuItem(
                 text = { Text(stringResource(R.string.menu_data_clear_favorites)) },
                 onClick = {
                     confirmationDialogState = ConfirmationDialogState.Show(
                         message = R.string.menu_data_clear_favorites_confirmation,
-                        onConfirm = { onAction(ClearFavoritesClick) }
+                        onConfirm = { onAction(ClearFavoritesClick) },
                     )
-                }
+                },
             )
             menuSectionLabel { Text(stringResource(R.string.menu_label_misc)) }
 //            menuItem(
 //                text = { Text(stringResource(R.string.menu_misc_rights)) },
-//                onClick = {
-//                    coroutineScope.launch {
-//                        openLinkHandler.openLink(informationForRightOwnersURL)
-//                    }
-//                }
+//                onClick = { onAction(MenuAction.RightsClick) },
 //            )
 //            menuItem(
 //                text = { Text(stringResource(R.string.menu_misc_privacy)) },
-//                onClick = {
-//                    coroutineScope.launch {
-//                        openLinkHandler.openLink(privacyPolicyURL)
-//                    }
-//                }
+//                onClick = { onAction(MenuAction.PrivacyPolicyClick) },
 //            )
             menuItem(
                 text = { Text(stringResource(R.string.menu_misc_contacts)) },
-                onClick = {
-                    coroutineScope.launch {
-                        openLinkHandler.openLink(developerEmailURI)
-                    }
-                }
+                onClick = { onAction(MenuAction.SendFeedbackClick) },
             )
             menuItem(
                 text = { Text(stringResource(R.string.menu_misc_about)) },
-                onClick = { showAboutDialog = true }
+                onClick = { showAboutDialog = true },
             )
         }
     }
@@ -225,8 +205,6 @@ private fun TVMenuScreen(
     onAction: (MenuAction) -> Unit,
 ) {
     val (theme, favoritesSyncPeriod, bookmarksSyncPeriod) = state
-    val openLinkHandler = LocalOpenLinkHandler.current
-    val coroutineScope = rememberCoroutineScope()
     var confirmationDialogState by remember {
         mutableStateOf<ConfirmationDialogState>(ConfirmationDialogState.Hide)
     }
@@ -276,56 +254,44 @@ private fun TVMenuScreen(
             onClick = {
                 confirmationDialogState = ConfirmationDialogState.Show(
                     message = R.string.menu_data_clear_history_confirmation,
-                    onConfirm = { onAction(ClearHistoryClick) }
+                    onConfirm = { onAction(ClearHistoryClick) },
                 )
-            }
+            },
         )
         menuItem(
             text = { Text(stringResource(R.string.menu_data_clear_bookmarks)) },
             onClick = {
                 confirmationDialogState = ConfirmationDialogState.Show(
                     message = R.string.menu_data_clear_bookmarks_confirmation,
-                    onConfirm = { onAction(ClearBookmarksClick) }
+                    onConfirm = { onAction(ClearBookmarksClick) },
                 )
-            }
+            },
         )
         menuItem(
             text = { Text(stringResource(R.string.menu_data_clear_favorites)) },
             onClick = {
                 confirmationDialogState = ConfirmationDialogState.Show(
                     message = R.string.menu_data_clear_favorites_confirmation,
-                    onConfirm = { onAction(ClearFavoritesClick) }
+                    onConfirm = { onAction(ClearFavoritesClick) },
                 )
-            }
+            },
         )
         menuSectionLabel { Text(stringResource(R.string.menu_label_misc)) }
         menuItem(
             text = { Text(stringResource(R.string.menu_misc_rights)) },
-            onClick = {
-                coroutineScope.launch {
-                    openLinkHandler.openLink(informationForRightOwnersURL)
-                }
-            }
+            onClick = { onAction(MenuAction.RightsClick) },
         )
         menuItem(
             text = { Text(stringResource(R.string.menu_misc_privacy)) },
-            onClick = {
-                coroutineScope.launch {
-                    openLinkHandler.openLink(privacyPolicyURL)
-                }
-            }
+            onClick = { onAction(MenuAction.PrivacyPolicyClick) },
         )
         menuItem(
             text = { Text(stringResource(R.string.menu_misc_contacts)) },
-            onClick = {
-                coroutineScope.launch {
-                    openLinkHandler.openLink(developerEmailURI)
-                }
-            }
+            onClick = { onAction(MenuAction.SendFeedbackClick) },
         )
         menuItem(
             text = { Text(stringResource(R.string.menu_misc_about)) },
-            onClick = { showAboutDialog = true }
+            onClick = { showAboutDialog = true },
         )
     }
 }
@@ -445,8 +411,7 @@ private fun <T> MenuSelectionItem(
                             } else {
                                 FocusRequester.Default
                             }
-                        ),
-                        spec = focusableSpec(color = MaterialTheme.colorScheme.surfaceVariant)
+                        ), spec = focusableSpec(color = MaterialTheme.colorScheme.surfaceVariant)
                     ) {
                         DropdownMenuItem(
                             onClick = {

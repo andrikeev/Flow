@@ -76,7 +76,7 @@ class PagingDataLoader<T : Any>(
 
                     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
                         val nextPage = params.key ?: initialPage
-                        return kotlin.runCatching { fetchData(nextPage) }
+                        return runCatching { fetchData(nextPage) }
                             .fold(
                                 { data ->
                                     LoadResult.Page(

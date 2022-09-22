@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,33 +31,37 @@ import me.rutrackersearch.app.ui.common.dividedItems
 import me.rutrackersearch.app.ui.common.focusableItems
 import me.rutrackersearch.models.forum.Category
 import me.rutrackersearch.models.forum.CategoryModel
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun BookmarksScreen(
-    onBookmarkClick: (Category) -> Unit,
+    openCategory: (Category) -> Unit,
 ) {
     BookmarksScreen(
         viewModel = hiltViewModel(),
-        onBookmarkClick = onBookmarkClick,
+        openCategory = openCategory,
     )
 }
 
 @Composable
 private fun BookmarksScreen(
     viewModel: BookmarksViewModel,
-    onBookmarkClick: (Category) -> Unit,
+    openCategory: (Category) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
-    BookmarksScreen(
-        state = state,
-        onBookmarkClick = onBookmarkClick,
-    )
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is BookmarksSideEffect.OpenCategory -> openCategory(sideEffect.category)
+        }
+    }
+    val state by viewModel.collectAsState()
+    BookmarksScreen(state, viewModel::perform)
 }
 
 @Composable
 private fun BookmarksScreen(
     state: BookmarksState,
-    onBookmarkClick: (Category) -> Unit,
+    onAction: (BookmarksAction) -> Unit,
 ) {
     when (state) {
         is BookmarksState.Initial -> Loading()
@@ -75,12 +78,12 @@ private fun BookmarksScreen(
                 ) {
                     dividedItems(
                         items = state.items,
-                        key = { it.data.id },
-                        contentType = { it.data::class },
+                        key = { it.category.id },
+                        contentType = { it.category::class },
                     ) { bookmark ->
                         Bookmark(
                             bookmark = bookmark,
-                            onClick = { onBookmarkClick(bookmark.data) },
+                            onClick = { onAction(BookmarksAction.BookmarkClicked(bookmark)) },
                         )
                     }
                 }
@@ -92,12 +95,12 @@ private fun BookmarksScreen(
                 ) {
                     focusableItems(
                         items = state.items,
-                        key = { it.data.id },
-                        contentType = { it.data::class },
+                        key = { it.category.id },
+                        contentType = { it.category::class },
                     ) { bookmark ->
                         Bookmark(
                             bookmark = bookmark,
-                            onClick = { onBookmarkClick(bookmark.data) },
+                            onClick = { onAction(BookmarksAction.BookmarkClicked(bookmark)) },
                         )
                     }
                 }
@@ -133,7 +136,7 @@ private fun Bookmark(
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 8.dp),
-                    text = bookmark.data.name,
+                    text = bookmark.category.name,
                 )
             }
             if (bookmark.newTopicsCount > 0) {

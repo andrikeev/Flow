@@ -1,15 +1,10 @@
 package me.rutrackersearch.app.ui.search.result
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -32,11 +26,12 @@ import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.ArrowDropUp
 import androidx.compose.material.icons.outlined.CheckBox
 import androidx.compose.material.icons.outlined.CheckBoxOutlineBlank
-import androidx.compose.material.icons.outlined.ExpandLess
+import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.Tune
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -47,16 +42,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -72,21 +64,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.job
-import kotlinx.coroutines.launch
 import me.rutrackersearch.app.R
-import me.rutrackersearch.app.ui.common.AppBar
 import me.rutrackersearch.app.ui.common.BackButton
 import me.rutrackersearch.app.ui.common.ContentElevation
 import me.rutrackersearch.app.ui.common.ContentScale
 import me.rutrackersearch.app.ui.common.Divider
 import me.rutrackersearch.app.ui.common.DynamicBox
+import me.rutrackersearch.app.ui.common.ExpandableAppBar
 import me.rutrackersearch.app.ui.common.Focusable
 import me.rutrackersearch.app.ui.common.FocusableLazyColumn
 import me.rutrackersearch.app.ui.common.IconButton
 import me.rutrackersearch.app.ui.common.LazyColumn
 import me.rutrackersearch.app.ui.common.Page
-import me.rutrackersearch.app.ui.common.PageResult
 import me.rutrackersearch.app.ui.common.PagesScreen
+import me.rutrackersearch.app.ui.common.ScrollBackFloatingActionButton
 import me.rutrackersearch.app.ui.common.TextButton
 import me.rutrackersearch.app.ui.common.TopicListItem
 import me.rutrackersearch.app.ui.common.appendItems
@@ -99,6 +90,7 @@ import me.rutrackersearch.app.ui.common.loadingItem
 import me.rutrackersearch.app.ui.common.rememberFocusRequester
 import me.rutrackersearch.app.ui.common.resId
 import me.rutrackersearch.app.ui.forum.forumtree.ForumTreeScreen
+import me.rutrackersearch.app.ui.paging.LoadState
 import me.rutrackersearch.app.ui.search.result.SearchResultAction.BackClick
 import me.rutrackersearch.app.ui.search.result.SearchResultAction.FavoriteClick
 import me.rutrackersearch.app.ui.search.result.SearchResultAction.ListBottomReached
@@ -119,49 +111,45 @@ import me.rutrackersearch.models.search.Period
 import me.rutrackersearch.models.search.Sort
 import me.rutrackersearch.models.topic.Author
 import me.rutrackersearch.models.topic.Torrent
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SearchResultScreen(
-    onBackClick: () -> Unit,
-    onSearchClick: (Filter) -> Unit,
-    onTorrentClick: (Torrent) -> Unit,
-    onNewFilter: (Filter) -> Unit,
+    back: () -> Unit,
+    openSearchInput: (Filter) -> Unit,
+    openSearchResult: (Filter) -> Unit,
+    openTorrent: (Torrent) -> Unit,
 ) {
     SearchResultScreen(
         viewModel = hiltViewModel(),
-        onBackClick = onBackClick,
-        onSearchClick = onSearchClick,
-        onTorrentClick = onTorrentClick,
-        onNewFilter = onNewFilter,
+        back = back,
+        openSearchInput = openSearchInput,
+        openSearchResult = openSearchResult,
+        openTorrent = openTorrent,
     )
 }
 
 @Composable
 private fun SearchResultScreen(
     viewModel: SearchResultViewModel,
-    onBackClick: () -> Unit,
-    onSearchClick: (Filter) -> Unit,
-    onTorrentClick: (Torrent) -> Unit,
-    onNewFilter: (Filter) -> Unit,
+    back: () -> Unit,
+    openSearchInput: (Filter) -> Unit,
+    openSearchResult: (Filter) -> Unit,
+    openTorrent: (Torrent) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
-    val onAction: (SearchResultAction) -> Unit = { action ->
-        when (action) {
-            BackClick -> onBackClick()
-            is SearchClick -> onSearchClick(action.filter)
-            is TorrentClick -> onTorrentClick(action.torrent)
-            is SetPeriod -> onNewFilter(
-                state.filter.copy(
-                    query = null,
-                    period = action.value
-                )
-            )
-            else -> viewModel.perform(action)
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is SearchResultSideEffect.Back -> back()
+            is SearchResultSideEffect.OpenSearchInput -> openSearchInput(sideEffect.filter)
+            is SearchResultSideEffect.OpenSearchResult -> openSearchResult(sideEffect.filter)
+            is SearchResultSideEffect.OpenTorrent -> openTorrent(sideEffect.torrent)
         }
     }
+    val state by viewModel.collectAsState()
     DynamicBox(
-        mobileContent = { MobileSearchResultScreen(state, onAction) },
-        tvContent = { TVSearchResultScreen(state, onAction) }
+        mobileContent = { MobileSearchResultScreen(state, viewModel::perform) },
+        tvContent = { TVSearchResultScreen(state, viewModel::perform) },
     )
 }
 
@@ -171,7 +159,6 @@ private fun MobileSearchResultScreen(
     onAction: (SearchResultAction) -> Unit,
 ) {
     val scrollState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
     val pinnedScrollBehavior = remember { TopAppBarDefaults.pinnedScrollBehavior() }
     Scaffold(
         modifier = Modifier.nestedScroll(pinnedScrollBehavior.nestedScrollConnection),
@@ -182,23 +169,7 @@ private fun MobileSearchResultScreen(
                 scrollBehavior = pinnedScrollBehavior,
             )
         },
-        floatingActionButton = {
-            val showFAB by remember { derivedStateOf { scrollState.firstVisibleItemIndex > 1 } }
-            AnimatedVisibility(
-                visible = showFAB,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                FloatingActionButton(
-                    modifier = Modifier.size(40.dp),
-                    onClick = { coroutineScope.launch { scrollState.animateScrollToItem(0) } },
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.secondary,
-                ) {
-                    Icon(imageVector = Icons.Outlined.ExpandLess, contentDescription = null)
-                }
-            }
-        },
+        floatingActionButton = { ScrollBackFloatingActionButton(scrollState) },
     ) { padding ->
         SearchResultList(
             modifier = Modifier.padding(padding),
@@ -215,69 +186,60 @@ private fun SearchAppBar(
     onAction: (SearchResultAction) -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
-    val filter = state.filter
     var isExpanded by remember { mutableStateOf(false) }
-    val scrollFraction = scrollBehavior.scrollFraction
-    val colors = TopAppBarDefaults.smallTopAppBarColors()
-    val containerColor by colors.containerColor(scrollFraction)
-    val secondaryContainerColor by animateColorAsState(
-        targetValue = if (scrollFraction > 0.01f) {
-            MaterialTheme.colorScheme.surfaceColorAtElevation(ContentElevation.large)
-        } else {
-            MaterialTheme.colorScheme.surfaceColorAtElevation(ContentElevation.small)
+    ExpandableAppBar(
+        navigationIcon = { BackButton { onAction(BackClick) } },
+        title = {
+            val colorScheme = MaterialTheme.colorScheme
+            val colorDefault =
+                remember { colorScheme.surfaceColorAtElevation(ContentElevation.small) }
+            val colorScrolled =
+                remember { colorScheme.surfaceColorAtElevation(ContentElevation.large) }
+            val scrolled by derivedStateOf { scrollBehavior.scrollFraction > 0.01 }
+            val secondaryContainerColor by animateColorAsState(
+                targetValue = if (scrolled) colorScrolled else colorDefault, animationSpec = tween(
+                    durationMillis = 500, easing = LinearOutSlowInEasing
+                )
+            )
+            SearchTextItem(
+                modifier = Modifier.fillMaxWidth(),
+                filter = state.filter,
+                onClick = { onAction(SearchClick) },
+                color = secondaryContainerColor,
+            )
         },
-        animationSpec = tween(
-            durationMillis = 500,
-            easing = LinearOutSlowInEasing
-        )
-    )
-    Column(modifier = Modifier.fillMaxWidth()) {
-        AppBar(
-            navigationIcon = { BackButton { onAction(BackClick) } },
-            title = {
-                SearchTextItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    filter = filter,
-                    onClick = { onAction(SearchClick(filter)) },
-                    color = secondaryContainerColor,
-                )
-            },
-            actions = {
-                val rotation by animateFloatAsState(targetValue = if (isExpanded) 180f else 0f)
-                IconButton(
-                    modifier = Modifier.rotate(rotation),
-                    onClick = { isExpanded = !isExpanded },
-                    imageVector = if (isExpanded) {
-                        Icons.Outlined.ExpandLess
-                    } else {
-                        Icons.Outlined.Tune
-                    },
-                )
-            },
-            scrollBehavior = scrollBehavior,
-        )
-        AnimatedVisibility(
-            visible = isExpanded,
-            enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
-            exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
-        ) {
-            Surface(color = containerColor) {
-                FilterBar(
-                    state = state,
-                    onAction = { action ->
-                        when (action) {
-                            is SetAuthor,
-                            is SetCategories,
-                            is SetPeriod -> {
-                                isExpanded = false
-                            }
-                            else -> Unit
-                        }
-                        onAction(action)
-                    },
-                )
+        actions = {
+            val rotation by animateFloatAsState(targetValue = if (isExpanded) 180f else 0f)
+            IconButton(onClick = { isExpanded = !isExpanded }) {
+                BadgedBox(badge = { if (!isExpanded && !state.filter.isDefault()) Badge() }) {
+                    Icon(
+                        modifier = Modifier.rotate(rotation),
+                        imageVector = if (isExpanded) {
+                            Icons.Outlined.ExpandMore
+                        } else {
+                            Icons.Outlined.Tune
+                        },
+                        contentDescription = null,
+                    )
+                }
             }
-        }
+        },
+        scrollBehavior = scrollBehavior,
+        isExpanded = isExpanded,
+    ) {
+        FilterBar(
+            state = state,
+            onAction = { action ->
+                when (action) {
+                    is SetAuthor, is SetCategories, is SetPeriod -> {
+                        isExpanded = false
+                    }
+
+                    else -> Unit
+                }
+                onAction(action)
+            },
+        )
     }
 }
 
@@ -349,7 +311,11 @@ private fun FilterBar(
             onSubmit = { author -> onAction(SetAuthor(author)) },
         )
         FilterCategoryItem(
-            available = state.categories,
+            available = when (state.content) {
+                is SearchResultContent.Content -> state.content.categories
+                is SearchResultContent.Empty,
+                is SearchResultContent.Initial -> emptyList()
+            },
             selected = filter.categories,
             onSubmit = { categories -> onAction(SetCategories(categories)) },
         )
@@ -371,30 +337,35 @@ private fun SearchResultList(
         onEndOfListReached = { onAction(ListBottomReached) },
     ) {
         when (state.content) {
-            is PageResult.Loading -> loadingItem()
-            is PageResult.Error -> errorItem(
-                error = state.content.error,
-                onRetryClick = { onAction(RetryClick) },
-            )
-            is PageResult.Empty -> emptyItem(
+            is SearchResultContent.Initial -> when (state.loadStates.refresh) {
+                is LoadState.Loading,
+                is LoadState.NotLoading -> loadingItem()
+
+                is LoadState.Error -> errorItem(
+                    error = state.loadStates.refresh.error,
+                    onRetryClick = { onAction(RetryClick) },
+                )
+
+            }
+
+            is SearchResultContent.Empty -> emptyItem(
                 titleRes = R.string.search_result_empty_title,
                 subtitleRes = R.string.search_result_empty_subtitle,
                 iconRes = R.drawable.ill_empty_search,
             )
-            is PageResult.Content -> {
-                dividedItems(
-                    items = state.content.content,
-                    key = { it.data.id },
-                    contentType = { it.data::class }
-                ) { item ->
+
+            is SearchResultContent.Content -> {
+                dividedItems(items = state.content.torrents,
+                    key = { it.topic.id },
+                    contentType = { it.topic::class }) { item ->
                     TopicListItem(
                         topicModel = item,
-                        onClick = { onAction(TorrentClick(item.data)) },
+                        onClick = { onAction(TorrentClick(item.topic)) },
                         onFavoriteClick = { onAction(FavoriteClick(item)) },
                     )
                 }
                 appendItems(
-                    state = state.content.append,
+                    state = state.loadStates.append,
                     onRetryClick = { onAction(RetryClick) },
                 )
             }
@@ -417,8 +388,7 @@ private fun <T> FilterDropdownItem(
         verticalAlignment = CenterVertically,
     ) {
         Text(
-            modifier = Modifier.weight(1f),
-            text = label
+            modifier = Modifier.weight(1f), text = label
         )
         var expanded by remember { mutableStateOf(false) }
         Surface(
@@ -506,9 +476,7 @@ private fun AuthorDialog(
     Dialog(onDismissRequest = onDismissRequest) {
         var textValue by remember { mutableStateOf(author?.name ?: "") }
         fun onSubmit() {
-            val newAuthor = textValue
-                .takeIf(String::isNotBlank)
-                ?.let { Author(name = it) }
+            val newAuthor = textValue.takeIf(String::isNotBlank)?.let { Author(name = it) }
             onSubmit(newAuthor)
             onDismissRequest()
         }
@@ -583,8 +551,7 @@ private fun FilterCategoryItem(
         verticalAlignment = CenterVertically,
     ) {
         Text(
-            modifier = Modifier.weight(1f),
-            text = stringResource(R.string.filter_category_label)
+            modifier = Modifier.weight(1f), text = stringResource(R.string.filter_category_label)
         )
         var showDialog by remember { mutableStateOf(false) }
         Surface(
@@ -632,8 +599,7 @@ private fun CategoriesSelectDialog(
                 Surface {
                     Column {
                         PagesScreen(
-                            modifier = Modifier.weight(1f),
-                            pages = listOf(
+                            modifier = Modifier.weight(1f), pages = listOf(
                                 Page(labelResId = R.string.filter_categories_current) {
                                     AvailableCategoriesList(
                                         available = available,
@@ -731,18 +697,15 @@ private fun AvailableCategoriesList(
                     key = { _, item -> item.id },
                 ) { index, item ->
                     val isSelected = selectedState.contains(item)
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 48.dp),
-                        onClick = {
-                            if (isSelected) {
-                                selectedState.remove(item)
-                            } else {
-                                selectedState.add(item)
-                            }
+                    Surface(modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp), onClick = {
+                        if (isSelected) {
+                            selectedState.remove(item)
+                        } else {
+                            selectedState.add(item)
                         }
-                    ) {
+                    }) {
                         Row(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                             verticalAlignment = CenterVertically,
@@ -795,18 +758,15 @@ private fun AvailableCategoriesList(
                     key = Category::id,
                 ) { item ->
                     val isSelected = selectedState.contains(item)
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 48.dp),
-                        onClick = {
-                            if (isSelected) {
-                                selectedState.remove(item)
-                            } else {
-                                selectedState.add(item)
-                            }
+                    Surface(modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp), onClick = {
+                        if (isSelected) {
+                            selectedState.remove(item)
+                        } else {
+                            selectedState.add(item)
                         }
-                    ) {
+                    }) {
                         Row(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                             verticalAlignment = CenterVertically,
@@ -876,29 +836,35 @@ private fun TVSearchResultList(
         onEndOfListReached = { onAction(ListBottomReached) },
     ) {
         when (state.content) {
-            is PageResult.Loading -> loadingItem()
-            is PageResult.Error -> errorItem(
-                error = state.content.error,
-                onRetryClick = { onAction(RetryClick) },
-            )
-            is PageResult.Empty -> emptyItem(
+            is SearchResultContent.Initial -> when (state.loadStates.refresh) {
+                is LoadState.Loading,
+                is LoadState.NotLoading -> loadingItem()
+
+                is LoadState.Error -> errorItem(
+                    error = state.loadStates.refresh.error,
+                    onRetryClick = { onAction(RetryClick) },
+                )
+
+            }
+
+            is SearchResultContent.Empty -> emptyItem(
                 titleRes = R.string.search_result_empty_title,
                 subtitleRes = R.string.search_result_empty_subtitle,
                 iconRes = R.drawable.ill_empty_search,
             )
-            is PageResult.Content -> {
-                focusableItems(
-                    items = state.content.content,
-                    key = { it.data.id },
-                    contentType = { it.data::class },
-                ) { item ->
+
+            is SearchResultContent.Content -> {
+                focusableItems(items = state.content.torrents,
+                    key = { it.topic.id },
+                    contentType = { it.topic::class }) { item ->
                     TopicListItem(
                         topicModel = item,
-                        onClick = { onAction(TorrentClick(item.data)) },
+                        onClick = { onAction(TorrentClick(item.topic)) },
+                        onFavoriteClick = { onAction(FavoriteClick(item)) },
                     )
                 }
                 appendItems(
-                    state = state.content.append,
+                    state = state.loadStates.append,
                     onRetryClick = { onAction(RetryClick) },
                 )
             }
@@ -923,7 +889,7 @@ private fun TVFilterBar(
                     .fillMaxWidth()
                     .padding(8.dp),
                 filter = state.filter,
-                onClick = { onAction(SearchClick(state.filter)) },
+                onClick = { onAction(SearchClick) },
                 color = MaterialTheme.colorScheme.surfaceVariant,
             )
         }
@@ -965,7 +931,11 @@ private fun TVFilterBar(
         }
         focusableItem {
             TVFilterCategoryItem(
-                available = state.categories,
+                available = when (state.content) {
+                    is SearchResultContent.Content -> state.content.categories
+                    is SearchResultContent.Empty,
+                    is SearchResultContent.Initial -> emptyList()
+                },
                 selected = filter.categories,
                 onSubmit = { categories -> onAction(SetCategories(categories)) },
             )
@@ -1052,9 +1022,8 @@ private fun TVFilterAuthorItem(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            text = "${stringResource(R.string.filter_author_label)}: " +
-                (selected?.name
-                    ?: stringResource(R.string.filter_any).replaceFirstChar(Char::lowercaseChar)),
+            text = "${stringResource(R.string.filter_author_label)}: " + (selected?.name
+                ?: stringResource(R.string.filter_any).replaceFirstChar(Char::lowercaseChar)),
         )
     }
     if (showDialog) {
@@ -1083,12 +1052,11 @@ private fun TVFilterCategoryItem(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            text = stringResource(R.string.filter_category_label) + ": " +
-                when {
-                    selected == null -> stringResource(R.string.filter_any)
-                    selected.size == 1 -> selected.first().name
-                    else -> stringResource(R.string.filter_category_counter, selected.size)
-                }
+            text = stringResource(R.string.filter_category_label) + ": " + when {
+                selected == null -> stringResource(R.string.filter_any)
+                selected.size == 1 -> selected.first().name
+                else -> stringResource(R.string.filter_category_counter, selected.size)
+            }
         )
     }
     if (showDialog) {

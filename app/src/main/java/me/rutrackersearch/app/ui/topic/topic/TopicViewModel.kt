@@ -5,8 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +30,7 @@ import me.rutrackersearch.domain.usecase.LoadTopicPageUseCase
 import me.rutrackersearch.domain.usecase.VisitTopicUseCase
 import me.rutrackersearch.models.topic.Post
 import me.rutrackersearch.models.topic.TopicModel
+import me.rutrackersearch.utils.newCancelableScope
 import javax.inject.Inject
 
 @HiltViewModel
@@ -107,7 +106,7 @@ class TopicViewModel @Inject constructor(
                 reloadFromPage(action.page)
             }
             is AddComment -> viewModelScope.launch {
-                kotlin.runCatching { addCommentUseCase(topic.id, action.comment) }
+                runCatching { addCommentUseCase(topic.id, action.comment) }
                     .onSuccess { mutablePagingActions.emit(PagingAction.Refresh) }
             }
             is FirstVisibleItemIndexChanged -> viewModelScope.launch {
@@ -119,7 +118,7 @@ class TopicViewModel @Inject constructor(
 
     private fun reloadFromPage(initialPage: Int = 1) {
         pagingDataScope?.cancel()
-        pagingDataScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+        pagingDataScope = newCancelableScope()
         pagingDataScope?.let { scope ->
             scope.launch {
                 mutableFirstLoadedPageNumber.emit(initialPage)

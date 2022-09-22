@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -35,8 +33,6 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,6 +43,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -75,65 +72,61 @@ import me.rutrackersearch.app.ui.common.Placeholder
 import me.rutrackersearch.app.ui.platform.LocalPlatformType
 import me.rutrackersearch.app.ui.platform.PlatformType
 import me.rutrackersearch.auth.models.Captcha
+import me.rutrackersearch.models.InputState
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun LoginScreen(onSuccess: () -> Unit) {
+fun LoginScreen(back: () -> Unit) {
     LoginScreen(
         viewModel = hiltViewModel(),
-        onSuccess = onSuccess,
+        back = back,
     )
 }
 
 @Composable
 private fun LoginScreen(
     viewModel: LoginViewModel,
-    onSuccess: () -> Unit,
+    back: () -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
-    LaunchedEffect(state) {
-        if (state.isSuccess) {
-            onSuccess()
+    val resources = LocalContext.current.resources
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val snackbarState = remember { SnackbarHostState() }
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is LoginSideEffect.Error -> {
+                snackbarState.showSnackbar(resources.getString(R.string.error_something_goes_wrong))
+            }
+
+            is LoginSideEffect.HideKeyboard -> keyboardController?.hide()
+            is LoginSideEffect.Success -> back()
         }
     }
-    LoginScreen(state = state, onAction = viewModel::perform)
+    val state by viewModel.collectAsState()
+    LoginScreen(
+        state = state,
+        snackbarState = snackbarState,
+        onAction = viewModel::perform,
+    )
 }
 
 @Composable
 private fun LoginScreen(
     state: LoginState,
+    snackbarState: SnackbarHostState,
     onAction: (LoginAction) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val snackbarState = remember { SnackbarHostState() }
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
 
-    fun submit() {
-        keyboardController?.hide()
-        if (state.isValid) {
-            onAction(SubmitClick)
-        }
-    }
+    fun submit() = onAction(SubmitClick)
 
-    if (state.error != null) {
-        val errorMessage = when (state.error) {
-            is me.rutrackersearch.models.error.Failure.ConnectionError -> stringResource(R.string.error_no_internet)
-            is me.rutrackersearch.models.error.Failure.ServerError -> stringResource(R.string.error_proxy_server)
-            is me.rutrackersearch.models.error.Failure.ServiceUnavailable -> stringResource(R.string.error_site_connection)
-            else -> stringResource(R.string.error_something_goes_wrong)
-        }
-        LaunchedEffect(state.error) {
-            coroutineScope.launch { snackbarState.showSnackbar(errorMessage) }
-        }
-    }
     val colors = TextFieldDefaults.outlinedTextFieldColors(
         focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
     )
+
     Scaffold(
-        modifier = Modifier
-            .statusBarsPadding()
-            .navigationBarsPadding(),
         snackbarHost = { SnackbarHost(snackbarState) }
     ) { paddingValues ->
         DynamicBox(
@@ -292,6 +285,7 @@ private fun UsernameInputField(
                         onSelectNext()
                         true
                     }
+
                     else -> {
                         false
                     }
@@ -350,10 +344,12 @@ private fun PasswordInputField(
                         onSelectPrevious()
                         true
                     }
+
                     Key.DirectionDown.keyCode -> {
                         onSelectNext()
                         true
                     }
+
                     else -> {
                         false
                     }
@@ -417,6 +413,7 @@ private fun CaptchaInputField(
                         onSelectPrevious()
                         true
                     }
+
                     else -> {
                         false
                     }
@@ -476,10 +473,12 @@ private fun CaptchaImage(
                     painter = painter,
                     contentDescription = stringResource(R.string.auth_captcha),
                 )
+
                 is AsyncImagePainter.State.Loading -> CircularProgressIndicator(
                     modifier = Modifier.size(32.dp),
                     strokeWidth = 2.dp,
                 )
+
                 is AsyncImagePainter.State.Error -> Icon(
                     modifier = Modifier.size(48.dp),
                     imageVector = Icons.Outlined.ImageNotSupported,
@@ -530,7 +529,11 @@ private fun LoginButton(
 )
 @Composable
 private fun LoginScreenPreview_DefaultState() {
-    LoginScreen(state = LoginState(), onAction = {})
+    LoginScreen(
+        state = LoginState(),
+        snackbarState = remember { SnackbarHostState() },
+        onAction = {},
+    )
 }
 
 @Preview(
@@ -549,7 +552,11 @@ private fun LoginScreenPreview_DefaultState() {
 )
 @Composable
 private fun LoginScreenPreview_LoadingState() {
-    LoginScreen(state = LoginState(isLoading = true), onAction = {})
+    LoginScreen(
+        state = LoginState(isLoading = true),
+        snackbarState = remember { SnackbarHostState() },
+        onAction = {},
+    )
 }
 
 @Preview(
@@ -572,8 +579,8 @@ private fun LoginScreenPreview_ErrorState() {
         state = LoginState(
             usernameInput = InputState.Empty,
             passwordInput = InputState.Invalid("123"),
-            error = Throwable(),
         ),
+        snackbarState = remember { SnackbarHostState() },
         onAction = {},
     )
 }
@@ -597,7 +604,11 @@ private fun LoginScreenPreview_CaptchaRequired(
     @PreviewParameter(LoginScreenPreviewParameterProvider::class) platformType: PlatformType,
 ) {
     CompositionLocalProvider(LocalPlatformType provides platformType) {
-        LoginScreen(state = LoginState(captcha = Captcha("", "", "")), onAction = {})
+        LoginScreen(
+            state = LoginState(captcha = Captcha("", "", "")),
+            snackbarState = remember { SnackbarHostState() },
+            onAction = {},
+        )
     }
 }
 

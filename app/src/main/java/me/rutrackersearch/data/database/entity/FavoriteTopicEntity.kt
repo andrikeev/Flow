@@ -26,9 +26,17 @@ data class FavoriteTopicEntity(
     val magnetLink: String? = null,
     val hasUpdate: Boolean = false,
 ) {
+    override fun equals(other: Any?): Boolean {
+        return other is FavoriteTopicEntity && other.id == this.id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+
     fun toTopicModel(): TopicModel<out Topic> {
         return TopicModel(
-            data = if (tags == null && status == null && size == null && seeds == null && leeches == null) {
+            topic = if (tags == null && status == null && size == null && seeds == null && leeches == null) {
                 BaseTopic(
                     id = id,
                     title = title,

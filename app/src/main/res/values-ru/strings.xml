@@ -136,6 +136,7 @@
     <string name="sync_period_weekly">Раз в неделю</string>
     <string name="notification_channel_name">Обновления</string>
     <string name="notification_channel_description">Уведомления о новых темах или обновлении раздач</string>
+    <string name="foreground_channel_name">Разное</string>
     <string name="notification_topic_update">Раздача обновлена</string>
     <string name="notification_bookmark_update">Новые темы в разделе</string>
     <string name="torrent_status_duplicate">Дупликат</string>
@@ -146,4 +147,5 @@
     <string name="torrent_status_closed">Закрыта</string>
     <string name="torrent_status_no_description">Нет описания</string>
     <string name="torrent_status_consumed">Поглощена</string>
+    <string name="foreground_channel_description">Фоновые задачи</string>
 </resources>

@@ -10,5 +10,5 @@ sealed interface ForumState {
 
 data class Expandable<T>(
     val item: T,
-    val expanded: Boolean,
+    val expanded: Boolean = false,
 )

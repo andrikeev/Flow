@@ -1,4 +1,4 @@
-package me.rutrackersearch.app.ui.search
+package me.rutrackersearch.app.ui.search.root
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +20,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -46,59 +45,57 @@ import me.rutrackersearch.app.ui.common.loadingItem
 import me.rutrackersearch.app.ui.common.resId
 import me.rutrackersearch.models.search.Filter
 import me.rutrackersearch.models.search.Search
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SearchScreen(
-    onLoginClick: () -> Unit,
-    onSearchActionClick: () -> Unit,
-    onSearchClick: (Filter) -> Unit,
+    openLogin: () -> Unit,
+    openSearchInput: () -> Unit,
+    openSearch: (Filter) -> Unit,
 ) {
     SearchScreen(
         viewModel = hiltViewModel(),
-        onLoginClick = onLoginClick,
-        onSearchActionClick = onSearchActionClick,
-        onSearchClick = onSearchClick,
+        openLogin = openLogin,
+        openSearchInput = openSearchInput,
+        openSearch = openSearch,
     )
 }
 
 @Composable
 private fun SearchScreen(
     viewModel: SearchViewModel,
-    onLoginClick: () -> Unit,
-    onSearchActionClick: () -> Unit,
-    onSearchClick: (Filter) -> Unit,
+    openLogin: () -> Unit,
+    openSearchInput: () -> Unit,
+    openSearch: (Filter) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
-    SearchScreen(
-        state = state,
-        onLoginClick = onLoginClick,
-        onSearchActionClick = onSearchActionClick,
-        onSearchClick = onSearchClick,
-    )
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is SearchSideEffect.OpenLogin -> openLogin()
+            is SearchSideEffect.OpenSearch -> openSearch(sideEffect.filter)
+            is SearchSideEffect.OpenSearchInput -> openSearchInput()
+        }
+    }
+    val state by viewModel.collectAsState()
+    SearchScreen(state, viewModel::perform)
 }
 
 @Composable
 private fun SearchScreen(
     state: SearchState,
-    onLoginClick: () -> Unit,
-    onSearchActionClick: () -> Unit,
-    onSearchClick: (Filter) -> Unit,
+    onAction: (SearchAction) -> Unit,
 ) {
     DynamicBox(
         mobileContent = {
             MobileSearchScreen(
                 state = state,
-                onLoginClick = onLoginClick,
-                onSearchActionClick = onSearchActionClick,
-                onSearchClick = onSearchClick,
+                onAction = onAction,
             )
         },
         tvContent = {
             TVSearchScreen(
                 state = state,
-                onLoginClick = onLoginClick,
-                onSearchActionClick = onSearchActionClick,
-                onSearchClick = onSearchClick,
+                onAction = onAction,
             )
         },
     )
@@ -107,9 +104,7 @@ private fun SearchScreen(
 @Composable
 private fun MobileSearchScreen(
     state: SearchState,
-    onLoginClick: () -> Unit,
-    onSearchActionClick: () -> Unit,
-    onSearchClick: (Filter) -> Unit,
+    onAction: (SearchAction) -> Unit,
 ) {
     val pinnedScrollBehavior = remember { TopAppBarDefaults.pinnedScrollBehavior() }
     Scaffold(
@@ -120,7 +115,7 @@ private fun MobileSearchScreen(
                 actions = {
                     if (state != SearchState.Unauthorised) {
                         IconButton(
-                            onClick = onSearchActionClick,
+                            onClick = { onAction(SearchAction.SearchActionClick) },
                             imageVector = Icons.Outlined.Search,
                         )
                     }
@@ -137,13 +132,15 @@ private fun MobileSearchScreen(
                 is SearchState.Unauthorised -> item {
                     Unauthorized(
                         modifier = Modifier.fillParentMaxSize(),
-                        onLoginClick = onLoginClick
+                        onLoginClick = { onAction(SearchAction.LoginClick) }
                     )
                 }
+
                 is SearchState.Initial -> loadingItem()
                 is SearchState.Empty -> item {
                     Empty(modifier = Modifier.fillParentMaxSize())
                 }
+
                 is SearchState.SearchList -> {
                     dividedItems(
                         items = state.items,
@@ -152,7 +149,7 @@ private fun MobileSearchScreen(
                     ) { search ->
                         Search(
                             search = search,
-                            onClick = { onSearchClick(search.filter) },
+                            onClick = { onAction(SearchAction.SearchItemClick(search)) },
                         )
                     }
                 }
@@ -164,9 +161,7 @@ private fun MobileSearchScreen(
 @Composable
 private fun TVSearchScreen(
     state: SearchState,
-    onLoginClick: () -> Unit,
-    onSearchActionClick: () -> Unit,
-    onSearchClick: (Filter) -> Unit,
+    onAction: (SearchAction) -> Unit,
 ) {
     FocusableLazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -181,20 +176,22 @@ private fun TVSearchScreen(
             is SearchState.Unauthorised -> item {
                 Unauthorized(
                     modifier = Modifier.fillParentMaxSize(),
-                    onLoginClick = onLoginClick
+                    onLoginClick = { onAction(SearchAction.LoginClick) },
                 )
             }
+
             is SearchState.Initial -> loadingItem()
             is SearchState.Empty -> {
-                focusableStickyHeader { SearchActionItem(onClick = onSearchActionClick) }
+                focusableStickyHeader { SearchActionItem(onClick = { onAction(SearchAction.SearchActionClick) }) }
                 item { Empty(modifier = Modifier.fillParentMaxSize()) }
             }
+
             is SearchState.SearchList -> {
-                focusableStickyHeader { SearchActionItem(onClick = onSearchActionClick) }
+                focusableStickyHeader { SearchActionItem(onClick = { onAction(SearchAction.SearchActionClick) }) }
                 focusableItems(state.items) { search ->
                     Search(
                         search = search,
-                        onClick = { onSearchClick(search.filter) },
+                        onClick = { onAction(SearchAction.SearchItemClick(search)) },
                     )
                 }
             }
@@ -285,12 +282,14 @@ private fun Search(
                                 categories.isNullOrEmpty() -> {
                                     stringResource(R.string.search_item_all_categories)
                                 }
+
                                 categories.size == 1 -> {
                                     stringResource(
                                         R.string.search_item_category,
                                         categories.first().name,
                                     )
                                 }
+
                                 else -> {
                                     stringResource(
                                         R.string.search_item_categories,

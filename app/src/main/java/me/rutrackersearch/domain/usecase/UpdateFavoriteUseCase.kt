@@ -12,9 +12,9 @@ class UpdateFavoriteUseCase @Inject constructor(
 ) {
     suspend operator fun <T : Topic> invoke(topic: TopicModel<T>) {
         if (topic.isFavorite) {
-            favoritesRepository.remove(topic.data)
+            favoritesRepository.remove(topic.topic)
         } else {
-            favoritesRepository.add(topic.data)
+            favoritesRepository.add(topic.topic)
         }
     }
 }

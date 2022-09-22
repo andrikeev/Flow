@@ -1,22 +1,10 @@
 package me.rutrackersearch.app.ui.forum.root
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.*
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -30,7 +18,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,45 +35,36 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
-import me.rutrackersearch.app.ui.common.CategoryListItem
-import me.rutrackersearch.app.ui.common.ContentElevation
-import me.rutrackersearch.app.ui.common.Divider
-import me.rutrackersearch.app.ui.common.DynamicBox
-import me.rutrackersearch.app.ui.common.Error
-import me.rutrackersearch.app.ui.common.FocusableLazyColumn
-import me.rutrackersearch.app.ui.common.Loading
-import me.rutrackersearch.app.ui.common.dividedItems
-import me.rutrackersearch.app.ui.common.focusableItems
-import me.rutrackersearch.app.ui.common.rememberFocusRequester
-import me.rutrackersearch.app.ui.forum.root.ForumAction.CategoryClick
-import me.rutrackersearch.app.ui.forum.root.ForumAction.ExpandClick
-import me.rutrackersearch.app.ui.forum.root.ForumAction.RetryClick
+import me.rutrackersearch.app.ui.common.*
+import me.rutrackersearch.app.ui.forum.root.ForumAction.*
 import me.rutrackersearch.app.ui.theme.surfaceColorAtElevation
 import me.rutrackersearch.models.forum.Category
 import me.rutrackersearch.models.forum.RootCategory
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun ForumScreen(
-    onCategoryClick: (Category) -> Unit,
+    openCategory: (Category) -> Unit,
 ) {
     ForumScreen(
         viewModel = hiltViewModel(),
-        onCategoryClick = onCategoryClick,
+        openCategory = openCategory,
     )
 }
 
 @Composable
 private fun ForumScreen(
     viewModel: ForumViewModel,
-    onCategoryClick: (Category) -> Unit,
+    openCategory: (Category) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
-    ForumScreen(state) { action ->
-        when (action) {
-            is CategoryClick -> onCategoryClick(action.category)
-            else -> viewModel.perform(action)
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is ForumSideEffect.OpenCategory -> openCategory(sideEffect.category)
         }
     }
+    val state by viewModel.collectAsState()
+    ForumScreen(state, viewModel::perform)
 }
 
 @Composable

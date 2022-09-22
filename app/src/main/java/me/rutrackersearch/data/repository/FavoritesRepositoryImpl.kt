@@ -1,28 +1,25 @@
 package me.rutrackersearch.data.repository
 
-import kotlinx.coroutines.Dispatchers
+import androidx.work.WorkManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
-import me.rutrackersearch.auth.AuthObservable
-import me.rutrackersearch.data.database.AppDatabase
+import me.rutrackersearch.data.database.dao.FavoriteTopicDao
 import me.rutrackersearch.data.database.entity.FavoriteTopicEntity
+import me.rutrackersearch.data.workers.AddFavoriteWorker
+import me.rutrackersearch.data.workers.LoadFavoritesWorker
+import me.rutrackersearch.data.workers.RemoveFavoriteWorker
+import me.rutrackersearch.data.workers.oneTimeWorkRequest
 import me.rutrackersearch.domain.repository.FavoritesRepository
 import me.rutrackersearch.models.topic.Topic
 import me.rutrackersearch.models.topic.TopicModel
-import me.rutrackersearch.network.NetworkApi
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FavoritesRepositoryImpl @Inject constructor(
-    private val api: NetworkApi,
-    private val authObservable: me.rutrackersearch.auth.AuthObservable,
-    db: AppDatabase,
+    private val workManager: WorkManager,
+    private val dao: FavoriteTopicDao,
 ) : FavoritesRepository {
-
-    private val dao = db.favoriteTopicDao()
-
     override fun observeTopics(): Flow<List<TopicModel<out Topic>>> {
         return dao.observerAll().map { entities ->
             entities.map(FavoriteTopicEntity::toTopicModel)
@@ -38,27 +35,22 @@ class FavoritesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun loadFavorites() {
-        if (authObservable.authorised) {
-            loadRemoteFavorites()
-        }
+        val workRequest = oneTimeWorkRequest<LoadFavoritesWorker>()
+        workManager.enqueue(workRequest)
     }
 
     override suspend fun add(topic: Topic) {
-        withContext(Dispatchers.IO) {
-            if (authObservable.authorised) {
-                api.addFavorite(topic.id)
-                loadRemoteFavorites()
-            }
-        }
         dao.insert(FavoriteTopicEntity.of(topic))
+        val data = AddFavoriteWorker.dataOf(topic)
+        val workRequest = oneTimeWorkRequest<AddFavoriteWorker>(data)
+        workManager.enqueue(workRequest)
     }
 
     override suspend fun remove(topic: Topic) {
-        if (authObservable.authorised) {
-            api.removeFavorite(topic.id)
-            loadRemoteFavorites()
-        }
         dao.deleteById(topic.id)
+        val data = RemoveFavoriteWorker.dataOf(topic)
+        val workRequest = oneTimeWorkRequest<RemoveFavoriteWorker>(data)
+        workManager.enqueue(workRequest)
     }
 
     override suspend fun update(topic: Topic) {
@@ -67,19 +59,5 @@ class FavoritesRepositoryImpl @Inject constructor(
 
     override suspend fun clear() {
         dao.deleteAll()
-    }
-
-    private suspend fun loadRemoteFavorites() {
-        try {
-            val firstPage = api.favorites(1)
-            val topics = (firstPage.items + IntRange(2, firstPage.pages)
-                .map { page -> api.favorites(page) }
-                .flatMap { page -> page.items })
-                .map { FavoriteTopicEntity.of(it) }
-            dao.deleteAll()
-            dao.insertAll(topics)
-        } catch (e: Exception) {
-            //Nothing
-        }
     }
 }

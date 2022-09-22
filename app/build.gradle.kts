@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.application")
     id("dagger.hilt.android.plugin")
@@ -14,8 +16,8 @@ android {
         applicationId = "me.rutrackersearch.app"
         minSdk = libs.versions.androidSdk.minSdk.get().toInt()
         targetSdk = libs.versions.androidSdk.targetSdk.get().toInt()
-        versionCode = 23
-        versionName = "4.0.1"
+        versionCode = 24
+        versionName = "4.1.1"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -57,6 +59,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    namespace = "me.rutrackersearch.app"
 }
 
 dependencies {
@@ -73,6 +76,7 @@ dependencies {
     implementation(libs.bundles.hilt)
     implementation(libs.bundles.navigation)
     implementation(libs.bundles.network)
+    implementation(libs.bundles.orbit)
     implementation(libs.bundles.room)
     implementation(libs.bundles.work)
 

@@ -11,9 +11,9 @@ class UpdateBookmarkUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(category: CategoryModel) {
         if (category.isBookmark) {
-            bookmarksRepository.remove(category.data)
+            bookmarksRepository.remove(category.category)
         } else {
-            bookmarksRepository.add(category.data)
+            bookmarksRepository.add(category.category)
         }
     }
 }

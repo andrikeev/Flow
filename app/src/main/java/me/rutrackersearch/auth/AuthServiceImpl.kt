@@ -94,11 +94,15 @@ class AuthServiceImpl @Inject constructor(
         val codeMatcher = CAP_CODE_REGEX.matcher(data)
         val sidMatcher = CAP_SID_REGEX.matcher(data)
         val urlMatcher = CAP_SRC_REGEX.matcher(data)
-        return if (codeMatcher.find() && sidMatcher.find() && urlMatcher.find()) {
-            val captchaUrl = urlMatcher.group(1).let { url ->
-                url.takeIf { it.contains("http") } ?: "http://${url.trim('/')}"
-            }
-            Captcha(sidMatcher.group(1), codeMatcher.group(1), captchaUrl)
+
+        val code = if (codeMatcher.find()) codeMatcher.group(1) else null
+        val sid = if (sidMatcher.find()) sidMatcher.group(1) else null
+        val url = if (urlMatcher.find()) urlMatcher.group(1) else null
+
+        return if (code != null && sid != null && url != null) {
+            val captchaUrl = url.takeIf { it.contains("http") }
+                ?: "http://${url.trim('/')}"
+            Captcha(sid, code, captchaUrl)
         } else {
             null
         }

@@ -12,51 +12,61 @@ import android.content.IntentFilter
 import android.database.Cursor
 import android.net.Uri
 import android.os.Environment.DIRECTORY_DOWNLOADS
+import dagger.hilt.android.qualifiers.ApplicationContext
 import me.rutrackersearch.auth.AuthObservable
 import me.rutrackersearch.domain.service.TorrentDownloadService
 import me.rutrackersearch.network.HostProvider
+import java.io.File
+import java.net.URI
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class TorrentDownloadServiceImpl @Inject constructor(
     private val authObservable: AuthObservable,
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     private val hostProvider: HostProvider,
 ) : TorrentDownloadService {
+    private val cache = mutableMapOf<String, String>()
+
     override suspend fun downloadTorrent(id: String, title: String): String? {
-        return suspendCoroutine { continuation ->
-            val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-            var downloadId = 0L
-            context.registerReceiver(
-                object : BroadcastReceiver() {
-                    override fun onReceive(context: Context, intent: Intent) {
-                        val action = intent.action
-                        if (action == DownloadManager.ACTION_DOWNLOAD_COMPLETE) {
-                            val completedId =
-                                intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0)
-                            if (completedId == downloadId) {
-                                val uri = downloadManager.getDownloadedFileUri(downloadId)
-                                continuation.resume(uri.toString())
+        val cachedUri = cache.getOrDefault(id, null)
+        if (cachedUri != null && File(URI.create(cachedUri)).exists()) {
+            return cachedUri
+        } else {
+            return suspendCoroutine { continuation ->
+                val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+                var downloadId = 0L
+                context.registerReceiver(
+                    object : BroadcastReceiver() {
+                        override fun onReceive(context: Context, intent: Intent) {
+                            val action = intent.action
+                            if (action == DownloadManager.ACTION_DOWNLOAD_COMPLETE) {
+                                val completedId =
+                                    intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0)
+                                if (completedId == downloadId) {
+                                    val uri = downloadManager.getDownloadedFileUri(downloadId)
+                                    continuation.resume(uri.toString())
+                                } else {
+                                    continuation.resume(null)
+                                }
                             } else {
                                 continuation.resume(null)
                             }
-                        } else {
-                            continuation.resume(null)
+                            context.unregisterReceiver(this)
                         }
-                        context.unregisterReceiver(this)
-                    }
-                },
-                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-            )
-            val fileName = buildValidFatFilename(title.plus(".torrent"))
-            val uri = Uri.parse("https://${hostProvider.host}/forum/dl.php?t=$id")
-            val request = DownloadManager.Request(uri)
-                .addRequestHeader("Cookie", authObservable.token)
-                .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, fileName)
-                .setTitle(title)
-                .setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            downloadId = downloadManager.enqueue(request)
+                    },
+                    IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+                )
+                val fileName = buildValidFatFilename(title.plus(".torrent"))
+                val uri = Uri.parse("https://${hostProvider.host}/forum/dl.php?t=$id")
+                val request = DownloadManager.Request(uri)
+                    .addRequestHeader("Cookie", authObservable.token)
+                    .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, fileName)
+                    .setTitle(title)
+                    .setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                downloadId = downloadManager.enqueue(request)
+            }
         }
     }
 

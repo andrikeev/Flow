@@ -169,6 +169,9 @@
 
     <string name="notification_channel_name">Favorites updates</string>
     <string name="notification_channel_description">Notifications about updates in favorites topics or new topics in bookmarked forum</string>
+    <string name="foreground_channel_name">Other</string>
+    <string name="foreground_channel_description">Background tasks</string>
     <string name="notification_topic_update">Topic updated</string>
     <string name="notification_bookmark_update">New topics on forum</string>
+    <string name="notification_running_task" translatable="false">Sync..</string>
 </resources>

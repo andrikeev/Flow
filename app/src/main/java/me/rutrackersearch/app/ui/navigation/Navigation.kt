@@ -1,16 +1,12 @@
 package me.rutrackersearch.app.ui.navigation
 
+import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,13 +26,13 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,14 +44,17 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navigation
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.job
 import me.rutrackersearch.app.R
 import me.rutrackersearch.app.ui.args.wrap
@@ -64,7 +63,9 @@ import me.rutrackersearch.app.ui.args.wrapPid
 import me.rutrackersearch.app.ui.auth.LoginScreen
 import me.rutrackersearch.app.ui.common.ContentElevation
 import me.rutrackersearch.app.ui.common.ContentScale
+import me.rutrackersearch.app.ui.common.DynamicBox
 import me.rutrackersearch.app.ui.common.Focusable
+import me.rutrackersearch.app.ui.common.NavigationBar
 import me.rutrackersearch.app.ui.common.Page
 import me.rutrackersearch.app.ui.common.PagesScreen
 import me.rutrackersearch.app.ui.common.focusableSpec
@@ -73,11 +74,9 @@ import me.rutrackersearch.app.ui.forum.bookmarks.BookmarksScreen
 import me.rutrackersearch.app.ui.forum.category.CategoryScreen
 import me.rutrackersearch.app.ui.forum.root.ForumScreen
 import me.rutrackersearch.app.ui.menu.MenuScreen
-import me.rutrackersearch.app.ui.search.SearchScreen
 import me.rutrackersearch.app.ui.search.input.SearchInputScreen
 import me.rutrackersearch.app.ui.search.result.SearchResultScreen
-import me.rutrackersearch.app.ui.theme.isLight
-import me.rutrackersearch.app.ui.theme.surfaceColorAtElevation
+import me.rutrackersearch.app.ui.search.root.SearchScreen
 import me.rutrackersearch.app.ui.topic.open.OpenTopicScreen
 import me.rutrackersearch.app.ui.topic.topic.TopicScreen
 import me.rutrackersearch.app.ui.topic.torrent.TorrentScreen
@@ -85,39 +84,89 @@ import me.rutrackersearch.app.ui.topics.favorites.FavoritesScreen
 import me.rutrackersearch.app.ui.topics.history.HistoryScreen
 import me.rutrackersearch.models.forum.Category
 import me.rutrackersearch.models.search.Filter
-import me.rutrackersearch.models.topic.Author
 import me.rutrackersearch.models.topic.Topic
 import me.rutrackersearch.models.topic.Torrent
 
-typealias Destination = @Composable (NavHostController, NavBackStackEntry) -> Unit
+private typealias Destination = @Composable (NavHostController, NavBackStackEntry) -> Unit
 
 @Composable
-fun MobileNavigation(
+fun Navigation(navController: NavHostController) {
+    DynamicBox(
+        mobileContent = { MobileNavigation(navController = navController) },
+        tvContent = { TVNavigation(navController = navController) },
+    )
+}
+
+@Composable
+private fun MobileNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
+) {
+    MobileNavigation(
+        modifier = modifier,
+        navController = navController,
+        navigationTabs = listOf(
+            NavigationTab(
+                route = NavigationGraph.Search.route,
+                labelResId = R.string.search_label,
+                icon = Icons.Outlined.Search,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Forums.route,
+                labelResId = R.string.forum_label,
+                icon = Icons.Outlined.ListAlt,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Topics.route,
+                labelResId = R.string.topics_label,
+                icon = Icons.Outlined.Forum,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Menu.route,
+                labelResId = R.string.menu_label,
+                icon = Icons.Outlined.Menu,
+            ),
+        ),
+        navigationGraphs = listOf(
+            NavigationGraph.Auth,
+            NavigationGraph.Search,
+            NavigationGraph.SearchInput,
+            NavigationGraph.Forums,
+            NavigationGraph.Topics,
+            NavigationGraph.Menu,
+            NavigationGraph.OpenTopic,
+            NavigationGraph.Topic,
+            NavigationGraph.Torrent,
+        ),
+    )
+}
+
+@Composable
+private fun MobileNavigation(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    navigationTabs: List<NavigationTab>,
+    navigationGraphs: List<NavigationGraph>,
 ) {
     Scaffold(
         modifier = modifier,
         bottomBar = {
-            val navigationTabs = BottomNavigationTabs.tabs
-            val navigationBarRoutes = navigationTabs.map(BottomNavigationTabs::route)
-            val currentEntry by navController.currentBackStackEntryAsState()
-            val currentGraphRoute = currentEntry?.destination?.parent?.route
-            val showNavigationBar = navigationBarRoutes.contains(currentGraphRoute)
-            val isNavigationItemSelected: (route: String) -> Boolean = { route ->
-                currentGraphRoute == route
-            }
-            val onNavigationItemSelected: (route: String) -> Unit = { route ->
-                navController.navigate(route) {
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
+            val navigationBarRoutes = remember { navigationTabs.map(NavigationTab::route) }
+            val currentBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentGraphRoute by derivedStateOf { currentBackStackEntry?.destination?.parent?.route }
+            val showNavigationBar by derivedStateOf { navigationBarRoutes.contains(currentGraphRoute) }
             BottomNavigation(
                 tabs = navigationTabs,
                 visible = showNavigationBar,
-                isSelected = isNavigationItemSelected,
-                onClick = onNavigationItemSelected,
+                isSelected = { route ->
+                    currentGraphRoute == route
+                },
+                onClick = { route ->
+                    navController.navigate(route) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
             )
         },
     ) { padding ->
@@ -126,7 +175,7 @@ fun MobileNavigation(
             navController = navController,
             startDestination = NavigationGraph.Search.route,
         ) {
-            NavigationGraph.bottomNavigationGraphs.forEach { graph ->
+            navigationGraphs.forEach { graph ->
                 navigation(
                     route = graph.route,
                     startDestination = graph.startDestination.route,
@@ -144,108 +193,100 @@ fun MobileNavigation(
 
 @Composable
 private fun BottomNavigation(
-    modifier: Modifier = Modifier,
     visible: Boolean,
-    tabs: List<BottomNavigationTabs>,
+    tabs: List<NavigationTab>,
     isSelected: (route: String) -> Boolean,
     onClick: (route: String) -> Unit,
 ) {
-    val systemUiController = rememberSystemUiController()
-    val elevation by animateDpAsState(
-        targetValue = if (visible) {
-            ContentElevation.small
-        } else {
-            ContentElevation.zero
-        },
-        animationSpec = tween(
-            durationMillis = 500,
-            easing = LinearOutSlowInEasing,
-        )
-    )
-    val systemUiColor = MaterialTheme.colorScheme.surfaceColorAtElevation(elevation)
-    LaunchedEffect(systemUiColor) {
-        systemUiController.setNavigationBarColor(
-            color = systemUiColor,
-            darkIcons = systemUiColor.isLight(),
-        )
-    }
     AnimatedVisibility(
         visible = visible,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically(),
+        enter = fadeIn(),
+        exit = fadeOut(),
     ) {
-        NavigationBar(modifier = modifier) {
+        NavigationBar {
             tabs.forEach { tab ->
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = tab.icon,
-                            contentDescription = stringResource(tab.labelResId),
-                        )
-                    },
+                NavigationBarItem(icon = {
+                    Icon(
+                        imageVector = tab.icon,
+                        contentDescription = stringResource(tab.labelResId),
+                    )
+                },
                     label = { Text(stringResource(tab.labelResId)) },
                     selected = isSelected(tab.route),
-                    onClick = { onClick(tab.route) }
-                )
+                    onClick = { onClick(tab.route) })
             }
         }
-    }
-}
-
-private sealed class BottomNavigationTabs(
-    val route: String,
-    @StringRes val labelResId: Int,
-    val icon: ImageVector,
-) {
-    private object Search : BottomNavigationTabs(
-        route = NavigationGraph.Search.route,
-        labelResId = R.string.search_label,
-        icon = Icons.Outlined.Search,
-    )
-
-    private object Forum : BottomNavigationTabs(
-        route = NavigationGraph.Forums.route,
-        labelResId = R.string.forum_label,
-        icon = Icons.Outlined.ListAlt,
-    )
-
-    private object Topics : BottomNavigationTabs(
-        route = NavigationGraph.Topics.route,
-        labelResId = R.string.topics_label,
-        icon = Icons.Outlined.Forum,
-    )
-
-    private object Menu : BottomNavigationTabs(
-        route = NavigationGraph.Menu.route,
-        labelResId = R.string.menu_label,
-        icon = Icons.Outlined.Menu,
-    )
-
-    companion object {
-        val tabs = listOf(Search, Forum, Topics, Menu)
     }
 }
 
 @Composable
-fun TVNavigation(
+private fun TVNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
 ) {
+    TVNavigation(
+        modifier = modifier,
+        navController = navController,
+        navigationTabs = listOf(
+            NavigationTab(
+                route = NavigationGraph.Search.route,
+                labelResId = R.string.search_label,
+                icon = Icons.Outlined.Search,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Forum.route,
+                labelResId = R.string.forum_label,
+                icon = Icons.Outlined.ListAlt,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Bookmarks.route,
+                labelResId = R.string.bookmarks_label,
+                icon = Icons.Outlined.Bookmarks,
+            ),
+            NavigationTab(
+                route = NavigationGraph.History.route,
+                labelResId = R.string.history_label,
+                icon = Icons.Outlined.History,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Favorites.route,
+                labelResId = R.string.favorites_label,
+                icon = Icons.Outlined.Favorite,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Menu.route,
+                labelResId = R.string.settings_label,
+                icon = Icons.Outlined.Settings,
+            )
+        ),
+        navigationGraphs = listOf(
+            NavigationGraph.Auth,
+            NavigationGraph.Search,
+            NavigationGraph.SearchInput,
+            NavigationGraph.Forum,
+            NavigationGraph.Bookmarks,
+            NavigationGraph.Favorites,
+            NavigationGraph.History,
+            NavigationGraph.Menu,
+            NavigationGraph.OpenTopic,
+            NavigationGraph.Topic,
+            NavigationGraph.Torrent
+        ),
+    )
+}
+
+@Composable
+private fun TVNavigation(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    navigationTabs: List<NavigationTab>,
+    navigationGraphs: List<NavigationGraph>,
+) {
     Scaffold(modifier = modifier) { padding ->
-        val navigationTabs = SideNavigationTabs.tabs
-        val navigationBarRoutes = navigationTabs.map(SideNavigationTabs::route)
-        val currentEntry by navController.currentBackStackEntryAsState()
-        val currentGraphRoute = currentEntry?.destination?.parent?.route
-        val showNavigationBar = navigationBarRoutes.contains(currentGraphRoute)
-        val isNavigationItemSelected: (route: String) -> Boolean = { route ->
-            currentGraphRoute == route
-        }
-        val onNavigationItemSelected: (route: String) -> Unit = { route ->
-            navController.navigate(route) {
-                launchSingleTop = true
-                restoreState = true
-            }
-        }
+        val navigationBarRoutes = remember { navigationTabs.map(NavigationTab::route) }
+        val currentBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentGraphRoute by derivedStateOf { currentBackStackEntry?.destination?.parent?.route }
+        val showNavigationBar by derivedStateOf { navigationBarRoutes.contains(currentGraphRoute) }
         Row(
             modifier = Modifier.padding(padding),
             verticalAlignment = Alignment.CenterVertically,
@@ -253,15 +294,21 @@ fun TVNavigation(
             SideNavigation(
                 tabs = navigationTabs,
                 visible = showNavigationBar,
-                isTabSelected = isNavigationItemSelected,
-                onClick = onNavigationItemSelected,
+                isSelected = { route ->
+                    currentGraphRoute == route
+                },
+                onClick = { route ->
+                    navController.backQueue.filter { it.destination.route?.contains(route) == true }
+                        .forEach(navController.backQueue::remove)
+                    navController.navigate(route)
+                },
             )
             NavHost(
                 modifier = Modifier.padding(padding),
                 navController = navController,
                 startDestination = NavigationGraph.Search.route,
             ) {
-                NavigationGraph.sideNavigationGraphs.forEach { graph ->
+                navigationGraphs.forEach { graph ->
                     navigation(
                         route = graph.route,
                         startDestination = graph.startDestination.route,
@@ -282,8 +329,8 @@ fun TVNavigation(
 private fun SideNavigation(
     modifier: Modifier = Modifier,
     visible: Boolean,
-    tabs: List<SideNavigationTabs>,
-    isTabSelected: (route: String) -> Boolean,
+    tabs: List<NavigationTab>,
+    isSelected: (route: String) -> Boolean,
     onClick: (route: String) -> Unit,
 ) {
     val focusRequester = rememberFocusRequester()
@@ -321,10 +368,9 @@ private fun SideNavigation(
             verticalArrangement = Arrangement.Center,
         ) {
             tabs.forEach { tab ->
-                val isSelected = isTabSelected(tab.route)
                 Focusable(
                     modifier = Modifier.focusRequester(
-                        if (isSelected) {
+                        if (isSelected(tab.route)) {
                             focusRequester
                         } else {
                             FocusRequester.Default
@@ -349,7 +395,7 @@ private fun SideNavigation(
                         label = {
                             Text(stringResource(tab.labelResId))
                         },
-                        selected = isSelected,
+                        selected = isSelected(tab.route),
                         onClick = { onClick(tab.route) },
                     )
                 }
@@ -358,51 +404,85 @@ private fun SideNavigation(
     }
 }
 
-private sealed class SideNavigationTabs(
+@Preview(name = "Mobile navbar")
+@Composable
+private fun BottomNavigation_Preview() {
+    BottomNavigation(
+        tabs = listOf(
+            NavigationTab(
+                route = NavigationGraph.Search.route,
+                labelResId = R.string.search_label,
+                icon = Icons.Outlined.Search,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Forums.route,
+                labelResId = R.string.forum_label,
+                icon = Icons.Outlined.ListAlt,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Topics.route,
+                labelResId = R.string.topics_label,
+                icon = Icons.Outlined.Forum,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Menu.route,
+                labelResId = R.string.menu_label,
+                icon = Icons.Outlined.Menu,
+            ),
+        ),
+        visible = true,
+        isSelected = { it == NavigationGraph.Search.route },
+        onClick = {},
+    )
+}
+
+@Preview(name = "Tv navbar", showBackground = true)
+@Composable
+private fun SideNavigation_Preview() {
+    SideNavigation(
+        tabs = listOf(
+            NavigationTab(
+                route = NavigationGraph.Search.route,
+                labelResId = R.string.search_label,
+                icon = Icons.Outlined.Search,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Forum.route,
+                labelResId = R.string.forum_label,
+                icon = Icons.Outlined.ListAlt,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Bookmarks.route,
+                labelResId = R.string.bookmarks_label,
+                icon = Icons.Outlined.Bookmarks,
+            ),
+            NavigationTab(
+                route = NavigationGraph.History.route,
+                labelResId = R.string.history_label,
+                icon = Icons.Outlined.History,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Favorites.route,
+                labelResId = R.string.favorites_label,
+                icon = Icons.Outlined.Favorite,
+            ),
+            NavigationTab(
+                route = NavigationGraph.Menu.route,
+                labelResId = R.string.settings_label,
+                icon = Icons.Outlined.Settings,
+            )
+        ),
+        visible = true,
+        isSelected = { it == NavigationGraph.Search.route },
+        onClick = {},
+    )
+}
+
+private data class NavigationTab(
     val route: String,
     @StringRes val labelResId: Int,
     val icon: ImageVector,
-) {
-    private object Search : SideNavigationTabs(
-        route = NavigationGraph.Search.route,
-        labelResId = R.string.search_label,
-        icon = Icons.Outlined.Search,
-    )
-
-    private object Forum : SideNavigationTabs(
-        route = NavigationGraph.Forum.route,
-        labelResId = R.string.forum_label,
-        icon = Icons.Outlined.ListAlt,
-    )
-
-    private object Bookmarks : SideNavigationTabs(
-        route = NavigationGraph.Bookmarks.route,
-        labelResId = R.string.bookmarks_label,
-        icon = Icons.Outlined.Bookmarks,
-    )
-
-    private object History : SideNavigationTabs(
-        route = NavigationGraph.History.route,
-        labelResId = R.string.history_label,
-        icon = Icons.Outlined.History,
-    )
-
-    private object Favorites : SideNavigationTabs(
-        route = NavigationGraph.Favorites.route,
-        labelResId = R.string.favorites_label,
-        icon = Icons.Outlined.Favorite,
-    )
-
-    private object Settings : SideNavigationTabs(
-        route = NavigationGraph.Menu.route,
-        labelResId = R.string.settings_label,
-        icon = Icons.Outlined.Settings,
-    )
-
-    companion object {
-        val tabs = listOf(Search, Forum, Bookmarks, History, Favorites, Settings)
-    }
-}
+)
 
 private sealed interface NavigationGraph {
     val route: String
@@ -505,33 +585,6 @@ private sealed interface NavigationGraph {
         override val destinations: List<NavigationDestination> =
             listOf(NavigationDestination.OpenTopic)
     }
-
-    companion object {
-        val bottomNavigationGraphs = listOf(
-            Auth,
-            Search,
-            SearchInput,
-            Forums,
-            Topics,
-            Menu,
-            OpenTopic,
-            Topic,
-            Torrent
-        )
-        val sideNavigationGraphs = listOf(
-            Auth,
-            Search,
-            SearchInput,
-            Forum,
-            Bookmarks,
-            Favorites,
-            History,
-            Menu,
-            OpenTopic,
-            Topic,
-            Torrent
-        )
-    }
 }
 
 private sealed interface NavigationDestination {
@@ -541,7 +594,7 @@ private sealed interface NavigationDestination {
     object Login : NavigationDestination {
         override val route: String = "${NavigationGraph.Auth.route}/login"
         override val content: Destination = { navController, _ ->
-            LoginScreen(onSuccess = navController::popBackStack)
+            LoginScreen(back = navController::popBackStack)
         }
     }
 
@@ -549,9 +602,9 @@ private sealed interface NavigationDestination {
         override val route: String = "${NavigationGraph.Search.route}/search_history"
         override val content: Destination = { navController, _ ->
             SearchScreen(
-                onLoginClick = navController::openLogin,
-                onSearchActionClick = navController::openSearchInput,
-                onSearchClick = navController::openSearchResult,
+                openLogin = navController::openLogin,
+                openSearchInput = navController::openSearchInput,
+                openSearch = navController::openSearchResult,
             )
         }
     }
@@ -560,8 +613,8 @@ private sealed interface NavigationDestination {
         override val route: String = "${NavigationGraph.SearchInput.route}/search_input"
         override val content: Destination = { navController, _ ->
             SearchInputScreen(
-                onBackClick = navController::popBackStack,
-                onSubmit = { filter ->
+                back = navController::popBackStack,
+                openSearch = { filter ->
                     navController.popBackStack()
                     navController.openSearchResult(filter)
                 },
@@ -573,10 +626,10 @@ private sealed interface NavigationDestination {
         override val route: String = "${NavigationGraph.Search.route}/search_result"
         override val content: Destination = { navController, _ ->
             SearchResultScreen(
-                onBackClick = navController::popBackStack,
-                onSearchClick = navController::openSearchInput,
-                onTorrentClick = navController::openTorrent,
-                onNewFilter = navController::openSearchResult,
+                back = navController::popBackStack,
+                openSearchInput = navController::openSearchInput,
+                openTorrent = navController::openTorrent,
+                openSearchResult = navController::openSearchResult,
             )
         }
     }
@@ -590,13 +643,13 @@ private sealed interface NavigationDestination {
                         labelResId = R.string.forum_title,
                         icon = Icons.Outlined.ListAlt,
                     ) {
-                        ForumScreen(onCategoryClick = navController::openCategory)
+                        ForumScreen(openCategory = navController::openCategory)
                     },
                     Page(
                         labelResId = R.string.bookmarks_title,
                         icon = Icons.Outlined.Bookmark,
                     ) {
-                        BookmarksScreen(onBookmarkClick = navController::openCategory)
+                        BookmarksScreen(openCategory = navController::openCategory)
                     }
                 )
             )
@@ -606,14 +659,14 @@ private sealed interface NavigationDestination {
     object Forum : NavigationDestination {
         override val route: String = "${NavigationGraph.Forums.route}/forum"
         override val content: Destination = { navController, _ ->
-            ForumScreen(onCategoryClick = navController::openCategory)
+            ForumScreen(openCategory = navController::openCategory)
         }
     }
 
     object Bookmarks : NavigationDestination {
         override val route: String = "${NavigationGraph.Bookmarks.route}/bookmarks"
         override val content: Destination = { navController, _ ->
-            BookmarksScreen(onBookmarkClick = navController::openCategory)
+            BookmarksScreen(openCategory = navController::openCategory)
         }
     }
 
@@ -621,8 +674,8 @@ private sealed interface NavigationDestination {
         override val route: String = "${NavigationGraph.Favorites.route}/favorites"
         override val content: Destination = { navController, _ ->
             FavoritesScreen(
-                onTopicClick = navController::openTopic,
-                onTorrentClick = navController::openTorrent,
+                openTopic = navController::openTopic,
+                openTorrent = navController::openTorrent,
             )
         }
     }
@@ -631,8 +684,8 @@ private sealed interface NavigationDestination {
         override val route: String = "${NavigationGraph.History.route}/history"
         override val content: Destination = { navController, _ ->
             HistoryScreen(
-                onTopicClick = navController::openTopic,
-                onTorrentClick = navController::openTorrent,
+                openTopic = navController::openTopic,
+                openTorrent = navController::openTorrent,
             )
         }
     }
@@ -641,11 +694,11 @@ private sealed interface NavigationDestination {
         override val route: String = "${NavigationGraph.Forums.route}/category"
         override val content: Destination = { navController, _ ->
             CategoryScreen(
-                onBackClick = navController::popBackStack,
-                onCategoryClick = navController::openCategory,
-                onTopicClick = navController::openTopic,
-                onTorrentClick = navController::openTorrent,
-                onSearchClick = navController::openSearchResult,
+                back = navController::popBackStack,
+                openCategory = navController::openCategory,
+                openSearchInput = navController::openSearchInput,
+                openTopic = navController::openTopic,
+                openTorrent = navController::openTorrent,
             )
         }
     }
@@ -660,8 +713,8 @@ private sealed interface NavigationDestination {
                         icon = Icons.Outlined.History,
                     ) {
                         HistoryScreen(
-                            onTopicClick = navController::openTopic,
-                            onTorrentClick = navController::openTorrent,
+                            openTopic = navController::openTopic,
+                            openTorrent = navController::openTorrent,
                         )
                     },
                     Page(
@@ -669,8 +722,8 @@ private sealed interface NavigationDestination {
                         icon = Icons.Outlined.Favorite,
                     ) {
                         FavoritesScreen(
-                            onTopicClick = navController::openTopic,
-                            onTorrentClick = navController::openTorrent,
+                            openTopic = navController::openTopic,
+                            openTorrent = navController::openTorrent,
                         )
                     },
                 )
@@ -682,8 +735,8 @@ private sealed interface NavigationDestination {
         override val route: String = "${NavigationGraph.Topic.route}/topic"
         override val content: Destination = { navController, _ ->
             TopicScreen(
-                onBackClick = navController::popBackStack,
-                onLoginClick = navController::openLogin,
+                back = navController::popBackStack,
+                openLogin = navController::openLogin,
             )
         }
     }
@@ -692,11 +745,11 @@ private sealed interface NavigationDestination {
         override val route: String = "${NavigationGraph.Torrent.route}/torrent"
         override val content: Destination = { navController, _ ->
             TorrentScreen(
-                onBackClick = navController::popBackStack,
-                onLoginClick = navController::openLogin,
-                onCommentsClick = navController::openTopic,
-                onCategoryClick = navController::openCategory,
-                onAuthorClick = navController::openSearchResult,
+                back = navController::popBackStack,
+                openLogin = navController::openLogin,
+                openComments = navController::openTopic,
+                openCategory = navController::openCategory,
+                openSearch = navController::openSearchResult,
             )
         }
     }
@@ -705,12 +758,12 @@ private sealed interface NavigationDestination {
         override val route: String = "${NavigationGraph.OpenTopic.route}/open_topic"
         override val content: Destination = { navController, _ ->
             OpenTopicScreen(
-                onBackClick = navController::popBackStack,
-                onTopicLoaded = {
+                back = navController::popBackStack,
+                openTopic = {
                     navController.popBackStack()
                     navController.openTopic(it)
                 },
-                onTorrentLoaded = {
+                openTorrent = {
                     navController.popBackStack()
                     navController.openTorrent(it)
                 },
@@ -721,61 +774,63 @@ private sealed interface NavigationDestination {
     object Menu : NavigationDestination {
         override val route: String = "${NavigationGraph.Menu.route}/menu"
         override val content: Destination = { navController, _ ->
-            MenuScreen(onLoginClick = navController::openLogin)
+            MenuScreen(openLogin = navController::openLogin)
         }
     }
 }
 
-private fun NavHostController.openLogin() {
-    navigate(NavigationDestination.Login.route)
+fun NavHostController.openSearchResult(filter: Filter) = navigate(
+    route = NavigationDestination.SearchResult.route,
+    arg = filter.wrap(),
+)
+
+fun NavHostController.openCategory(category: Category) = navigate(
+    route = NavigationDestination.Category.route,
+    arg = category.wrap(),
+)
+
+fun NavHostController.openTopic(id: String? = null, pid: String? = null) = navigate(
+    route = NavigationDestination.OpenTopic.route,
+    args = listOf(id.wrapId(), pid.wrapPid()),
+)
+
+private fun NavHostController.openLogin() = navigate(NavigationDestination.Login.route)
+
+private fun NavHostController.openSearchInput(filter: Filter = Filter()) = navigate(
+    route = NavigationDestination.SearchInput.route,
+    arg = filter.wrap(),
+)
+
+private fun NavHostController.openTopic(topic: Topic) = navigate(
+    route = NavigationDestination.Topic.route,
+    arg = topic.wrap(),
+)
+
+private fun NavHostController.openTorrent(torrent: Torrent) = navigate(
+    route = NavigationDestination.Torrent.route,
+    arg = torrent.wrap(),
+)
+
+private fun NavController.navigate(
+    route: String,
+    navOptions: NavOptions? = null,
+    navigatorExtras: Navigator.Extras? = null,
+    arg: Pair<String, Parcelable>,
+) {
+    navigate(route, navOptions, navigatorExtras)
+    currentBackStackEntry?.arguments?.apply {
+        putParcelable(arg.first, arg.second)
+    }
 }
 
-private fun NavHostController.openSearchInput(filter: Filter = Filter()) {
-    navigate(
-        route = NavigationDestination.SearchInput.route,
-        args = listOf(filter.wrap()),
-    )
-}
-
-private fun NavHostController.openSearchResult(category: Category) {
-    openSearchResult(Filter(categories = listOf(category)))
-}
-
-private fun NavHostController.openSearchResult(author: Author) {
-    openSearchResult(Filter(author = author))
-}
-
-fun NavHostController.openSearchResult(filter: Filter) {
-    navigate(
-        route = NavigationDestination.SearchResult.route,
-        args = listOf(filter.wrap()),
-    )
-}
-
-fun NavHostController.openCategory(category: Category) {
-    navigate(
-        route = NavigationDestination.Category.route,
-        args = listOf(category.wrap()),
-    )
-}
-
-fun NavHostController.openTopic(id: String? = null, pid: String? = null) {
-    navigate(
-        route = NavigationDestination.OpenTopic.route,
-        args = listOf(id.wrapId(), pid.wrapPid()),
-    )
-}
-
-private fun NavHostController.openTopic(topic: Topic) {
-    navigate(
-        route = NavigationDestination.Topic.route,
-        args = listOf(topic.wrap()),
-    )
-}
-
-private fun NavHostController.openTorrent(torrent: Torrent) {
-    navigate(
-        route = NavigationDestination.Torrent.route,
-        args = listOf(torrent.wrap()),
-    )
+private fun NavController.navigate(
+    route: String,
+    navOptions: NavOptions? = null,
+    navigatorExtras: Navigator.Extras? = null,
+    args: List<Pair<String, Parcelable>> = emptyList(),
+) {
+    navigate(route, navOptions, navigatorExtras)
+    currentBackStackEntry?.arguments?.apply {
+        args.forEach { putParcelable(it.first, it.second) }
+    }
 }

@@ -8,7 +8,9 @@ import javax.inject.Singleton
 class AddSuggestUseCase @Inject constructor(
     private val suggestsRepository: SuggestsRepository,
 ) {
-    suspend operator fun invoke(query: String) {
-        suggestsRepository.addSuggest(query)
+    suspend operator fun invoke(query: String?) {
+        if (!query.isNullOrBlank()) {
+            suggestsRepository.addSuggest(query)
+        }
     }
 }

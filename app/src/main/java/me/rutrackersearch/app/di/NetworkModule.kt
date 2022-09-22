@@ -13,8 +13,8 @@ import me.rutrackersearch.domain.service.TorrentDownloadService
 import me.rutrackersearch.network.HostProvider
 import me.rutrackersearch.network.NetworkApi
 import me.rutrackersearch.network.NetworkApiImpl
-import me.rutrackersearch.network.RuTrackerApiFactoryImpl
 import me.rutrackersearch.network.rutracker.RuTrackerApi
+import me.rutrackersearch.network.rutracker.RuTrackerApiImpl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -27,6 +27,10 @@ interface NetworkModule {
     @Binds
     @Singleton
     fun networkApi(impl: NetworkApiImpl): NetworkApi
+
+    @Binds
+    @Singleton
+    fun ruTrackerApi(impl: RuTrackerApiImpl): RuTrackerApi
 
     @Binds
     @Singleton
@@ -43,11 +47,6 @@ interface NetworkModule {
     fun refreshTokenInterceptor(impl: RefreshTokenInterceptor): Interceptor
 
     companion object {
-        @Provides
-        @Singleton
-        fun rutrackerApi(impl: RuTrackerApiFactoryImpl): RuTrackerApi {
-            return impl.create()
-        }
 
         @Provides
         @Singleton
@@ -57,7 +56,7 @@ interface NetworkModule {
 
         @Provides
         @Singleton
-        fun okHttpClient(interceptors: Set<Interceptor>): OkHttpClient {
+        fun okHttpClient(interceptors: Set<@JvmSuppressWildcards Interceptor>): OkHttpClient {
             return OkHttpClient.Builder().apply {
                 interceptors.forEach(this::addNetworkInterceptor)
             }.build()
@@ -67,7 +66,7 @@ interface NetworkModule {
         @Singleton
         @IntoSet
         fun httpLoggingInterceptor(): Interceptor {
-            return HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+            return HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
         }
     }
 }

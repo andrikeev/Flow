@@ -70,11 +70,11 @@ fun FocusableLazyColumn(
             val visibleItems = state.layoutInfo.visibleItemsInfo.map(LazyListItemInfo::index)
             if (focusedIndex !in visibleItems) {
                 state.animateScrollToItem(focusedIndex)
-                kotlin.runCatching { focusRequester.requestFocus() }
+                runCatching { focusRequester.requestFocus() }
             } else {
                 coroutineContext.job.invokeOnCompletion { error ->
                     if (error == null) {
-                        kotlin.runCatching { focusRequester.requestFocus() }
+                        runCatching { focusRequester.requestFocus() }
                     }
                 }
             }

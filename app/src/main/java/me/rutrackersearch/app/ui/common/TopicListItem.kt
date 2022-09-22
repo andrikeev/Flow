@@ -1,6 +1,5 @@
 package me.rutrackersearch.app.ui.common
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +15,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,38 +32,29 @@ fun TopicListItem(
     topicModel: TopicModel<out Topic>,
     showCategory: Boolean = true,
     dimVisited: Boolean = true,
-    highlightNew: Boolean = false,
     onClick: () -> Unit,
     onFavoriteClick: () -> Unit,
 ) {
-    val (topic, isVisited, isFavorite, isNew) = topicModel
-    val containerColor by animateColorAsState(
-        with(MaterialTheme.colorScheme) {
-            if (highlightNew && isNew) surfaceVariant else surface
-        }
-    )
+    val (topic, isVisited, isFavorite) = topicModel
     val contentColor = if (dimVisited && isVisited) {
         MaterialTheme.colorScheme.outline
     } else {
-        MaterialTheme.colorScheme.contentColorFor(containerColor)
+        MaterialTheme.colorScheme.onSurface
     }
     TopicListItem(
         topic = topic,
         showCategory = showCategory,
-        containerColor = containerColor,
         contentColor = contentColor,
         action = {
             IconButton(
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .then(Modifier.size(24.dp)),
+                modifier = Modifier.size(32.dp),
                 onClick = onFavoriteClick,
                 imageVector = if (isFavorite) {
                     Icons.Outlined.Favorite
                 } else {
                     Icons.Outlined.FavoriteBorder
                 },
-                tint = MaterialTheme.colorScheme.tertiary,
+                tint = MaterialTheme.colorScheme.primary,
             )
         },
         onClick = onClick,
@@ -77,32 +66,24 @@ fun TopicListItem(
     topicModel: TopicModel<out Topic>,
     showCategory: Boolean = true,
     dimVisited: Boolean = true,
-    highlightNew: Boolean = false,
     onClick: () -> Unit,
 ) {
-    val (topic, isVisited, _, isNew) = topicModel
-    val containerColor by animateColorAsState(
-        with(MaterialTheme.colorScheme) {
-            if (highlightNew && isNew) surfaceVariant else surface
-        }
-    )
+    val (topic, isVisited) = topicModel
     val contentColor = if (dimVisited && isVisited) {
         MaterialTheme.colorScheme.outline
     } else {
-        MaterialTheme.colorScheme.contentColorFor(containerColor)
+        MaterialTheme.colorScheme.onSurface
     }
     when (topic) {
         is Torrent -> Torrent(
             torrent = topic,
             showCategory = showCategory,
-            containerColor = containerColor,
             contentColor = contentColor,
             onClick = onClick,
         )
         else -> Topic(
             topic = topic,
             showCategory = showCategory,
-            containerColor = containerColor,
             contentColor = contentColor,
             onClick = onClick,
         )
@@ -122,7 +103,6 @@ fun TopicListItem(
         is Torrent -> Torrent(
             torrent = topic,
             showCategory = showCategory,
-            containerColor = containerColor,
             contentColor = contentColor,
             action = action,
             onClick = onClick,
@@ -130,7 +110,6 @@ fun TopicListItem(
         else -> Topic(
             topic = topic,
             showCategory = showCategory,
-            containerColor = containerColor,
             contentColor = contentColor,
             action = action,
             onClick = onClick,
@@ -144,7 +123,6 @@ private fun Topic(
     modifier: Modifier = Modifier,
     topic: Topic,
     showCategory: Boolean = true,
-    containerColor: Color,
     contentColor: Color,
     action: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
@@ -152,7 +130,6 @@ private fun Topic(
     Surface(
         modifier = modifier,
         onClick = onClick,
-        color = containerColor,
         contentColor = contentColor,
     ) {
         Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
@@ -192,7 +169,6 @@ private fun Torrent(
     modifier: Modifier = Modifier,
     torrent: Torrent,
     showCategory: Boolean = true,
-    containerColor: Color,
     contentColor: Color,
     action: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
@@ -200,7 +176,6 @@ private fun Torrent(
     Surface(
         modifier = modifier,
         onClick = onClick,
-        color = containerColor,
         contentColor = contentColor,
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
@@ -261,7 +236,7 @@ private fun TopicListItem() {
     Column {
         TopicListItem(
             topicModel = TopicModel(
-                data = Torrent(
+                topic = Torrent(
                     id = "1",
                     title = "Сияние / The Shining (Стэнли Кубрик / S 23 3 Kubrick) 2x MVO + DVO + 4x AVO (Володарский, Гаврилов, Живов, Кузнецов) + VO + Sub Rus, Eng + Comm + Original Eng",
                     author = Author(name = "qooble"),
@@ -279,7 +254,7 @@ private fun TopicListItem() {
         )
         TopicListItem(
             topicModel = TopicModel(
-                data = Torrent(
+                topic = Torrent(
                     id = "1",
                     title = "Сияние / The Shining (Стэнли Кубрик / S 23 3 Kubrick) 2x MVO + DVO + 4x AVO (Володарский, Гаврилов, Живов, Кузнецов) + VO + Sub Rus, Eng + Comm + Original Eng",
                     author = Author(name = "qooble"),
@@ -299,7 +274,7 @@ private fun TopicListItem() {
         )
         TopicListItem(
             topicModel = TopicModel(
-                data = Torrent(
+                topic = Torrent(
                     id = "1",
                     title = "Сияние / The Shining (Стэнли Кубрик / S 23 3 Kubrick) 2x MVO + DVO + 4x AVO (Володарский, Гаврилов, Живов, Кузнецов) + VO + Sub Rus, Eng + Comm + Original Eng",
                     author = Author(name = "qooble"),
@@ -319,7 +294,7 @@ private fun TopicListItem() {
         )
         TopicListItem(
             topicModel = TopicModel(
-                data = Torrent(
+                topic = Torrent(
                     id = "1",
                     title = "Сияние / The Shining (Стэнли Кубрик / S 23 3 Kubrick) 2x MVO + DVO + 4x AVO (Володарский, Гаврилов, Живов, Кузнецов) + VO + Sub Rus, Eng + Comm + Original Eng",
                     author = Author(name = "qooble"),
@@ -333,7 +308,6 @@ private fun TopicListItem() {
                 ),
                 isNew = true,
             ),
-            highlightNew = true,
             onClick = {},
             onFavoriteClick = {},
         )

@@ -1,15 +1,14 @@
-package me.rutrackersearch.app.ui
+package me.rutrackersearch.app.ui.main
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import me.rutrackersearch.domain.usecase.ObserveSettingsUseCase
-import me.rutrackersearch.models.settings.Settings
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     observeSettingsUseCase: ObserveSettingsUseCase,
 ) : ViewModel() {
-    val settings: Flow<Settings> = observeSettingsUseCase()
+    val theme = observeSettingsUseCase().map { it.theme }
 }

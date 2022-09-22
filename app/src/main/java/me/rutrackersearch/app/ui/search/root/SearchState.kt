@@ -1,4 +1,4 @@
-package me.rutrackersearch.app.ui.search
+package me.rutrackersearch.app.ui.search.root
 
 import me.rutrackersearch.models.search.Search
 

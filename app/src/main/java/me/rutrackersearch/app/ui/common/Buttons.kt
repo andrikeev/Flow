@@ -162,7 +162,7 @@ fun IconButton(
 }
 
 @Composable
-private fun IconButton(
+fun IconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     enabled: Boolean = true,

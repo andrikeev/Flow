@@ -4,11 +4,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,7 +30,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.ExpandLess
+import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.FirstPage
 import androidx.compose.material.icons.outlined.LastPage
 import androidx.compose.material.icons.outlined.Pin
@@ -76,9 +74,9 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import me.rutrackersearch.app.R
-import me.rutrackersearch.app.ui.common.AppBar
 import me.rutrackersearch.app.ui.common.BackButton
 import me.rutrackersearch.app.ui.common.DynamicBox
+import me.rutrackersearch.app.ui.common.ExpandableAppBar
 import me.rutrackersearch.app.ui.common.FavoriteButton
 import me.rutrackersearch.app.ui.common.IconButton
 import me.rutrackersearch.app.ui.common.LazyColumn
@@ -98,20 +96,19 @@ import me.rutrackersearch.app.ui.topic.topic.TopicAction.BackClick
 import me.rutrackersearch.app.ui.topic.topic.TopicAction.EndOfListReached
 import me.rutrackersearch.app.ui.topic.topic.TopicAction.FavoriteClick
 import me.rutrackersearch.app.ui.topic.topic.TopicAction.FirstVisibleItemIndexChanged
-import me.rutrackersearch.app.ui.topic.topic.TopicAction.GoToPage
 import me.rutrackersearch.app.ui.topic.topic.TopicAction.LoginClick
 import me.rutrackersearch.app.ui.topic.topic.TopicAction.RetryClick
 import me.rutrackersearch.models.topic.Post
 
 @Composable
 fun TopicScreen(
-    onBackClick: () -> Unit,
-    onLoginClick: () -> Unit,
+    back: () -> Unit,
+    openLogin: () -> Unit,
 ) {
     TopicScreen(
         viewModel = hiltViewModel(),
-        onBackClick = onBackClick,
-        onLoginClick = onLoginClick,
+        onBackClick = back,
+        onLoginClick = openLogin,
     )
 }
 
@@ -148,98 +145,87 @@ private fun MobileTopicScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                var isExpanded by remember { mutableStateOf(false) }
-                val scrollFraction = scrollBehavior.scrollFraction
-                val colors = TopAppBarDefaults.smallTopAppBarColors()
-                val containerColor by colors.containerColor(scrollFraction)
-                AppBar(
-                    navigationIcon = { BackButton { onAction(BackClick) } },
-                    title = {
-                        Text(
-                            text = topic.title,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.titleSmall,
+            var isExpanded by remember { mutableStateOf(false) }
+            ExpandableAppBar(
+                navigationIcon = { BackButton { onAction(BackClick) } },
+                title = {
+                    Text(
+                        text = topic.title,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                },
+                actions = {
+                    FavoriteButton(
+                        isFavorite = isFavorite,
+                        onClick = { onAction(FavoriteClick(state.topic)) },
+                    )
+                    AnimatedVisibility(visible = state.pages > 1) {
+                        val rotation by animateFloatAsState(
+                            targetValue = if (isExpanded) 180f else 0f
                         )
-                    },
-                    actions = {
-                        FavoriteButton(
-                            isFavorite = isFavorite,
-                            onClick = { onAction(FavoriteClick(state.topic)) },
+                        IconButton(
+                            modifier = Modifier.rotate(rotation),
+                            onClick = { isExpanded = !isExpanded },
+                            imageVector = if (isExpanded) {
+                                Icons.Outlined.ExpandMore
+                            } else {
+                                Icons.Outlined.Pin
+                            },
                         )
-                        AnimatedVisibility(visible = state.pages > 1) {
-                            val rotation by animateFloatAsState(
-                                targetValue = if (isExpanded) 180f else 0f
-                            )
-                            IconButton(
-                                modifier = Modifier.rotate(rotation),
-                                onClick = { isExpanded = !isExpanded },
-                                imageVector = if (isExpanded) {
-                                    Icons.Outlined.ExpandLess
-                                } else {
-                                    Icons.Outlined.Pin
-                                },
-                            )
-                        }
-                    },
-                    scrollBehavior = scrollBehavior,
-                )
-                AnimatedVisibility(
-                    visible = isExpanded,
-                    enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
-                    exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
+                    }
+                },
+                scrollBehavior = scrollBehavior,
+                isExpanded = isExpanded,
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Surface(color = containerColor) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.SpaceAround,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            val isEnabled = state.content !is PageResult.Loading
-                            fun goToPage(page: Int) = onAction(GoToPage(page))
-                            IconButton(
-                                onClick = { goToPage(1) },
-                                enabled = isEnabled && state.page != 1,
-                                imageVector = Icons.Outlined.FirstPage,
-                            )
-                            IconButton(
-                                onClick = { goToPage(state.page - 1) },
-                                enabled = isEnabled && state.page != 1,
-                                imageVector = Icons.Outlined.ChevronLeft,
-                            )
-                            Box(
-                                modifier = Modifier.width(48.dp),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Crossfade(targetState = isEnabled) { showPage ->
-                                    if (showPage) {
-                                        Text(
-                                            text = "${state.page}/${state.pages}",
-                                            style = MaterialTheme.typography.labelLarge,
-                                        )
-                                    } else {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(16.dp),
-                                            strokeWidth = 1.dp,
-                                        )
-                                    }
-                                }
+                    val isEnabled = state.content !is PageResult.Loading
+                    fun goToPage(page: Int) = onAction(TopicAction.GoToPage(page))
+                    IconButton(
+                        onClick = { goToPage(1) },
+                        enabled = isEnabled && state.page != 1,
+                        imageVector = Icons.Outlined.FirstPage,
+                    )
+                    IconButton(
+                        onClick = { goToPage(state.page - 1) },
+                        enabled = isEnabled && state.page != 1,
+                        imageVector = Icons.Outlined.ChevronLeft,
+                    )
+                    Box(
+                        modifier = Modifier.width(48.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Crossfade(targetState = isEnabled) { showPage ->
+                            if (showPage) {
+                                Text(
+                                    text = "${state.page}/${state.pages}",
+                                    style = MaterialTheme.typography.labelLarge,
+                                )
+                            } else {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    strokeWidth = 1.dp,
+                                )
                             }
-                            IconButton(
-                                onClick = { goToPage(state.page + 1) },
-                                enabled = isEnabled && state.page != state.pages,
-                                imageVector = Icons.Outlined.ChevronRight,
-                            )
-                            IconButton(
-                                onClick = { goToPage(state.pages) },
-                                enabled = isEnabled && state.page != state.pages,
-                                imageVector = Icons.Outlined.LastPage,
-                            )
                         }
                     }
+                    IconButton(
+                        onClick = { goToPage(state.page + 1) },
+                        enabled = isEnabled && state.page != state.pages,
+                        imageVector = Icons.Outlined.ChevronRight,
+                    )
+                    IconButton(
+                        onClick = { goToPage(state.pages) },
+                        enabled = isEnabled && state.page != state.pages,
+                        imageVector = Icons.Outlined.LastPage,
+                    )
                 }
             }
         },

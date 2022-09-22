@@ -19,14 +19,14 @@ interface NetworkApi {
         author: String,
         authorId: String,
         categories: String,
-        page: Int,
+        page: Int = 1,
     ): Page<Torrent>
 
     suspend fun forumTree(): ForumTree
 
-    suspend fun category(id: String, page: Int): Page<ForumItem>
+    suspend fun category(id: String, page: Int = 1): Page<ForumItem>
 
-    suspend fun favorites(page: Int): Page<Topic>
+    suspend fun favorites(page: Int = 1): Page<Topic>
 
     suspend fun addFavorite(id: String)
 
@@ -34,7 +34,7 @@ interface NetworkApi {
 
     suspend fun topic(id: String, pid: String): Topic
 
-    suspend fun comments(id: String, page: Int): Page<Post>
+    suspend fun comments(id: String, page: Int = 1): Page<Post>
 
     suspend fun addComment(topicId: String, message: String)
 

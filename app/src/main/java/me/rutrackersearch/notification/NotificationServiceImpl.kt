@@ -6,14 +6,15 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.work.ForegroundInfo
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.rutrackersearch.app.R
 import me.rutrackersearch.models.forum.Category
-import me.rutrackersearch.models.forum.CategoryModel
 import me.rutrackersearch.models.topic.Torrent
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,13 +28,23 @@ class NotificationServiceImpl @Inject constructor(
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = context.getString(R.string.notification_channel_name)
-            val descriptionText = context.getString(R.string.notification_channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
+            val updatesChannel = NotificationChannel(
+                UPDATES_CHANNEL_ID,
+                context.getString(R.string.notification_channel_name),
+                NotificationManager.IMPORTANCE_DEFAULT,
+            ).apply {
+                description = context.getString(R.string.notification_channel_description)
             }
-            notificationManager.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(updatesChannel)
+
+            val foregroundTasksChannel = NotificationChannel(
+                FOREGROUND_CHANNEL_ID,
+                context.getString(R.string.foreground_channel_name),
+                NotificationManager.IMPORTANCE_LOW,
+            ).apply {
+                description = context.getString(R.string.foreground_channel_description)
+            }
+            notificationManager.createNotificationChannel(foregroundTasksChannel)
         }
     }
 
@@ -42,7 +53,7 @@ class NotificationServiceImpl @Inject constructor(
     }
 
     override fun showFavoriteUpdateNotification(torrent: Torrent) {
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID).apply {
+        val builder = NotificationCompat.Builder(context, UPDATES_CHANNEL_ID).apply {
             setContentTitle(context.getString(R.string.notification_topic_update))
             setContentText(torrent.title)
             setSmallIcon(R.drawable.ic_notification)
@@ -53,16 +64,39 @@ class NotificationServiceImpl @Inject constructor(
         notificationManager.notify(torrent.id.toInt(), builder.build())
     }
 
-    override fun showBookmarkUpdateNotification(categoryModel: CategoryModel) {
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID).apply {
+    override fun showBookmarkUpdateNotification(category: Category) {
+        val builder = NotificationCompat.Builder(context, UPDATES_CHANNEL_ID).apply {
             setContentTitle(context.getString(R.string.notification_bookmark_update))
-            setContentText(categoryModel.data.name)
+            setContentText(category.name)
             setSmallIcon(R.drawable.ic_notification)
             color = 0x8c9eff
-            setContentIntent(createPendingIntent(categoryModel.data))
+            setContentIntent(createPendingIntent(category))
             setAutoCancel(true)
         }
-        notificationManager.notify(categoryModel.data.id.toInt(), builder.build())
+        notificationManager.notify(category.id.toInt(), builder.build())
+    }
+
+    override fun createForegroundInfo(): ForegroundInfo {
+        val notification = NotificationCompat.Builder(
+            context,
+            FOREGROUND_CHANNEL_ID,
+        ).apply {
+            setContentTitle(context.getString(R.string.notification_running_task))
+            setSmallIcon(R.drawable.ic_notification)
+            color = 0x8c9eff
+        }.build()
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ForegroundInfo(
+                FOREGROUND_NOTIFICATION_ID,
+                notification,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
+            )
+        } else {
+            ForegroundInfo(
+                FOREGROUND_NOTIFICATION_ID,
+                notification,
+            )
+        }
     }
 
     private fun createPendingIntent(torrent: Torrent): PendingIntent? {
@@ -85,6 +119,8 @@ class NotificationServiceImpl @Inject constructor(
     }
 
     private companion object {
-        const val CHANNEL_ID = "me.rutrackersearch.app.notifications"
+        const val FOREGROUND_NOTIFICATION_ID = 1
+        const val UPDATES_CHANNEL_ID = "me.rutrackersearch.app.notifications"
+        const val FOREGROUND_CHANNEL_ID = "me.rutrackersearch.app.notifications_foreground"
     }
 }

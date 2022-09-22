@@ -6,6 +6,7 @@ import me.rutrackersearch.domain.repository.FavoritesRepository
 import me.rutrackersearch.domain.repository.SearchHistoryRepository
 import me.rutrackersearch.domain.repository.SuggestsRepository
 import me.rutrackersearch.domain.repository.TopicHistoryRepository
+import me.rutrackersearch.domain.service.LoadFavoritesService
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,6 +18,7 @@ class LogoutUseCase @Inject constructor(
     private val bookmarksRepository: BookmarksRepository,
     private val topicHistoryRepository: TopicHistoryRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
+    private val loadFavoritesService: LoadFavoritesService,
 ) {
     suspend operator fun invoke() {
         accountRepository.clear()
@@ -25,5 +27,6 @@ class LogoutUseCase @Inject constructor(
         bookmarksRepository.clear()
         topicHistoryRepository.clear()
         searchHistoryRepository.clear()
+        loadFavoritesService.stop()
     }
 }

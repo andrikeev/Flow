@@ -11,7 +11,7 @@ import javax.inject.Singleton
 class LoadForumUseCase @Inject constructor(
     private val forumRepository: ForumRepository,
 ) {
-    suspend fun invoke(): Forum {
+    suspend operator fun invoke(): Forum {
         val forumTree = forumRepository.loadForumTree()
         return Forum(
             forumTree.children.map { forumTreeRootGroup ->

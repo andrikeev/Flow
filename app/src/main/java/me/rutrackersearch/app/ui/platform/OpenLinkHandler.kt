@@ -16,7 +16,7 @@ class OpenLinkHandlerImpl(
     override fun openLink(link: String) {
         val uri = Uri.parse(link)
         if (!deeplinkHandler.handle(uri)) {
-            uriHandler.openUri(link)
+            runCatching { uriHandler.openUri(link) }
         }
     }
 }

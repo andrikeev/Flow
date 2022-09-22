@@ -25,7 +25,7 @@ import me.rutrackersearch.network.utils.url
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
-internal class RuTrackerApiImpl @Inject constructor(
+class RuTrackerApiImpl @Inject constructor(
     private val httpClient: OkHttpClient,
     private val hostProvider: HostProvider,
 ) : RuTrackerApi {

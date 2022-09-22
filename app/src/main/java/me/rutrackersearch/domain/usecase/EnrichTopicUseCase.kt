@@ -26,7 +26,7 @@ class EnrichTopicUseCase @Inject constructor(
             } ?: bookmarksRepository.observeNewTopics(),
         ) { favoriteTopics, updatedIds, visitedTopics, newTopics ->
             TopicModel(
-                data = topic,
+                topic = topic,
                 isVisited = visitedTopics.contains(topic.id),
                 isFavorite = favoriteTopics.contains(topic.id),
                 isNew = newTopics.contains(topic.id),

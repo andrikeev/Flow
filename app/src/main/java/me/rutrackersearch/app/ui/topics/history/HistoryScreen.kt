@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -17,44 +16,44 @@ import me.rutrackersearch.app.ui.common.Loading
 import me.rutrackersearch.app.ui.common.TopicListItem
 import me.rutrackersearch.app.ui.common.dividedItems
 import me.rutrackersearch.app.ui.common.focusableItems
-import me.rutrackersearch.models.topic.TopicModel
 import me.rutrackersearch.models.topic.BaseTopic
 import me.rutrackersearch.models.topic.Topic
 import me.rutrackersearch.models.topic.Torrent
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun HistoryScreen(
-    onTopicClick: (Topic) -> Unit,
-    onTorrentClick: (Torrent) -> Unit,
+    openTopic: (Topic) -> Unit,
+    openTorrent: (Torrent) -> Unit,
 ) {
     HistoryScreen(
         viewModel = hiltViewModel(),
-        onTopicClick = onTopicClick,
-        onTorrentClick = onTorrentClick,
+        openTopic = openTopic,
+        openTorrent = openTorrent,
     )
 }
 
 @Composable
 private fun HistoryScreen(
     viewModel: HistoryViewModel,
-    onTopicClick: (Topic) -> Unit,
-    onTorrentClick: (Torrent) -> Unit,
+    openTopic: (Topic) -> Unit,
+    openTorrent: (Torrent) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
-    HistoryScreen(
-        state = state,
-        onTopicClick = onTopicClick,
-        onTorrentClick = onTorrentClick,
-        onFavoriteClick = viewModel::onFavoriteClick,
-    )
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is HistorySideEffect.OpenTopic -> openTopic(sideEffect.topic)
+            is HistorySideEffect.OpenTorrent -> openTorrent(sideEffect.torrent)
+        }
+    }
+    val state by viewModel.collectAsState()
+    HistoryScreen(state = state, onAction = viewModel::perform)
 }
 
 @Composable
 private fun HistoryScreen(
     state: HistoryState,
-    onTopicClick: (Topic) -> Unit,
-    onTorrentClick: (Torrent) -> Unit,
-    onFavoriteClick: (TopicModel<out Topic>) -> Unit,
+    onAction: (HistoryAction) -> Unit,
 ) {
     when (state) {
         is HistoryState.Initial -> Loading()
@@ -63,6 +62,7 @@ private fun HistoryScreen(
             subtitleRes = R.string.topics_history_subtitle,
             iconRes = R.drawable.ill_placeholder,
         )
+
         is HistoryState.HistoryList -> DynamicBox(
             mobileContent = {
                 LazyColumn(
@@ -71,19 +71,21 @@ private fun HistoryScreen(
                 ) {
                     dividedItems(
                         items = state.items,
-                        key = { it.data.id },
-                        contentType = { it.data::class },
+                        key = { it.topic.id },
+                        contentType = { it.topic::class },
                     ) { item ->
                         TopicListItem(
                             topicModel = item,
                             dimVisited = false,
                             onClick = {
-                                when (val topic = item.data) {
-                                    is BaseTopic -> onTopicClick(topic)
-                                    is Torrent -> onTorrentClick(topic)
-                                }
+                                onAction(
+                                    when (item.topic) {
+                                        is BaseTopic -> HistoryAction.TopicClick(item.topic)
+                                        is Torrent -> HistoryAction.TorrentClick(item.topic)
+                                    }
+                                )
                             },
-                            onFavoriteClick = { onFavoriteClick(item) },
+                            onFavoriteClick = { onAction(HistoryAction.FavoriteClick(item)) },
                         )
                     }
                 }
@@ -96,17 +98,19 @@ private fun HistoryScreen(
                 ) {
                     focusableItems(
                         items = state.items,
-                        key = { it.data.id },
-                        contentType = { it.data::class },
+                        key = { it.topic.id },
+                        contentType = { it.topic::class },
                     ) { item ->
                         TopicListItem(
                             topicModel = item,
                             dimVisited = false,
                             onClick = {
-                                when (val topic = item.data) {
-                                    is BaseTopic -> onTopicClick(topic)
-                                    is Torrent -> onTorrentClick(topic)
-                                }
+                                onAction(
+                                    when (item.topic) {
+                                        is BaseTopic -> HistoryAction.TopicClick(item.topic)
+                                        is Torrent -> HistoryAction.TorrentClick(item.topic)
+                                    }
+                                )
                             },
                         )
                     }

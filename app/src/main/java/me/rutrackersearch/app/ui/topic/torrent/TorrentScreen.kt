@@ -1,8 +1,5 @@
 package me.rutrackersearch.app.ui.topic.torrent
 
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.os.Build
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,20 +13,16 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FileDownload
-import androidx.compose.material.icons.filled.FileDownloadDone
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.ImageNotSupported
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,8 +34,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +41,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -59,9 +51,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.launch
 import me.rutrackersearch.app.R
 import me.rutrackersearch.app.ui.common.AppBar
@@ -81,10 +70,10 @@ import me.rutrackersearch.app.ui.common.TextButton
 import me.rutrackersearch.app.ui.common.TorrentStatus
 import me.rutrackersearch.app.ui.common.focusableSpec
 import me.rutrackersearch.app.ui.common.rememberTabAppBarScrollBehavior
-import me.rutrackersearch.app.ui.platform.LocalOpenFileHandler
 import me.rutrackersearch.app.ui.platform.LocalOpenLinkHandler
 import me.rutrackersearch.app.ui.platform.LocalShareLinkHandler
 import me.rutrackersearch.app.ui.theme.TopicColors
+import me.rutrackersearch.app.ui.topic.download.DownloadDialog
 import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.AuthorClick
 import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.BackClick
 import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.CategoryClick
@@ -95,43 +84,44 @@ import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.RetryClick
 import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.ShareClick
 import me.rutrackersearch.app.ui.topic.torrent.TorrentAction.TorrentFileClick
 import me.rutrackersearch.models.forum.Category
+import me.rutrackersearch.models.search.Filter
 import me.rutrackersearch.models.topic.Author
 import me.rutrackersearch.models.topic.Content
 import me.rutrackersearch.models.topic.PostContent
 import me.rutrackersearch.models.topic.Topic
 import me.rutrackersearch.models.topic.TorrentDescription
 import me.rutrackersearch.models.topic.isValid
-import me.rutrackersearch.models.user.isAuthorized
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import me.rutrackersearch.app.ui.common.ContentScale as FocusableContentScale
 
 @Composable
 fun TorrentScreen(
-    onBackClick: () -> Unit,
-    onLoginClick: () -> Unit,
-    onCommentsClick: (Topic) -> Unit,
-    onCategoryClick: (Category) -> Unit,
-    onAuthorClick: (Author) -> Unit,
+    back: () -> Unit,
+    openLogin: () -> Unit,
+    openComments: (Topic) -> Unit,
+    openCategory: (Category) -> Unit,
+    openSearch: (Filter) -> Unit,
 ) {
     TorrentScreen(
         viewModel = hiltViewModel(),
-        onBackClick = onBackClick,
-        onLoginClick = onLoginClick,
-        onCommentsClick = onCommentsClick,
-        onCategoryClick = onCategoryClick,
-        onAuthorClick = onAuthorClick,
+        back = back,
+        openLogin = openLogin,
+        openComments = openComments,
+        openCategory = openCategory,
+        openSearch = openSearch,
     )
 }
 
 @Composable
 private fun TorrentScreen(
     viewModel: TorrentViewModel,
-    onBackClick: () -> Unit,
-    onLoginClick: () -> Unit,
-    onCommentsClick: (Topic) -> Unit,
-    onCategoryClick: (Category) -> Unit,
-    onAuthorClick: (Author) -> Unit,
+    back: () -> Unit,
+    openLogin: () -> Unit,
+    openComments: (Topic) -> Unit,
+    openCategory: (Category) -> Unit,
+    openSearch: (Filter) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
     val snackbarState = remember { SnackbarHostState() }
     val shareLinkHandler = LocalShareLinkHandler.current
     var magnetLinkDialogState by remember {
@@ -147,31 +137,28 @@ private fun TorrentScreen(
     TorrentFileDialog(
         state = torrentFileDialogState,
         onDismiss = { torrentFileDialogState = TorrentFileDialogState.Hide },
-        onLoginClick = onLoginClick,
+        onLogin = openLogin,
     )
-    val onAction: (TorrentAction) -> Unit = { action ->
-        when (action) {
-            BackClick -> onBackClick()
-            RetryClick -> viewModel.perform(action)
-            is CommentsClick -> onCommentsClick(action.topic)
-            is FavoriteClick -> viewModel.perform(action)
-            is AuthorClick -> onAuthorClick(action.author)
-            is CategoryClick -> onCategoryClick(action.category)
-            is ShareClick -> shareLinkHandler.shareLink(
-                "https://rutracker.org/forum/viewtopic.php?t=${action.torrent.id}"
-            )
-            is MagnetClick -> {
-                magnetLinkDialogState = MagnetLinkDialogState.Show(action.magnetLink)
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is TorrentSideEffect.Back -> back()
+            is TorrentSideEffect.Download -> {
+                torrentFileDialogState = TorrentFileDialogState.Show
             }
-            TorrentFileClick -> {
-                torrentFileDialogState = TorrentFileDialogState.Show(viewModel)
+            is TorrentSideEffect.OpenCategory -> openCategory(sideEffect.category)
+            is TorrentSideEffect.OpenComments -> openComments(sideEffect.topic)
+            is TorrentSideEffect.OpenMagnet -> {
+                magnetLinkDialogState = MagnetLinkDialogState.Show(sideEffect.magnetLink)
             }
+            is TorrentSideEffect.OpenSearch -> openSearch(sideEffect.filter)
+            is TorrentSideEffect.Share -> shareLinkHandler.shareLink(sideEffect.link)
         }
     }
+    val state by viewModel.collectAsState()
     CompositionLocalProvider(LocalSnackbarHostState provides snackbarState) {
         DynamicBox(
-            mobileContent = { MobileTorrentScreen(state, onAction) },
-            tvContent = { TVTorrentScreen(state, onAction) },
+            mobileContent = { MobileTorrentScreen(state, viewModel::perform) },
+            tvContent = { TVTorrentScreen(state, viewModel::perform) },
         )
     }
 }
@@ -181,7 +168,7 @@ private fun MobileTorrentScreen(
     state: TorrentState,
     onAction: (TorrentAction) -> Unit,
 ) {
-    val (torrent, _, isFavorite) = state.data
+    val (torrent, _, isFavorite) = state.torrent
     val (_, title, author, category, _, status, _, _, _, _, magnetLink, description) = torrent
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
@@ -200,10 +187,10 @@ private fun MobileTorrentScreen(
                 actions = {
                     FavoriteButton(
                         isFavorite = isFavorite,
-                        onClick = { onAction(FavoriteClick(state.data)) },
+                        onClick = { onAction(FavoriteClick) },
                     )
                     IconButton(
-                        onClick = { onAction(ShareClick(torrent)) },
+                        onClick = { onAction(ShareClick) },
                         imageVector = Icons.Outlined.Share,
                         contentDescription = stringResource(R.string.action_share),
                     )
@@ -265,7 +252,7 @@ private fun MobileTorrentScreen(
                         item {
                             Button(
                                 text = stringResource(R.string.topic_action_magnet),
-                                onClick = { magnetLink?.also { onAction(MagnetClick(it)) } },
+                                onClick = { magnetLink?.also { onAction(MagnetClick) } },
                                 color = TopicColors.magnet,
                             )
                         }
@@ -280,30 +267,26 @@ private fun MobileTorrentScreen(
                     item {
                         Button(
                             text = stringResource(R.string.topic_action_comments),
-                            onClick = { onAction(CommentsClick(torrent)) },
+                            onClick = { onAction(CommentsClick) },
                             color = TopicColors.comments,
                         )
                     }
                 }
             }
             item {
-                when (state) {
-                    is TorrentState.Loading -> Loading()
-                    is TorrentState.Error -> Error(
+                when {
+                    state.isLoading -> Loading()
+                    state.error != null -> Error(
                         error = state.error,
                         onRetryClick = { onAction(RetryClick) },
                     )
-                    is TorrentState.Loaded -> {
-                        if (description != null) {
-                            Post(
-                                modifier = Modifier.padding(
-                                    horizontal = 16.dp,
-                                    vertical = 8.dp,
-                                ),
-                                content = description.content,
-                            )
-                        }
-                    }
+                    description != null -> Post(
+                        modifier = Modifier.padding(
+                            horizontal = 16.dp,
+                            vertical = 8.dp,
+                        ),
+                        content = description.content,
+                    )
                 }
             }
         }
@@ -315,7 +298,7 @@ private fun TVTorrentScreen(
     state: TorrentState,
     onAction: (TorrentAction) -> Unit,
 ) {
-    val (torrent, _, isFavorite) = state.data
+    val (torrent, _, isFavorite) = state.torrent
     val (_, title, author, category, _, status, _, _, _, _, magnetLink, description) = torrent
     val scrollBehavior = rememberTabAppBarScrollBehavior()
     Scaffold(
@@ -327,7 +310,7 @@ private fun TVTorrentScreen(
                 action = {
                     FavoriteButton(
                         isFavorite = isFavorite,
-                        onClick = { onAction(FavoriteClick(state.data)) },
+                        onClick = { onAction(FavoriteClick) },
                     )
                 }
             )
@@ -395,7 +378,7 @@ private fun TVTorrentScreen(
                                 if (status.isValid()) {
                                     Button(
                                         text = stringResource(R.string.topic_action_magnet),
-                                        onClick = { magnetLink?.also { onAction(MagnetClick(it)) } },
+                                        onClick = { magnetLink?.also { onAction(MagnetClick) } },
                                         color = TopicColors.magnet,
                                     )
                                     Button(
@@ -406,24 +389,20 @@ private fun TVTorrentScreen(
                                 }
                                 Button(
                                     text = stringResource(R.string.topic_action_comments),
-                                    onClick = { onAction(CommentsClick(torrent)) },
+                                    onClick = { onAction(CommentsClick) },
                                     color = TopicColors.comments,
                                 )
                             }
-                            when (state) {
-                                is TorrentState.Loading -> Loading()
-                                is TorrentState.Error -> Error(
+                            when {
+                                state.isLoading -> Loading()
+                                state.error != null -> Error(
                                     error = state.error,
                                     onRetryClick = { onAction(RetryClick) },
                                 )
-                                is TorrentState.Loaded -> {
-                                    description?.content?.let {
-                                        Post(
-                                            modifier = Modifier.padding(8.dp),
-                                            content = it,
-                                        )
-                                    }
-                                }
+                                description != null -> Post(
+                                    modifier = Modifier.padding(8.dp),
+                                    content = description.content,
+                                )
                             }
                         }
                     }
@@ -456,7 +435,9 @@ private fun TorrentImage(
 ) {
     val src = torrentDescription?.content?.torrentImage()?.src
     Box(
-        modifier = modifier.aspectRatio(2 / 3f),
+        modifier = modifier
+            .aspectRatio(2 / 3f)
+            .clip(MaterialTheme.shapes.extraSmall),
         contentAlignment = Alignment.TopCenter,
     ) {
         SubcomposeAsyncImage(
@@ -468,6 +449,7 @@ private fun TorrentImage(
                     painter = painter,
                     contentDescription = null,
                 )
+
                 is AsyncImagePainter.State.Loading -> Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -479,6 +461,7 @@ private fun TorrentImage(
                         strokeWidth = 2.dp,
                     )
                 }
+
                 AsyncImagePainter.State.Empty,
                 is AsyncImagePainter.State.Error -> Box(
                     modifier = Modifier
@@ -605,136 +588,16 @@ private fun MagnetDialog(
 private fun TorrentFileDialog(
     state: TorrentFileDialogState,
     onDismiss: () -> Unit,
-    onLoginClick: () -> Unit,
+    onLogin: () -> Unit,
 ) {
-    if (state is TorrentFileDialogState.Show) {
-        val viewModel = state.viewModel
-        val authState by viewModel.authState.collectAsState()
-        val diskPermissionState = rememberPermissionState(WRITE_EXTERNAL_STORAGE)
-
-        if (!authState.isAuthorized()) {
-            AlertDialog(
-                text = { Text(stringResource(R.string.topic_login_required)) },
-                confirmButton = {
-                    TextButton(
-                        text = stringResource(R.string.action_login),
-                        onClick = onLoginClick,
-                    )
-                },
-                dismissButton = {
-                    TextButton(
-                        text = stringResource(R.string.action_cancel),
-                        onClick = onDismiss,
-                    )
-                },
-                onDismissRequest = onDismiss,
-            )
-        } else if (
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            !diskPermissionState.status.isGranted
-        ) {
-            if (!diskPermissionState.status.shouldShowRationale) {
-                AlertDialog(
-                    text = { Text(stringResource(R.string.topic_permission_required)) },
-                    confirmButton = {
-                        TextButton(
-                            text = stringResource(R.string.action_open_settings),
-                            onClick = {},
-                        )
-                    },
-                    dismissButton = {
-                        TextButton(
-                            text = stringResource(R.string.action_cancel),
-                            onClick = onDismiss,
-                        )
-                    },
-                    onDismissRequest = onDismiss,
-                )
-            } else {
-                LaunchedEffect(Unit) {
-                    viewModel.perform(TorrentFileClick)
-                    diskPermissionState.launchPermissionRequest()
-                }
-            }
-        } else {
-            val torrentState by viewModel.state.collectAsState()
-            val openFileHandler = LocalOpenFileHandler.current
-            val torrentFile = torrentState.torrentFile
-            LaunchedEffect(Unit) {
-                if (torrentFile == null) {
-                    viewModel.perform(TorrentFileClick)
-                }
-            }
-            Dialog(onDismissRequest = onDismiss) {
-                Surface(
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.surface,
-                ) {
-                    Column {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 18.dp),
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Crossfade(targetState = torrentFile != null) { downloadCompleted ->
-                                    Icon(
-                                        imageVector = if (downloadCompleted) {
-                                            Icons.Default.FileDownloadDone
-                                        } else {
-                                            Icons.Default.FileDownload
-                                        },
-                                        contentDescription = null
-                                    )
-                                }
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(56.dp)
-                                        .padding(horizontal = 16.dp)
-                                        .weight(1f),
-                                    contentAlignment = Alignment.CenterStart,
-                                ) {
-                                    Crossfade(targetState = torrentFile != null) { downloadCompleted ->
-                                        if (downloadCompleted) {
-                                            Text(text = stringResource(R.string.topic_file_download_completed))
-                                        } else {
-                                            CircularProgressIndicator(
-                                                modifier = Modifier.size(16.dp),
-                                                strokeWidth = 2.dp,
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        Surface(tonalElevation = ContentElevation.small) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp),
-                                horizontalArrangement = Arrangement.End,
-                            ) {
-                                TextButton(
-                                    text = stringResource(R.string.action_cancel),
-                                    onClick = onDismiss,
-                                )
-                                TextButton(
-                                    text = stringResource(R.string.action_open_file),
-                                    onClick = {
-                                        openFileHandler.openFile(torrentFile.toString())
-                                        onDismiss()
-                                    },
-                                    enabled = torrentFile != null,
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    if (state == TorrentFileDialogState.Show) {
+        DownloadDialog(
+            dismiss = onDismiss,
+            openLogin = onLogin,
+        )
     }
 }
+
 
 private sealed interface MagnetLinkDialogState {
     object Hide : MagnetLinkDialogState
@@ -743,7 +606,7 @@ private sealed interface MagnetLinkDialogState {
 
 private sealed interface TorrentFileDialogState {
     object Hide : TorrentFileDialogState
-    data class Show(val viewModel: TorrentViewModel) : TorrentFileDialogState
+    object Show : TorrentFileDialogState
 }
 
 private fun Content.torrentImage(): PostContent.TorrentMainImage? {

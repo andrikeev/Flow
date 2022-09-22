@@ -12,15 +12,15 @@ import kotlinx.coroutines.launch
 import me.rutrackersearch.app.ui.common.Result
 import me.rutrackersearch.app.ui.forum.forumtree.ForumTreeAction.ExpandClick
 import me.rutrackersearch.app.ui.forum.forumtree.ForumTreeAction.RetryClick
-import me.rutrackersearch.models.forum.ForumTree
 import me.rutrackersearch.domain.usecase.LoadForumTreeUseCase
+import me.rutrackersearch.models.forum.ForumTree
 import javax.inject.Inject
 
 @HiltViewModel
 class ForumTreeViewModel @Inject constructor(
     private val loadForumTreeUseCase: LoadForumTreeUseCase,
 ) : ViewModel() {
-    private val mutableForumTreeLoading = MutableStateFlow<Result<me.rutrackersearch.models.forum.ForumTree>>(Result.Loading())
+    private val mutableForumTreeLoading = MutableStateFlow<Result<ForumTree>>(Result.Loading())
     private val mutableExpandedSet = MutableStateFlow<Set<String>>(emptySet())
 
     val state: StateFlow<ForumTreeState> = combine(
@@ -68,7 +68,7 @@ class ForumTreeViewModel @Inject constructor(
             .onFailure { mutableForumTreeLoading.emit(Result.Error(it)) }
     }
 
-    private fun me.rutrackersearch.models.forum.ForumTree.mapToViewState(expandedSet: Set<String>): List<ForumTreeItem> {
+    private fun ForumTree.mapToViewState(expandedSet: Set<String>): List<ForumTreeItem> {
         return children.mapIndexed { index, forumTreeRootGroup ->
             val forumTreeRootId = "c-$index"
             val isForumTreeRootExpanded = expandedSet.contains(forumTreeRootId)

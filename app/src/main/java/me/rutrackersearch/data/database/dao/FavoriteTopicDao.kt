@@ -9,6 +9,12 @@ import me.rutrackersearch.data.database.entity.FavoriteTopicEntity
 
 @Dao
 interface FavoriteTopicDao {
+    @Query("SELECT id FROM FavoriteTopic")
+    suspend fun getAllIds(): List<String>
+
+    @Query("SELECT * FROM FavoriteTopic")
+    suspend fun getAll(): List<FavoriteTopicEntity>
+
     @Query("SELECT * FROM FavoriteTopic ORDER by timestamp DESC")
     fun observerAll(): Flow<List<FavoriteTopicEntity>>
 
@@ -22,10 +28,13 @@ interface FavoriteTopicDao {
     suspend fun insert(entity: FavoriteTopicEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(entities: List<FavoriteTopicEntity>)
+    suspend fun insertAll(entities: Collection<FavoriteTopicEntity>)
 
     @Query("DELETE FROM FavoriteTopic WHERE id == :id")
     suspend fun deleteById(id: String)
+
+    @Query("DELETE FROM FavoriteTopic WHERE id IN (:ids)")
+    suspend fun deleteByIds(ids: Collection<String>)
 
     @Query("UPDATE FavoriteTopic SET hasUpdate = 0 WHERE id == :id")
     suspend fun update(id: String)

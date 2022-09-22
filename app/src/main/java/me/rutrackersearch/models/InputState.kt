@@ -1,4 +1,4 @@
-package me.rutrackersearch.app.ui.auth
+package me.rutrackersearch.models
 
 sealed class InputState(val value: String = "") {
     object Initial : InputState()
@@ -8,5 +8,5 @@ sealed class InputState(val value: String = "") {
 
     fun isError() = this is Empty || this is Invalid
 
-    fun isValid() = this is Initial || this is Valid
+    fun isValid() = this is Valid
 }

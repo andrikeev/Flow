@@ -8,7 +8,5 @@ import javax.inject.Singleton
 class RefreshFavoritesUseCase @Inject constructor(
     private val favoritesRepository: FavoritesRepository,
 ) {
-    suspend operator fun invoke() {
-        return favoritesRepository.loadFavorites()
-    }
+    suspend operator fun invoke() = favoritesRepository.loadFavorites()
 }

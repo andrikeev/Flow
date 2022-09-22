@@ -39,6 +39,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -103,20 +104,27 @@ private fun TextContent(textContent: TextContent) {
 
 private fun AnnotatedString.Builder.append(textContent: TextContent) {
     when (textContent) {
-        is TextContent.Text -> append(textContent.text)
+        is TextContent.Text -> {
+            val text = textContent.text
+            if (text == "\n" || text.isBlank()) append(textContent.text)
+            else append("${textContent.text} ")
+        }
         is TextContent.Default -> append(textContent.children)
         is TextContent.StyledText.Bold -> append(buildAnnotatedString {
             pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
             append(textContent.children)
         })
+
         is TextContent.StyledText.Crossed -> append(buildAnnotatedString {
             pushStyle(SpanStyle(textDecoration = TextDecoration.LineThrough))
             append(textContent.children)
         })
+
         is TextContent.StyledText.Italic -> append(buildAnnotatedString {
-            pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
+            pushStyle(SpanStyle(fontStyle = FontStyle.Italic))
             append(textContent.children)
         })
+
         is TextContent.StyledText.Underscore -> append(buildAnnotatedString {
             pushStyle(SpanStyle(textDecoration = TextDecoration.Underline))
             append(textContent.children)
@@ -139,7 +147,7 @@ private fun PostContent(content: PostContent) {
         is PostContent.PostList -> Box(content.children)
         is PostContent.Image -> Image(content.src)
         is PostContent.Link -> LinkItem(content.src, content.children)
-        PostContent.Hr -> Divider(modifier = Modifier.padding(vertical = 4.dp))
+        is PostContent.Hr -> Divider(modifier = Modifier.padding(vertical = 4.dp))
         is PostContent.TorrentMainImage -> Unit
     }
 }
@@ -231,6 +239,7 @@ private fun Quote(title: String, items: List<Content>) {
 @Composable
 private fun Image(src: String) {
     SubcomposeAsyncImage(
+        modifier = Modifier.padding(2.dp),
         model = src,
         contentDescription = null,
     ) {
@@ -240,10 +249,12 @@ private fun Image(src: String) {
                 painter = painter,
                 contentDescription = null,
             )
+
             is AsyncImagePainter.State.Loading -> CircularProgressIndicator(
                 modifier = Modifier.size(32.dp),
                 strokeWidth = 2.dp,
             )
+
             is AsyncImagePainter.State.Error -> Icon(
                 modifier = Modifier.size(48.dp),
                 imageVector = Icons.Outlined.ImageNotSupported,
@@ -298,4 +309,12 @@ private fun LinkItem(src: String, children: List<Content>) {
     }
 }
 
-private fun List<Content>.isTextContent(): Boolean = all { it is TextContent }
+private fun List<Content>.isTextContent(): Boolean = all { it.isTextContent() }
+
+private fun Content.isTextContent(): Boolean {
+    return when (this) {
+        is PostContent.Default -> children.all { it.isTextContent() }
+        is TextContent -> true
+        else -> false
+    }
+}

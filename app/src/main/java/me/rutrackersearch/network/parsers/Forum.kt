@@ -2,9 +2,7 @@ package me.rutrackersearch.network.parsers
 
 import me.rutrackersearch.models.Page
 import me.rutrackersearch.models.forum.Category
-import me.rutrackersearch.models.forum.ForumCategory
 import me.rutrackersearch.models.forum.ForumItem
-import me.rutrackersearch.models.forum.ForumTopic
 import me.rutrackersearch.models.topic.Author
 import me.rutrackersearch.models.topic.BaseTopic
 import me.rutrackersearch.models.topic.Torrent
@@ -19,7 +17,7 @@ import org.jsoup.Jsoup
 internal fun parseForumPage(html: String): Page<ForumItem> {
     val doc = Jsoup.parse(html)
     val categories = doc.select(".forumlink > a").map { element ->
-        ForumCategory(
+        ForumItem.Category(
             Category(
                 id = requireIdFromUrl(element.url(), "f"),
                 name = element.toStr(),
@@ -35,7 +33,7 @@ internal fun parseForumPage(html: String): Page<ForumItem> {
             name = element.select("a.topicAuthor").toStr().takeIf(String::isNotBlank)
                 ?: element.select(".vf-col-author").toStr(),
         )
-        ForumTopic(
+        ForumItem.Topic(
             if (status == null) {
                 BaseTopic(
                     id = id,

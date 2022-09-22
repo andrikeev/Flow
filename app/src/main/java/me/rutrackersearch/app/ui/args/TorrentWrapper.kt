@@ -11,7 +11,7 @@ import me.rutrackersearch.models.topic.Torrent
 @TypeParceler<Torrent, TorrentParceler>()
 class TorrentWrapper(val torrent: Torrent) : Parcelable
 
-fun Torrent.wrap(): Pair<String, Parcelable> = Key to TorrentWrapper(this.copy(description = null))
+fun Torrent.wrap(): Pair<String, Parcelable> = Key to TorrentWrapper(this)
 
 fun SavedStateHandle.requireTorrent(): Torrent = require<TorrentWrapper>(Key).torrent
 

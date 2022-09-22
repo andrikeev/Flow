@@ -10,7 +10,13 @@ import me.rutrackersearch.data.database.entity.BookmarkEntity
 @Dao
 interface BookmarkDao {
     @Query("SELECT * FROM Bookmark ORDER by timestamp DESC")
+    fun getAll(): List<BookmarkEntity>
+
+    @Query("SELECT * FROM Bookmark ORDER by timestamp DESC")
     fun observerAll(): Flow<List<BookmarkEntity>>
+
+    @Query("SELECT * FROM Bookmark WHERE id == :id")
+    fun getById(id: String): BookmarkEntity?
 
     @Query("SELECT id FROM Bookmark")
     fun observerIds(): Flow<List<String>>
@@ -20,9 +26,6 @@ interface BookmarkDao {
 
     @Query("SELECT newTopics FROM Bookmark")
     fun observeNewTopics(): Flow<List<String>>
-
-    @Query("SELECT topics FROM Bookmark WHERE id == :id")
-    suspend fun getTopics(id: String): List<String>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: BookmarkEntity)

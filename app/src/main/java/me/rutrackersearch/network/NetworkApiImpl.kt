@@ -1,6 +1,5 @@
 package me.rutrackersearch.network
 
-import me.rutrackersearch.models.error.Failure
 import me.rutrackersearch.models.search.Order
 import me.rutrackersearch.models.search.Period
 import me.rutrackersearch.models.search.Sort
@@ -49,14 +48,14 @@ class NetworkApiImpl @Inject constructor(
     override suspend fun addFavorite(id: String) {
         val response = ruTrackerApi.addFavorite(id, getFormToken())
         if (!response.contains("Тема добавлена")) {
-            throw Failure.BadRequest()
+            throw RuntimeException("Error adding favorite")
         }
     }
 
     override suspend fun removeFavorite(id: String) {
         val response = ruTrackerApi.removeFavorite(id, getFormToken())
         if (!response.contains("Тема удалена")) {
-            throw Failure.BadRequest()
+            throw RuntimeException("Error removing favorite")
         }
     }
 

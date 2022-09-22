@@ -8,14 +8,12 @@ sealed interface LoadState {
 
 data class LoadStates(
     val refresh: LoadState = LoadState.NotLoading,
-    val prepend: LoadState = LoadState.NotLoading,
     val append: LoadState = LoadState.NotLoading,
+    val prepend: LoadState = LoadState.NotLoading,
 ) {
     companion object {
-        val initial = LoadStates(
-            refresh = LoadState.Loading,
-            prepend = LoadState.NotLoading,
-            append = LoadState.NotLoading,
-        )
+        val idle = LoadStates()
+        val refresh = LoadStates(refresh = LoadState.Loading)
+        val append = LoadStates(append = LoadState.Loading)
     }
 }

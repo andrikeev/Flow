@@ -1,4 +1,4 @@
-package me.rutrackersearch.app.ui.common.auth
+package me.rutrackersearch.app.ui.common.account
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +29,8 @@ import me.rutrackersearch.app.ui.common.ConfirmationDialog
 import me.rutrackersearch.app.ui.common.ConfirmationDialogState
 import me.rutrackersearch.app.ui.common.TextButton
 import me.rutrackersearch.models.user.AuthState
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun AccountItem(
@@ -46,15 +47,15 @@ fun AccountItem(
 @Composable
 private fun AccountItem(
     modifier: Modifier = Modifier,
-    viewModel: AuthViewModel,
+    viewModel: AccountViewModel,
     onLogin: () -> Unit,
 ) {
-    val state by viewModel.state.collectAsState(AuthState.Unauthorized)
+    viewModel.collectSideEffect { onLogin() }
+    val state by viewModel.collectAsState()
     AccountItem(
         modifier = modifier,
         state = state,
-        onLogin = onLogin,
-        onLogout = viewModel::logout,
+        onAction = viewModel::perform,
     )
 }
 
@@ -62,23 +63,19 @@ private fun AccountItem(
 private fun AccountItem(
     modifier: Modifier = Modifier,
     state: AuthState,
-    onLogin: () -> Unit,
-    onLogout: () -> Unit,
+    onAction: (AccountAction) -> Unit,
 ) {
     var confirmationDialogState by remember {
         mutableStateOf<ConfirmationDialogState>(ConfirmationDialogState.Hide)
     }
 
     fun onLogoutWithConfirmation() {
-        confirmationDialogState = ConfirmationDialogState.Show(
-            message = R.string.confirmation_simple,
-            onConfirm = { onLogout() }
-        )
+        confirmationDialogState =
+            ConfirmationDialogState.Show(message = R.string.confirmation_simple,
+                onConfirm = { onAction(AccountAction.LogoutClick) })
     }
-    ConfirmationDialog(
-        state = confirmationDialogState,
-        onDismiss = { confirmationDialogState = ConfirmationDialogState.Hide }
-    )
+    ConfirmationDialog(state = confirmationDialogState,
+        onDismiss = { confirmationDialogState = ConfirmationDialogState.Hide })
 
     val avatarUrl = when (state) {
         is AuthState.Authorized -> state.account.avatarUrl
@@ -110,10 +107,11 @@ private fun AccountItem(
                         onClick = { onLogoutWithConfirmation() },
                     )
                 }
+
                 AuthState.Unauthorized -> {
                     TextButton(
                         text = stringResource(R.string.action_login),
-                        onClick = onLogin,
+                        onClick = { onAction(AccountAction.LoginClick) },
                     )
                 }
             }
@@ -145,5 +143,5 @@ private fun Avatar(url: String?) {
 )
 @Composable
 private fun AccountItem_Preview() {
-    AccountItem(state = AuthState.Unauthorized, onLogin = {}, onLogout = {})
+    AccountItem(state = AuthState.Unauthorized, onAction = {})
 }

@@ -4,43 +4,55 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import me.rutrackersearch.app.ui.args.requireId
 import me.rutrackersearch.app.ui.args.requirePid
-import me.rutrackersearch.app.ui.common.Result
 import me.rutrackersearch.domain.usecase.LoadTopicUseCase
-import me.rutrackersearch.models.topic.Topic
+import me.rutrackersearch.models.topic.BaseTopic
+import me.rutrackersearch.models.topic.Torrent
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
+import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @HiltViewModel
 class OpenTopicViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val loadTopicUseCase: LoadTopicUseCase,
-) : ViewModel() {
+) : ViewModel(), ContainerHost<OpenTopicState, OpenTopicSideEffect> {
     private val id: String = savedStateHandle.requireId()
     private val pid: String = savedStateHandle.requirePid()
-    private val mutableState = MutableStateFlow<Result<Topic>>(Result.Loading())
 
-    val state: StateFlow<Result<Topic>> = mutableState
+    override val container: Container<OpenTopicState, OpenTopicSideEffect> = container(
+        initialState = OpenTopicState.Loading,
+        onCreate = { loadTopic() },
+    )
 
-    init {
-        loadTopic()
+    fun perform(action: OpenTopicAction) {
+        when (action) {
+            OpenTopicAction.BackClick -> onBackClick()
+            OpenTopicAction.RetryClick -> loadTopic()
+        }
     }
 
-    fun retry() {
-        loadTopic()
+    private fun onBackClick() = intent {
+        postSideEffect(OpenTopicSideEffect.Back)
     }
 
-    private fun loadTopic() {
+    private fun loadTopic() = intent {
+        reduce { OpenTopicState.Loading }
         viewModelScope.launch {
-            mutableState.emit(Result.Loading())
-            kotlin.runCatching { loadTopicUseCase(id, pid) }
+            runCatching { loadTopicUseCase(id, pid) }
                 .onSuccess { topic ->
-                    mutableState.emit(Result.Content(topic))
+                    when (topic) {
+                        is BaseTopic -> postSideEffect(OpenTopicSideEffect.OpenTopic(topic))
+                        is Torrent -> postSideEffect(OpenTopicSideEffect.OpenTorrent(topic))
+                    }
                 }
-                .onFailure { mutableState.emit(Result.Error(it)) }
+                .onFailure { reduce { OpenTopicState.Error(it) } }
         }
     }
 }

@@ -17,7 +17,7 @@ class EnrichCategoriesUseCase @Inject constructor(
             .mapLatest { bookmarks ->
                 categories.map { category ->
                     CategoryModel(
-                        data = category,
+                        category = category,
                         isBookmark = bookmarks.contains(category.id),
                     )
                 }

@@ -29,7 +29,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -60,42 +59,40 @@ import me.rutrackersearch.app.ui.search.input.SearchInputAction.SuggestClick
 import me.rutrackersearch.app.ui.search.input.SearchInputAction.SuggestSelected
 import me.rutrackersearch.models.search.Filter
 import me.rutrackersearch.models.search.Suggest
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SearchInputScreen(
-    onBackClick: () -> Unit,
-    onSubmit: (Filter) -> Unit,
+    back: () -> Unit,
+    openSearch: (Filter) -> Unit,
 ) {
     SearchInputScreen(
         viewModel = hiltViewModel(),
-        onBackClick = onBackClick,
-        onSubmit = onSubmit,
+        back = back,
+        openSearch = openSearch,
     )
 }
 
 @Composable
 private fun SearchInputScreen(
     viewModel: SearchInputViewModel,
-    onBackClick: () -> Unit,
-    onSubmit: (Filter) -> Unit,
+    back: () -> Unit,
+    openSearch: (Filter) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
-    SearchInputScreen(state) { action ->
-        when (action) {
-            BackClick -> onBackClick()
-            is SubmitClick -> {
-                viewModel.perform(action)
-                onSubmit(state.filter.copy(query = action.query))
-            }
-            is SuggestClick -> {
-                viewModel.perform(action)
-                onSubmit(state.filter.copy(query = action.suggest.value))
-            }
-            ClearInputClick -> viewModel.perform(action)
-            is InputChanged -> viewModel.perform(action)
-            is SuggestSelected -> viewModel.perform(action)
+    val keyboardController = LocalSoftwareKeyboardController.current
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is SearchInputSideEffect.Back -> back()
+            is SearchInputSideEffect.HideKeyboard -> keyboardController?.hide()
+            is SearchInputSideEffect.OpenSearch -> openSearch(sideEffect.filter)
         }
     }
+    val state by viewModel.collectAsState()
+    SearchInputScreen(
+        state = state,
+        onAction = viewModel::perform,
+    )
 }
 
 @Composable
@@ -103,7 +100,7 @@ private fun SearchInputScreen(
     state: SearchInputState,
     onAction: (SearchInputAction) -> Unit,
 ) {
-    val (_, searchInput, suggests) = state
+    val (searchInput, suggests) = state
     val pinnedScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(pinnedScrollBehavior.nestedScrollConnection),
@@ -127,7 +124,7 @@ private fun SearchInputScreen(
                         ),
                         trailingIcon = {
                             AnimatedVisibility(
-                                visible = state.isClearButtonVisible,
+                                visible = state.showClearButton,
                                 enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
                                 exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center),
                             ) {

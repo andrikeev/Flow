@@ -7,7 +7,6 @@ import androidx.compose.material.icons.outlined.FiberNew
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,42 +20,45 @@ import me.rutrackersearch.app.ui.common.Loading
 import me.rutrackersearch.app.ui.common.TopicListItem
 import me.rutrackersearch.app.ui.common.dividedItems
 import me.rutrackersearch.app.ui.common.focusableItems
-import me.rutrackersearch.models.topic.TopicModel
 import me.rutrackersearch.models.topic.BaseTopic
 import me.rutrackersearch.models.topic.Topic
+import me.rutrackersearch.models.topic.TopicModel
 import me.rutrackersearch.models.topic.Torrent
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun FavoritesScreen(
-    onTopicClick: (Topic) -> Unit,
-    onTorrentClick: (Torrent) -> Unit,
+    openTopic: (Topic) -> Unit,
+    openTorrent: (Torrent) -> Unit,
 ) {
     FavoritesScreen(
         viewModel = hiltViewModel(),
-        onTopicClick = onTopicClick,
-        onTorrentClick = onTorrentClick,
+        openTopic = openTopic,
+        openTorrent = openTorrent,
     )
 }
 
 @Composable
 private fun FavoritesScreen(
     viewModel: FavoritesViewModel,
-    onTopicClick: (Topic) -> Unit,
-    onTorrentClick: (Torrent) -> Unit,
+    openTopic: (Topic) -> Unit,
+    openTorrent: (Torrent) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
-    FavoritesScreen(
-        state = state,
-        onTopicClick = onTopicClick,
-        onTorrentClick = onTorrentClick,
-    )
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is FavoritesSideEffect.OpenTopic -> openTopic(sideEffect.topic)
+            is FavoritesSideEffect.OpenTorrent -> openTorrent(sideEffect.torrent)
+        }
+    }
+    val state by viewModel.collectAsState()
+    FavoritesScreen(state, viewModel::perform)
 }
 
 @Composable
 private fun FavoritesScreen(
     state: FavoritesState,
-    onTopicClick: (Topic) -> Unit,
-    onTorrentClick: (Torrent) -> Unit,
+    onAction: (FavoritesAction) -> Unit,
 ) {
     when (state) {
         is FavoritesState.Initial -> Loading()
@@ -73,13 +75,13 @@ private fun FavoritesScreen(
                 ) {
                     dividedItems(
                         items = state.items,
-                        key = { it.data.id },
-                        contentType = { it.data::class },
+                        key = { it.topic.id },
+                        contentType = { it.topic::class },
                     ) {
                         FavoriteTopic(
                             topicModel = it,
-                            onTopicClick = onTopicClick,
-                            onTorrentClick = onTorrentClick,
+                            onTopicClick = { topic -> onAction(FavoritesAction.TopicClick(topic))},
+                            onTorrentClick = { torrent -> onAction(FavoritesAction.TorrentClick(torrent))},
                         )
                     }
                 }
@@ -92,13 +94,13 @@ private fun FavoritesScreen(
                 ) {
                     focusableItems(
                         items = state.items,
-                        key = { it.data.id },
-                        contentType = { it.data::class },
+                        key = { it.topic.id },
+                        contentType = { it.topic::class },
                     ) {
                         FavoriteTopic(
                             topicModel = it,
-                            onTopicClick = onTopicClick,
-                            onTorrentClick = onTorrentClick,
+                            onTopicClick = { topic -> onAction(FavoritesAction.TopicClick(topic))},
+                            onTorrentClick = { torrent -> onAction(FavoritesAction.TorrentClick(torrent))},
                         )
                     }
                 }
@@ -113,9 +115,9 @@ private fun FavoriteTopic(
     onTopicClick: (Topic) -> Unit,
     onTorrentClick: (Torrent) -> Unit,
 ) = TopicListItem(
-    topic = topicModel.data,
+    topic = topicModel.topic,
     onClick = {
-        when (val topic = topicModel.data) {
+        when (val topic = topicModel.topic) {
             is BaseTopic -> onTopicClick(topic)
             is Torrent -> onTorrentClick(topic)
         }
