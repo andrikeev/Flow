@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="topics_favorites_subtitle">Здесь будут отображаться темы, которые вы добавили в избранное</string>
+    <string name="topics_favorites_title">Избранное</string>
+    <string name="topics_history_subtitle">Здесь будет отображаться история просмотра тем</string>
+    <string name="topics_history_title">История</string>
+</resources>

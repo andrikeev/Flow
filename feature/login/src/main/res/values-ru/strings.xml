@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_screen_action_sign_in">Войти</string>
+    <string name="login_screen_captcha_hint">Проверочный код</string>
+    <string name="login_screen_captcha_empty_label">Введите проверочный код</string>
+    <string name="login_screen_header_subtitle">Используйте для входа свой аккаунт rutracker.org</string>
+    <string name="login_screen_header_title">Вход</string>
+    <string name="login_screen_password_hint">Пароль</string>
+    <string name="login_screen_password_empty_label">Не может быть пустым</string>
+    <string name="login_screen_username_hint">Имя пользователя</string>
+    <string name="login_screen_username_empty_label">Не может быть пустым</string>
+    <string name="login_screen_wrong_credits_label">Неверный логин или пароль</string>
+</resources>

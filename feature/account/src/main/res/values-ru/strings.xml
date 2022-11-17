@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="account_item_avatar_content_description">Аватарка</string>
+    <string name="account_item_login_action">Войти</string>
+    <string name="account_item_logout_action">Выйти</string>
+    <string name="account_item_logout_confirmation">Вы точно хотите выйти?</string>
+</resources>

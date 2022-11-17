@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_version">Версия: %1$s</string>
+
+    <string name="menu_data_clear_bookmarks">Очистить закладки</string>
+    <string name="menu_data_clear_bookmarks_confirmation">Удалить все сохарненные закладки?</string>
+    <string name="menu_data_clear_favorites">Очистить избранное</string>
+    <string name="menu_data_clear_favorites_confirmation">Удалить все избарнные темы?</string>
+    <string name="menu_data_clear_history">Очистить историю</string>
+    <string name="menu_data_clear_history_confirmation">Удалить историю запросов, подсказки и все посещённые темы?</string>
+    <string name="menu_label_data">Данные</string>
+    <string name="menu_label_misc">Другое</string>
+    <string name="menu_label_settings">Настройки</string>
+    <string name="menu_misc_about">О приложении</string>
+    <string name="menu_misc_contacts">Обратная связь</string>
+    <string name="menu_misc_privacy">Политики конфиденциальности</string>
+    <string name="menu_misc_rights">Информация для правообладателей</string>
+    <string name="menu_settings_bookmarks_sync">Синхронизация закладок</string>
+    <string name="menu_settings_favorites_sync">Синхронизация избранного</string>
+    <string name="menu_settings_theme">Тема</string>
+
+    <string name="sync_period_daily">Раз в день</string>
+    <string name="sync_period_hour">Каждый час</string>
+    <string name="sync_period_off">Откл.</string>
+    <string name="sync_period_six_hours">Каждые 6 часов</string>
+    <string name="sync_period_twelve_hours">Каждые 12 часов</string>
+    <string name="sync_period_weekly">Раз в неделю</string>
+
+    <string name="theme_dark">Тёмная</string>
+    <string name="theme_dynamic">Динамическая (Material You)</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_system">Системная</string>
+</resources>

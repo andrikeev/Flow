@@ -1,0 +1,6 @@
+<resources>
+    <string name="topics_favorites_subtitle">There will be list of favorites topics</string>
+    <string name="topics_favorites_title">Favorites</string>
+    <string name="topics_history_subtitle">There will be list of last visited topics</string>
+    <string name="topics_history_title">History</string>
+</resources>

@@ -1,26 +1,15 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("com.android.application")
-    id("dagger.hilt.android.plugin")
-    id("kotlin-parcelize")
-    kotlin("android")
-    kotlin("kapt")
+    id("flow.android.application")
+    id("flow.android.hilt")
 }
 
 android {
-    compileSdk = libs.versions.androidSdk.compileSdk.get().toInt()
-    buildToolsVersion = libs.versions.androidSdk.buildTools.get()
-
     defaultConfig {
         applicationId = "me.rutrackersearch.app"
-        minSdk = libs.versions.androidSdk.minSdk.get().toInt()
-        targetSdk = libs.versions.androidSdk.targetSdk.get().toInt()
         versionCode = 24
         versionName = "4.1.1"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -37,24 +26,7 @@ android {
         }
     }
 
-    buildFeatures {
-        compose = true
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = libs.versions.java.get()
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
-    }
-
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -63,25 +35,37 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:auth"))
+    implementation(project(":core:common"))
+    implementation(project(":core:data"))
+    implementation(project(":core:database"))
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:dispatchers"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:downloads"))
+    implementation(project(":core:logger"))
+    implementation(project(":core:models"))
+    implementation(project(":core:network"))
+    implementation(project(":core:notifications"))
+    implementation(project(":core:securestorage"))
+    implementation(project(":core:ui"))
+    implementation(project(":core:work"))
+
+    implementation(project(":feature:account"))
+    implementation(project(":feature:forum"))
+    implementation(project(":feature:login"))
+    implementation(project(":feature:menu"))
+    implementation(project(":feature:search"))
+    implementation(project(":feature:topic"))
+    implementation(project(":feature:topics"))
+
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.security.ktx)
-    implementation(libs.jsoup)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.material3)
-    implementation(libs.okhttp.logging)
 
     implementation(libs.bundles.accompanist)
     implementation(libs.bundles.coil)
-    implementation(libs.bundles.compose)
-    implementation(libs.bundles.hilt)
     implementation(libs.bundles.navigation)
     implementation(libs.bundles.network)
     implementation(libs.bundles.orbit)
-    implementation(libs.bundles.room)
-    implementation(libs.bundles.work)
-
-    debugImplementation(libs.bundles.composeDebug)
-
-    kapt(libs.bundles.hiltCompiler)
-    kapt(libs.bundles.roomCompile)
 }

@@ -1,4 +1,4 @@
-enableFeaturePreview("VERSION_CATALOGS")
+@file:Suppress("UnstableApiUsage")
 
 pluginManagement {
     repositories {
@@ -9,16 +9,8 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        // Register the AndroidX snapshot repository first so snapshots don't attempt (and fail)
-        // to download from the non-snapshot repositories
-        maven(url = "https://androidx.dev/snapshots/builds/8455591/artifacts/repository") {
-            content {
-                // The AndroidX snapshot repository will only have androidx artifacts, don't
-                // bother trying to find other ones
-                includeGroupByRegex("androidx\\..*")
-            }
-        }
         google()
         mavenCentral()
     }
@@ -27,3 +19,28 @@ dependencyResolutionManagement {
 rootProject.name = "Flow"
 
 include(":app")
+include(":core:auth")
+include(":core:common")
+include(":core:data")
+include(":core:dispatchers")
+include(":core:database")
+include(":core:designsystem")
+include(":core:domain")
+include(":core:downloads")
+include(":core:logger")
+include(":core:models")
+include(":core:network")
+include(":core:networkutils")
+include(":core:notifications")
+include(":core:securestorage")
+include(":core:testing")
+include(":core:ui")
+include(":core:work")
+
+include(":feature:account")
+include(":feature:forum")
+include(":feature:login")
+include(":feature:menu")
+include(":feature:search")
+include(":feature:topic")
+include(":feature:topics")

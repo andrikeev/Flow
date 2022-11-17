@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_screen_content_description_filter">Раскрыть фильтры</string>
+    <string name="search_screen_content_description_search">Начать поиск</string>
+    <string name="search_screen_filter_any">Любой</string>
+    <string name="search_screen_filter_author_label">Автор</string>
+    <string name="search_screen_filter_categories_all">Все</string>
+    <string name="search_screen_filter_categories_current">Текущие</string>
+    <string name="search_screen_filter_category_counter">выбрано %1$d</string>
+    <string name="search_screen_filter_category_label">Форум</string>
+    <string name="search_screen_filter_order_label">В порядке</string>
+    <string name="search_screen_filter_period_label">За</string>
+    <string name="search_screen_filter_sort_label">Сортировать по</string>
+    <string name="search_screen_history_item_all_categories">везде</string>
+    <string name="search_screen_history_item_author">от %1$s</string>
+    <string name="search_screen_history_item_categories">в %1$d категориях</string>
+    <string name="search_screen_history_item_category">в %1$s</string>
+    <string name="search_screen_history_item_period">Искать за %1$s</string>
+    <string name="search_screen_history_item_query">Искать \"%1$s\"</string>
+    <string name="search_screen_history_subtitle">Здесь будут сохраняться последние запросы</string>
+    <string name="search_screen_history_title">История запросов</string>
+    <string name="search_screen_input_hint">Поиск..</string>
+    <string name="search_screen_result_empty_subtitle">Попробуйте использовать ключевые слова или изменить настройки фильтрации</string>
+    <string name="search_screen_result_empty_title">Ничего не найдено</string>
+    <string name="search_screen_title">Поиск</string>
+    <string name="search_screen_unauthorized_subtitle">Для использования поиска необходимо авторизоваться</string>
+    <string name="search_screen_unauthorized_title">Нет авторизации</string>
+</resources>

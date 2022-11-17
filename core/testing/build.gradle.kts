@@ -1,0 +1,30 @@
+plugins {
+    id("flow.android.library")
+    id("flow.android.library.compose")
+    id("flow.android.hilt")
+}
+
+android {
+    namespace = "flow.testing"
+}
+
+dependencies {
+    api(project(":core:auth"))
+    api(project(":core:data"))
+    api(project(":core:dispatchers"))
+    api(project(":core:downloads"))
+    api(project(":core:logger"))
+    api(project(":core:models"))
+    api(project(":core:work"))
+
+    api(libs.junit4)
+    api(libs.androidx.test.core)
+    api(libs.kotlinx.coroutines.test)
+
+    api(libs.androidx.test.runner)
+    api(libs.androidx.test.rules)
+    api(libs.androidx.compose.ui.test)
+    api(libs.hilt.android.testing)
+
+    debugApi(libs.androidx.compose.ui.testManifest)
+}

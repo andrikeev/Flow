@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_updates_channel_name">Обновления избранного</string>
+    <string name="notification_updates_channel_description">Уведомления о новых темах или обновлении раздач</string>
+    <string name="notification_sync_channel_name">Фоновые задачи</string>
+    <string name="notification_sync_channel_description">Фоновое обновление контента</string>
+
+    <string name="notification_topic_update">Раздача обновлена</string>
+    <string name="notification_bookmark_update">Новые темы в разделе</string>
+    <string name="notification_running_task">Обновление..</string>
+</resources>

@@ -1,6 +1,4 @@
 <resources>
-
-    <style name="Theme.Flow" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
-
+    <style name="Theme.Flow" parent="Theme.Flow.DesignSystem" />
     <style name="Theme.Flow.Leanback" />
 </resources>

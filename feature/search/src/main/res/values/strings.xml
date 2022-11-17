@@ -1,0 +1,27 @@
+<resources>
+    <string name="search_screen_content_description_filter">Expand filters</string>
+    <string name="search_screen_content_description_search">Start search</string>
+    <string name="search_screen_filter_any">Any</string>
+    <string name="search_screen_filter_author_label">Author</string>
+    <string name="search_screen_filter_categories_all">All</string>
+    <string name="search_screen_filter_categories_current">Current</string>
+    <string name="search_screen_filter_category_counter">%1$d selected</string>
+    <string name="search_screen_filter_category_label">Categories</string>
+    <string name="search_screen_filter_order_label">Order by</string>
+    <string name="search_screen_filter_period_label">For</string>
+    <string name="search_screen_filter_sort_label">Sort by</string>
+    <string name="search_screen_history_item_all_categories">everywhere</string>
+    <string name="search_screen_history_item_author">by %1$s</string>
+    <string name="search_screen_history_item_categories">in %1$d categories</string>
+    <string name="search_screen_history_item_category">in %1$s</string>
+    <string name="search_screen_history_item_period">Search for %1$s</string>
+    <string name="search_screen_history_item_query">Search for \"%1$s\"</string>
+    <string name="search_screen_history_subtitle">There will be list of recent searches</string>
+    <string name="search_screen_history_title">Search history</string>
+    <string name="search_screen_input_hint">Search..</string>
+    <string name="search_screen_result_empty_subtitle">Try to use keywords or change filter parameters</string>
+    <string name="search_screen_result_empty_title">Nothing found</string>
+    <string name="search_screen_title">Search</string>
+    <string name="search_screen_unauthorized_subtitle">Authorization required to search</string>
+    <string name="search_screen_unauthorized_title">Unauthorized</string>
+</resources>
