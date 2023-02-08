@@ -1,17 +1,24 @@
 package flow.domain.usecase
 
-import flow.data.api.BookmarksRepository
-import flow.models.forum.CategoryModel
+import flow.data.api.repository.BookmarksRepository
+import flow.data.api.service.ForumService
+import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class UpdateBookmarkUseCase @Inject constructor(
+    private val forumService: ForumService,
     private val bookmarksRepository: BookmarksRepository,
 ) {
-    suspend operator fun invoke(category: CategoryModel) {
-        if (category.isBookmark) {
-            bookmarksRepository.remove(category.category)
-        } else {
-            bookmarksRepository.add(category.category)
+    suspend operator fun invoke(id: String) {
+        runCatching {
+            coroutineScope {
+                val category = forumService.getCategoryPage(id, 1)
+                bookmarksRepository.update(
+                    id = id,
+                    topics = category.items.topicsIds(),
+                    newTopics = emptyList(),
+                )
+            }
         }
     }
 }

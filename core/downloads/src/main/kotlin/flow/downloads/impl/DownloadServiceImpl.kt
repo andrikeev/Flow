@@ -9,7 +9,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
 import dagger.hilt.android.qualifiers.ApplicationContext
-import flow.auth.api.AuthRepository
+import flow.auth.api.TokenProvider
 import flow.downloads.api.DownloadService
 import java.io.File
 import java.net.URI
@@ -19,7 +19,7 @@ import kotlin.coroutines.suspendCoroutine
 
 class DownloadServiceImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val authRepository: AuthRepository,
+    private val tokenProvider: TokenProvider,
 ) : DownloadService {
     private val cache = mutableMapOf<String, String>()
 
@@ -53,7 +53,7 @@ class DownloadServiceImpl @Inject constructor(
                 val fileName = buildValidFatFilename(title.plus(".torrent"))
                 val uri = Uri.parse("https://rutracker.org/forum/dl.php?t=$id")
                 val request = DownloadManager.Request(uri)
-                    .addRequestHeader("Cookie", authRepository.getToken())
+                    .addRequestHeader("Cookie", tokenProvider.getToken())
                     .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName).setTitle(title)
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 downloadId = downloadManager.enqueue(request)

@@ -23,9 +23,9 @@ import dagger.hilt.components.SingletonComponent
 import flow.database.AppDatabase
 import flow.database.dao.BookmarkDao
 import flow.database.dao.FavoriteTopicDao
-import flow.database.dao.HistoryTopicDao
 import flow.database.dao.SearchHistoryDao
 import flow.database.dao.SuggestDao
+import flow.database.dao.VisitedTopicDao
 import javax.inject.Singleton
 
 @Module
@@ -42,7 +42,7 @@ object DaosModule {
 
     @Provides
     @Singleton
-    fun providesHistoryTopicDao(appDatabase: AppDatabase): HistoryTopicDao = appDatabase.historyTopicDao()
+    fun providesVisitedTopicDao(appDatabase: AppDatabase): VisitedTopicDao = appDatabase.visitedTopicDao()
 
     @Provides
     @Singleton

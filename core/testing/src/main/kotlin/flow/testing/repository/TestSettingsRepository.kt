@@ -1,6 +1,6 @@
 package flow.testing.repository
 
-import flow.data.api.SettingsRepository
+import flow.data.api.repository.SettingsRepository
 import flow.models.settings.Settings
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme

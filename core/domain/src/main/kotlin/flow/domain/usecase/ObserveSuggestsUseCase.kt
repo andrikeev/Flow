@@ -1,6 +1,6 @@
 package flow.domain.usecase
 
-import flow.data.api.SuggestsRepository
+import flow.data.api.repository.SuggestsRepository
 import flow.models.search.Suggest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

@@ -1,7 +1,7 @@
 package flow.securestorage
 
 import flow.models.settings.Settings
-import flow.models.user.Account
+import flow.securestorage.model.Account
 
 /**
  * Storage for secure data management.

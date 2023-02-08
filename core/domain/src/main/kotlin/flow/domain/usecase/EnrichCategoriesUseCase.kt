@@ -1,6 +1,6 @@
 package flow.domain.usecase
 
-import flow.data.api.BookmarksRepository
+import flow.data.api.repository.BookmarksRepository
 import flow.models.forum.Category
 import flow.models.forum.CategoryModel
 import kotlinx.coroutines.flow.Flow

@@ -1,11 +1,13 @@
 package flow.domain.usecase
 
 import flow.auth.api.AuthService
-import flow.auth.models.AuthResponse
+import flow.models.auth.AuthResult
+import flow.work.api.BackgroundService
 import javax.inject.Inject
 
 class LoginUseCase @Inject constructor(
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val backgroundService: BackgroundService,
 ) {
     suspend operator fun invoke(
         username: String,
@@ -13,7 +15,10 @@ class LoginUseCase @Inject constructor(
         captchaSid: String?,
         captchaCode: String?,
         captchaValue: String?,
-    ): AuthResponse {
-        return authService.login(username, password, captchaSid, captchaCode, captchaValue)
-    }
+    ): AuthResult = authService.login(username, password, captchaSid, captchaCode, captchaValue)
+        .also { authResult ->
+            if (authResult == AuthResult.Success) {
+                backgroundService.loadFavorites()
+            }
+        }
 }

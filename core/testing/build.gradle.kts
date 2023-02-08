@@ -9,13 +9,14 @@ android {
 }
 
 dependencies {
-    api(project(":core:auth"))
+    api(project(":core:auth:api"))
+    api(project(":core:auth:impl"))
     api(project(":core:data"))
     api(project(":core:dispatchers"))
     api(project(":core:downloads"))
     api(project(":core:logger"))
     api(project(":core:models"))
-    api(project(":core:work"))
+    api(project(":core:work:impl"))
 
     api(libs.junit4)
     api(libs.androidx.test.core)

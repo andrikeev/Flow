@@ -12,11 +12,11 @@ fun String?.wrapId(): Pair<String, Parcelable> = KeyId to IdWrapper(this.orEmpty
 fun String?.wrapPid(): Pair<String, Parcelable> = KeyPid to IdWrapper(this.orEmpty())
 
 fun SavedStateHandle.requireId(): String {
-    return require<IdWrapper>(flow.ui.args.KeyId).id
+    return require<IdWrapper>(KeyId).id
 }
 
 fun SavedStateHandle.requirePid(): String {
-    return require<IdWrapper>(flow.ui.args.KeyPid).id
+    return require<IdWrapper>(KeyPid).id
 }
 
 private const val KeyId = "id"

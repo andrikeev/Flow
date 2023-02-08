@@ -13,6 +13,6 @@ class TorrentWrapper(val torrent: Torrent) : Parcelable
 
 fun Torrent.wrap(): Pair<String, Parcelable> = Key to TorrentWrapper(this)
 
-fun SavedStateHandle.requireTorrent(): Torrent = require<TorrentWrapper>(flow.ui.args.Key).torrent
+fun SavedStateHandle.requireTorrent(): Torrent = require<TorrentWrapper>(Key).torrent
 
 private const val Key = "torrent"

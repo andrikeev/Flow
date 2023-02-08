@@ -7,11 +7,13 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:auth"))
+    implementation(project(":core:auth:api"))
+    implementation(project(":core:common"))
     implementation(project(":core:data"))
     implementation(project(":core:downloads"))
     implementation(project(":core:models"))
-    implementation(project(":core:work"))
+    implementation(project(":core:notifications"))
+    implementation(project(":core:work:api"))
 
     implementation(libs.javax.inject)
     implementation(libs.kotlinx.coroutines.core)

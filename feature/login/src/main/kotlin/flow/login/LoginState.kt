@@ -1,7 +1,7 @@
 package flow.login
 
-import flow.auth.models.Captcha
 import flow.models.InputState
+import flow.models.auth.Captcha
 
 data class LoginState(
     val isLoading: Boolean = false,

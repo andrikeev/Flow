@@ -1,16 +1,14 @@
 package flow.login
 
-import flow.auth.models.AuthResponse
-import flow.auth.models.Captcha
 import flow.domain.usecase.LoginUseCase
-import flow.domain.usecase.SaveAccountUseCase
 import flow.domain.usecase.TextValidationUseCase
 import flow.models.InputState
-import flow.testing.repository.TestAuthRepository
-import flow.testing.repository.TestAuthRepository.Companion.TestAccount
-import flow.testing.repository.TestFavoritesRepository
+import flow.models.auth.AuthResult
+import flow.models.auth.Captcha
+import flow.testing.logger.TestLoggerFactory
 import flow.testing.rule.MainDispatcherRule
 import flow.testing.service.TestAuthService
+import flow.testing.service.TestBackgroundService
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -22,20 +20,16 @@ class LoginViewModelTest {
     val dispatcherRule = MainDispatcherRule()
 
     private val authService = TestAuthService()
-    private val authRepository = TestAuthRepository()
-    private val favoritesRepository = TestFavoritesRepository()
+    private val backgroundService = TestBackgroundService()
 
     private lateinit var viewModel: LoginViewModel
 
     @Before
     fun setUp() {
         viewModel = LoginViewModel(
-            loginUseCase = LoginUseCase(authService),
-            saveAccountUseCase = SaveAccountUseCase(
-                authRepository = authRepository,
-                favoritesRepository = favoritesRepository,
-            ),
+            loginUseCase = LoginUseCase(authService, backgroundService),
             textValidationUseCase = TextValidationUseCase(),
+            loggerFactory = TestLoggerFactory(),
         )
     }
 
@@ -86,7 +80,7 @@ class LoginViewModelTest {
     @Test
     fun `Submit and receive Success`() = runTest {
         // set
-        authService.response = AuthResponse.Success(TestAccount)
+        authService.response = AuthResult.Success
         val containerTest = viewModel.test()
         // do
         containerTest.testIntent { perform(LoginAction.SubmitClick) }
@@ -105,7 +99,7 @@ class LoginViewModelTest {
     @Test
     fun `Submit and receive WrongCredits without Captcha`() = runTest {
         // set
-        authService.response = AuthResponse.WrongCredits(null)
+        authService.response = AuthResult.WrongCredits(null)
         val containerTest = viewModel.test()
         // do
         containerTest.testIntent { perform(LoginAction.SubmitClick) }
@@ -131,7 +125,7 @@ class LoginViewModelTest {
     @Test
     fun `Submit and receive WrongCredits with Captcha`() = runTest {
         // set
-        authService.response = AuthResponse.WrongCredits(TestCaptcha)
+        authService.response = AuthResult.WrongCredits(TestCaptcha)
         val containerTest = viewModel.test()
         // do
         containerTest.testIntent { perform(LoginAction.SubmitClick) }
@@ -158,7 +152,7 @@ class LoginViewModelTest {
     @Test
     fun `Submit and receive Captcha`() = runTest {
         // set
-        authService.response = AuthResponse.CaptchaRequired(TestCaptcha)
+        authService.response = AuthResult.CaptchaRequired(TestCaptcha)
         val containerTest = viewModel.test()
         // do
         containerTest.testIntent { perform(LoginAction.SubmitClick) }
@@ -183,7 +177,7 @@ class LoginViewModelTest {
     @Test
     fun `Submit and receive Error`() = runTest {
         // set
-        authService.response = AuthResponse.Error(TestError)
+        authService.response = AuthResult.Error(TestError)
         val containerTest = viewModel.test()
         // do
         containerTest.testIntent { perform(LoginAction.SubmitClick) }

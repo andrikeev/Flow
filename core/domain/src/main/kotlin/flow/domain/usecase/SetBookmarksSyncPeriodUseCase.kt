@@ -1,6 +1,6 @@
 package flow.domain.usecase
 
-import flow.data.api.SettingsRepository
+import flow.data.api.repository.SettingsRepository
 import flow.models.settings.SyncPeriod
 import flow.work.api.BackgroundService
 import javax.inject.Inject

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="forum_screen_title_bookmarks">Закладки</string>
-    <string name="forum_screen_bookmarks_empty_subtitle">Здесь будут отображаться ваши закладки</string>
-    <string name="forum_screen_bookmarks_empty_title">Закладки</string>
-    <string name="forum_screen_forum_empty_subtitle">Кажется, пока здесь ничего нет</string>
-    <string name="forum_screen_forum_empty_title">Пусто</string>
-    <string name="forum_screen_title_forum">Форум</string>
-</resources>

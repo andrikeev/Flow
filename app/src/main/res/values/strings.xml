@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Flow</string>
+    <string name="tab_title_bookmarks">Bookmarks</string>
+    <string name="tab_title_favorites">Favorites</string>
+    <string name="tab_title_forum">Forum</string>
+    <string name="tab_title_recents">Recents</string>
 </resources>

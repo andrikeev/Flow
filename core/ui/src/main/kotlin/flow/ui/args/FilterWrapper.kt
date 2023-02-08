@@ -14,7 +14,7 @@ class FilterWrapper(val filter: Filter) : Parcelable
 fun Filter.wrap(): Pair<String, Parcelable> = Key to FilterWrapper(this)
 
 fun SavedStateHandle.requireFilter(): Filter {
-    return require<FilterWrapper>(flow.ui.args.Key).filter
+    return require<FilterWrapper>(Key).filter
 }
 
 private const val Key = "filter"

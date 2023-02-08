@@ -1,0 +1,4 @@
+<resources>
+    <string name="forum_screen_forum_empty_subtitle">Page is empty</string>
+    <string name="forum_screen_forum_empty_title">Empty</string>
+</resources>

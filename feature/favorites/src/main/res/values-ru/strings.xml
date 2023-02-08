@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="favorites_empty_subtitle">Здесь будут отображаться темы, которые вы добавили в избранное</string>
+    <string name="favorites_empty_title">Избранное</string>
+</resources>

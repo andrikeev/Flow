@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import flow.domain.usecase.LoadTopicUseCase
+import flow.domain.usecase.GetTopicUseCase
 import flow.models.topic.BaseTopic
 import flow.models.topic.Torrent
 import flow.ui.args.requireId
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OpenTopicViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val loadTopicUseCase: LoadTopicUseCase,
+    private val getTopicUseCase: GetTopicUseCase,
 ) : ViewModel(), ContainerHost<OpenTopicState, OpenTopicSideEffect> {
     private val id: String = savedStateHandle.requireId()
     private val pid: String = savedStateHandle.requirePid()
@@ -45,7 +45,7 @@ class OpenTopicViewModel @Inject constructor(
     private fun loadTopic() = intent {
         reduce { OpenTopicState.Loading }
         viewModelScope.launch {
-            runCatching { loadTopicUseCase(id, pid) }
+            runCatching { getTopicUseCase(id, pid) }
                 .onSuccess { topic ->
                     when (topic) {
                         is BaseTopic -> postSideEffect(OpenTopicSideEffect.OpenTopic(topic))

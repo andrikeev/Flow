@@ -2,13 +2,11 @@ package flow.login
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import flow.auth.models.AuthResponse
 import flow.domain.usecase.LoginUseCase
-import flow.domain.usecase.SaveAccountUseCase
 import flow.domain.usecase.TextValidationUseCase
 import flow.logger.api.LoggerFactory
 import flow.models.InputState
-import flow.models.user.Account
+import flow.models.auth.AuthResult
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -20,7 +18,6 @@ import javax.inject.Inject
 @HiltViewModel
 internal class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val saveAccountUseCase: SaveAccountUseCase,
     private val textValidationUseCase: TextValidationUseCase,
     loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<LoginState, LoginSideEffect> {
@@ -58,20 +55,11 @@ internal class LoginViewModel @Inject constructor(
             state.captchaInput.value,
         )
         when (response) {
-            is AuthResponse.Success -> {
-                saveAccountUseCase(
-                    Account(
-                        response.account.id,
-                        state.usernameInput.value,
-                        state.passwordInput.value,
-                        response.account.token,
-                        response.account.avatarUrl,
-                    )
-                )
+            is AuthResult.Success -> {
                 postSideEffect(LoginSideEffect.Success)
             }
 
-            is AuthResponse.CaptchaRequired -> reduce {
+            is AuthResult.CaptchaRequired -> reduce {
                 state.copy(
                     isLoading = false,
                     captcha = response.captcha,
@@ -79,7 +67,7 @@ internal class LoginViewModel @Inject constructor(
                 )
             }
 
-            is AuthResponse.WrongCredits -> reduce {
+            is AuthResult.WrongCredits -> reduce {
                 state.copy(
                     isLoading = false,
                     usernameInput = InputState.Invalid(state.usernameInput.value),
@@ -89,7 +77,7 @@ internal class LoginViewModel @Inject constructor(
                 )
             }
 
-            is AuthResponse.Error -> {
+            is AuthResult.Error -> {
                 logger.e(response.error) { "Login error" }
                 postSideEffect(LoginSideEffect.Error(response.error))
                 reduce { state.copy(isLoading = false) }

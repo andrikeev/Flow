@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.DownloadTorrentUseCase
 import flow.domain.usecase.ObserveAuthStateUseCase
-import flow.models.user.isAuthorized
+import flow.models.auth.isAuthorized
 import flow.ui.args.requireTorrent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

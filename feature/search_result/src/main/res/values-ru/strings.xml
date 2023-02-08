@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_screen_content_description_filter">Раскрыть фильтры</string>
+    <string name="search_screen_content_description_search">Начать поиск</string>
+    <string name="search_screen_filter_any">Любой</string>
+    <string name="search_screen_filter_author_label">Автор</string>
+    <string name="search_screen_filter_categories_all">Все</string>
+    <string name="search_screen_filter_categories_current">Текущие</string>
+    <string name="search_screen_filter_category_counter">выбрано %1$d</string>
+    <string name="search_screen_filter_category_label">Форум</string>
+    <string name="search_screen_filter_order_label">В порядке</string>
+    <string name="search_screen_filter_period_label">За</string>
+    <string name="search_screen_filter_sort_label">Сортировать по</string>
+    <string name="search_screen_input_hint">Поиск..</string>
+    <string name="search_screen_result_empty_subtitle">Попробуйте использовать ключевые слова или изменить настройки фильтрации</string>
+    <string name="search_screen_result_empty_title">Ничего не найдено</string>
+</resources>

@@ -1,6 +1,6 @@
 package flow.domain.usecase
 
-import flow.data.api.SearchHistoryRepository
+import flow.data.api.repository.SearchHistoryRepository
 import flow.models.search.Search
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

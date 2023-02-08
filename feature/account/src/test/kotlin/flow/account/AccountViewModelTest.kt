@@ -2,15 +2,15 @@ package flow.account
 
 import flow.domain.usecase.LogoutUseCase
 import flow.domain.usecase.ObserveAuthStateUseCase
-import flow.models.user.AuthState
-import flow.testing.repository.TestAuthRepository
-import flow.testing.repository.TestAuthRepository.Companion.TestAccount
+import flow.models.auth.AuthState
 import flow.testing.repository.TestBookmarksRepository
 import flow.testing.repository.TestFavoritesRepository
 import flow.testing.repository.TestSearchHistoryRepository
 import flow.testing.repository.TestSuggestsRepository
-import flow.testing.repository.TestTopicHistoryRepository
+import flow.testing.repository.TestVisitedRepository
 import flow.testing.rule.MainDispatcherRule
+import flow.testing.service.TestAuthService
+import flow.testing.service.TestAuthService.Companion.TestAuthState
 import flow.testing.service.TestBackgroundService
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -24,19 +24,19 @@ internal class AccountViewModelTest {
     @get:Rule
     val dispatcherRule = MainDispatcherRule()
 
-    private val authRepository = TestAuthRepository()
+    private val authService = TestAuthService()
 
     private val logoutUseCase = LogoutUseCase(
-        authRepository = authRepository,
+        authService = authService,
         backgroundService = TestBackgroundService(),
         bookmarksRepository = TestBookmarksRepository(),
         favoritesRepository = TestFavoritesRepository(),
         searchHistoryRepository = TestSearchHistoryRepository(),
         suggestsRepository = TestSuggestsRepository(),
-        topicHistoryRepository = TestTopicHistoryRepository(),
+        visitedRepository = TestVisitedRepository(),
     )
     private val observeAuthStateUseCase = ObserveAuthStateUseCase(
-        authRepository = authRepository,
+        authService = authService,
     )
 
     private lateinit var viewModel: AccountViewModel
@@ -61,14 +61,13 @@ internal class AccountViewModelTest {
     fun `Authorized when created`() = runTest {
         //set
         val containerTest = viewModel.test()
-        authRepository.saveAccount(TestAccount)
         //do
         containerTest.runOnCreate()
         //check
         containerTest.assert(AuthState.Unauthorized) {
             states(
                 { AuthState.Unauthorized },
-                { AuthState.Authorized(TestAccount.name, TestAccount.avatarUrl) },
+                { TestAuthState },
             )
         }
     }
@@ -77,32 +76,15 @@ internal class AccountViewModelTest {
     fun `Unauthorised when ConfirmLogoutClick`() = runTest {
         //set
         val containerTest = viewModel.liveTest()
-        authRepository.saveAccount(TestAccount)
+        authService.authState.value = TestAuthState
         containerTest.runOnCreate()
         //do
         containerTest.testIntent { perform(AccountAction.ConfirmLogoutClick) }
         //check
         containerTest.assert(AuthState.Unauthorized) {
             states(
-                { AuthState.Authorized(TestAccount.name, TestAccount.avatarUrl) },
+                { TestAuthState },
                 { AuthState.Unauthorized },
-            )
-        }
-    }
-
-    @Test
-    fun `Authorized when account saved`() = runTest {
-        //set
-        val containerTest = viewModel.liveTest()
-        authRepository.clear()
-        containerTest.runOnCreate()
-        //do
-        authRepository.saveAccount(TestAccount)
-        //check
-        containerTest.assert(AuthState.Unauthorized) {
-            states(
-                { AuthState.Unauthorized },
-                { AuthState.Authorized(TestAccount.name, TestAccount.avatarUrl) },
             )
         }
     }

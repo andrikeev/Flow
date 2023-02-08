@@ -1,13 +1,13 @@
 package flow.domain.usecase
 
-import flow.data.api.ForumRepository
+import flow.data.api.service.ForumService
 import flow.models.forum.ForumTree
 import javax.inject.Inject
 
 class GetForumTreeUseCase @Inject constructor(
-    private val forumRepository: ForumRepository,
+    private val forumService: ForumService,
 ) {
     suspend operator fun invoke(): ForumTree {
-        return forumRepository.loadForumTree()
+        return forumService.loadForumTree()
     }
 }

@@ -1,12 +1,12 @@
 package flow.domain.usecase
 
-import flow.auth.api.AuthRepository
-import flow.models.user.AuthState
+import flow.auth.api.AuthService
+import flow.models.auth.AuthState
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObserveAuthStateUseCase @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authService: AuthService
 ) {
-    operator fun invoke(): Flow<AuthState> = authRepository.observeAuthState()
+    operator fun invoke(): Flow<AuthState> = authService.observeAuthState()
 }

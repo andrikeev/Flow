@@ -1,0 +1,4 @@
+<resources>
+    <string name="favorites_empty_subtitle">There will be list of favorites topics</string>
+    <string name="favorites_empty_title">Favorites</string>
+</resources>

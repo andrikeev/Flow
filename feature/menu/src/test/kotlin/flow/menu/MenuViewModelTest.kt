@@ -1,8 +1,8 @@
 package flow.menu
 
 import flow.domain.usecase.ClearBookmarksUseCase
-import flow.domain.usecase.ClearFavoritesUseCase
 import flow.domain.usecase.ClearHistoryUseCase
+import flow.domain.usecase.ClearLocalFavoritesUseCase
 import flow.domain.usecase.ObserveSettingsUseCase
 import flow.domain.usecase.SetBookmarksSyncPeriodUseCase
 import flow.domain.usecase.SetFavoritesSyncPeriodUseCase
@@ -14,7 +14,7 @@ import flow.testing.repository.TestFavoritesRepository
 import flow.testing.repository.TestSearchHistoryRepository
 import flow.testing.repository.TestSettingsRepository
 import flow.testing.repository.TestSuggestsRepository
-import flow.testing.repository.TestTopicHistoryRepository
+import flow.testing.repository.TestVisitedRepository
 import flow.testing.rule.MainDispatcherRule
 import flow.testing.service.TestBackgroundService
 import kotlinx.coroutines.test.runTest
@@ -32,7 +32,7 @@ class MenuViewModelTest {
     private val favoritesRepository = TestFavoritesRepository()
     private val suggestsRepository = TestSuggestsRepository()
     private val searchHistoryRepository = TestSearchHistoryRepository()
-    private val topicHistoryRepository = TestTopicHistoryRepository()
+    private val topicHistoryRepository = TestVisitedRepository()
     private val settingsRepository = TestSettingsRepository()
     private val backgroundService = TestBackgroundService()
 
@@ -42,11 +42,11 @@ class MenuViewModelTest {
     fun setUp() {
         viewModel = MenuViewModel(
             clearBookmarksUseCase = ClearBookmarksUseCase(bookmarksRepository),
-            clearFavoritesUseCase = ClearFavoritesUseCase(favoritesRepository),
+            clearLocalFavoritesUseCase = ClearLocalFavoritesUseCase(favoritesRepository),
             clearHistoryUseCase = ClearHistoryUseCase(
                 suggestsRepository = suggestsRepository,
                 searchHistoryRepository = searchHistoryRepository,
-                topicHistoryRepository = topicHistoryRepository,
+                visitedRepository = topicHistoryRepository,
             ),
             observeSettingsUseCase = ObserveSettingsUseCase(settingsRepository),
             setBookmarksSyncPeriodUseCase = SetBookmarksSyncPeriodUseCase(

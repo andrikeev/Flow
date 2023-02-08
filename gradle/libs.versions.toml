@@ -21,11 +21,14 @@ hilt = "2.43.2"
 hiltExt = "1.0.0"
 jsoup = "1.15.3"
 junit4 = "4.13.2"
+koin = "3.2.0-beta-1"
 kotlin = "1.7.20"
 kotlinxCoroutines = "1.6.4"
 kotlinxDatetime = "0.3.1"
+kotlinxSerialization = "1.4.1"
+ktor = "2.0.0"
+logback = "1.2.11"
 material3 = "1.8.0-alpha01"
-okhttp = "5.0.0-alpha.10"
 orbit = "4.4.0"
 room = "2.4.3"
 
@@ -71,13 +74,25 @@ hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hi
 javax-inject = { group = "javax.inject", name = "javax.inject", version = "1" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+koin = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-server-content-negotiation-jvm = { group = "io.ktor", name = "ktor-server-content-negotiation-jvm", version.ref = "ktor" }
+ktor-server-core-jvm = { group = "io.ktor", name = "ktor-server-core-jvm", version.ref = "ktor" }
+ktor-server-call-logging-jvm = { group = "io.ktor", name = "ktor-server-call-logging-jvm", version.ref = "ktor" }
+ktor-server-host-common-jvm = { group = "io.ktor", name = "ktor-server-host-common-jvm", version.ref = "ktor" }
+ktor-server-status-pages-jvm = { group = "io.ktor", name = "ktor-server-status-pages-jvm", version.ref = "ktor" }
+ktor-server-netty-jvm = { group = "io.ktor", name = "ktor-server-netty-jvm", version.ref = "ktor" }
+ktor-serialization-gson = { group = "io.ktor", name = "ktor-serialization-gson", version.ref = "ktor" }
+logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
 material3 = { group = "com.google.android.material", name = "material", version.ref = "material3" }
-okhttp-client = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
-okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 orbit-compose = { group = "org.orbit-mvi", name = "orbit-compose", version.ref = "orbit" }
 orbit-core = { group = "org.orbit-mvi", name = "orbit-core", version.ref = "orbit" }
 orbit-viewmodel = { group = "org.orbit-mvi", name = "orbit-viewmodel", version.ref = "orbit" }
@@ -89,13 +104,54 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-serializationPlugin = { group = "org.jetbrains.kotlin", name = "kotlin-serialization", version.ref = "kotlin" }
 
 [bundles]
-accompanist = ["accompanist-flowlayout", "accompanist-pager", "accompanist-permissions", "accompanist-systemuicontroller"]
-coil = ["coil-kt", "coil-kt-compose", "coil-kt-svg"]
-compose = ["androidx-paging-compose", "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-compose-ui-util"]
-navigation = ["androidx-hilt-navigation-compose", "androidx-navigation-compose"]
-network = ["okhttp-client", "okhttp-logging"]
-orbit = ["orbit-core", "orbit-viewmodel", "orbit-compose"]
-room = ["room-runtime", "room-ktx"]
-work = ["androidx-work-ktx", "hilt-ext-work"]
+accompanist = [
+    "accompanist-flowlayout",
+    "accompanist-pager",
+    "accompanist-permissions",
+    "accompanist-systemuicontroller"
+]
+coil = [
+    "coil-kt",
+    "coil-kt-compose",
+    "coil-kt-svg"
+]
+compose = [
+    "androidx-paging-compose",
+    "androidx-compose-ui-tooling",
+    "androidx-compose-ui-tooling-preview",
+    "androidx-compose-ui-util"
+]
+ktor-client = [
+    "ktor-client-core",
+    "ktor-client-cio",
+    "ktor-client-logging"
+]
+ktor-server = [
+    "ktor-server-content-negotiation-jvm",
+    "ktor-server-core-jvm",
+    "ktor-server-call-logging-jvm",
+    "ktor-server-host-common-jvm",
+    "ktor-server-status-pages-jvm",
+    "ktor-server-netty-jvm",
+    "ktor-serialization-gson"
+]
+navigation = [
+    "androidx-hilt-navigation-compose",
+    "androidx-navigation-compose"
+]
+orbit = [
+    "orbit-core",
+    "orbit-viewmodel",
+    "orbit-compose"
+]
+room = [
+    "room-runtime",
+    "room-ktx"
+]
+work = [
+    "androidx-work-ktx",
+    "hilt-ext-work"
+]

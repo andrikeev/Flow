@@ -1,6 +1,6 @@
 package flow.domain.usecase
 
-import flow.data.api.FavoritesRepository
+import flow.data.api.repository.FavoritesRepository
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import kotlinx.coroutines.flow.Flow
