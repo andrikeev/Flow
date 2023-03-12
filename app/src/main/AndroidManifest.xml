@@ -22,14 +22,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Flow"
+        android:theme="@style/Theme.Flow.Splash"
         tools:ignore="UnusedAttribute">
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleInstance"
-            android:theme="@style/Theme.Flow"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

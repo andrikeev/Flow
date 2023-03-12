@@ -65,6 +65,7 @@ dependencies {
     implementation(project(":feature:visited"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.material3)
 
