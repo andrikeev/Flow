@@ -1,7 +1,6 @@
 package flow.topic.open
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -10,6 +9,7 @@ import flow.designsystem.component.AppBar
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.Error
 import flow.designsystem.component.Loading
+import flow.designsystem.component.Scaffold
 import flow.models.topic.Topic
 import flow.models.topic.Torrent
 import flow.ui.component.getIllRes
@@ -54,8 +54,9 @@ private fun OpenTopicScreen(
 private fun OpenTopicScreen(
     state: OpenTopicState,
     onAction: (OpenTopicAction) -> Unit,
-) {
-    Scaffold(topBar = { AppBar(navigationIcon = { BackButton { onAction(OpenTopicAction.BackClick) } }) }) { padding ->
+) = Scaffold(
+    topBar = { AppBar(navigationIcon = { BackButton { onAction(OpenTopicAction.BackClick) } }) },
+    content = { padding ->
         when (state) {
             is OpenTopicState.Loading -> Loading(modifier = Modifier.padding(padding))
             is OpenTopicState.Error -> Error(
@@ -66,5 +67,5 @@ private fun OpenTopicScreen(
                 onRetryClick = { onAction(OpenTopicAction.RetryClick) },
             )
         }
-    }
-}
+    },
+)

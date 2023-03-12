@@ -45,6 +45,7 @@ dependencies {
     implementation(project(":core:downloads"))
     implementation(project(":core:logger"))
     implementation(project(":core:models"))
+    implementation(project(":core:navigation"))
     implementation(project(":core:network:impl"))
     implementation(project(":core:notifications"))
     implementation(project(":core:securestorage"))
@@ -64,13 +65,11 @@ dependencies {
     implementation(project(":feature:topic"))
     implementation(project(":feature:visited"))
 
+    implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.material3)
 
-    implementation(libs.bundles.accompanist)
-    implementation(libs.bundles.coil)
-    implementation(libs.bundles.navigation)
     implementation(libs.bundles.orbit)
 }

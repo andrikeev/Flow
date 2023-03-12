@@ -21,13 +21,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -54,11 +50,11 @@ import flow.designsystem.component.ExpandableAppBar
 import flow.designsystem.component.FavoriteButton
 import flow.designsystem.component.IconButton
 import flow.designsystem.component.LazyList
+import flow.designsystem.component.Scaffold
 import flow.designsystem.component.TextButton
 import flow.designsystem.drawables.FlowIcons
 import flow.models.topic.Post
 import flow.ui.component.Avatar
-import flow.ui.component.LocalSnackbarHostState
 import flow.ui.component.PageResult
 import flow.ui.component.Post
 import flow.ui.component.appendItems
@@ -89,7 +85,6 @@ private fun TopicScreen(
     onLoginClick: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
-    val snackbarState = remember { SnackbarHostState() }
     val onAction: (TopicAction) -> Unit = { action ->
         when (action) {
             is TopicAction.BackClick -> onBackClick()
@@ -97,9 +92,7 @@ private fun TopicScreen(
             else -> viewModel.perform(action)
         }
     }
-    CompositionLocalProvider(LocalSnackbarHostState provides snackbarState) {
-        MobileTopicScreen(state, onAction)
-    }
+    MobileTopicScreen(state, onAction)
 }
 
 @Composable
@@ -271,7 +264,6 @@ private fun MobileTopicScreen(
                 }
             }
         },
-        snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
     ) { padding ->
         val scrollState = rememberLazyListState()
         val firstVisibleItemIndex by remember {

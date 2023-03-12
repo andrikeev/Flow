@@ -22,12 +22,12 @@ import androidx.core.view.WindowCompat.setDecorFitsSystemWindows
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import flow.designsystem.platform.LocalPlatformType
 import flow.designsystem.platform.PlatformType
 import flow.models.settings.Theme
+import flow.navigation.NavigationController
+import flow.navigation.rememberNavigationController
 import flow.ui.platform.DeeplinkHandler
 import flow.ui.platform.LocalOpenFileHandler
 import flow.ui.platform.LocalOpenLinkHandler
@@ -40,7 +40,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.rutrackersearch.app.main.MainScreen
 import me.rutrackersearch.app.main.MainViewModel
-import me.rutrackersearch.app.navigation.Navigation
+import me.rutrackersearch.app.navigation.MobileNavigation
 import me.rutrackersearch.app.platform.DeeplinkHandlerImpl
 import me.rutrackersearch.app.platform.OpenFileHandlerImpl
 import me.rutrackersearch.app.platform.OpenLinkHandlerImpl
@@ -85,8 +85,8 @@ open class MainActivity : ComponentActivity() {
 
         setContent {
             theme?.let { theme ->
-                val navController = rememberNavController()
-                val deeplinkHandler = rememberDeeplinkHandler(navController)
+                val navigationController = rememberNavigationController()
+                val deeplinkHandler = rememberDeeplinkHandler(navigationController)
                 val linkHandler = rememberOpenLinkHandler(deeplinkHandler)
                 val shareLinkHandler = rememberShareLinkHandler()
                 val openFileHandler = rememberOpenFileHandler()
@@ -99,7 +99,7 @@ open class MainActivity : ComponentActivity() {
                     MainScreen(
                         theme = theme,
                         platformType = deviceType,
-                        content = { Navigation(navController) },
+                        content = { MobileNavigation(navigationController) },
                     )
                 }
             }
@@ -111,9 +111,9 @@ open class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun rememberDeeplinkHandler(navController: NavHostController): DeeplinkHandler {
+    private fun rememberDeeplinkHandler(navigationController: NavigationController): DeeplinkHandler {
         return remember {
-            DeeplinkHandlerImpl(navController).apply {
+            DeeplinkHandlerImpl(navigationController).apply {
                 newIntentListener = { intent ->
                     if (intent.data?.let(::handle) == false && intent.action == Intent.ACTION_VIEW) {
                         startActivity(Intent(Intent.ACTION_VIEW, intent.data))

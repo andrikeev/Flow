@@ -15,17 +15,16 @@ fun MainScreen(
     platformType: PlatformType,
     content: @Composable () -> Unit,
 ) {
-    val isDark = when (theme) {
-        Theme.DARK -> true
-        Theme.LIGHT -> false
-        Theme.SYSTEM,
-        Theme.DYNAMIC,
-        -> isSystemInDarkTheme()
-    } || platformType == PlatformType.TV
-    val isDynamic = theme == Theme.DYNAMIC
+    val isDark = platformType == PlatformType.TV || theme.isDark()
+    val isDynamic = theme.isDynamic()
     val systemUiController = rememberSystemUiController()
     LaunchedEffect(isDark) {
-        systemUiController.setSystemBarsColor(Color.Transparent, !isDark)
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = !isDark,
+            isNavigationBarContrastEnforced = false,
+            transformColorForLightContent = { Color.Transparent },
+        )
     }
     FlowTheme(
         isDark = isDark,
@@ -33,3 +32,13 @@ fun MainScreen(
         content = content,
     )
 }
+
+@Composable
+private fun Theme.isDark(): Boolean = when (this) {
+    Theme.DARK -> true
+    Theme.LIGHT -> false
+    Theme.SYSTEM -> isSystemInDarkTheme()
+    Theme.DYNAMIC -> isSystemInDarkTheme()
+}
+
+private fun Theme.isDynamic(): Boolean = this == Theme.DYNAMIC

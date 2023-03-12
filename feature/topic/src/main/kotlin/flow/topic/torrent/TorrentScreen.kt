@@ -18,13 +18,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +45,7 @@ import flow.designsystem.component.Error
 import flow.designsystem.component.FavoriteButton
 import flow.designsystem.component.IconButton
 import flow.designsystem.component.Loading
+import flow.designsystem.component.Scaffold
 import flow.designsystem.component.TextButton
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.Elevation
@@ -62,7 +59,6 @@ import flow.models.topic.Topic
 import flow.models.topic.TorrentDescription
 import flow.models.topic.isValid
 import flow.topic.download.DownloadDialog
-import flow.ui.component.LocalSnackbarHostState
 import flow.ui.component.Post
 import flow.ui.component.TorrentStatus
 import flow.ui.component.getIllRes
@@ -101,7 +97,6 @@ private fun TorrentScreen(
     openCategory: (Category) -> Unit,
     openSearch: (Filter) -> Unit,
 ) {
-    val snackbarState = remember { SnackbarHostState() }
     val shareLinkHandler = LocalShareLinkHandler.current
     var magnetLinkDialogState by remember {
         mutableStateOf<MagnetLinkDialogState>(MagnetLinkDialogState.Hide)
@@ -136,9 +131,7 @@ private fun TorrentScreen(
         }
     }
     val state by viewModel.collectAsState()
-    CompositionLocalProvider(LocalSnackbarHostState provides snackbarState) {
-        MobileTorrentScreen(state, viewModel::perform)
-    }
+    MobileTorrentScreen(state, viewModel::perform)
 }
 
 @Composable
@@ -176,7 +169,6 @@ private fun MobileTorrentScreen(
                 appBarState = scrollBehavior.state,
             )
         },
-        snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
     ) { padding ->
         LazyColumn(
             modifier = Modifier.padding(padding),

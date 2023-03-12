@@ -1,20 +1,20 @@
 package me.rutrackersearch.app.platform
 
 import android.net.Uri
-import androidx.navigation.NavHostController
 import flow.models.forum.Category
 import flow.models.search.Filter
 import flow.models.search.Order
 import flow.models.search.Period
 import flow.models.search.Sort
 import flow.models.topic.Author
+import flow.navigation.NavigationController
 import flow.ui.platform.DeeplinkHandler
 import me.rutrackersearch.app.navigation.openCategory
-import me.rutrackersearch.app.navigation.openSearchResult
 import me.rutrackersearch.app.navigation.openTopic
+import me.rutrackersearch.app.navigation.showSearchResult
 
 class DeeplinkHandlerImpl(
-    private val navController: NavHostController
+    private val navigationController: NavigationController,
 ) : DeeplinkHandler {
     override fun handle(uri: Uri): Boolean {
         return if (
@@ -29,7 +29,7 @@ class DeeplinkHandlerImpl(
                         val id = uri.getQueryParameters("t")
                         val pid = uri.getQueryParameters("p")
                         if (!id.isNullOrEmpty() || !pid.isNullOrEmpty()) {
-                            navController.openTopic(id = id.firstOrNull(), pid = pid.firstOrNull())
+                            navigationController.openTopic(id = id.firstOrNull(), pid = pid.firstOrNull())
                             true
                         } else {
                             false
@@ -38,7 +38,7 @@ class DeeplinkHandlerImpl(
 
                     path.contains("viewforum.php") -> {
                         uri.getQueryParameters("f")?.firstOrNull()?.let { id ->
-                            navController.openCategory(Category(id, ""))
+                            navigationController.openCategory(Category(id, ""))
                             true
                         } ?: false
                     }
@@ -88,7 +88,7 @@ class DeeplinkHandlerImpl(
                             author = author,
                             categories = categories,
                         )
-                        navController.openSearchResult(filter)
+                        navigationController.showSearchResult(filter)
                         true
                     }
 
