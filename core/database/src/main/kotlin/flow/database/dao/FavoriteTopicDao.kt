@@ -58,7 +58,7 @@ interface FavoriteTopicDao {
      * @param entities list of [FavoriteTopicEntity] to insert or replace
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(entities: Collection<FavoriteTopicEntity>)
+    suspend fun insert(entities: Collection<FavoriteTopicEntity>)
 
     /**
      * Remove [FavoriteTopicEntity] with provided id.
@@ -66,7 +66,7 @@ interface FavoriteTopicDao {
      * @param id [FavoriteTopicEntity.id] of entity to delete
      */
     @Query("DELETE FROM FavoriteTopic WHERE id == :id")
-    suspend fun deleteById(id: String)
+    suspend fun delete(id: String)
 
     /**
      * Remove [FavoriteTopicEntity]s with provided ids.
@@ -74,7 +74,7 @@ interface FavoriteTopicDao {
      * @param ids list of [FavoriteTopicEntity.id] of entities to delete
      */
     @Query("DELETE FROM FavoriteTopic WHERE id IN (:ids)")
-    suspend fun deleteByIds(ids: Collection<String>)
+    suspend fun delete(ids: Collection<String>)
 
     /**
      * Update [FavoriteTopicEntity] with provided id and set [FavoriteTopicEntity.hasUpdate] to false.

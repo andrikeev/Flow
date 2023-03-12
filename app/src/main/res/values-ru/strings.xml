@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_title_forum">Форум</string>
+    <string name="tab_title_recents">Недавние</string>
+    <string name="tab_title_bookmarks">Закладки</string>
+    <string name="tab_title_favorites">Избранное</string>
+</resources>

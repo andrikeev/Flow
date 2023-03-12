@@ -1,10 +1,13 @@
 package flow.domain.usecase
 
-import flow.data.api.FavoritesRepository
 import javax.inject.Inject
 
 class RefreshFavoritesUseCase @Inject constructor(
-    private val favoritesRepository: FavoritesRepository,
+    private val loadFavoritesUseCase: LoadFavoritesUseCase,
+    private val syncFavoritesUseCase: SyncFavoritesUseCase,
 ) {
-    suspend operator fun invoke() = favoritesRepository.loadFavorites()
+    suspend operator fun invoke() {
+        loadFavoritesUseCase()
+        syncFavoritesUseCase()
+    }
 }

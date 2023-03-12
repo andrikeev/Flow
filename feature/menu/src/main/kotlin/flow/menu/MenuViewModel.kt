@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.ClearBookmarksUseCase
-import flow.domain.usecase.ClearFavoritesUseCase
 import flow.domain.usecase.ClearHistoryUseCase
+import flow.domain.usecase.ClearLocalFavoritesUseCase
 import flow.domain.usecase.ObserveSettingsUseCase
 import flow.domain.usecase.SetBookmarksSyncPeriodUseCase
 import flow.domain.usecase.SetFavoritesSyncPeriodUseCase
@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class MenuViewModel @Inject constructor(
     private val clearBookmarksUseCase: ClearBookmarksUseCase,
-    private val clearFavoritesUseCase: ClearFavoritesUseCase,
+    private val clearLocalFavoritesUseCase: ClearLocalFavoritesUseCase,
     private val clearHistoryUseCase: ClearHistoryUseCase,
     private val observeSettingsUseCase: ObserveSettingsUseCase,
     private val setBookmarksSyncPeriodUseCase: SetBookmarksSyncPeriodUseCase,
@@ -40,7 +40,7 @@ internal class MenuViewModel @Inject constructor(
             is MenuAction.AboutClick -> postSideEffect(MenuSideEffect.ShowAbout)
             is MenuAction.ConfirmableAction -> postSideEffect(action.toConfirmation())
             is MenuAction.ClearBookmarksConfirmation -> clearBookmarksUseCase()
-            is MenuAction.ClearFavoritesConfirmation -> clearFavoritesUseCase()
+            is MenuAction.ClearFavoritesConfirmation -> clearLocalFavoritesUseCase()
             is MenuAction.ClearHistoryConfirmation -> clearHistoryUseCase()
             is MenuAction.LoginClick -> postSideEffect(MenuSideEffect.OpenLogin)
             is MenuAction.PrivacyPolicyClick -> postSideEffect(MenuSideEffect.OpenLink(PrivacyPolicyURL))

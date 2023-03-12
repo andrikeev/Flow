@@ -11,14 +11,4 @@ data class BookmarkEntity(
     val category: Category,
     val topics: List<String> = emptyList(),
     val newTopics: List<String> = emptyList(),
-) {
-    companion object {
-        fun of(category: Category): BookmarkEntity {
-            return BookmarkEntity(
-                id = category.id,
-                timestamp = System.currentTimeMillis(),
-                category = category,
-            )
-        }
-    }
-}
+)

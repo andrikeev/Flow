@@ -30,7 +30,7 @@ interface BookmarkDao {
      * @param id [BookmarkEntity.id]
      */
     @Query("SELECT * FROM Bookmark WHERE id == :id")
-    fun getById(id: String): BookmarkEntity?
+    fun get(id: String): BookmarkEntity?
 
     /**
      * Observe all [BookmarkEntity]'s ids.

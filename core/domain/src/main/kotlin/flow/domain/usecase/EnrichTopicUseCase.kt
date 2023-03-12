@@ -1,8 +1,8 @@
 package flow.domain.usecase
 
-import flow.data.api.BookmarksRepository
-import flow.data.api.FavoritesRepository
-import flow.data.api.TopicHistoryRepository
+import flow.data.api.repository.BookmarksRepository
+import flow.data.api.repository.FavoritesRepository
+import flow.data.api.repository.VisitedRepository
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import kotlinx.coroutines.flow.Flow
@@ -11,14 +11,14 @@ import javax.inject.Inject
 
 class EnrichTopicUseCase @Inject constructor(
     private val favoritesRepository: FavoritesRepository,
-    private val topicHistoryRepository: TopicHistoryRepository,
+    private val visitedRepository: VisitedRepository,
     private val bookmarksRepository: BookmarksRepository,
 ) {
     operator fun <T : Topic> invoke(topic: T): Flow<TopicModel<T>> {
         return combine(
             favoritesRepository.observeIds(),
             favoritesRepository.observeUpdatedIds(),
-            topicHistoryRepository.observeIds(),
+            visitedRepository.observeIds(),
             topic.category?.id?.let { id ->
                 bookmarksRepository.observeNewTopics(id)
             } ?: bookmarksRepository.observeNewTopics(),

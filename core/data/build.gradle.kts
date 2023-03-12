@@ -8,9 +8,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:auth:api"))
     implementation(project(":core:database"))
     implementation(project(":core:models"))
-    implementation(project(":core:network"))
+    implementation(project(":core:network:api"))
     implementation(project(":core:securestorage"))
-    implementation(project(":core:work"))
 }

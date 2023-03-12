@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.common.newCancelableScope
 import flow.domain.usecase.AddCommentUseCase
-import flow.domain.usecase.LoadTopicPageUseCase
+import flow.domain.usecase.GetTopicPageUseCase
 import flow.domain.usecase.VisitTopicUseCase
 import flow.models.topic.Post
 import flow.models.topic.TopicModel
@@ -28,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TopicViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val loadTopicPageUseCase: LoadTopicPageUseCase,
+    private val getTopicPageUseCase: GetTopicPageUseCase,
     private val visitTopicUseCase: VisitTopicUseCase,
     private val addCommentUseCase: AddCommentUseCase,
 ) : ViewModel() {
@@ -125,7 +125,7 @@ class TopicViewModel @Inject constructor(
                     initialPage = initialPage,
                     pageSize = PageSize,
                     fetchData = { page ->
-                        loadTopicPageUseCase(topic.id, page).also { loadedPage ->
+                        getTopicPageUseCase(topic.id, page).also { loadedPage ->
                             mutableFirstLoadedPageNumber.emit(
                                 if (mutableFirstLoadedPageNumber.value == 0) {
                                     loadedPage.page

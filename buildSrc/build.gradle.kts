@@ -11,6 +11,7 @@ repositories {
 dependencies {
     implementation(libs.android.gradlePlugin)
     implementation(libs.kotlin.gradlePlugin)
+    implementation(libs.kotlin.serializationPlugin)
     implementation(libs.hilt.gradlePlugin)
 }
 
@@ -39,6 +40,14 @@ gradlePlugin {
         register("kotlinLibrary") {
             id = "flow.kotlin.library"
             implementationClass = "KotlinLibraryConventionPlugin"
+        }
+        register("kotlinSerialization") {
+            id = "flow.kotlin.serialization"
+            implementationClass = "KotlinSerializationConventionPlugin"
+        }
+        register("ktorApplication") {
+            id = "flow.ktor.application"
+            implementationClass = "KtorApplicationConventionPlugin"
         }
     }
 }

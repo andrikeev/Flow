@@ -14,7 +14,7 @@ class CategoryWrapper(val category: Category) : Parcelable
 fun Category.wrap(): Pair<String, Parcelable> = Key to CategoryWrapper(this)
 
 fun SavedStateHandle.requireCategory(): Category {
-    return require<CategoryWrapper>(flow.ui.args.Key).category
+    return require<CategoryWrapper>(Key).category
 }
 
 private const val Key = "category"

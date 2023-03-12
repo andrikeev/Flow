@@ -1,6 +1,6 @@
 package flow.domain.usecase
 
-import flow.data.api.BookmarksRepository
+import flow.data.api.repository.BookmarksRepository
 import javax.inject.Inject
 
 class ClearBookmarksUseCase @Inject constructor(

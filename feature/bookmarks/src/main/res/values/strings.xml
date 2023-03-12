@@ -1,0 +1,5 @@
+<resources>
+    <string name="forum_screen_title_bookmarks">Bookmarks</string>
+    <string name="forum_screen_bookmarks_empty_subtitle">There will be list of forum bookmarks</string>
+    <string name="forum_screen_bookmarks_empty_title">Bookmarks</string>
+</resources>

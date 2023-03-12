@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.LogoutUseCase
 import flow.domain.usecase.ObserveAuthStateUseCase
-import flow.models.user.AuthState
+import flow.models.auth.AuthState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container

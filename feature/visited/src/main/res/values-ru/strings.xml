@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="visited_empty_subtitle">Здесь будет отображаться история просмотра тем</string>
+    <string name="visited_empty_title">Просмотренные</string>
+</resources>

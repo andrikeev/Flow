@@ -1,6 +1,6 @@
 package flow.domain.usecase
 
-import flow.data.api.SuggestsRepository
+import flow.data.api.repository.SuggestsRepository
 import javax.inject.Inject
 
 class AddSuggestUseCase @Inject constructor(

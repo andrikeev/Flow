@@ -1,6 +1,6 @@
 package flow.testing.repository
 
-import flow.data.api.SuggestsRepository
+import flow.data.api.repository.SuggestsRepository
 import kotlinx.coroutines.flow.Flow
 
 class TestSuggestsRepository : SuggestsRepository {

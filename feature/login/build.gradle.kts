@@ -8,6 +8,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:auth"))
+    implementation(project(":core:auth:api"))
     implementation(project(":core:logger"))
 }

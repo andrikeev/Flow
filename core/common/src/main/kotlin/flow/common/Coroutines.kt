@@ -17,4 +17,4 @@ fun CoroutineScope.relaunch(block: suspend CoroutineScope.() -> Unit) {
 fun CoroutineScope.launchCatching(
     onFailure: suspend (Throwable) -> Unit = {},
     block: suspend CoroutineScope.() -> Unit,
-): Job = launch { runCatching { coroutineScope(block) }.onFailure { onFailure(it) } }
+): Job = launch { kotlin.runCatching { coroutineScope(block) }.onFailure { onFailure(it) } }

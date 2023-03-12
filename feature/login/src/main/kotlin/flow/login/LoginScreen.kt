@@ -26,12 +26,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import flow.auth.models.Captcha
 import flow.designsystem.component.Scaffold
 import flow.designsystem.component.ThemePreviews
 import flow.designsystem.theme.FlowTheme
 import flow.login.LoginAction.SubmitClick
 import flow.models.InputState
+import flow.models.auth.Captcha
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect

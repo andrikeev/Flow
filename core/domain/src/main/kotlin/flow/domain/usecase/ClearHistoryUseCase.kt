@@ -1,18 +1,18 @@
 package flow.domain.usecase
 
-import flow.data.api.SearchHistoryRepository
-import flow.data.api.SuggestsRepository
-import flow.data.api.TopicHistoryRepository
+import flow.data.api.repository.VisitedRepository
+import flow.data.api.repository.SearchHistoryRepository
+import flow.data.api.repository.SuggestsRepository
 import javax.inject.Inject
 
 class ClearHistoryUseCase @Inject constructor(
     private val suggestsRepository: SuggestsRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
-    private val topicHistoryRepository: TopicHistoryRepository,
+    private val visitedRepository: VisitedRepository,
 ) {
     suspend operator fun invoke() {
         suggestsRepository.clear()
         searchHistoryRepository.clear()
-        topicHistoryRepository.clear()
+        visitedRepository.clear()
     }
 }

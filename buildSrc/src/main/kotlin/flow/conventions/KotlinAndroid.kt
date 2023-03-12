@@ -6,7 +6,6 @@ import org.gradle.api.JavaVersion
 /**
  * Configure base Kotlin with Android options
  */
-@Suppress("UnstableApiUsage")
 internal fun configureKotlinAndroid(
     commonExtension: CommonExtension<*, *, *, *>,
 ) {

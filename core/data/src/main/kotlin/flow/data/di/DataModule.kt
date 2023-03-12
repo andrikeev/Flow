@@ -4,26 +4,28 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import flow.data.api.BookmarksRepository
-import flow.data.api.FavoritesRepository
-import flow.data.api.ForumRepository
-import flow.data.api.SearchHistoryRepository
-import flow.data.api.SearchRepository
-import flow.data.api.SettingsRepository
-import flow.data.api.SuggestsRepository
-import flow.data.api.TopicHistoryRepository
-import flow.data.api.TopicRepository
-import flow.data.api.TorrentRepository
-import flow.data.impl.BookmarksRepositoryImpl
-import flow.data.impl.FavoritesRepositoryImpl
-import flow.data.impl.ForumRepositoryImpl
-import flow.data.impl.SearchHistoryRepositoryImpl
-import flow.data.impl.SearchRepositoryImpl
-import flow.data.impl.SettingsRepositoryImpl
-import flow.data.impl.SuggestsRepositoryImpl
-import flow.data.impl.TopicHistoryRepositoryImpl
-import flow.data.impl.TopicRepositoryImpl
-import flow.data.impl.TorrentRepositoryImpl
+import flow.data.api.repository.BookmarksRepository
+import flow.data.api.repository.FavoritesRepository
+import flow.data.api.repository.SearchHistoryRepository
+import flow.data.api.repository.SettingsRepository
+import flow.data.api.repository.SuggestsRepository
+import flow.data.api.repository.VisitedRepository
+import flow.data.api.service.FavoritesService
+import flow.data.api.service.ForumService
+import flow.data.api.service.SearchService
+import flow.data.api.service.TopicService
+import flow.data.api.service.TorrentService
+import flow.data.impl.repository.BookmarksRepositoryImpl
+import flow.data.impl.repository.FavoritesRepositoryImpl
+import flow.data.impl.repository.SearchHistoryRepositoryImpl
+import flow.data.impl.repository.SettingsRepositoryImpl
+import flow.data.impl.repository.SuggestsRepositoryImpl
+import flow.data.impl.repository.VisitedRepositoryImpl
+import flow.data.impl.service.FavoritesServiceImpl
+import flow.data.impl.service.ForumServiceImpl
+import flow.data.impl.service.SearchServiceImpl
+import flow.data.impl.service.TopicServiceImpl
+import flow.data.impl.service.TorrentServiceImpl
 import javax.inject.Singleton
 
 @Module
@@ -39,7 +41,11 @@ internal interface DataModule {
 
     @Binds
     @Singleton
-    fun forumRepository(impl: ForumRepositoryImpl): ForumRepository
+    fun favoritesService(impl: FavoritesServiceImpl): FavoritesService
+
+    @Binds
+    @Singleton
+    fun forumService(impl: ForumServiceImpl): ForumService
 
     @Binds
     @Singleton
@@ -47,7 +53,7 @@ internal interface DataModule {
 
     @Binds
     @Singleton
-    fun searchRepository(impl: SearchRepositoryImpl): SearchRepository
+    fun searchService(impl: SearchServiceImpl): SearchService
 
     @Binds
     @Singleton
@@ -59,13 +65,13 @@ internal interface DataModule {
 
     @Binds
     @Singleton
-    fun topicHistoryRepository(impl: TopicHistoryRepositoryImpl): TopicHistoryRepository
+    fun topicService(impl: TopicServiceImpl): TopicService
 
     @Binds
     @Singleton
-    fun topicRepository(impl: TopicRepositoryImpl): TopicRepository
+    fun torrentService(impl: TorrentServiceImpl): TorrentService
 
     @Binds
     @Singleton
-    fun torrentRepository(impl: TorrentRepositoryImpl): TorrentRepository
+    fun visitedRepository(impl: VisitedRepositoryImpl): VisitedRepository
 }

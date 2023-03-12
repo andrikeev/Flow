@@ -26,7 +26,7 @@ android {
         }
     }
 
-    packaging {
+    packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -35,7 +35,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:auth"))
+    implementation(project(":core:auth:impl"))
     implementation(project(":core:common"))
     implementation(project(":core:data"))
     implementation(project(":core:database"))
@@ -45,19 +45,24 @@ dependencies {
     implementation(project(":core:downloads"))
     implementation(project(":core:logger"))
     implementation(project(":core:models"))
-    implementation(project(":core:network"))
+    implementation(project(":core:network:impl"))
     implementation(project(":core:notifications"))
     implementation(project(":core:securestorage"))
     implementation(project(":core:ui"))
-    implementation(project(":core:work"))
+    implementation(project(":core:work:impl"))
 
     implementation(project(":feature:account"))
+    implementation(project(":feature:bookmarks"))
+    implementation(project(":feature:category"))
+    implementation(project(":feature:favorites"))
     implementation(project(":feature:forum"))
     implementation(project(":feature:login"))
     implementation(project(":feature:menu"))
     implementation(project(":feature:search"))
+    implementation(project(":feature:search_input"))
+    implementation(project(":feature:search_result"))
     implementation(project(":feature:topic"))
-    implementation(project(":feature:topics"))
+    implementation(project(":feature:visited"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
@@ -66,6 +71,5 @@ dependencies {
     implementation(libs.bundles.accompanist)
     implementation(libs.bundles.coil)
     implementation(libs.bundles.navigation)
-    implementation(libs.bundles.network)
     implementation(libs.bundles.orbit)
 }

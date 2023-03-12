@@ -5,7 +5,7 @@ import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import flow.models.user.AuthState
+import flow.models.auth.AuthState
 import flow.testing.rule.stringResource
 import org.junit.Rule
 import org.junit.Test

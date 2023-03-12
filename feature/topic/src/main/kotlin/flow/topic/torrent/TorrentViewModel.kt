@@ -11,11 +11,11 @@ import flow.domain.usecase.EnrichTorrentUseCase
 import flow.domain.usecase.ObserveAuthStateUseCase
 import flow.domain.usecase.ToggleFavoriteUseCase
 import flow.domain.usecase.VisitTopicUseCase
+import flow.models.auth.isAuthorized
 import flow.models.forum.Category
 import flow.models.search.Filter
 import flow.models.topic.Author
 import flow.models.topic.TopicModel
-import flow.models.user.isAuthorized
 import flow.ui.args.requireTorrent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

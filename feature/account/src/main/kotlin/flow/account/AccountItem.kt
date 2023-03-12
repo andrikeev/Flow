@@ -23,7 +23,7 @@ import flow.designsystem.component.DialogState
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
 import flow.designsystem.theme.FlowTheme
-import flow.models.user.AuthState
+import flow.models.auth.AuthState
 import flow.ui.component.Avatar
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -50,8 +50,8 @@ internal fun AccountItem(
     var confirmationDialogState by remember { mutableStateOf<DialogState>(DialogState.Hide) }
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is AccountSideEffect.HideLogoutConfirmation -> confirmationDialogState = DialogState.Hide
             is AccountSideEffect.OpenLogin -> onLoginClick()
+            is AccountSideEffect.HideLogoutConfirmation -> confirmationDialogState = DialogState.Hide
             is AccountSideEffect.ShowLogoutConfirmation -> confirmationDialogState = DialogState.Show
         }
     }

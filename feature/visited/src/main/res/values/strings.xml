@@ -1,0 +1,4 @@
+<resources>
+    <string name="visited_empty_subtitle">There will be list of last visited topics</string>
+    <string name="visited_empty_title">Visited</string>
+</resources>

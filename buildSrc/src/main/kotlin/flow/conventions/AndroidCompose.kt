@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package flow.conventions
 
 import com.android.build.api.dsl.CommonExtension

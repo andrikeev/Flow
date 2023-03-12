@@ -3,7 +3,7 @@ package flow.securestorage
 import flow.models.settings.Settings
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
-import flow.models.user.Account
+import flow.securestorage.model.Account
 import flow.securestorage.preferences.SecurePreferencesFactory
 import flow.securestorage.utils.clear
 import flow.securestorage.utils.edit

@@ -36,11 +36,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
-import flow.auth.models.Captcha
 import flow.designsystem.component.Button
 import flow.designsystem.component.Placeholder
 import flow.designsystem.drawables.FlowIcons
 import flow.models.InputState
+import flow.models.auth.Captcha
 import flow.ui.R as UiR
 
 @Composable

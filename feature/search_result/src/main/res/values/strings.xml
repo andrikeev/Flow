@@ -1,0 +1,16 @@
+<resources>
+    <string name="search_screen_content_description_filter">Expand filters</string>
+    <string name="search_screen_content_description_search">Start search</string>
+    <string name="search_screen_filter_any">Any</string>
+    <string name="search_screen_filter_author_label">Author</string>
+    <string name="search_screen_filter_categories_all">All</string>
+    <string name="search_screen_filter_categories_current">Current</string>
+    <string name="search_screen_filter_category_counter">%1$d selected</string>
+    <string name="search_screen_filter_category_label">Categories</string>
+    <string name="search_screen_filter_order_label">Order by</string>
+    <string name="search_screen_filter_period_label">For</string>
+    <string name="search_screen_filter_sort_label">Sort by</string>
+    <string name="search_screen_input_hint">Search..</string>
+    <string name="search_screen_result_empty_subtitle">Try to use keywords or change filter parameters</string>
+    <string name="search_screen_result_empty_title">Nothing found</string>
+</resources>
