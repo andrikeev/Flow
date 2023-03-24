@@ -17,13 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import flow.designsystem.component.ConfirmationDialog
 import flow.designsystem.component.DialogState
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
 import flow.designsystem.theme.FlowTheme
 import flow.models.auth.AuthState
+import flow.navigation.viewModel
 import flow.ui.component.Avatar
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -36,7 +36,7 @@ fun AccountItem(
 ) {
     AccountItem(
         modifier = modifier,
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(),
         onLoginClick = onLoginClick,
     )
 }

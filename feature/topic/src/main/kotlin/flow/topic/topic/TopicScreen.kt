@@ -43,7 +43,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.hilt.navigation.compose.hiltViewModel
 import flow.designsystem.component.AppBarDefaults
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.ExpandableAppBar
@@ -67,28 +66,16 @@ import flow.designsystem.R as DesignsystemR
 import flow.ui.R as UiR
 
 @Composable
-fun TopicScreen(
+internal fun TopicScreen(
+    viewModel: TopicViewModel,
     back: () -> Unit,
     openLogin: () -> Unit,
-) {
-    TopicScreen(
-        viewModel = hiltViewModel(),
-        onBackClick = back,
-        onLoginClick = openLogin,
-    )
-}
-
-@Composable
-private fun TopicScreen(
-    viewModel: TopicViewModel,
-    onBackClick: () -> Unit,
-    onLoginClick: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
     val onAction: (TopicAction) -> Unit = { action ->
         when (action) {
-            is TopicAction.BackClick -> onBackClick()
-            is TopicAction.LoginClick -> onLoginClick()
+            is TopicAction.BackClick -> back()
+            is TopicAction.LoginClick -> openLogin()
             else -> viewModel.perform(action)
         }
     }

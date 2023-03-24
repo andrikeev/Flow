@@ -124,12 +124,14 @@ class PagingDataLoader<T : Any>(
         mutableItems.value = pagingDataDiffer.snapshot().items
     }
 
-    private fun toLoadStates(combinedLoadStates: CombinedLoadStates): LoadStates {
-        return LoadStates(
-            refresh = toLoadState(combinedLoadStates.refresh),
-            prepend = toLoadState(combinedLoadStates.prepend),
-            append = toLoadState(combinedLoadStates.append),
-        )
+    private fun toLoadStates(combinedLoadStates: CombinedLoadStates?): LoadStates {
+        return combinedLoadStates?.let {
+            LoadStates(
+                refresh = toLoadState(combinedLoadStates.refresh),
+                prepend = toLoadState(combinedLoadStates.prepend),
+                append = toLoadState(combinedLoadStates.append),
+            )
+        } ?: LoadStates()
     }
 
     private fun toLoadState(loadState: androidx.paging.LoadState): LoadState {

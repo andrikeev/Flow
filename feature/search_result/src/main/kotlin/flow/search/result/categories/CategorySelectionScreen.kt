@@ -7,10 +7,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.RunOnComposition
 import flow.models.forum.Category
+import flow.navigation.viewModel
 import flow.search.result.categories.CategorySelectionAction.ExpandClick
 import flow.search.result.categories.CategorySelectionAction.RetryClick
 import flow.search.result.categories.CategorySelectionAction.SelectClick
@@ -32,7 +32,7 @@ internal fun CategorySelectionScreen(
     onCategoriesRemoved: (List<Category>) -> Unit,
 ) {
     CategorySelectionScreen(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(),
         selectedCategories = selectedCategories,
         onCategoriesSelected = onCategoriesSelected,
         onCategoriesRemoved = onCategoriesRemoved,

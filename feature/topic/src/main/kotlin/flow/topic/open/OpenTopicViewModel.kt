@@ -7,8 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.GetTopicUseCase
 import flow.models.topic.BaseTopic
 import flow.models.topic.Torrent
-import flow.ui.args.requireId
-import flow.ui.args.requirePid
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -23,8 +21,8 @@ class OpenTopicViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getTopicUseCase: GetTopicUseCase,
 ) : ViewModel(), ContainerHost<OpenTopicState, OpenTopicSideEffect> {
-    private val id: String = savedStateHandle.requireId()
-    private val pid: String = savedStateHandle.requirePid()
+    private val id: String = savedStateHandle.id
+    private val pid: String = savedStateHandle.pid
 
     override val container: Container<OpenTopicState, OpenTopicSideEffect> = container(
         initialState = OpenTopicState.Loading,

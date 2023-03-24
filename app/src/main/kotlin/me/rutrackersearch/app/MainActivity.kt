@@ -25,6 +25,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import flow.designsystem.platform.LocalPlatformType
 import flow.designsystem.platform.PlatformType
+import flow.main.MainScreen
+import flow.main.MainViewModel
 import flow.models.settings.Theme
 import flow.navigation.NavigationController
 import flow.navigation.rememberNavigationController
@@ -38,8 +40,6 @@ import flow.ui.platform.ShareLinkHandler
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import me.rutrackersearch.app.main.MainScreen
-import me.rutrackersearch.app.main.MainViewModel
 import me.rutrackersearch.app.navigation.MobileNavigation
 import me.rutrackersearch.app.platform.DeeplinkHandlerImpl
 import me.rutrackersearch.app.platform.OpenFileHandlerImpl

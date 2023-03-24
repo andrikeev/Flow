@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.AppBarDefaults
 import flow.designsystem.component.AppBarState
@@ -29,6 +28,7 @@ import flow.models.search.Filter
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import flow.models.topic.Torrent
+import flow.navigation.viewModel
 import flow.ui.component.CategoryListItem
 import flow.ui.component.LoadState
 import flow.ui.component.TopicListItem
@@ -49,7 +49,7 @@ fun CategoryScreen(
     openTorrent: (Torrent) -> Unit,
 ) {
     CategoryScreen(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(),
         back = back,
         openCategory = openCategory,
         openSearchInput = openSearchInput,
@@ -197,7 +197,7 @@ private fun CategoryScreenList(
 @Composable
 internal fun CategoryAppBar(state: AppBarState) {
     CategoryAppBar(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(),
         appBarState = state,
     )
 }

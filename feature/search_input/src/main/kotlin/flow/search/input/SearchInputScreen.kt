@@ -37,7 +37,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.AppBarDefaults
 import flow.designsystem.component.AppBarScrollBehavior
@@ -53,29 +52,17 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun SearchInputScreen(
-    back: () -> Unit,
-    openSearch: (Filter) -> Unit,
-) {
-    SearchInputScreen(
-        viewModel = hiltViewModel(),
-        back = back,
-        openSearch = openSearch,
-    )
-}
-
-@Composable
-private fun SearchInputScreen(
+internal fun SearchInputScreen(
     viewModel: SearchInputViewModel,
     back: () -> Unit,
-    openSearch: (Filter) -> Unit,
+    openSearchResult: (Filter) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is SearchInputSideEffect.Back -> back()
             is SearchInputSideEffect.HideKeyboard -> keyboardController?.hide()
-            is SearchInputSideEffect.OpenSearch -> openSearch(sideEffect.filter)
+            is SearchInputSideEffect.OpenSearch -> openSearchResult(sideEffect.filter)
         }
     }
     val state by viewModel.collectAsState()

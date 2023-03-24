@@ -1,41 +1,40 @@
 [versions]
-accompanist = "0.24.8-beta"
-androidGradlePlugin = "7.4.0-beta02"
-androidxActivity = "1.4.0"
-androidxComposeBom = "2022.11.00"
-androidxComposeCompiler = "1.3.2"
+accompanist = "0.30.0"
+androidGradlePlugin = "7.4.1"
+androidxActivity = "1.7.0"
+androidxComposeBom = "2023.03.00"
+androidxComposeCompiler = "1.4.4"
 androidxCore = "1.9.0"
 androidxCoreSplashscreen = "1.0.0"
-androidxLifecycle = "2.5.0-beta01"
-androidxNavigation = "2.5.2"
-androidxPaging = "1.0.0-alpha14"
-androidxSavedState = "1.1.0"
+androidxLifecycle = "2.6.1"
+androidxNavigation = "2.5.3"
+androidxPaging = "3.1.1"
+androidxSavedState = "1.2.1"
 androidxSecurity = "1.1.0-alpha03"
-androidxStartup = "1.1.1"
 androidxTestCore = "1.5.0-rc01"
 androidxTestExt = "1.1.3"
 androidxTestRunner = "1.4.0"
 androidxTestRules = "1.4.0"
-androidxWork = "2.7.1"
-coil = "2.0.0-rc01"
-hilt = "2.43.2"
+androidxWork = "2.8.1"
+coil = "2.3.0"
+hilt = "2.44"
 hiltExt = "1.0.0"
 jsoup = "1.15.3"
 junit4 = "4.13.2"
-koin = "3.2.0-beta-1"
-kotlin = "1.7.20"
+koin = "3.4.0"
+kotlin = "1.8.10"
 kotlinxCoroutines = "1.6.4"
 kotlinxDatetime = "0.3.1"
 kotlinxSerialization = "1.4.1"
 ktor = "2.0.0"
 logback = "1.2.11"
-material3 = "1.8.0-alpha01"
+material = "1.8.0"
 orbit = "4.4.0"
 room = "2.4.3"
 
 [libraries]
 accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "accompanist" }
-accompanist-pager = { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "accompanist" }
+accompanist-navigation-animation = { group = "com.google.accompanist", name = "accompanist-navigation-animation", version.ref = "accompanist" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
@@ -56,10 +55,9 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 androidx-lifecycle-viewModel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModel-savedState = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "androidxLifecycle" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
-androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidxPaging" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-runtime", version.ref = "androidxPaging" }
 androidx-savedstate-ktx = { group = "androidx.savedstate", name = "savedstate-ktx", version.ref = "androidxSavedState" }
 androidx-security-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "androidxSecurity" }
-androidx-startup = { group = "androidx.startup", name = "startup-runtime", version.ref = "androidxStartup" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
@@ -94,7 +92,7 @@ ktor-server-status-pages-jvm = { group = "io.ktor", name = "ktor-server-status-p
 ktor-server-netty-jvm = { group = "io.ktor", name = "ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-serialization-gson = { group = "io.ktor", name = "ktor-serialization-gson", version.ref = "ktor" }
 logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
-material3 = { group = "com.google.android.material", name = "material", version.ref = "material3" }
+material3 = { group = "com.google.android.material", name = "material", version.ref = "material" }
 orbit-compose = { group = "org.orbit-mvi", name = "orbit-compose", version.ref = "orbit" }
 orbit-core = { group = "org.orbit-mvi", name = "orbit-core", version.ref = "orbit" }
 orbit-viewmodel = { group = "org.orbit-mvi", name = "orbit-viewmodel", version.ref = "orbit" }
@@ -109,22 +107,10 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 kotlin-serializationPlugin = { group = "org.jetbrains.kotlin", name = "kotlin-serialization", version.ref = "kotlin" }
 
 [bundles]
-accompanist = [
-    "accompanist-flowlayout",
-    "accompanist-pager",
-    "accompanist-permissions",
-    "accompanist-systemuicontroller"
-]
 coil = [
     "coil-kt",
     "coil-kt-compose",
     "coil-kt-svg"
-]
-compose = [
-    "androidx-paging-compose",
-    "androidx-compose-ui-tooling",
-    "androidx-compose-ui-tooling-preview",
-    "androidx-compose-ui-util"
 ]
 ktor-client = [
     "ktor-client-core",
@@ -139,10 +125,6 @@ ktor-server = [
     "ktor-server-status-pages-jvm",
     "ktor-server-netty-jvm",
     "ktor-serialization-gson"
-]
-navigation = [
-    "androidx-hilt-navigation-compose",
-    "androidx-navigation-compose"
 ]
 orbit = [
     "orbit-core",

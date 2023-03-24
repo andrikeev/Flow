@@ -1,11 +1,18 @@
 package flow.ui.parcel
 
 import android.os.Parcel
+import android.os.Parcelable
 import flow.models.topic.Torrent
 import flow.models.topic.TorrentStatus
 import kotlinx.parcelize.Parceler
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.TypeParceler
 
-object TorrentParceler : Parceler<Torrent> {
+@Parcelize
+@TypeParceler<Torrent, TorrentParceler>()
+class TorrentWrapper(val torrent: Torrent) : Parcelable
+
+private object TorrentParceler : Parceler<Torrent> {
     override fun create(parcel: Parcel) = Torrent(
         id = parcel.requireString(),
         title = parcel.requireString(),

@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import flow.designsystem.component.AppBarDefaults
 import flow.designsystem.component.AppBarState
 import flow.designsystem.component.BackButton
@@ -44,23 +43,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun SearchResultScreen(
-    back: () -> Unit,
-    openSearchInput: (Filter) -> Unit,
-    openSearchResult: (Filter) -> Unit,
-    openTorrent: (Torrent) -> Unit,
-) {
-    SearchResultScreen(
-        viewModel = hiltViewModel(),
-        back = back,
-        openSearchInput = openSearchInput,
-        openSearchResult = openSearchResult,
-        openTorrent = openTorrent,
-    )
-}
-
-@Composable
-private fun SearchResultScreen(
+internal fun SearchResultScreen(
     viewModel: SearchResultViewModel,
     back: () -> Unit,
     openSearchInput: (Filter) -> Unit,

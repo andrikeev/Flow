@@ -34,23 +34,20 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
 import flow.designsystem.component.Button
 import flow.designsystem.component.Placeholder
 import flow.designsystem.drawables.FlowIcons
 import flow.models.InputState
 import flow.models.auth.Captcha
+import flow.ui.component.RemoteImage
 import flow.ui.R as UiR
 
 @Composable
-internal fun LoginScreenHeader() {
-    Placeholder(
-        modifier = Modifier.fillMaxSize(),
-        titleRes = R.string.login_screen_header_title,
-        subtitleRes = R.string.login_screen_header_subtitle,
-    )
-}
+internal fun LoginScreenHeader() = Placeholder(
+    modifier = Modifier.fillMaxSize(),
+    titleRes = R.string.login_screen_header_title,
+    subtitleRes = R.string.login_screen_header_subtitle,
+)
 
 @Composable
 internal fun UsernameInputField(
@@ -59,62 +56,60 @@ internal fun UsernameInputField(
     onChanged: (String) -> Unit,
     onSelectNext: () -> Unit,
     colors: TextFieldColors,
-) {
-    OutlinedTextField(
-        modifier = modifier
-            .padding(4.dp)
-            .onKeyEvent { event ->
-                when (event.key.keyCode) {
-                    Key.DirectionDown.keyCode -> {
-                        onSelectNext()
-                        true
-                    }
+) = OutlinedTextField(
+    modifier = modifier
+        .padding(4.dp)
+        .onKeyEvent { event ->
+            when (event.key.keyCode) {
+                Key.DirectionDown.keyCode -> {
+                    onSelectNext()
+                    true
+                }
 
-                    else -> {
-                        false
-                    }
+                else -> {
+                    false
                 }
             }
-            .autofill(
-                autofillTypes = listOf(
-                    AutofillType.Username,
-                    AutofillType.EmailAddress,
-                ),
-                onFill = onChanged,
+        }
+        .autofill(
+            autofillTypes = listOf(
+                AutofillType.Username,
+                AutofillType.EmailAddress,
             ),
-        value = state.usernameInput.value,
-        onValueChange = onChanged,
-        singleLine = true,
-        enabled = !state.isLoading,
-        isError = state.usernameInput.isError(),
-        label = {
-            Text(
-                stringResource(
-                    when (state.usernameInput) {
-                        is InputState.Empty -> R.string.login_screen_username_empty_label
-                        is InputState.Invalid -> R.string.login_screen_wrong_credits_label
-                        else -> R.string.login_screen_username_hint
-                    }
-                )
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = FlowIcons.Username,
-                contentDescription = null,
-            )
-        },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Ascii,
-            imeAction = ImeAction.Next,
-            autoCorrect = false,
+            onFill = onChanged,
         ),
-        keyboardActions = KeyboardActions(
-            onNext = { onSelectNext() }
-        ),
-        colors = colors,
-    )
-}
+    value = state.usernameInput.value,
+    onValueChange = onChanged,
+    singleLine = true,
+    enabled = !state.isLoading,
+    isError = state.usernameInput.isError(),
+    label = {
+        Text(
+            stringResource(
+                when (state.usernameInput) {
+                    is InputState.Empty -> R.string.login_screen_username_empty_label
+                    is InputState.Invalid -> R.string.login_screen_wrong_credits_label
+                    else -> R.string.login_screen_username_hint
+                }
+            )
+        )
+    },
+    leadingIcon = {
+        Icon(
+            imageVector = FlowIcons.Username,
+            contentDescription = null,
+        )
+    },
+    keyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Ascii,
+        imeAction = ImeAction.Next,
+        autoCorrect = false,
+    ),
+    keyboardActions = KeyboardActions(
+        onNext = { onSelectNext() }
+    ),
+    colors = colors,
+)
 
 @Composable
 internal fun PasswordInputField(
@@ -125,70 +120,68 @@ internal fun PasswordInputField(
     onSelectPrevious: () -> Unit = {},
     onSubmit: () -> Unit,
     colors: TextFieldColors,
-) {
-    OutlinedTextField(
-        modifier = modifier
-            .padding(4.dp)
-            .onKeyEvent { event ->
-                when (event.key.keyCode) {
-                    Key.DirectionUp.keyCode -> {
-                        onSelectPrevious()
-                        true
-                    }
+) = OutlinedTextField(
+    modifier = modifier
+        .padding(4.dp)
+        .onKeyEvent { event ->
+            when (event.key.keyCode) {
+                Key.DirectionUp.keyCode -> {
+                    onSelectPrevious()
+                    true
+                }
 
-                    Key.DirectionDown.keyCode -> {
-                        onSelectNext()
-                        true
-                    }
+                Key.DirectionDown.keyCode -> {
+                    onSelectNext()
+                    true
+                }
 
-                    else -> {
-                        false
-                    }
+                else -> {
+                    false
                 }
             }
-            .autofill(
-                autofillTypes = listOf(AutofillType.Password),
-                onFill = onChanged,
-            ),
-        value = state.passwordInput.value,
-        onValueChange = onChanged,
-        singleLine = true,
-        enabled = !state.isLoading,
-        isError = state.passwordInput.isError(),
-        visualTransformation = PasswordVisualTransformation(),
-        label = {
-            Text(
-                stringResource(
-                    when (state.passwordInput) {
-                        is InputState.Empty -> R.string.login_screen_password_empty_label
-                        is InputState.Invalid -> R.string.login_screen_wrong_credits_label
-                        else -> R.string.login_screen_password_hint
-                    }
-                )
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = FlowIcons.Password,
-                contentDescription = null,
-            )
-        },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = if (state.hasCaptcha) {
-                ImeAction.Next
-            } else {
-                ImeAction.Done
-            },
-            autoCorrect = false,
+        }
+        .autofill(
+            autofillTypes = listOf(AutofillType.Password),
+            onFill = onChanged,
         ),
-        keyboardActions = KeyboardActions(
-            onNext = { onSelectNext() },
-            onDone = { onSubmit() },
-        ),
-        colors = colors,
-    )
-}
+    value = state.passwordInput.value,
+    onValueChange = onChanged,
+    singleLine = true,
+    enabled = !state.isLoading,
+    isError = state.passwordInput.isError(),
+    visualTransformation = PasswordVisualTransformation(),
+    label = {
+        Text(
+            stringResource(
+                when (state.passwordInput) {
+                    is InputState.Empty -> R.string.login_screen_password_empty_label
+                    is InputState.Invalid -> R.string.login_screen_wrong_credits_label
+                    else -> R.string.login_screen_password_hint
+                }
+            )
+        )
+    },
+    leadingIcon = {
+        Icon(
+            imageVector = FlowIcons.Password,
+            contentDescription = null,
+        )
+    },
+    keyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Password,
+        imeAction = if (state.hasCaptcha) {
+            ImeAction.Next
+        } else {
+            ImeAction.Done
+        },
+        autoCorrect = false,
+    ),
+    keyboardActions = KeyboardActions(
+        onNext = { onSelectNext() },
+        onDone = { onSubmit() },
+    ),
+    colors = colors,
+)
 
 @Composable
 internal fun CaptchaInputField(
@@ -198,104 +191,100 @@ internal fun CaptchaInputField(
     onSelectPrevious: () -> Unit = {},
     onSubmit: () -> Unit,
     colors: TextFieldColors,
-) {
-    OutlinedTextField(
-        modifier = modifier
-            .padding(4.dp)
-            .onKeyEvent { event ->
-                when (event.key.keyCode) {
-                    Key.DirectionUp.keyCode -> {
-                        onSelectPrevious()
-                        true
-                    }
-
-                    else -> {
-                        false
-                    }
+) = OutlinedTextField(
+    modifier = modifier
+        .padding(4.dp)
+        .onKeyEvent { event ->
+            when (event.key.keyCode) {
+                Key.DirectionUp.keyCode -> {
+                    onSelectPrevious()
+                    true
                 }
-            },
-        value = state.captchaInput.value,
-        onValueChange = onChanged,
-        singleLine = true,
-        enabled = !state.isLoading,
-        isError = state.captchaInput.isError(),
-        label = {
-            Text(
-                stringResource(
-                    when (state.captchaInput) {
-                        is InputState.Empty -> R.string.login_screen_captcha_empty_label
-                        is InputState.Invalid -> R.string.login_screen_captcha_empty_label
-                        else -> R.string.login_screen_captcha_hint
-                    }
-                )
-            )
+
+                else -> {
+                    false
+                }
+            }
         },
-        leadingIcon = {
-            Icon(
-                imageVector = FlowIcons.Captcha,
-                contentDescription = null,
+    value = state.captchaInput.value,
+    onValueChange = onChanged,
+    singleLine = true,
+    enabled = !state.isLoading,
+    isError = state.captchaInput.isError(),
+    label = {
+        Text(
+            stringResource(
+                when (state.captchaInput) {
+                    is InputState.Empty -> R.string.login_screen_captcha_empty_label
+                    is InputState.Invalid -> R.string.login_screen_captcha_empty_label
+                    else -> R.string.login_screen_captcha_hint
+                }
             )
-        },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done,
-            autoCorrect = false,
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = { onSubmit() },
-        ),
-        colors = colors,
-    )
-}
+        )
+    },
+    leadingIcon = {
+        Icon(
+            imageVector = FlowIcons.Captcha,
+            contentDescription = null,
+        )
+    },
+    keyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Text,
+        imeAction = ImeAction.Done,
+        autoCorrect = false,
+    ),
+    keyboardActions = KeyboardActions(
+        onDone = { onSubmit() },
+    ),
+    colors = colors,
+)
 
 @Composable
 internal fun CaptchaImage(
     modifier: Modifier = Modifier,
     captcha: Captcha,
-) {
-    Box(
-        modifier = modifier.padding(8.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        SubcomposeAsyncImage(
-            model = captcha.url,
-            contentDescription = null,
-        ) {
-            when (painter.state) {
-                AsyncImagePainter.State.Empty,
-                is AsyncImagePainter.State.Success -> Image(
+) = Box(
+    modifier = modifier.padding(8.dp),
+    contentAlignment = Alignment.Center,
+    content = {
+        RemoteImage(
+            src = captcha.url,
+            contentDescription = stringResource(R.string.login_screen_captcha_hint),
+            onLoading = {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(32.dp),
+                    strokeWidth = 2.dp,
+                )
+            },
+            onSuccess = { painter ->
+                Image(
                     modifier = Modifier.fillMaxSize(),
                     painter = painter,
                     contentDescription = stringResource(R.string.login_screen_captcha_hint),
                 )
-
-                is AsyncImagePainter.State.Loading -> CircularProgressIndicator(
-                    modifier = Modifier.size(32.dp),
-                    strokeWidth = 2.dp,
-                )
-
-                is AsyncImagePainter.State.Error -> Image(
+            },
+            onError = {
+                Image(
                     modifier = Modifier.fillMaxSize(),
                     painter = painterResource(UiR.drawable.ill_placeholder),
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.login_screen_captcha_hint),
                     colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary),
                 )
-            }
-        }
-    }
-}
+            },
+        )
+    },
+)
 
 @Composable
 internal fun LoginButton(
     modifier: Modifier = Modifier,
     state: LoginState,
     onSubmit: () -> Unit,
-) {
-    Button(
-        modifier = modifier,
-        onClick = onSubmit,
-        enabled = !state.isLoading && state.isValid,
-    ) {
+) = Button(
+    modifier = modifier,
+    onClick = onSubmit,
+    enabled = !state.isLoading && state.isValid,
+    content = {
         if (state.isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier
@@ -305,8 +294,8 @@ internal fun LoginButton(
             )
         }
         Text(stringResource(R.string.login_screen_action_sign_in))
-    }
-}
+    },
+)
 
 private fun Modifier.autofill(
     autofillTypes: List<AutofillType>,
@@ -315,8 +304,8 @@ private fun Modifier.autofill(
     val autofill = LocalAutofill.current
     val autofillNode = AutofillNode(onFill = onFill, autofillTypes = autofillTypes)
     LocalAutofillTree.current += autofillNode
-    onGloballyPositioned {
-        autofillNode.boundingBox = it.boundsInWindow()
+    onGloballyPositioned { coordinates ->
+        autofillNode.boundingBox = coordinates.boundsInWindow()
     }.onFocusChanged { focusState ->
         autofill?.run {
             if (focusState.isFocused) {

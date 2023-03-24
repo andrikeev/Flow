@@ -29,10 +29,10 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 add("implementation", project(":core:dispatchers"))
                 add("implementation", project(":core:logger"))
                 add("implementation", project(":core:models"))
+                add("implementation", project(":core:navigation"))
                 add("implementation", project(":core:testing"))
                 add("implementation", project(":core:ui"))
 
-                add("implementation", libs.findLibrary("androidx.hilt.navigation.compose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewModel.compose").get())
                 add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
 

@@ -35,7 +35,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import flow.account.AccountItem
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.AppBarDefaults
@@ -61,6 +60,7 @@ import flow.menu.MenuAction.SetFavoritesSyncPeriod
 import flow.menu.MenuAction.SetTheme
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
+import flow.navigation.viewModel
 import flow.ui.platform.LocalOpenLinkHandler
 import kotlinx.coroutines.job
 import org.orbitmvi.orbit.compose.collectAsState
@@ -71,7 +71,7 @@ import flow.ui.R as UiR
 @Composable
 fun MenuScreen(openLogin: () -> Unit) {
     MenuScreen(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(),
         openLogin = openLogin,
     )
 }
@@ -159,10 +159,8 @@ internal fun MenuScreen(
                 text = { Text(stringResource(R.string.menu_data_clear_history)) },
                 onClick = {
                     onAction(
-                        ConfirmableAction(
-                            confirmationMessage = R.string.menu_data_clear_history_confirmation,
-                            onConfirmAction = { onAction(ClearHistoryConfirmation) }
-                        )
+                        ConfirmableAction(confirmationMessage = R.string.menu_data_clear_history_confirmation,
+                            onConfirmAction = { onAction(ClearHistoryConfirmation) })
                     )
                 },
             )
@@ -170,10 +168,8 @@ internal fun MenuScreen(
                 text = { Text(stringResource(R.string.menu_data_clear_bookmarks)) },
                 onClick = {
                     onAction(
-                        ConfirmableAction(
-                            confirmationMessage = R.string.menu_data_clear_bookmarks_confirmation,
-                            onConfirmAction = { onAction(ClearBookmarksConfirmation) }
-                        )
+                        ConfirmableAction(confirmationMessage = R.string.menu_data_clear_bookmarks_confirmation,
+                            onConfirmAction = { onAction(ClearBookmarksConfirmation) })
                     )
                 },
             )
@@ -181,10 +177,8 @@ internal fun MenuScreen(
                 text = { Text(stringResource(R.string.menu_data_clear_favorites)) },
                 onClick = {
                     onAction(
-                        ConfirmableAction(
-                            confirmationMessage = R.string.menu_data_clear_favorites_confirmation,
-                            onConfirmAction = { onAction(ClearFavoritesConfirmation) }
-                        )
+                        ConfirmableAction(confirmationMessage = R.string.menu_data_clear_favorites_confirmation,
+                            onConfirmAction = { onAction(ClearFavoritesConfirmation) })
                     )
                 },
             )
@@ -210,7 +204,7 @@ internal fun MenuScreen(
 }
 
 private fun LazyListScope.menuAccountItem(
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
 ) = item { AccountItem(onLoginClick = onLoginClick) }
 
 private fun LazyListScope.menuItem(
@@ -245,9 +239,7 @@ private fun MenuItem(
     onClick: () -> Unit,
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
+        modifier = Modifier.fillMaxWidth().height(56.dp),
         onClick = onClick,
     ) {
         Box(
@@ -269,9 +261,7 @@ private fun <T> MenuSelectionItem(
 ) {
     var showDropdown by remember { mutableStateOf(false) }
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(72.dp),
+        modifier = Modifier.fillMaxWidth().height(72.dp),
         onClick = { showDropdown = true },
     ) {
         Column(
@@ -369,8 +359,7 @@ private fun getPackageInfo(): PackageInfo? {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
             } else {
-                @Suppress("DEPRECATION")
-                packageManager.getPackageInfo(packageName, 0)
+                @Suppress("DEPRECATION") packageManager.getPackageInfo(packageName, 0)
             }
         }.getOrElse { null }
     }

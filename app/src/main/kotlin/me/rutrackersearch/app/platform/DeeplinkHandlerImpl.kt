@@ -9,9 +9,6 @@ import flow.models.search.Sort
 import flow.models.topic.Author
 import flow.navigation.NavigationController
 import flow.ui.platform.DeeplinkHandler
-import me.rutrackersearch.app.navigation.openCategory
-import me.rutrackersearch.app.navigation.openTopic
-import me.rutrackersearch.app.navigation.showSearchResult
 
 class DeeplinkHandlerImpl(
     private val navigationController: NavigationController,
@@ -29,7 +26,7 @@ class DeeplinkHandlerImpl(
                         val id = uri.getQueryParameters("t")
                         val pid = uri.getQueryParameters("p")
                         if (!id.isNullOrEmpty() || !pid.isNullOrEmpty()) {
-                            navigationController.openTopic(id = id.firstOrNull(), pid = pid.firstOrNull())
+//                            navigationController.openTopic(id = id.firstOrNull(), pid = pid.firstOrNull())
                             true
                         } else {
                             false
@@ -38,7 +35,7 @@ class DeeplinkHandlerImpl(
 
                     path.contains("viewforum.php") -> {
                         uri.getQueryParameters("f")?.firstOrNull()?.let { id ->
-                            navigationController.openCategory(Category(id, ""))
+                            //navigationController.openCategory(Category(id, ""))
                             true
                         } ?: false
                     }
@@ -88,7 +85,7 @@ class DeeplinkHandlerImpl(
                             author = author,
                             categories = categories,
                         )
-                        navigationController.showSearchResult(filter)
+                        //navigationController.openSearchResult(filter = filter)
                         true
                     }
 

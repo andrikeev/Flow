@@ -8,12 +8,11 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.ListenableWorker
 import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
-import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import flow.models.settings.SyncPeriod
 import flow.work.api.BackgroundService
 import flow.work.workers.AddFavoriteWorker
@@ -72,7 +71,11 @@ internal class WorkBackgroundService @Inject constructor(
         } else {
             val data = DelegatingWorker.delegateData(SyncFavoritesWorker::class)
             val workRequest = periodicWorkRequest<DelegatingWorker>(syncPeriod, data)
-            workManager.enqueueUniquePeriodicWork(SyncFavoritesWork, ExistingPeriodicWorkPolicy.REPLACE, workRequest)
+            workManager.enqueueUniquePeriodicWork(
+                SyncFavoritesWork,
+                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+                workRequest,
+            )
         }
     }
 
@@ -82,7 +85,11 @@ internal class WorkBackgroundService @Inject constructor(
         } else {
             val data = DelegatingWorker.delegateData(SyncBookmarksWorker::class)
             val workRequest = periodicWorkRequest<DelegatingWorker>(syncPeriod, data)
-            workManager.enqueueUniquePeriodicWork(SyncBookmarksWork, ExistingPeriodicWorkPolicy.REPLACE, workRequest)
+            workManager.enqueueUniquePeriodicWork(
+                SyncBookmarksWork,
+                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+                workRequest,
+            )
         }
     }
 
@@ -105,7 +112,7 @@ internal class WorkBackgroundService @Inject constructor(
             setConstraints(requiredNetworkConstraints())
             setBackoffCriteria(
                 BackoffPolicy.LINEAR,
-                OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                WorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS,
             )
         }.build()
@@ -124,7 +131,7 @@ internal class WorkBackgroundService @Inject constructor(
             setConstraints(requiredNetworkConstraints())
             setBackoffCriteria(
                 BackoffPolicy.LINEAR,
-                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                WorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS,
             )
         }.build()
