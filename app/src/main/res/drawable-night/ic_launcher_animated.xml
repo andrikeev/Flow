@@ -1,0 +1,57 @@
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="108dp"
+            android:height="108dp"
+            android:viewportWidth="108"
+            android:viewportHeight="108">
+            <path
+                android:name="bottom"
+                android:fillColor="#FFFFFF"
+                android:pathData="M51.5,72.95L58.46,65.99L61.94,69.47C63.86,71.39 63.86,74.51 61.94,76.43V76.43C60.01,78.35 56.9,78.35 54.98,76.43L51.5,72.95Z"/>
+            <path
+                android:name="mid"
+                android:fillColor="#FFFFFF"
+                android:pathData="M42.25,63.7L55.67,50.28C57.59,48.36 60.71,48.36 62.63,50.28V50.28C64.55,52.2 64.55,55.32 62.63,57.24L49.21,70.66L42.25,63.7Z"/>
+            <path
+                android:name="top"
+                android:fillColor="#FFFFFF"
+                android:pathData="M36.77,58.22C34.69,56.14 34.69,52.77 36.77,50.69L54.98,32.48C56.9,30.56 60.01,30.56 61.94,32.48V32.48C63.86,34.4 63.86,37.52 61.94,39.44L39.96,61.42L36.77,58.22Z"/>
+        </vector>
+    </aapt:attr>
+    <target android:name="bottom">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="600"
+                android:propertyName="fillAlpha"
+                android:startOffset="200"
+                android:valueFrom="0"
+                android:valueTo="0.4"
+                android:valueType="floatType"/>
+        </aapt:attr>
+    </target>
+    <target android:name="mid">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="400"
+                android:propertyName="fillAlpha"
+                android:startOffset="400"
+                android:valueFrom="0"
+                android:valueTo="0.7"
+                android:valueType="floatType"/>
+        </aapt:attr>
+    </target>
+    <target android:name="top">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="200"
+                android:propertyName="fillAlpha"
+                android:startOffset="600"
+                android:valueFrom="0"
+                android:valueTo="1"
+                android:valueType="floatType"/>
+        </aapt:attr>
+    </target>
+</animated-vector>

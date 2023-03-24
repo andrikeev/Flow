@@ -16,7 +16,7 @@ interface BookmarkDao {
      * Get list of all [BookmarkEntity]s in order from newest to latest.
      */
     @Query("SELECT * FROM Bookmark ORDER by timestamp DESC")
-    fun getAll(): List<BookmarkEntity>
+    suspend fun getAll(): List<BookmarkEntity>
 
     /**
      * Observe all [BookmarkEntity]s in order from newest to latest.
@@ -30,7 +30,7 @@ interface BookmarkDao {
      * @param id [BookmarkEntity.id]
      */
     @Query("SELECT * FROM Bookmark WHERE id == :id")
-    fun get(id: String): BookmarkEntity?
+    suspend fun get(id: String): BookmarkEntity?
 
     /**
      * Observe all [BookmarkEntity]'s ids.
