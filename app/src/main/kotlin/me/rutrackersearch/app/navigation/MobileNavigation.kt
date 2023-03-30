@@ -86,7 +86,6 @@ fun MobileNavigation(navigationController: NavigationController) {
                 NavigationAnimations.ScaleInOutAnimation,
             )
             addNestedNavigation(
-                openNewSearchInput = { openSearchInput(Filter()) },
                 openSearchInput = { filter -> openSearchInput(filter) },
                 openLogin = { openLogin() },
                 openTopic = { topic -> openTopic(topic) },
@@ -97,7 +96,6 @@ fun MobileNavigation(navigationController: NavigationController) {
 }
 
 private fun NavigationGraphBuilder.addNestedNavigation(
-    openNewSearchInput: () -> Unit,
     openSearchInput: (Filter) -> Unit,
     openLogin: () -> Unit,
     openTopic: (Topic) -> Unit,
@@ -112,7 +110,7 @@ private fun NavigationGraphBuilder.addNestedNavigation(
         navigationController = navigationController,
         navigationBarItems = navigationBarItems,
     ) {
-        addSearch(navigationController, openLogin, openNewSearchInput, openSearchInput, openTorrent)
+        addSearch(navigationController, openLogin, openTorrent)
         addForum(navigationController, openSearchInput, openTopic, openTorrent)
         addTopics(openTopic, openTorrent)
         addMenu(openLogin)
@@ -122,8 +120,6 @@ private fun NavigationGraphBuilder.addNestedNavigation(
 private fun NavigationGraphBuilder.addSearch(
     navigationController: NavigationController,
     openLogin: () -> Unit,
-    openNewSearchInput: () -> Unit,
-    openSearchInput: (Filter) -> Unit,
     openTorrent: (Torrent) -> Unit,
 ) {
     with(navigationController) {
@@ -133,15 +129,25 @@ private fun NavigationGraphBuilder.addSearch(
             animations = BottomRoute.Search.animations,
         ) {
             val (addSearchResult, openSearchResult) = buildSearchResultNavigation()
+            val (addSearchInput, openSearchInput) = buildSearchInputNavigation()
+
             addSearchHistory(
                 openLogin,
-                openNewSearchInput,
+                { openSearchInput(Filter()) },
                 { filter -> openSearchResult(filter) },
+                NavigationAnimations.Default,
+            )
+            addSearchInput(
+                ::popBackStack,
+                { filter ->
+                    popBackStack()
+                    openSearchResult(filter)
+                },
                 NavigationAnimations.Default,
             )
             addSearchResult(
                 navigationController::popBackStack,
-                openSearchInput,
+                { filter -> openSearchInput(filter) },
                 { filter -> openSearchResult(filter) },
                 openTorrent,
                 NavigationAnimations.Default,
