@@ -27,6 +27,7 @@ internal fun Project.configureAndroidCompose(
         dependencies {
             val bom = libs.findLibrary("androidx-compose-bom").get()
             add("implementation", platform(bom))
+            add("androidTestImplementation", platform(bom))
         }
 
         kotlinOptions {
@@ -37,10 +38,9 @@ internal fun Project.configureAndroidCompose(
                 "-opt-in=androidx.compose.runtime.ExperimentalComposeApi",
                 "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
                 "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi",
-                "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi",
                 "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi",
             )
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
+            jvmTarget = JavaVersion.VERSION_11.toString()
         }
     }
 }

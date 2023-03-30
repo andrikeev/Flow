@@ -58,6 +58,7 @@ dependencies {
     implementation(project(":feature:favorites"))
     implementation(project(":feature:forum"))
     implementation(project(":feature:login"))
+    implementation(project(":feature:main"))
     implementation(project(":feature:menu"))
     implementation(project(":feature:search"))
     implementation(project(":feature:search_input"))
@@ -65,7 +66,6 @@ dependencies {
     implementation(project(":feature:topic"))
     implementation(project(":feature:visited"))
 
-    implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)

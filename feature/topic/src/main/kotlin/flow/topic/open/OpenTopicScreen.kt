@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.Error
@@ -19,21 +18,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 import flow.ui.R as UiR
 
 @Composable
-fun OpenTopicScreen(
-    back: () -> Unit,
-    openTopic: (Topic) -> Unit,
-    openTorrent: (Torrent) -> Unit,
-) {
-    OpenTopicScreen(
-        viewModel = hiltViewModel(),
-        back = back,
-        openTopic = openTopic,
-        openTorrent = openTorrent,
-    )
-}
-
-@Composable
-private fun OpenTopicScreen(
+internal fun OpenTopicScreen(
     viewModel: OpenTopicViewModel,
     back: () -> Unit,
     openTopic: (Topic) -> Unit,

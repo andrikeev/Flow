@@ -10,9 +10,7 @@ import flow.common.newCancelableScope
 import flow.common.relaunch
 import flow.domain.usecase.AddSuggestUseCase
 import flow.domain.usecase.ObserveSuggestsUseCase
-import flow.models.search.Filter
 import flow.models.search.Suggest
-import flow.ui.args.requireFilter
 import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -28,7 +26,7 @@ internal class SearchInputViewModel @Inject constructor(
     private val observeSuggestsUseCase: ObserveSuggestsUseCase,
     private val saveSuggestUseCase: AddSuggestUseCase,
 ) : ViewModel(), ContainerHost<SearchInputState, SearchInputSideEffect> {
-    private val filter: Filter = savedStateHandle.requireFilter()
+    private val filter = savedStateHandle.filter
     private val observeSuggestsScope = viewModelScope.newCancelableScope()
 
     override val container: Container<SearchInputState, SearchInputSideEffect> = container(

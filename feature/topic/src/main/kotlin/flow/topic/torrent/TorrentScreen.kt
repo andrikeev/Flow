@@ -34,9 +34,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.AppBarDefaults
 import flow.designsystem.component.BackButton
@@ -60,6 +57,7 @@ import flow.models.topic.TorrentDescription
 import flow.models.topic.isValid
 import flow.topic.download.DownloadDialog
 import flow.ui.component.Post
+import flow.ui.component.RemoteImage
 import flow.ui.component.TorrentStatus
 import flow.ui.component.getIllRes
 import flow.ui.component.getStringRes
@@ -71,25 +69,7 @@ import flow.designsystem.R as DesignsystemR
 import flow.ui.R as UiR
 
 @Composable
-fun TorrentScreen(
-    back: () -> Unit,
-    openLogin: () -> Unit,
-    openComments: (Topic) -> Unit,
-    openCategory: (Category) -> Unit,
-    openSearch: (Filter) -> Unit,
-) {
-    TorrentScreen(
-        viewModel = hiltViewModel(),
-        back = back,
-        openLogin = openLogin,
-        openComments = openComments,
-        openCategory = openCategory,
-        openSearch = openSearch,
-    )
-}
-
-@Composable
-private fun TorrentScreen(
+internal fun TorrentScreen(
     viewModel: TorrentViewModel,
     back: () -> Unit,
     openLogin: () -> Unit,
@@ -278,17 +258,11 @@ private fun TorrentImage(
             .clip(MaterialTheme.shapes.extraSmall),
         contentAlignment = Alignment.TopCenter,
     ) {
-        SubcomposeAsyncImage(
-            model = src,
+        RemoteImage(
+            src = src,
             contentDescription = null,
-        ) {
-            when (painter.state) {
-                is AsyncImagePainter.State.Success -> Image(
-                    painter = painter,
-                    contentDescription = null,
-                )
-
-                is AsyncImagePainter.State.Loading -> Box(
+            onLoading = {
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceVariant),
@@ -299,9 +273,15 @@ private fun TorrentImage(
                         strokeWidth = 2.dp,
                     )
                 }
-
-                AsyncImagePainter.State.Empty,
-                is AsyncImagePainter.State.Error -> Box(
+            },
+            onSuccess = { painter ->
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                )
+            },
+            onError = {
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceVariant),
@@ -314,8 +294,8 @@ private fun TorrentImage(
                         tint = MaterialTheme.colorScheme.outline,
                     )
                 }
-            }
-        }
+            },
+        )
     }
 }
 

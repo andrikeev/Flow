@@ -19,7 +19,6 @@ import flow.models.search.Sort
 import flow.models.topic.Author
 import flow.models.topic.TopicModel
 import flow.models.topic.Torrent
-import flow.ui.args.requireFilter
 import flow.ui.component.LoadState
 import flow.ui.component.LoadStates
 import kotlinx.coroutines.flow.collectLatest
@@ -43,7 +42,7 @@ internal class SearchResultViewModel @Inject constructor(
     private val enrichScope = viewModelScope.newCancelableScope()
 
     override val container: Container<SearchResultState, SearchResultSideEffect> = container(
-        initialState = SearchResultState(savedStateHandle.requireFilter()),
+        initialState = SearchResultState(savedStateHandle.filter),
         onCreate = { state ->
             viewModelScope.launch { addSearchHistoryUseCase(state.filter) }
             loadFirstPage()

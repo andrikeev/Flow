@@ -1,10 +1,17 @@
 package flow.ui.parcel
 
 import android.os.Parcel
+import android.os.Parcelable
 import flow.models.search.Filter
 import kotlinx.parcelize.Parceler
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.TypeParceler
 
-object FilterParceler : Parceler<Filter> {
+@Parcelize
+@TypeParceler<Filter, FilterParceler>()
+class FilterWrapper(val filter: Filter) : Parcelable
+
+internal object FilterParceler : Parceler<Filter> {
     override fun create(parcel: Parcel) = Filter(
         query = parcel.read(OptionalStringParceler),
         sort = parcel.requireEnum(),

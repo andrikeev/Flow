@@ -11,26 +11,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import flow.designsystem.component.ThemePreviews
 import flow.designsystem.theme.FlowTheme
 import flow.ui.R
 
 @Composable
-fun Avatar(url: String?) {
-    val placeholder = painterResource(R.drawable.ic_avatar)
-    AsyncImage(
-        modifier = Modifier
-            .padding(vertical = 8.dp)
-            .size(48.dp)
-            .clip(CircleShape),
-        model = url,
-        placeholder = placeholder,
-        error = placeholder,
-        contentDescription = null,
-        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-    )
-}
+fun Avatar(url: String?) = RemoteImage(
+    modifier = Modifier
+        .padding(vertical = 8.dp)
+        .size(48.dp)
+        .clip(CircleShape),
+    src = url,
+    placeholder = painterResource(R.drawable.ic_avatar),
+    contentDescription = null,
+    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+)
 
 @ThemePreviews
 @Composable

@@ -10,8 +10,9 @@ android {
 
 dependencies {
     implementation(project(":core:designsystem"))
+    implementation(project(":core:ui"))
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.viewModel.savedState)
+    implementation(libs.accompanist.navigation.animation)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
 }

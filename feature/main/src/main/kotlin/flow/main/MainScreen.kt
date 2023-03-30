@@ -1,4 +1,4 @@
-package me.rutrackersearch.app.main
+package flow.main
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable

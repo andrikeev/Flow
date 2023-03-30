@@ -14,7 +14,6 @@ import flow.models.search.Filter
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import flow.models.topic.Torrent
-import flow.ui.args.requireCategory
 import flow.ui.component.LoadState
 import flow.ui.component.LoadStates
 import kotlinx.coroutines.flow.collectLatest
@@ -42,7 +41,7 @@ internal class CategoryViewModel @Inject constructor(
     private val enrichScope = viewModelScope.newCancelableScope()
 
     override val container: Container<CategoryState, CategorySideEffect> = container(
-        initialState = CategoryState(CategoryModelState.Initial(savedStateHandle.requireCategory())),
+        initialState = CategoryState(CategoryModelState.Initial(savedStateHandle.category)),
         onCreate = {
             observeCategoryModel()
             loadFirstPage()

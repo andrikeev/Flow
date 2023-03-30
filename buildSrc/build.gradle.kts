@@ -15,6 +15,10 @@ dependencies {
     implementation(libs.hilt.gradlePlugin)
 }
 
+kotlin {
+    jvmToolchain(11)
+}
+
 gradlePlugin {
     plugins {
         register("androidApplication") {

@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.AppBarDefaults
 import flow.designsystem.component.Button
@@ -40,21 +39,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun SearchScreen(
-    openLogin: () -> Unit,
-    openSearchInput: () -> Unit,
-    openSearch: (Filter) -> Unit,
-) {
-    SearchScreen(
-        viewModel = hiltViewModel(),
-        openLogin = openLogin,
-        openSearchInput = openSearchInput,
-        openSearch = openSearch,
-    )
-}
-
-@Composable
-private fun SearchScreen(
+internal fun SearchScreen(
     viewModel: SearchViewModel,
     openLogin: () -> Unit,
     openSearchInput: () -> Unit,

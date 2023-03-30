@@ -15,13 +15,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import flow.designsystem.component.Divider
 import flow.forum.ForumAction.CategoryClick
 import flow.forum.ForumAction.ExpandClick
 import flow.forum.ForumAction.RetryClick
 import flow.models.forum.Category
 import flow.models.forum.RootCategory
+import flow.navigation.viewModel
 import flow.ui.component.CategoryListItem
 import flow.ui.component.ExpandableCategoryListItem
 import flow.ui.component.dividedItems
@@ -35,7 +35,7 @@ fun ForumScreen(
     openCategory: (Category) -> Unit,
 ) {
     ForumScreen(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(),
         openCategory = openCategory,
     )
 }

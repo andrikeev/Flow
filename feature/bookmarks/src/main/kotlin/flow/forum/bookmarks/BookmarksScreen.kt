@@ -18,11 +18,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import flow.designsystem.component.LazyList
 import flow.designsystem.drawables.FlowIcons
 import flow.models.forum.Category
 import flow.models.forum.CategoryModel
+import flow.navigation.viewModel
 import flow.ui.component.dividedItems
 import flow.ui.component.emptyItem
 import flow.ui.component.loadingItem
@@ -34,7 +34,7 @@ fun BookmarksScreen(
     openCategory: (Category) -> Unit,
 ) {
     BookmarksScreen(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(),
         openCategory = openCategory,
     )
 }

@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import flow.designsystem.component.DynamicBox
 import flow.designsystem.component.Empty
 import flow.designsystem.component.FocusableLazyColumn
@@ -16,6 +15,7 @@ import flow.designsystem.component.focusableItems
 import flow.models.topic.BaseTopic
 import flow.models.topic.Topic
 import flow.models.topic.Torrent
+import flow.navigation.viewModel
 import flow.ui.component.TopicListItem
 import flow.ui.component.dividedItems
 import org.orbitmvi.orbit.compose.collectAsState
@@ -27,7 +27,7 @@ fun VisitedScreen(
     openTorrent: (Torrent) -> Unit,
 ) {
     VisitedScreen(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(),
         openTopic = openTopic,
         openTorrent = openTorrent,
     )

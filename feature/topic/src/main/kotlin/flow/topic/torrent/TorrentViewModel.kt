@@ -16,7 +16,6 @@ import flow.models.forum.Category
 import flow.models.search.Filter
 import flow.models.topic.Author
 import flow.models.topic.TopicModel
-import flow.ui.args.requireTorrent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
@@ -39,7 +38,7 @@ class TorrentViewModel @Inject constructor(
     private val observeTorrentScope = viewModelScope.newCancelableScope()
 
     override val container: Container<TorrentState, TorrentSideEffect> = container(
-        initialState = TorrentState(TopicModel(savedStateHandle.requireTorrent())),
+        initialState = TorrentState(TopicModel(savedStateHandle.torrent)),
         onCreate = { state ->
             viewModelScope.launch { visitTopicUseCase(state.torrent.topic) }
             viewModelScope.launch {

@@ -10,7 +10,6 @@ import flow.domain.usecase.GetTopicPageUseCase
 import flow.domain.usecase.VisitTopicUseCase
 import flow.models.topic.Post
 import flow.models.topic.TopicModel
-import flow.ui.args.requireTopic
 import flow.ui.component.LoadState
 import flow.ui.component.PageResult
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +31,7 @@ class TopicViewModel @Inject constructor(
     private val visitTopicUseCase: VisitTopicUseCase,
     private val addCommentUseCase: AddCommentUseCase,
 ) : ViewModel() {
-    private val topic = savedStateHandle.requireTopic()
+    private val topic = savedStateHandle.topic
     private val mutablePagingActions = MutableSharedFlow<PagingAction>(1)
     private val mutableFirstVisibleIndex = MutableStateFlow(0)
     private val mutablePagingData = MutableSharedFlow<PagingData<Post>>(1)

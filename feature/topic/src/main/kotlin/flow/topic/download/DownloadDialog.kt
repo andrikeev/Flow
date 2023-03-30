@@ -29,13 +29,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import flow.designsystem.component.TextButton
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.Elevation
+import flow.navigation.viewModel
 import flow.ui.platform.LocalOpenFileHandler
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -49,7 +49,7 @@ fun DownloadDialog(
     openLogin: () -> Unit,
 ) {
     DownloadDialog(
-        viewModel = hiltViewModel(),
+        viewModel = viewModel(),
         dismiss = dismiss,
         openLogin = openLogin,
     )

@@ -1,4 +1,4 @@
-package flow.navigation
+package flow.navigation.model
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
