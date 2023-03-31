@@ -3,53 +3,52 @@ package flow.topic.open
 import androidx.lifecycle.SavedStateHandle
 import flow.models.topic.Topic
 import flow.models.topic.Torrent
-import flow.navigation.NavigationController
+import flow.navigation.model.NavigationArgument
+import flow.navigation.model.NavigationDeepLink
 import flow.navigation.model.NavigationGraphBuilder
+import flow.navigation.model.appendRequiredArgs
+import flow.navigation.model.buildDeepLink
+import flow.navigation.model.buildRoute
+import flow.navigation.require
 import flow.navigation.ui.NavigationAnimations
 import flow.navigation.viewModel
 
-private const val IdKey = "Id"
-private const val PidKey = "Pid"
+private const val TopicIdKey = "t"
+private const val OpenTopicRoute = "open_topic"
 
-private val NavigationGraphBuilder.OpenTopicRoute
-    get() = route("OpenTopic")
-
-data class OpenTopicNavigation(
-    val addOpenTopic: NavigationGraphBuilder.(
-        back: () -> Unit,
-        openTopic: (Topic) -> Unit,
-        openTorrent: (Torrent) -> Unit,
-        animations: NavigationAnimations,
-    ) -> Unit,
-    val openTopic: NavigationController.(id: String?, pid: String?) -> Unit,
-)
-
-fun NavigationGraphBuilder.buildOpenTopicNavigation() = OpenTopicNavigation(
-    addOpenTopic = NavigationGraphBuilder::addOpenTopic,
-    openTopic = { id, pid ->
-        navigate(OpenTopicRoute) {
-            putString(IdKey, id)
-            putString(PidKey, pid)
-        }
-    },
-)
-
-private fun NavigationGraphBuilder.addOpenTopic(
+context(NavigationGraphBuilder)
+fun addOpenTopic(
     back: () -> Unit,
     openTopic: (Topic) -> Unit,
     openTorrent: (Torrent) -> Unit,
+    deepLinkUrls: List<String> = emptyList(),
     animations: NavigationAnimations,
 ) = addDestination(
-    route = OpenTopicRoute,
+    route = buildRoute(
+        route = OpenTopicRoute,
+        optionalArgsBuilder = { appendRequiredArgs(TopicIdKey) },
+    ),
+    arguments = listOf(
+        NavigationArgument(TopicIdKey, nullable = true),
+    ),
+    deepLinks = deepLinkUrls.map { url ->
+        NavigationDeepLink(buildDeepLink(url) { appendRequiredArgs(TopicIdKey) })
+    },
     animations = animations,
 ) {
     OpenTopicScreen(
         viewModel = viewModel(),
         back = back,
-        openTopic = openTopic,
-        openTorrent = openTorrent,
+        openTopic = { topic ->
+            back()
+            openTopic(topic)
+        },
+        openTorrent = { torrent ->
+            back()
+            openTorrent(torrent)
+        },
     )
 }
 
-internal val SavedStateHandle.id: String get() = get<String?>(IdKey).orEmpty()
-internal val SavedStateHandle.pid: String get() = get<String?>(PidKey).orEmpty()
+internal val SavedStateHandle.id: String
+    get() = require(TopicIdKey)

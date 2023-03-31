@@ -1,7 +1,6 @@
 package flow.conventions
 
 import com.android.build.api.dsl.CommonExtension
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.dependencies
@@ -40,7 +39,6 @@ internal fun Project.configureAndroidCompose(
                 "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi",
                 "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi",
             )
-            jvmTarget = JavaVersion.VERSION_11.toString()
         }
     }
 }

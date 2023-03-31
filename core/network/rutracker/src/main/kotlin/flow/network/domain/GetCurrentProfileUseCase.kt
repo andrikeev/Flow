@@ -1,7 +1,6 @@
 package flow.network.domain
 
 import flow.network.api.RuTrackerInnerApi
-import flow.network.dto.ResultDto
 import flow.network.dto.user.ProfileDto
 import org.jsoup.Jsoup
 
@@ -9,8 +8,8 @@ internal class GetCurrentProfileUseCase(
     private val api: RuTrackerInnerApi,
     private val getProfileUseCase: GetProfileUseCase,
 ) {
-    suspend operator fun invoke(token: String): ResultDto<ProfileDto> = tryCatching {
-        getProfileUseCase(parseUserId(api.mainPage(token)))
+    suspend operator fun invoke(token: String): ProfileDto {
+        return getProfileUseCase(parseUserId(api.mainPage(token)))
     }
 
     companion object {

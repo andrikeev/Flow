@@ -6,12 +6,10 @@ import flow.models.auth.AuthResult
 import flow.models.auth.AuthState
 import flow.models.auth.Captcha
 import flow.network.api.NetworkApi
-import flow.network.dto.ResultDto
 import flow.network.dto.auth.AuthResponseDto
 import flow.network.dto.auth.CaptchaDto
 import flow.securestorage.SecureStorage
 import flow.securestorage.model.Account
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,42 +35,29 @@ internal class AuthServiceImpl @Inject constructor(
         captchaSid: String?,
         captchaCode: String?,
         captchaValue: String?,
-    ): AuthResult = runCatching {
-        coroutineScope {
-            api.login(username, password, captchaSid, captchaCode, captchaValue)
-        }
-    }.fold(onSuccess = { dto ->
-        when (dto) {
-            is ResultDto.Data -> when (val authResponseDto = dto.value) {
-                is AuthResponseDto.CaptchaRequired -> {
-                    AuthResult.CaptchaRequired(requireNotNull(authResponseDto.captcha.toCaptcha()))
-                }
-
-                is AuthResponseDto.Success -> {
-                    val (id, token, avatarUrl) = authResponseDto.user
-                    saveAccount(Account(id, username, password, token, avatarUrl))
-                    AuthResult.Success
-                }
-
-                is AuthResponseDto.WrongCredits -> {
-                    AuthResult.WrongCredits(authResponseDto.captcha.toCaptcha())
-                }
+    ): AuthResult {
+        return when (val dto = api.login(username, password, captchaSid, captchaCode, captchaValue)) {
+            is AuthResponseDto.CaptchaRequired -> {
+                AuthResult.CaptchaRequired(requireNotNull(dto.captcha.toCaptcha()))
             }
-
-            is ResultDto.Error -> AuthResult.Error(dto.cause)
+            is AuthResponseDto.Success -> {
+                val (id, token, avatarUrl) = dto.user
+                saveAccount(Account(id, username, password, token, avatarUrl))
+                AuthResult.Success
+            }
+            is AuthResponseDto.WrongCredits -> {
+                AuthResult.WrongCredits(dto.captcha.toCaptcha())
+            }
         }
-    }, onFailure = { error -> AuthResult.Error(error) })
+    }
 
     override suspend fun refreshToken(): Boolean {
         val account = secureStorage.getAccount()
         if (account != null) {
             val dto = api.login(account.name, account.password, null, null, null)
-            if (dto is ResultDto.Data) {
-                val authResponseDto = dto.value
-                if (authResponseDto is AuthResponseDto.Success) {
-                    saveAccount(account.copy(token = authResponseDto.user.token))
-                    return true
-                }
+            if (dto is AuthResponseDto.Success) {
+                saveAccount(account.copy(token = dto.user.token))
+                return true
             }
         }
         logout()

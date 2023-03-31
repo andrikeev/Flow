@@ -1,13 +1,17 @@
 package flow.network.dto.auth
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class AuthResponseDto(val status: AuthStatusDto) {
-
-    data class Success(val user: UserDto) : AuthResponseDto(AuthStatusDto.OK)
-
-    data class WrongCredits(val captcha: CaptchaDto?) : AuthResponseDto(AuthStatusDto.WRONG_CREDITS)
-
-    data class CaptchaRequired(val captcha: CaptchaDto?) : AuthResponseDto(AuthStatusDto.CAPTCHA)
+sealed interface AuthResponseDto {
+    @Serializable
+    @SerialName("Success")
+    data class Success(val user: UserDto) : AuthResponseDto
+    @Serializable
+    @SerialName("WrongCredits")
+    data class WrongCredits(val captcha: CaptchaDto?) : AuthResponseDto
+    @Serializable
+    @SerialName("CaptchaRequired")
+    data class CaptchaRequired(val captcha: CaptchaDto?) : AuthResponseDto
 }

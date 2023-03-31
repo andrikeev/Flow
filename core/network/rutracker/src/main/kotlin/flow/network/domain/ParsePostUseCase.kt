@@ -20,7 +20,6 @@ import flow.network.dto.topic.Underscore
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
-import org.jsoup.parser.Tag
 import org.jsoup.select.Elements
 
 private typealias ElementsList = MutableList<PostElementDto>
@@ -36,11 +35,13 @@ internal object ParsePostUseCase {
         elements.forEach { appendElement(it) }
     }
 
-    private fun ElementsList.appendElement(element: Element) {
-        if (element.childNodes().isNotEmpty()) {
-            element.childNodes().forEach { appendNode(it) }
-        } else if (element.text().isNotEmpty()) {
-            text(element.text())
+    private fun ElementsList.appendElement(element: Element?) {
+        if (element != null) {
+            if (element.childNodes().isNotEmpty()) {
+                element.childNodes().forEach { appendNode(it) }
+            } else if (element.text().isNotEmpty()) {
+                text(element.text())
+            }
         }
     }
 
@@ -57,33 +58,32 @@ internal object ParsePostUseCase {
                 node.hasClass("postImg") && !node.hasClass("postImgAligned") -> image(node.attr("title"))
                 node.hasClass("postImg") && node.hasClass("postImgAligned") -> imageAligned(
                     node.attr("title"), when {
-                        node.hasClass("img-left") -> Alignment.start
-                        node.hasClass("img-top") -> Alignment.top
-                        node.hasClass("img-right") -> Alignment.end
-                        node.hasClass("img-bottom") -> Alignment.bottom
-                        else -> Alignment.start
+                        node.hasClass("img-left") -> Alignment.Start
+                        node.hasClass("img-top") -> Alignment.Top
+                        node.hasClass("img-right") -> Alignment.End
+                        node.hasClass("img-bottom") -> Alignment.Bottom
+                        else -> Alignment.Start
                     }
                 )
-
                 node.hasClass("post-ul") -> uList { appendElement(node) }
                 node.hasClass("c-wrap") -> code(
-                    node.select(".c-head").text()
-                ) { appendElements(node.select(".c-body")) }
+                    node.selectFirst(".c-head")?.text().orEmpty(),
+                ) { appendElement(node.selectFirst(".c-body")) }
 
                 node.hasClass("sp-wrap") -> spoiler(
-                    node.select(".sp-head").text()
-                ) { appendElements(node.select(".sp-body")) }
+                    node.selectFirst(".sp-head")?.text().orEmpty(),
+                ) { appendElement(node.selectFirst(".sp-body")) }
 
                 node.hasClass("q-wrap") -> quote(
-                    node.select(".q-head").text(),
+                    node.selectFirst(".q-head")?.text().orEmpty(),
                     node.select(".q-post").text()
                 ) {
                     node.select(".q-post").remove()
-                    appendElements(node.select(".q"))
+                    appendElement(node.selectFirst(".q"))
                 }
 
                 node.hasClass("post-hr") -> hr()
-                node.hasClass("post-br") || node.tag() == Tag.valueOf("br") -> br()
+                node.hasClass("post-br") || node.tag().name == "br" -> br()
                 else -> appendElement(node)
             }
 
@@ -146,10 +146,10 @@ internal object ParsePostUseCase {
     }
 
     private fun ElementsList.hr() {
-        add(Hr())
+        add(Hr)
     }
 
     private fun ElementsList.br() {
-        add(Br())
+        add(Br)
     }
 }

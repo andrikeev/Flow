@@ -12,9 +12,7 @@ import flow.domain.usecase.ObserveAuthStateUseCase
 import flow.domain.usecase.ToggleFavoriteUseCase
 import flow.domain.usecase.VisitTopicUseCase
 import flow.models.auth.isAuthorized
-import flow.models.forum.Category
 import flow.models.search.Filter
-import flow.models.topic.Author
 import flow.models.topic.TopicModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -52,9 +50,9 @@ class TorrentViewModel @Inject constructor(
 
     fun perform(action: TorrentAction) {
         when (action) {
-            is TorrentAction.AuthorClick -> onAuthorClick(action.value)
+            is TorrentAction.AuthorClick -> onAuthorClick()
             is TorrentAction.BackClick -> onBackClick()
-            is TorrentAction.CategoryClick -> onCategoryClick(action.value)
+            is TorrentAction.CategoryClick -> onCategoryClick()
             is TorrentAction.CommentsClick -> onCommentsClick()
             is TorrentAction.FavoriteClick -> onFavoriteClick()
             is TorrentAction.MagnetClick -> onMagnetClick()
@@ -64,21 +62,21 @@ class TorrentViewModel @Inject constructor(
         }
     }
 
-    private fun onAuthorClick(author: Author) = intent {
-        postSideEffect(TorrentSideEffect.OpenSearch(Filter(author = author)))
+    private fun onAuthorClick() = intent {
+        postSideEffect(TorrentSideEffect.OpenSearch(Filter(author = state.torrent.topic.author)))
     }
 
     private fun onBackClick() = intent { postSideEffect(TorrentSideEffect.Back) }
 
-    private fun onCategoryClick(category: Category) = intent {
-        postSideEffect(TorrentSideEffect.OpenCategory(category))
+    private fun onCategoryClick() = intent {
+        postSideEffect(TorrentSideEffect.OpenCategory(state.torrent.topic.category?.id!!)) //FIXME
     }
 
     private fun onCommentsClick() = intent {
         postSideEffect(TorrentSideEffect.OpenComments(state.torrent.topic))
     }
 
-    private fun onFavoriteClick() = intent { toggleFavoriteUseCase(state.torrent) }
+    private fun onFavoriteClick() = intent { toggleFavoriteUseCase(state.torrent.topic.id) }
 
     private fun onMagnetClick() = intent {
         state.torrent.topic.magnetLink?.let { link ->

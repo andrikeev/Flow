@@ -20,8 +20,8 @@ internal fun configureKotlinAndroid(
         }
 
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_11
-            targetCompatibility = JavaVersion.VERSION_11
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
         }
 
         kotlinOptions {
@@ -30,8 +30,8 @@ internal fun configureKotlinAndroid(
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=kotlinx.coroutines.FlowPreview",
                 "-opt-in=kotlin.Experimental",
+                "-Xcontext-receivers"
             )
-            jvmTarget = JavaVersion.VERSION_11.toString()
         }
     }
 }

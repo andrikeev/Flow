@@ -4,40 +4,22 @@ import androidx.lifecycle.SavedStateHandle
 import flow.models.topic.Topic
 import flow.navigation.NavigationController
 import flow.navigation.model.NavigationGraphBuilder
+import flow.navigation.model.buildRoute
+import flow.navigation.require
 import flow.navigation.ui.NavigationAnimations
 import flow.navigation.viewModel
-import flow.ui.args.require
 import flow.ui.parcel.TopicWrapper
 
-private const val TopicKey = "Topic"
+private const val TopicKey = "topic"
+private const val TopicRoute = "topic"
 
-private val NavigationGraphBuilder.TopicRoute
-    get() = route("Topic")
-
-data class TopicNavigation(
-    val addTopic: NavigationGraphBuilder.(
-        back: () -> Unit,
-        openLogin: () -> Unit,
-        animations: NavigationAnimations,
-    ) -> Unit,
-    val openTopic: NavigationController.(Topic) -> Unit,
-)
-
-fun NavigationGraphBuilder.buildTopicNavigation() = TopicNavigation(
-    addTopic = NavigationGraphBuilder::addTopic,
-    openTopic = { topic ->
-        navigate(TopicRoute) {
-            putParcelable(TopicKey, TopicWrapper(topic))
-        }
-    },
-)
-
-private fun NavigationGraphBuilder.addTopic(
+context(NavigationGraphBuilder)
+fun addTopic(
     back: () -> Unit,
     openLogin: () -> Unit,
     animations: NavigationAnimations,
 ) = addDestination(
-    route = TopicRoute,
+    route = buildRoute(TopicRoute),
     animations = animations,
 ) {
     TopicScreen(
@@ -45,6 +27,13 @@ private fun NavigationGraphBuilder.addTopic(
         back = back,
         openLogin = openLogin,
     )
+}
+
+context(NavigationGraphBuilder, NavigationController)
+fun openTopic(topic: Topic) {
+    navigate(buildRoute(TopicRoute)) {
+        putParcelable(TopicKey, TopicWrapper(topic))
+    }
 }
 
 internal val SavedStateHandle.topic: Topic get() = require<TopicWrapper>(TopicKey).topic

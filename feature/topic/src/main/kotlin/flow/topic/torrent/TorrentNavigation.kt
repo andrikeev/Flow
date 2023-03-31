@@ -1,52 +1,30 @@
 package flow.topic.torrent
 
 import androidx.lifecycle.SavedStateHandle
-import flow.models.forum.Category
 import flow.models.search.Filter
 import flow.models.topic.Topic
 import flow.models.topic.Torrent
 import flow.navigation.NavigationController
 import flow.navigation.model.NavigationGraphBuilder
+import flow.navigation.model.buildRoute
+import flow.navigation.require
 import flow.navigation.ui.NavigationAnimations
 import flow.navigation.viewModel
-import flow.ui.args.require
 import flow.ui.parcel.TorrentWrapper
 
-private const val TorrentKey = "Torrent"
+private const val TorrentKey = "torrent"
+private const val TorrentRoute = "torrent"
 
-private val NavigationGraphBuilder.TorrentRoute
-    get() = route("Torrent")
-
-data class TorrentNavigation(
-    val addTorrent: NavigationGraphBuilder.(
-        back: () -> Unit,
-        openLogin: () -> Unit,
-        openComments: (Topic) -> Unit,
-        openCategory: (Category) -> Unit,
-        openSearch: (Filter) -> Unit,
-        animations: NavigationAnimations,
-    ) -> Unit,
-    val openTorrent: NavigationController.(Torrent) -> Unit,
-)
-
-fun NavigationGraphBuilder.buildTorrentNavigation() = TorrentNavigation(
-    addTorrent = NavigationGraphBuilder::addTorrent,
-    openTorrent = { torrent ->
-        navigate(TorrentRoute) {
-            putParcelable(TorrentKey, TorrentWrapper(torrent))
-        }
-    },
-)
-
-private fun NavigationGraphBuilder.addTorrent(
+context(NavigationGraphBuilder)
+fun addTorrent(
     back: () -> Unit,
     openLogin: () -> Unit,
     openComments: (Topic) -> Unit,
-    openCategory: (Category) -> Unit,
+    openCategory: (String) -> Unit,
     openSearch: (Filter) -> Unit,
     animations: NavigationAnimations,
 ) = addDestination(
-    route = TorrentRoute,
+    route = buildRoute(TorrentRoute),
     animations = animations,
 ) {
     TorrentScreen(
@@ -57,6 +35,13 @@ private fun NavigationGraphBuilder.addTorrent(
         openCategory = openCategory,
         openSearch = openSearch,
     )
+}
+
+context(NavigationGraphBuilder, NavigationController)
+fun openTorrent(torrent: Torrent) {
+    navigate(buildRoute(TorrentRoute)) {
+        putParcelable(TorrentKey, TorrentWrapper(torrent))
+    }
 }
 
 internal val SavedStateHandle.torrent: Torrent get() = require<TorrentWrapper>(TorrentKey).torrent

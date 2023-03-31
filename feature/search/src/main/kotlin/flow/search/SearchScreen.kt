@@ -1,5 +1,6 @@
 package flow.search
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,29 +10,37 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.AppBarDefaults
+import flow.designsystem.component.AppBarState
+import flow.designsystem.component.Body
+import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.Button
+import flow.designsystem.component.CollectionPreviewParameterProvider
 import flow.designsystem.component.Empty
-import flow.designsystem.component.IconButton
 import flow.designsystem.component.Placeholder
 import flow.designsystem.component.Scaffold
+import flow.designsystem.component.SearchButton
+import flow.designsystem.component.SearchIcon
+import flow.designsystem.component.Surface
+import flow.designsystem.component.Text
 import flow.designsystem.component.ThemePreviews
-import flow.designsystem.drawables.FlowIcons
+import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
+import flow.models.forum.Category
 import flow.models.search.Filter
+import flow.models.search.Order
+import flow.models.search.Period
 import flow.models.search.Search
+import flow.models.search.Sort
+import flow.models.topic.Author
 import flow.ui.component.dividedItems
 import flow.ui.component.loadingItem
 import flow.ui.component.resId
@@ -65,23 +74,16 @@ private fun SearchScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            AppBar(
-                title = { Text(stringResource(R.string.search_screen_title)) },
-                actions = {
-                    if (state != SearchState.Unauthorised) {
-                        IconButton(
-                            onClick = { onAction(SearchAction.SearchActionClick) },
-                            imageVector = FlowIcons.Search,
-                        )
-                    }
-                },
+            SearchScreenAppBar(
+                state = state,
                 appBarState = scrollBehavior.state,
+                onAction = onAction,
             )
         }
     ) { padding ->
         LazyColumn(
             modifier = Modifier.padding(padding),
-            contentPadding = PaddingValues(vertical = 8.dp),
+            contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
         ) {
             when (state) {
                 is SearchState.Unauthorised -> item {
@@ -114,6 +116,21 @@ private fun SearchScreen(
 }
 
 @Composable
+private fun SearchScreenAppBar(
+    state: SearchState,
+    appBarState: AppBarState,
+    onAction: (SearchAction) -> Unit,
+) = AppBar(
+    title = { Text(stringResource(R.string.search_screen_title)) },
+    actions = {
+        AnimatedVisibility(state.showSearchAction) {
+            SearchButton(onClick = { onAction(SearchAction.SearchActionClick) })
+        }
+    },
+    appBarState = appBarState,
+)
+
+@Composable
 private fun Unauthorized(
     modifier: Modifier = Modifier,
     onLoginClick: () -> Unit,
@@ -126,7 +143,7 @@ private fun Unauthorized(
         Button(
             onClick = onLoginClick,
             text = stringResource(flow.designsystem.R.string.designsystem_action_login),
-            color = MaterialTheme.colorScheme.primary,
+            color = AppTheme.colors.primary,
         )
     },
 )
@@ -143,77 +160,109 @@ private fun Empty(modifier: Modifier = Modifier) = Empty(
 private fun Search(
     search: Search,
     onClick: () -> Unit,
+) = Surface(
+    modifier = Modifier
+        .fillMaxWidth()
+        .heightIn(min = AppTheme.sizes.default),
+    onClick = onClick,
 ) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 48.dp),
-        onClick = onClick,
+    Row(
+        modifier = Modifier.padding(
+            horizontal = AppTheme.spaces.large,
+            vertical = AppTheme.spaces.mediumLarge,
+        ),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+        SearchIcon()
+        Column(
+            modifier = Modifier
+                .padding(start = AppTheme.spaces.large)
+                .weight(1f),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Icon(imageVector = FlowIcons.Search, contentDescription = null)
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .weight(1f),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    search.filter.query?.let { query ->
-                        stringResource(R.string.search_screen_history_item_query, query)
-                    } ?: stringResource(
-                        R.string.search_screen_history_item_period,
-                        stringResource(search.filter.period.resId),
-                    ),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                Text(
-                    text = buildString {
-                        search.filter.author?.run {
-                            append(stringResource(R.string.search_screen_history_item_author, name))
-                            append(", ")
-                        }
-                        val categories = search.filter.categories
-                        append(
-                            when {
-                                categories.isNullOrEmpty() -> {
-                                    stringResource(R.string.search_screen_history_item_all_categories)
-                                }
+            BodyLarge(search.filter.queryOrPeriod())
+            Body(
+                text = search.filter.description(),
+                color = AppTheme.colors.outline,
+            )
+        }
+    }
+}
 
-                                categories.size == 1 -> {
-                                    stringResource(
-                                        R.string.search_screen_history_item_category,
-                                        categories.first().name,
-                                    )
-                                }
+@Composable
+private fun Filter.queryOrPeriod(): String {
+    return query?.takeIf(String::isNotBlank)
+               ?.let { query -> stringResource(R.string.search_screen_history_item_query, query) }
+           ?: stringResource(R.string.search_screen_history_item_period, stringResource(period.resId))
+}
 
-                                else -> {
-                                    stringResource(
-                                        R.string.search_screen_history_item_categories,
-                                        categories.size,
-                                    )
-                                }
-                            }
-                        )
-                    },
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.outline,
-                    ),
-                )
+@Composable
+private fun Filter.description(): String {
+    return buildString {
+        author?.let<Author, Unit> { (id, name) ->
+            if (name.isNotBlank()) {
+                append(stringResource(R.string.search_screen_history_item_author, name), ", ")
+            } else if (!id.isNullOrBlank()) {
+                append(stringResource(R.string.search_screen_history_item_author, "[$id]"), ", ")
             }
-            Icon(imageVector = FlowIcons.ArrowRight, contentDescription = null)
+        }
+        categories.let { categories ->
+            append(
+                when {
+                    categories.isNullOrEmpty() -> {
+                        stringResource(R.string.search_screen_history_item_all_categories)
+                    }
+
+                    categories.size == 1 -> {
+                        stringResource(
+                            R.string.search_screen_history_item_category,
+                            categories.first().name,
+                        )
+                    }
+
+                    else -> {
+                        stringResource(
+                            R.string.search_screen_history_item_categories,
+                            categories.size,
+                        )
+                    }
+                }
+            )
         }
     }
 }
 
 @ThemePreviews
 @Composable
-private fun SearchScreen_Preview() {
+private fun SearchScreenPreview(@PreviewParameter(SearchStateProvider::class) state: SearchState) {
     FlowTheme {
-        SearchScreen(state = SearchState.Empty, onAction = {})
+        SearchScreen(state = state, onAction = {})
     }
 }
+
+private class SearchStateProvider : CollectionPreviewParameterProvider<SearchState>(
+    SearchState.Initial,
+    SearchState.Unauthorised,
+    SearchState.Empty,
+    SearchState.SearchList(
+        listOf(
+            Search(1, Filter()),
+            Search(2, Filter(query = "The Witcher 3")),
+            Search(3, Filter(query = "The Witcher 3", sort = Sort.SEEDS)),
+            Search(4, Filter(query = "The Witcher 3", order = Order.DESCENDING)),
+            Search(5, Filter(period = Period.LAST_THREE_DAYS, sort = Sort.TITLE)),
+            Search(6, Filter(query = "The Witcher 3", author = Author(name = "_aUtHoR_999"))),
+            Search(7, Filter(period = Period.LAST_TWO_WEEKS, author = Author(name = "_aUtHoR_999"))),
+            Search(8, Filter(period = Period.LAST_TWO_WEEKS, author = Author(id = "123123", name = ""))),
+            Search(
+                9,
+                Filter(
+                    query = "Very very Very Very Very very long search query",
+                    author = Author(name = "Very very Very Very Very very long name"),
+                    categories = listOf(Category("1", "Very very Very Very Very very long category name")),
+                )
+            ),
+        )
+    ),
+)

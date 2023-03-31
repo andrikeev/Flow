@@ -1,2 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="topic_action_comments">Комментарии</string>
+    <string name="topic_author_label">Автор:</string>
+    <string name="topic_category_label">Форум:</string>
+    <string name="topic_empty_content_subtitle">Не удалось найти описание раздачи</string>
+    <string name="topic_empty_content_title">Пусто</string>
+    <string name="topic_empty_subtitle">Сообщений пока нет</string>
+    <string name="topic_empty_title">Пусто</string>
+    <string name="topic_file_download_in_progress">Файл загружается…</string>
+    <string name="topic_file_download_completed">Torrent-файл загружен</string>
+
+    <string name="topics_login_required_title">Необходима авторизация</string>
+    <string name="topics_login_required_for_download">Для того чтобы скачать torrent-файл, необходимо авторизоваться. Magnet-ссылка доступна без авторизации.</string>
+    <string name="topics_login_required_for_comment">Для того чтобы оставить комментарий, необходимо авторизоваться</string>
+
+    <string name="topic_new_comment">Новое сообщение</string>
+
+    <string name="permission_write_storage_rationale_title">Разрешить доступ к загрузкам?</string>
+    <string name="permission_write_storage_rationale">Чтобы загрузить файл необходимо предоставить разрешение на доступ к папке загрузки</string>
+</resources>

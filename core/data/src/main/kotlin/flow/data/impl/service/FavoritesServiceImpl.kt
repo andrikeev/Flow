@@ -6,7 +6,6 @@ import flow.data.api.service.FavoritesService
 import flow.data.converters.toFavorites
 import flow.models.topic.Topic
 import flow.network.api.NetworkApi
-import flow.network.dto.ResultDto
 import javax.inject.Inject
 
 class FavoritesServiceImpl @Inject constructor(
@@ -25,15 +24,19 @@ class FavoritesServiceImpl @Inject constructor(
         }
     }
 
-    override suspend fun add(id: String) {
-        if (authService.isAuthorized()) {
-            check(networkApi.addFavorite(tokenProvider.getToken(), id) == ResultDto.Success)
+    override suspend fun add(id: String): Boolean {
+        return if (authService.isAuthorized()) {
+            networkApi.addFavorite(tokenProvider.getToken(), id)
+        } else {
+            true
         }
     }
 
-    override suspend fun remove(id: String) {
-        if (authService.isAuthorized()) {
-            check(networkApi.removeFavorite(tokenProvider.getToken(), id) == ResultDto.Success)
+    override suspend fun remove(id: String): Boolean {
+        return if (authService.isAuthorized()) {
+            networkApi.removeFavorite(tokenProvider.getToken(), id)
+        } else {
+            true
         }
     }
 }

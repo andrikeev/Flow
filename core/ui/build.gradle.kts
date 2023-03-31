@@ -9,10 +9,12 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:designsystem"))
+    api(project(":core:designsystem"))
+
+    implementation(project(":core:logger"))
     implementation(project(":core:models"))
 
     implementation(libs.accompanist.flowlayout)
-    implementation(libs.androidx.lifecycle.viewModel.savedState)
+    implementation(libs.accompanist.permissions)
     implementation(libs.bundles.coil)
 }

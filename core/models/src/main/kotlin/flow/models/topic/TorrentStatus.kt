@@ -5,7 +5,7 @@ enum class TorrentStatus {
     NOT_APPROVED,
     CHECKING,
     APPROVED,
-    NEED_EDIT,
+    NEEDS_EDIT,
     CLOSED,
     NO_DESCRIPTION,
     CONSUMED,

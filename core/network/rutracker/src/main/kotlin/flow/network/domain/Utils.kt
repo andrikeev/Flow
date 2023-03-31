@@ -1,7 +1,5 @@
 package flow.network.domain
 
-import flow.network.dto.ResultDto
-import flow.network.dto.error.FlowError
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.net.URI
@@ -72,17 +70,3 @@ private fun parseUrl(url: String): Map<String, List<String>> {
         emptyMap()
     }
 }
-
-
-internal fun <T> T.toResult() = ResultDto.Data(this)
-
-internal inline fun <T> tryCatching(block: () -> ResultDto<T>): ResultDto<T> = runCatching(block).fold(
-    onSuccess = { it },
-    onFailure = { error ->
-        if (error is FlowError) {
-            ResultDto.Error(error)
-        } else {
-            ResultDto.Error(FlowError.Unknown(error))
-        }
-    },
-)

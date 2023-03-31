@@ -1,5 +1,7 @@
 package flow.ui.component
 
+import flow.models.LoadState
+
 sealed interface Result<T> {
     class Loading<T> : Result<T>
     data class Content<T>(val content: T) : Result<T>

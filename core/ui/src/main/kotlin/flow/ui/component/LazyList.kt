@@ -12,27 +12,28 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import flow.designsystem.component.CircularProgressIndicator
 import flow.designsystem.component.Divider
 import flow.designsystem.component.Empty
 import flow.designsystem.component.Error
 import flow.designsystem.component.Loading
+import flow.designsystem.component.Surface
+import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
+import flow.designsystem.theme.AppTheme
+import flow.models.LoadState
 import flow.ui.R
-import flow.designsystem.R as DesignsystemR
+import flow.designsystem.R as dsR
 
 inline fun <T> LazyListScope.dividedItems(
     items: List<T>,
     noinline key: ((item: T) -> Any)? = null,
     crossinline contentType: (item: T) -> Any? = { _ -> null },
-    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit
+    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit,
 ) = itemsIndexed(
     items = items,
     key = key?.let { { _, item -> key(item) } },
@@ -52,15 +53,14 @@ fun LazyListScope.appendItems(
         is LoadState.Loading -> item {
             Box(
                 modifier = Modifier
-                    .height(48.dp)
+                    .height(AppTheme.sizes.default)
                     .fillMaxWidth()
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .size(24.dp)
+                        .padding(AppTheme.spaces.large)
+                        .size(AppTheme.sizes.medium)
                         .align(Alignment.Center),
-                    strokeWidth = 2.dp,
                 )
             }
         }
@@ -70,7 +70,10 @@ fun LazyListScope.appendItems(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                        .padding(
+                            horizontal = AppTheme.spaces.large,
+                            vertical = AppTheme.spaces.mediumLarge,
+                        ),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -79,7 +82,7 @@ fun LazyListScope.appendItems(
                         text = stringResource(state.error.getStringRes()),
                     )
                     TextButton(
-                        text = stringResource(DesignsystemR.string.designsystem_action_retry),
+                        text = stringResource(dsR.string.designsystem_action_retry),
                         onClick = onRetryClick,
                     )
                 }

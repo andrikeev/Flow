@@ -1,18 +1,17 @@
 package flow.network.domain
 
-import flow.network.dto.ResultDto
-import flow.network.dto.error.FlowError
+import flow.network.model.Unauthorized
 import java.util.regex.Pattern
 
 internal object WithFormTokenUseCase {
 
     suspend operator fun <T> invoke(
         html: String,
-        block: suspend (formToken: String) -> ResultDto<T>,
-    ) = tryCatching {
+        block: suspend (formToken: String) -> T,
+    ): T {
         val formToken = parseFormToken(html)
-        if (formToken.isEmpty()) {
-            ResultDto.Error(FlowError.Unauthorized)
+        return if (formToken.isEmpty()) {
+            throw Unauthorized
         } else {
             block(formToken)
         }

@@ -10,6 +10,7 @@ import flow.common.newCancelableScope
 import flow.common.relaunch
 import flow.domain.usecase.AddSuggestUseCase
 import flow.domain.usecase.ObserveSuggestsUseCase
+import flow.logger.api.LoggerFactory
 import flow.models.search.Suggest
 import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.Container
@@ -25,7 +26,9 @@ internal class SearchInputViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val observeSuggestsUseCase: ObserveSuggestsUseCase,
     private val saveSuggestUseCase: AddSuggestUseCase,
+    loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<SearchInputState, SearchInputSideEffect> {
+    private val logger = loggerFactory.get("SearchInputViewModel")
     private val filter = savedStateHandle.filter
     private val observeSuggestsScope = viewModelScope.newCancelableScope()
 
@@ -35,13 +38,14 @@ internal class SearchInputViewModel @Inject constructor(
     )
 
     fun perform(action: SearchInputAction) {
+        logger.d { "Perform $action" }
         when (action) {
             is SearchInputAction.BackClick -> onBackClick()
             is SearchInputAction.ClearInputClick -> onInputChanged(TextFieldValue())
             is SearchInputAction.InputChanged -> onInputChanged(action.value.removeNewLines())
             is SearchInputAction.SubmitClick -> onSubmit()
             is SearchInputAction.SuggestClick -> onSubmit(action.suggest.value)
-            is SearchInputAction.SuggestSelected -> onSuggestSelected(action.suggest)
+            is SearchInputAction.SuggestEditClick -> onSuggestSelected(action.suggest)
         }
     }
 

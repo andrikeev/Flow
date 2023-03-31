@@ -2,11 +2,18 @@ package flow.navigation.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 import flow.navigation.NavigationController
+import flow.navigation.model.NavigationArgument
+import flow.navigation.model.NavigationDeepLink
 import flow.navigation.model.NavigationDestination
 import flow.navigation.model.NavigationGraphBuilder
 import flow.navigation.model.buildNavigationGraph
@@ -40,10 +47,25 @@ internal fun NavGraphBuilder.add(destination: NavigationDestination) {
         is NavigationDestination.Destination -> composable(
             route = destination.route,
             content = { destination.content() },
+            arguments = destination.arguments.map(NavigationArgument::toArgument),
+            deepLinks = destination.deepLinks.map(NavigationDeepLink::toDeepLink),
             enterTransition = destination.animations.enterTransition.toEnterTransition(),
             exitTransition = destination.animations.exitTransition.toExitTransition(),
             popEnterTransition = destination.animations.popEnterTransition.toEnterTransition(),
             popExitTransition = destination.animations.popExitTransition.toExitTransition(),
         )
     }
+}
+
+private fun NavigationArgument.toArgument(): NamedNavArgument {
+    return navArgument(name) {
+        type = NavType.StringType
+        if (this@toArgument.nullable) {
+            nullable = this@toArgument.nullable
+        }
+    }
+}
+
+private fun NavigationDeepLink.toDeepLink(): NavDeepLink {
+    return navDeepLink { uriPattern = uri }
 }

@@ -9,11 +9,7 @@
     <string name="error_site_connection">Site unavailable, please try again later</string>
     <string name="error_something_goes_wrong">Something went wrong, please try again later</string>
     <string name="error_title">Error</string>
-    <string name="favorites_label">Favorites</string>
-    <string name="forum_label">Forum</string>
-    <string name="history_label">History</string>
-    <string name="menu_label">Menu</string>
-    <string name="search_label">Search</string>
+
     <string name="search_period_all_time">all time</string>
     <string name="search_period_last_month">last month</string>
     <string name="search_period_last_three_days">last three days</string>
@@ -21,6 +17,7 @@
     <string name="search_period_last_week">last week</string>
     <string name="search_period_today">today</string>
     <string name="settings_label">Settings</string>
+
     <string name="sort_date">Date</string>
     <string name="sort_downloaded">Downloaded</string>
     <string name="sort_leeches">Leeches</string>
@@ -29,22 +26,7 @@
     <string name="sort_seeds">Seeds</string>
     <string name="sort_size">Size</string>
     <string name="sort_title">Title</string>
-    <string name="topic_action_comments">Comments</string>
-    <string name="topic_action_magnet" translatable="false">Magnet</string>
-    <string name="topic_action_torrent" translatable="false">Torrent</string>
-    <string name="topic_author_label">Author:</string>
-    <string name="topic_category_label">Category:</string>
-    <string name="topic_empty_content_subtitle">Could not find any content for this torrent</string>
-    <string name="topic_empty_content_title">Empty</string>
-    <string name="topic_empty_subtitle">No comments yet</string>
-    <string name="topic_empty_title">Empty</string>
-    <string name="topic_file_download_completed">Download completed</string>
-    <string name="topic_login_required">Login required</string>
-    <string name="topic_permission_required">To download file permission to storage required</string>
-    <string name="topic_title">Topic</string>
-    <string name="topics_downloads_subtitle">In development..</string>
-    <string name="topics_downloads_title">Downloads</string>
-    <string name="topics_label">Topics</string>
+
     <string name="torrent_status_approved">Approved</string>
     <string name="torrent_status_checking">Checking</string>
     <string name="torrent_status_closed">Closed</string>

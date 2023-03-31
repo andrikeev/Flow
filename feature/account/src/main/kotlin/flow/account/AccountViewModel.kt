@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.LogoutUseCase
 import flow.domain.usecase.ObserveAuthStateUseCase
+import flow.logger.api.LoggerFactory
 import flow.models.auth.AuthState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -20,26 +21,28 @@ import javax.inject.Inject
 internal class AccountViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val observeAuthStateUseCase: ObserveAuthStateUseCase,
+    loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<AuthState, AccountSideEffect> {
+    private val logger = loggerFactory.get("AccountViewModel")
+
     override val container: Container<AuthState, AccountSideEffect> = container(
         initialState = AuthState.Unauthorized,
         onCreate = { observeAuthState() },
     )
 
-    fun perform(action: AccountAction) = intent {
+    fun perform(action: AccountAction) {
+        logger.d { "Perform $action" }
         when (action) {
-            AccountAction.CancelLogoutClick -> postSideEffect(AccountSideEffect.HideLogoutConfirmation)
-            AccountAction.ConfirmLogoutClick -> logoutUseCase()
-            AccountAction.LoginClick -> postSideEffect(AccountSideEffect.OpenLogin)
-            AccountAction.LogoutClick -> postSideEffect(AccountSideEffect.ShowLogoutConfirmation)
+            AccountAction.ConfirmLogoutClick -> viewModelScope.launch { logoutUseCase() }
+            AccountAction.LoginClick -> intent { postSideEffect(AccountSideEffect.OpenLogin) }
+            AccountAction.LogoutClick -> intent { postSideEffect(AccountSideEffect.ShowLogoutConfirmation) }
         }
     }
 
-    private fun observeAuthState() = intent {
-        viewModelScope.launch {
-            observeAuthStateUseCase().collectLatest { authState ->
-                reduce { authState }
-            }
+    private fun observeAuthState() = viewModelScope.launch {
+        logger.d { "Start observing auth state" }
+        observeAuthStateUseCase().collectLatest { authState ->
+            intent { reduce { authState } }
         }
     }
 }

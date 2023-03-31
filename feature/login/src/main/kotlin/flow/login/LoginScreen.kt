@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,17 +20,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import flow.designsystem.component.LocalSnackbarHostState
 import flow.designsystem.component.Scaffold
 import flow.designsystem.component.ThemePreviews
+import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
 import flow.login.LoginAction.SubmitClick
 import flow.models.InputState
 import flow.models.auth.Captcha
-import flow.ui.component.LocalSnackbarHostState
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-import flow.ui.R as UiR
 
 @Composable
 internal fun LoginScreen(
@@ -45,7 +43,7 @@ internal fun LoginScreen(
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is LoginSideEffect.Error -> {
-                snackbarState.showSnackbar(resources.getString(UiR.string.error_something_goes_wrong))
+                snackbarState.showSnackbar(resources.getString(flow.ui.R.string.error_something_goes_wrong))
             }
 
             is LoginSideEffect.HideKeyboard -> keyboardController?.hide()
@@ -70,10 +68,6 @@ internal fun LoginScreen(
 
     fun submit() = onAction(SubmitClick)
 
-    val colors = TextFieldDefaults.outlinedTextFieldColors(
-        focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-    )
-
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
@@ -94,7 +88,6 @@ internal fun LoginScreen(
                 state = state,
                 onChanged = { onAction(LoginAction.UsernameChanged(it)) },
                 onSelectNext = { focusManager.moveFocus(FocusDirection.Next) },
-                colors = colors,
             )
             PasswordInputField(
                 state = state,
@@ -102,7 +95,6 @@ internal fun LoginScreen(
                 onSelectNext = { focusManager.moveFocus(FocusDirection.Next) },
                 onSelectPrevious = { focusManager.moveFocus(FocusDirection.Previous) },
                 onSubmit = { submit() },
-                colors = colors,
             )
             if (state.captcha != null) {
                 CaptchaImage(
@@ -113,11 +105,10 @@ internal fun LoginScreen(
                     state = state,
                     onChanged = { onAction(LoginAction.CaptchaChanged(it)) },
                     onSubmit = { submit() },
-                    colors = colors,
                 )
             }
             LoginButton(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(AppTheme.spaces.large),
                 state = state,
                 onSubmit = { submit() }
             )

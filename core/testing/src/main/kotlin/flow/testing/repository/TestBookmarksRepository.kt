@@ -34,11 +34,15 @@ class TestBookmarksRepository : BookmarksRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun isBookmark(id: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun add(category: Category) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun remove(category: Category) {
+    override suspend fun remove(id: String) {
         TODO("Not yet implemented")
     }
 

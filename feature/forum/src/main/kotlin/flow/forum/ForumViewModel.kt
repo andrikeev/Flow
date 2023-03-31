@@ -3,10 +3,11 @@ package flow.forum
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import flow.common.launchCatching
 import flow.domain.usecase.GetForumUseCase
-import flow.models.forum.Category
-import flow.models.forum.RootCategory
+import flow.logger.api.LoggerFactory
+import flow.models.forum.ForumCategory
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -18,13 +19,17 @@ import javax.inject.Inject
 @HiltViewModel
 internal class ForumViewModel @Inject constructor(
     private val getForumUseCase: GetForumUseCase,
+    loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<ForumState, ForumSideEffect> {
+    private val logger = loggerFactory.get("ForumViewModel")
+
     override val container: Container<ForumState, ForumSideEffect> = container(
         initialState = ForumState.Loading,
         onCreate = { loadForum() },
     )
 
     fun perform(action: ForumAction) {
+        logger.d { "Perform $action" }
         when (action) {
             is ForumAction.CategoryClick -> onCategoryClick(action.category)
             is ForumAction.ExpandClick -> onExpandClick(action.expandable)
@@ -32,21 +37,29 @@ internal class ForumViewModel @Inject constructor(
         }
     }
 
-    private fun loadForum() = intent {
-        reduce { ForumState.Loading }
-        viewModelScope.launchCatching(
-            onFailure = { reduce { ForumState.Error(it) } }
-        ) {
-            val forum = getForumUseCase()
-            reduce { ForumState.Loaded(forum.children.map(::Expandable)) }
+    private fun loadForum() {
+        logger.d { "Launch load forum" }
+        intent { reduce { ForumState.Loading } }
+        viewModelScope.launch {
+            runCatching {
+                coroutineScope { getForumUseCase() }
+            }
+                .onSuccess { forum ->
+                    logger.d { "Forum loaded" }
+                    intent { reduce { ForumState.Loaded(forum.children.map(::Expandable)) } }
+                }
+                .onFailure { error ->
+                    logger.d { "Forum load error" }
+                    intent { reduce { ForumState.Error(error) } }
+                }
         }
     }
 
-    private fun onCategoryClick(category: Category) = intent {
-        postSideEffect(ForumSideEffect.OpenCategory(category))
+    private fun onCategoryClick(category: ForumCategory) = intent {
+        postSideEffect(ForumSideEffect.OpenCategory(category.id))
     }
 
-    private fun onExpandClick(value: Expandable<RootCategory>) = intent {
+    private fun onExpandClick(value: Expandable<ForumCategory>) = intent {
         (state as? ForumState.Loaded)?.let { state ->
             reduce {
                 state.copy(

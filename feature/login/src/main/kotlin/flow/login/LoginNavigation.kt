@@ -2,30 +2,18 @@ package flow.login
 
 import flow.navigation.NavigationController
 import flow.navigation.model.NavigationGraphBuilder
+import flow.navigation.model.buildRoute
 import flow.navigation.ui.NavigationAnimations
 import flow.navigation.viewModel
 
-private val NavigationGraphBuilder.LoginRoute
-    get() = route("Login")
+private const val LoginRoute = "login"
 
-data class LoginNavigation(
-    val addLogin: NavigationGraphBuilder.(
-        back: () -> Unit,
-        animations: NavigationAnimations,
-    ) -> Unit,
-    val openLogin: NavigationController.() -> Unit,
-)
-
-fun NavigationGraphBuilder.buildLoginNavigation() = LoginNavigation(
-    addLogin = NavigationGraphBuilder::addLogin,
-    openLogin = { navigate(LoginRoute) }
-)
-
-private fun NavigationGraphBuilder.addLogin(
+context(NavigationGraphBuilder)
+fun addLogin(
     back: () -> Unit,
     animations: NavigationAnimations,
 ) = addDestination(
-    route = LoginRoute,
+    route = buildRoute(LoginRoute),
     arguments = emptyList(),
     animations = animations,
 ) {
@@ -33,4 +21,9 @@ private fun NavigationGraphBuilder.addLogin(
         viewModel = viewModel(),
         back = back,
     )
+}
+
+context(NavigationGraphBuilder, NavigationController)
+fun openLogin() {
+    navigate(buildRoute(LoginRoute))
 }

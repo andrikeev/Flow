@@ -15,7 +15,6 @@ import flow.ui.component.getIllRes
 import flow.ui.component.getStringRes
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-import flow.ui.R as UiR
 
 @Composable
 internal fun OpenTopicScreen(
@@ -46,7 +45,7 @@ private fun OpenTopicScreen(
             is OpenTopicState.Loading -> Loading(modifier = Modifier.padding(padding))
             is OpenTopicState.Error -> Error(
                 modifier = Modifier.padding(padding),
-                titleRes = UiR.string.error_title,
+                titleRes = flow.ui.R.string.error_title,
                 subtitleRes = state.error.getStringRes(),
                 imageRes = state.error.getIllRes(),
                 onRetryClick = { onAction(OpenTopicAction.RetryClick) },

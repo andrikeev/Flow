@@ -1,7 +1,6 @@
 package me.rutrackersearch.app
 
 import android.app.UiModeManager
-import android.content.Intent
 import android.content.res.Configuration.UI_MODE_TYPE_TELEVISION
 import android.graphics.Color
 import android.os.Bundle
@@ -25,12 +24,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import flow.designsystem.platform.LocalPlatformType
 import flow.designsystem.platform.PlatformType
+import flow.logger.api.LoggerFactory
 import flow.main.MainScreen
 import flow.main.MainViewModel
 import flow.models.settings.Theme
-import flow.navigation.NavigationController
 import flow.navigation.rememberNavigationController
-import flow.ui.platform.DeeplinkHandler
+import flow.ui.platform.LocalLoggerFactory
 import flow.ui.platform.LocalOpenFileHandler
 import flow.ui.platform.LocalOpenLinkHandler
 import flow.ui.platform.LocalShareLinkHandler
@@ -41,15 +40,16 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.rutrackersearch.app.navigation.MobileNavigation
-import me.rutrackersearch.app.platform.DeeplinkHandlerImpl
 import me.rutrackersearch.app.platform.OpenFileHandlerImpl
 import me.rutrackersearch.app.platform.OpenLinkHandlerImpl
 import me.rutrackersearch.app.platform.ShareLinkHandlerImpl
+import javax.inject.Inject
 
 @AndroidEntryPoint
 open class MainActivity : ComponentActivity() {
 
-    private lateinit var newIntentListener: (Intent) -> Unit
+    @Inject
+    lateinit var loggerFactory: LoggerFactory
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -85,9 +85,7 @@ open class MainActivity : ComponentActivity() {
 
         setContent {
             theme?.let { theme ->
-                val navigationController = rememberNavigationController()
-                val deeplinkHandler = rememberDeeplinkHandler(navigationController)
-                val linkHandler = rememberOpenLinkHandler(deeplinkHandler)
+                val linkHandler = rememberOpenLinkHandler()
                 val shareLinkHandler = rememberShareLinkHandler()
                 val openFileHandler = rememberOpenFileHandler()
                 CompositionLocalProvider(
@@ -95,7 +93,9 @@ open class MainActivity : ComponentActivity() {
                     LocalShareLinkHandler provides shareLinkHandler,
                     LocalOpenFileHandler provides openFileHandler,
                     LocalPlatformType provides deviceType,
+                    LocalLoggerFactory provides loggerFactory,
                 ) {
+                    val navigationController = rememberNavigationController()
                     MainScreen(
                         theme = theme,
                         platformType = deviceType,
@@ -104,29 +104,12 @@ open class MainActivity : ComponentActivity() {
                 }
             }
         }
-
-        addOnNewIntentListener { intent ->
-            newIntentListener.invoke(intent)
-        }
     }
 
     @Composable
-    private fun rememberDeeplinkHandler(navigationController: NavigationController): DeeplinkHandler {
-        return remember {
-            DeeplinkHandlerImpl(navigationController).apply {
-                newIntentListener = { intent ->
-                    if (intent.data?.let(::handle) == false && intent.action == Intent.ACTION_VIEW) {
-                        startActivity(Intent(Intent.ACTION_VIEW, intent.data))
-                    }
-                }
-            }
-        }
-    }
-
-    @Composable
-    private fun rememberOpenLinkHandler(deeplinkHandler: DeeplinkHandler): OpenLinkHandler {
+    private fun rememberOpenLinkHandler(): OpenLinkHandler {
         val uriHandler = LocalUriHandler.current
-        return remember { OpenLinkHandlerImpl(deeplinkHandler, uriHandler) }
+        return remember { OpenLinkHandlerImpl(uriHandler, loggerFactory) }
     }
 
     @Composable

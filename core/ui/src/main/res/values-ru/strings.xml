@@ -10,11 +10,7 @@
     <string name="error_site_connection">Сайт недоступен, попробуйте повторить позже</string>
     <string name="error_something_goes_wrong">Что-то пошло не так, попробуйте ещё раз</string>
     <string name="error_title">Ошибка</string>
-    <string name="favorites_label">Избранное</string>
-    <string name="forum_label">Форум</string>
-    <string name="history_label">История</string>
-    <string name="menu_label">Меню</string>
-    <string name="search_label">Поиск</string>
+
     <string name="search_period_all_time">всё время</string>
     <string name="search_period_last_month">месяц</string>
     <string name="search_period_last_three_days">последние три дня</string>
@@ -22,6 +18,7 @@
     <string name="search_period_last_week">неделю</string>
     <string name="search_period_today">сегодня</string>
     <string name="settings_label">Настройки</string>
+
     <string name="sort_date">Дате</string>
     <string name="sort_downloaded">Скачиваниям</string>
     <string name="sort_leeches">Качающим</string>
@@ -30,20 +27,7 @@
     <string name="sort_seeds">Раздающим</string>
     <string name="sort_size">Размеру</string>
     <string name="sort_title">Названию</string>
-    <string name="topic_action_comments">Комментарии</string>
-    <string name="topic_author_label">Автор:</string>
-    <string name="topic_category_label">Форум:</string>
-    <string name="topic_empty_content_subtitle">Не удалось найти описание раздачи</string>
-    <string name="topic_empty_content_title">Пусто</string>
-    <string name="topic_empty_subtitle">Сообщений пока нет</string>
-    <string name="topic_empty_title">Пусто</string>
-    <string name="topic_file_download_completed">torrent-файл загружен</string>
-    <string name="topic_login_required">Необходимо авторизоваться</string>
-    <string name="topic_permission_required">Для загрузки файла нужен доступ к диску</string>
-    <string name="topic_title">Тема</string>
-    <string name="topics_downloads_subtitle">В процессе разработки</string>
-    <string name="topics_downloads_title">Загрузки</string>
-    <string name="topics_label">Темы</string>
+
     <string name="torrent_status_approved">Проверена</string>
     <string name="torrent_status_checking">Проверяется</string>
     <string name="torrent_status_closed">Закрыта</string>

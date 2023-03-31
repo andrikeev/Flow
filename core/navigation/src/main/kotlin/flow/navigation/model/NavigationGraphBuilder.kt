@@ -5,10 +5,12 @@ import flow.navigation.ui.NavigationAnimations
 
 interface NavigationGraphBuilder {
     val graph: String?
+
     fun addDestination(
         route: String,
         isStartRoute: Boolean = false,
         arguments: List<NavigationArgument> = emptyList(),
+        deepLinks: List<NavigationDeepLink> = emptyList(),
         animations: NavigationAnimations = NavigationAnimations.Default,
         options: NavigationOptions = NavigationOptions.Empty,
         content: @Composable () -> Unit,
@@ -20,10 +22,6 @@ interface NavigationGraphBuilder {
         animations: NavigationAnimations = NavigationAnimations.Default,
         nestedDestinations: NavigationGraphBuilder.() -> Unit,
     )
-
-    fun route(value: String): String {
-        return graph?.let { "$it/" }.orEmpty() + value
-    }
 }
 
 private class NavigationGraphBuilderImpl(
@@ -36,11 +34,21 @@ private class NavigationGraphBuilderImpl(
         route: String,
         isStartRoute: Boolean,
         arguments: List<NavigationArgument>,
+        deepLinks: List<NavigationDeepLink>,
         animations: NavigationAnimations,
         options: NavigationOptions,
         content: @Composable () -> Unit,
     ) {
-        destinations.add(NavigationDestination.Destination(route, arguments, content, animations, options))
+        destinations.add(
+            NavigationDestination.Destination(
+                route = route,
+                arguments = arguments,
+                deepLinks = deepLinks,
+                content = content,
+                animations = animations,
+                options = options,
+            )
+        )
         if (isStartRoute) {
             startRoute = route
         }

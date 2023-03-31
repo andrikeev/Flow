@@ -19,7 +19,6 @@
     <string name="search_screen_history_item_query">Искать \"%1$s\"</string>
     <string name="search_screen_history_subtitle">Здесь будут сохраняться последние запросы</string>
     <string name="search_screen_history_title">История запросов</string>
-    <string name="search_screen_input_hint">Поиск..</string>
     <string name="search_screen_result_empty_subtitle">Попробуйте использовать ключевые слова или изменить настройки фильтрации</string>
     <string name="search_screen_result_empty_title">Ничего не найдено</string>
     <string name="search_screen_title">Поиск</string>

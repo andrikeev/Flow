@@ -27,7 +27,7 @@ internal interface RuTrackerInnerApi {
     ): String
     suspend fun forum(): String
     suspend fun category(id: String, page: Int?): String
-    suspend fun topic(token: String, id: String? = null, pid: String? = null, page: Int? = null): String
+    suspend fun topic(token: String, id: String, page: Int? = null): String
     suspend fun download(token: String, id: String): FileDto
     suspend fun profile(userId: String): String
     suspend fun postMessage(token: String, topicId: String, formToken: String, message: String): String

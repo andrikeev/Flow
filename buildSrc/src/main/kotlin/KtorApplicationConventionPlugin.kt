@@ -15,6 +15,7 @@ class KtorApplicationConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("flow.kotlin.library")
                 apply("org.gradle.application")
+                apply("io.ktor.plugin")
             }
         }
     }

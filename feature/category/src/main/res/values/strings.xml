@@ -1,4 +1,7 @@
 <resources>
     <string name="forum_screen_forum_empty_subtitle">Page is empty</string>
     <string name="forum_screen_forum_empty_title">Empty</string>
+
+    <string name="forum_screen_login_required_title">Login required</string>
+    <string name="forum_screen_login_required_for_search">To use search on the forum you need to be authorized</string>
 </resources>

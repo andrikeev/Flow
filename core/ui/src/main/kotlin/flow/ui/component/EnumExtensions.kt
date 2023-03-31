@@ -2,9 +2,9 @@ package flow.ui.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import flow.designsystem.drawables.FlowIcons
-import flow.designsystem.theme.TopicColors
+import flow.designsystem.drawables.Icon
+import flow.designsystem.theme.AppTheme
 import flow.models.search.Order
 import flow.models.search.Period
 import flow.models.search.Sort
@@ -37,13 +37,13 @@ val Order.resId: Int
         Order.DESCENDING -> R.string.sort_order_descending
     }
 
-val TorrentStatus.icon: ImageVector
+val TorrentStatus.icon: Icon
     get() = when (this) {
         TorrentStatus.DUPLICATE -> FlowIcons.TorrentStatus.Duplicate
         TorrentStatus.NOT_APPROVED -> FlowIcons.TorrentStatus.Checking
         TorrentStatus.CHECKING -> FlowIcons.TorrentStatus.Checking
         TorrentStatus.APPROVED -> FlowIcons.TorrentStatus.Approved
-        TorrentStatus.NEED_EDIT -> FlowIcons.TorrentStatus.NeedsEdit
+        TorrentStatus.NEEDS_EDIT -> FlowIcons.TorrentStatus.NeedsEdit
         TorrentStatus.CLOSED -> FlowIcons.TorrentStatus.Closed
         TorrentStatus.NO_DESCRIPTION -> FlowIcons.TorrentStatus.NoDescription
         TorrentStatus.CONSUMED -> FlowIcons.TorrentStatus.Consumed
@@ -51,14 +51,14 @@ val TorrentStatus.icon: ImageVector
 
 val TorrentStatus.color: Color
     @Composable get() = when (this) {
-        TorrentStatus.DUPLICATE -> TopicColors.statusOkVariant
-        TorrentStatus.NOT_APPROVED -> TopicColors.statusWarning
-        TorrentStatus.CHECKING -> TopicColors.statusWarning
-        TorrentStatus.APPROVED -> TopicColors.statusOk
-        TorrentStatus.NEED_EDIT -> TopicColors.statusWarning
-        TorrentStatus.CLOSED -> TopicColors.statusError
-        TorrentStatus.NO_DESCRIPTION -> TopicColors.statusWarning
-        TorrentStatus.CONSUMED -> TopicColors.statusOkVariant
+        TorrentStatus.DUPLICATE -> AppTheme.colors.accentBlue
+        TorrentStatus.NOT_APPROVED -> AppTheme.colors.accentOrange
+        TorrentStatus.CHECKING -> AppTheme.colors.accentOrange
+        TorrentStatus.APPROVED -> AppTheme.colors.accentGreen
+        TorrentStatus.NEEDS_EDIT -> AppTheme.colors.accentRed
+        TorrentStatus.CLOSED -> AppTheme.colors.accentRed
+        TorrentStatus.NO_DESCRIPTION -> AppTheme.colors.accentOrange
+        TorrentStatus.CONSUMED -> AppTheme.colors.accentBlue
     }
 
 val TorrentStatus.resId: Int
@@ -67,7 +67,7 @@ val TorrentStatus.resId: Int
         TorrentStatus.NOT_APPROVED -> R.string.torrent_status_not_approved
         TorrentStatus.CHECKING -> R.string.torrent_status_checking
         TorrentStatus.APPROVED -> R.string.torrent_status_approved
-        TorrentStatus.NEED_EDIT -> R.string.torrent_status_need_edit
+        TorrentStatus.NEEDS_EDIT -> R.string.torrent_status_need_edit
         TorrentStatus.CLOSED -> R.string.torrent_status_closed
         TorrentStatus.NO_DESCRIPTION -> R.string.torrent_status_no_description
         TorrentStatus.CONSUMED -> R.string.torrent_status_consumed

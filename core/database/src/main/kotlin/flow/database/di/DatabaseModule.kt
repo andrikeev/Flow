@@ -20,5 +20,7 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "flow-db",
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
 }

@@ -1,225 +1,315 @@
 package flow.designsystem.component
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ButtonColors
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonElevation
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonColors
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import flow.designsystem.R
 import flow.designsystem.drawables.FlowIcons
-import flow.designsystem.theme.Elevation
-import flow.designsystem.theme.Scale
+import flow.designsystem.drawables.Icon
+import flow.designsystem.theme.AppTheme
+import flow.designsystem.theme.FlowTheme
+import flow.designsystem.theme.contentColorFor
 
 @Composable
+@NonRestartableComposable
 fun Button(
-    modifier: Modifier = Modifier,
     text: String,
-    onClick: () -> Unit,
-    enabled: Boolean = true,
-    color: Color,
-) {
-    Button(
-        modifier = modifier,
-        onClick = onClick,
-        enabled = enabled,
-        colors = ButtonDefaults.buttonColors(containerColor = color),
-    ) {
-        Text(
-            text = text,
-            overflow = TextOverflow.Clip,
-            softWrap = false,
-        )
-    }
-}
-
-@Composable
-fun Button(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     enabled: Boolean = true,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
-    shape: Shape = MaterialTheme.shapes.medium,
-    border: BorderStroke? = null,
-    colors: ButtonColors = ButtonDefaults.buttonColors(),
-    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
-    content: @Composable RowScope.() -> Unit
+    color: Color = AppTheme.colors.primary,
+) = Button(
+    modifier = modifier,
+    onClick = onClick,
+    enabled = enabled,
+    color = color,
 ) {
-    Focusable(
-        spec = focusableSpec(
-            scale = Scale.large,
-            elevation = Elevation.large,
-        ),
-    ) {
-        androidx.compose.material3.Button(
-            modifier = modifier,
-            onClick = onClick,
-            enabled = enabled,
-            interactionSource = interactionSource,
-            elevation = elevation,
-            shape = shape,
-            border = border,
-            colors = colors,
-            contentPadding = contentPadding,
-            content = content,
-        )
-    }
+    Text(
+        text = text,
+        overflow = TextOverflow.Clip,
+        softWrap = false,
+    )
 }
 
 @Composable
+@NonRestartableComposable
+fun Button(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    color: Color = AppTheme.colors.primary,
+    content: @Composable RowScope.() -> Unit,
+) = androidx.compose.material3.Button(
+    modifier = modifier,
+    onClick = onClick,
+    enabled = enabled,
+    shape = AppTheme.shapes.circle,
+    colors = ButtonDefaults.buttonColors(
+        containerColor = color,
+        contentColor = AppTheme.colors.contentColorFor(color),
+        disabledContainerColor = AppTheme.colors.onSurface.copy(alpha = 0.12f),
+        disabledContentColor = AppTheme.colors.onSurface.copy(alpha = 0.37f),
+    ),
+    contentPadding = ButtonDefaults.ContentPadding,
+    content = content,
+)
+
+@Composable
+@NonRestartableComposable
 fun TextButton(
-    modifier: Modifier = Modifier,
     text: String,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
     enabled: Boolean = true,
+    color: Color = AppTheme.colors.primary,
+) = TextButton(
+    modifier = modifier,
+    onClick = onClick,
+    enabled = enabled,
+    contentColor = color,
 ) {
-    TextButton(
-        modifier = modifier,
-        onClick = onClick,
-        enabled = enabled,
-    ) {
-        Text(
-            text = text,
-            overflow = TextOverflow.Clip,
-            softWrap = false,
-        )
-    }
+    Text(
+        text = text,
+        overflow = TextOverflow.Clip,
+        softWrap = false,
+    )
 }
 
 @Composable
+@NonRestartableComposable
 private fun TextButton(
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    enabled: Boolean = true,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    elevation: ButtonElevation? = null,
-    shape: Shape = MaterialTheme.shapes.medium,
-    border: BorderStroke? = null,
-    colors: ButtonColors = ButtonDefaults.textButtonColors(),
-    contentPadding: PaddingValues = ButtonDefaults.TextButtonContentPadding,
-    content: @Composable RowScope.() -> Unit
-) {
-    Focusable(
-        spec = focusableSpec(
-            shape = shape,
-            color = MaterialTheme.colorScheme.surface,
-            elevation = Elevation.large,
-        ),
-    ) {
-        androidx.compose.material3.TextButton(
-            onClick = onClick,
-            modifier = modifier,
-            enabled = enabled,
-            interactionSource = interactionSource,
-            elevation = elevation,
-            shape = shape,
-            border = border,
-            colors = colors,
-            contentPadding = contentPadding,
-            content = content,
-        )
-    }
-}
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+    shape: Shape = AppTheme.shapes.medium,
+    contentColor: Color = AppTheme.colors.primary,
+    content: @Composable RowScope.() -> Unit,
+) = androidx.compose.material3.TextButton(
+    onClick = onClick,
+    modifier = modifier,
+    enabled = enabled,
+    shape = shape,
+    border = null,
+    colors = ButtonDefaults.textButtonColors(
+        containerColor = Color.Transparent,
+        contentColor = contentColor,
+        disabledContainerColor = Color.Transparent,
+        disabledContentColor = AppTheme.colors.onSurface.copy(alpha = 0.37f),
+    ),
+    contentPadding = ButtonDefaults.ContentPadding,
+    content = content,
+)
 
 @Composable
+@NonRestartableComposable
 fun IconButton(
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
     enabled: Boolean = true,
-    imageVector: ImageVector,
+    modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    content: @Composable () -> Unit,
+) = androidx.compose.material3.IconButton(
+    modifier = modifier,
+    onClick = onClick,
+    enabled = enabled,
+    interactionSource = interactionSource,
+    content = content,
+)
+
+@Composable
+@NonRestartableComposable
+fun IconButton(
+    icon: Icon,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     tint: Color = Color.Unspecified,
-    contentDescription: String? = null,
-) {
-    IconButton(
-        modifier = modifier,
-        onClick = onClick,
-        enabled = enabled,
-    ) {
+    onClick: () -> Unit,
+) = IconButton(
+    modifier = modifier,
+    onClick = onClick,
+    enabled = enabled,
+    content = {
         Icon(
-            imageVector = imageVector,
+            icon = icon,
             tint = if (tint == Color.Unspecified) LocalContentColor.current else tint,
             contentDescription = contentDescription,
         )
-    }
-}
-
-@Composable
-fun IconButton(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    enabled: Boolean = true,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
-    content: @Composable () -> Unit
-) {
-    Focusable(
-        spec = focusableSpec(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.surface,
-            elevation = Elevation.large,
-        ),
-    ) {
-        androidx.compose.material3.IconButton(
-            onClick = onClick,
-            modifier = modifier,
-            enabled = enabled,
-            interactionSource = interactionSource,
-            colors = colors,
-            content = content,
-        )
-    }
-}
+    },
+)
 
 @Composable
 fun FavoriteButton(
+    favorite: Boolean,
     modifier: Modifier = Modifier,
-    isFavorite: Boolean,
     onClick: () -> Unit,
-) {
-    val color by animateColorAsState(
-        targetValue = if (isFavorite) {
-            MaterialTheme.colorScheme.secondary
-        } else {
-            LocalContentColor.current
-        },
-    )
-    IconButton(
-        modifier = modifier,
-        onClick = onClick,
-        imageVector = if (isFavorite) {
-            FlowIcons.FavoriteChecked
-        } else {
-            FlowIcons.FavoriteUnchecked
-        },
-        tint = color,
-        contentDescription = stringResource(R.string.designsystem_action_favorite),
-    )
-}
+) = IconButton(
+    modifier = modifier,
+    onClick = onClick,
+    content = {
+        Crossfade(
+            targetState = favorite,
+            label = "FavoriteButton_Crossfade",
+        ) { favorite ->
+            if (favorite) {
+                Icon(
+                    icon = FlowIcons.FavoriteChecked,
+                    tint = AppTheme.colors.primary,
+                    contentDescription = stringResource(R.string.designsystem_action_favorite),
+                )
+            } else {
+                Icon(
+                    icon = FlowIcons.FavoriteUnchecked,
+                    contentDescription = stringResource(R.string.designsystem_action_favorite),
+                )
+            }
+        }
+    },
+)
 
 @Composable
-fun BackButton(onClick: () -> Unit) {
-    IconButton(
-        onClick = onClick,
-        imageVector = FlowIcons.Back,
-        contentDescription = stringResource(R.string.designsystem_action_back),
-    )
+fun BookmarkButton(
+    bookmark: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) = IconButton(
+    modifier = modifier,
+    onClick = onClick,
+    content = {
+        Crossfade(
+            targetState = bookmark,
+            label = "BookmarkButton_Crossfade",
+        ) { bookmark ->
+            if (bookmark) {
+                Icon(
+                    icon = FlowIcons.BookmarkChecked,
+                    tint = AppTheme.colors.primary,
+                    contentDescription = stringResource(R.string.designsystem_action_favorite),
+                )
+            } else {
+                Icon(
+                    icon = FlowIcons.BookmarkUnchecked,
+                    contentDescription = stringResource(R.string.designsystem_action_favorite),
+                )
+            }
+        }
+    },
+)
+
+@Composable
+@NonRestartableComposable
+fun BackButton(onClick: () -> Unit) = IconButton(
+    icon = FlowIcons.BackArrow,
+    contentDescription = stringResource(R.string.designsystem_action_back),
+    onClick = onClick,
+)
+
+@Composable
+@NonRestartableComposable
+fun SearchButton(onClick: () -> Unit) = IconButton(
+    icon = FlowIcons.Search,
+    contentDescription = stringResource(R.string.designsystem_action_search),
+    onClick = onClick,
+)
+
+@ThemePreviews
+@Composable
+private fun ButtonPreview(@PreviewParameter(ButtonParamsProvider::class) enabled: Boolean) {
+    FlowTheme {
+        Surface {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Button(
+                    modifier = Modifier.padding(AppTheme.spaces.medium),
+                    text = "Primary button",
+                    enabled = enabled,
+                    onClick = {},
+                    color = AppTheme.colors.primary,
+                )
+                Button(
+                    modifier = Modifier.padding(AppTheme.spaces.medium),
+                    text = "Accent blue button",
+                    enabled = enabled,
+                    onClick = {},
+                    color = AppTheme.colors.accentBlue,
+                )
+                Button(
+                    modifier = Modifier.padding(AppTheme.spaces.medium),
+                    text = "Accent green button",
+                    enabled = enabled,
+                    onClick = {},
+                    color = AppTheme.colors.accentGreen,
+                )
+                Button(
+                    modifier = Modifier.padding(AppTheme.spaces.medium),
+                    text = "Accent orange button",
+                    enabled = enabled,
+                    onClick = {},
+                    color = AppTheme.colors.accentOrange,
+                )
+                Button(
+                    modifier = Modifier.padding(AppTheme.spaces.medium),
+                    text = "Accent red button",
+                    enabled = enabled,
+                    onClick = {},
+                    color = AppTheme.colors.accentRed,
+                )
+            }
+        }
+    }
 }
+
+@ThemePreviews
+@Composable
+private fun TextButtonPreview(@PreviewParameter(ButtonParamsProvider::class) enabled: Boolean) {
+    FlowTheme {
+        Surface {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                TextButton(
+                    text = "Primary button",
+                    enabled = enabled,
+                    onClick = {},
+                )
+                TextButton(
+                    text = "Accent blue button",
+                    enabled = enabled,
+                    onClick = {},
+                    color = AppTheme.colors.accentBlue,
+                )
+                TextButton(
+                    text = "Accent green button",
+                    enabled = enabled,
+                    onClick = {},
+                    color = AppTheme.colors.accentGreen,
+                )
+                TextButton(
+                    text = "Accent orange button",
+                    enabled = enabled,
+                    onClick = {},
+                    color = AppTheme.colors.accentOrange,
+                )
+                TextButton(
+                    text = "Accent red button",
+                    enabled = enabled,
+                    onClick = {},
+                    color = AppTheme.colors.accentRed,
+                )
+            }
+        }
+    }
+}
+
+private class ButtonParamsProvider : CollectionPreviewParameterProvider<Boolean>(true, false)

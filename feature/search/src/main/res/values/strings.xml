@@ -18,7 +18,6 @@
     <string name="search_screen_history_item_query">Search for \"%1$s\"</string>
     <string name="search_screen_history_subtitle">There will be list of recent searches</string>
     <string name="search_screen_history_title">Search history</string>
-    <string name="search_screen_input_hint">Search..</string>
     <string name="search_screen_result_empty_subtitle">Try to use keywords or change filter parameters</string>
     <string name="search_screen_result_empty_title">Nothing found</string>
     <string name="search_screen_title">Search</string>

@@ -2,9 +2,13 @@ package flow.proxy.rutracker.routes
 
 import flow.network.api.NetworkApi
 import flow.proxy.rutracker.di.inject
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.routing.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.request.receiveParameters
+import io.ktor.server.response.respond
+import io.ktor.server.routing.post
+import io.ktor.server.routing.routing
+import io.ktor.server.util.getOrFail
 
 internal fun Application.configureAuthRoutes() {
     val api by inject<NetworkApi>()
@@ -12,13 +16,13 @@ internal fun Application.configureAuthRoutes() {
     routing {
         post("/login") {
             with(call.receiveParameters()) {
-                respond(
+                call.respond(
                     api.login(
-                        username = require("username"),
-                        password = require("password"),
-                        captchaSid = getOrEmpty("cap_sid"),
-                        captchaCode = getOrEmpty("cap_code"),
-                        captchaValue = getOrEmpty("cap_val"),
+                        username = getOrFail("username"),
+                        password = getOrFail("password"),
+                        captchaSid = get("cap_sid"),
+                        captchaCode = get("cap_code"),
+                        captchaValue = get("cap_val"),
                     )
                 )
             }

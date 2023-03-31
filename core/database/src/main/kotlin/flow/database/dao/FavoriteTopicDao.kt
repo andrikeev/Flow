@@ -13,27 +13,33 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FavoriteTopicDao {
     /**
-     * Get all [FavoriteTopicEntity]'s ids.
+     * Get [FavoriteTopicEntity] by id if exists.
      */
-    @Query("SELECT id FROM FavoriteTopic")
-    suspend fun getAllIds(): List<String>
+    @Query("SELECT * FROM FavoriteTopic WHERE id = :id")
+    suspend fun get(id: String): FavoriteTopicEntity?
 
     /**
      * Get all [FavoriteTopicEntity]s.
      */
-    @Query("SELECT * FROM FavoriteTopic")
+    @Query("SELECT * FROM FavoriteTopic ORDER BY timestamp DESC")
     suspend fun getAll(): List<FavoriteTopicEntity>
+
+    /**
+     * Get all [FavoriteTopicEntity]'s ids.
+     */
+    @Query("SELECT id FROM FavoriteTopic ORDER BY timestamp DESC")
+    suspend fun getAllIds(): List<String>
 
     /**
      * Observe all [FavoriteTopicEntity]s from newest to latest.
      */
-    @Query("SELECT * FROM FavoriteTopic ORDER by timestamp DESC")
+    @Query("SELECT * FROM FavoriteTopic ORDER BY timestamp DESC")
     fun observerAll(): Flow<List<FavoriteTopicEntity>>
 
     /**
      * Observe all [FavoriteTopicEntity]'s ids.
      */
-    @Query("SELECT id FROM FavoriteTopic")
+    @Query("SELECT id FROM FavoriteTopic ORDER BY timestamp DESC")
     fun observerAllIds(): Flow<List<String>>
 
     /**

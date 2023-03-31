@@ -23,6 +23,8 @@ import dagger.hilt.components.SingletonComponent
 import flow.database.AppDatabase
 import flow.database.dao.BookmarkDao
 import flow.database.dao.FavoriteTopicDao
+import flow.database.dao.ForumCategoryDao
+import flow.database.dao.ForumMetadataDao
 import flow.database.dao.SearchHistoryDao
 import flow.database.dao.SuggestDao
 import flow.database.dao.VisitedTopicDao
@@ -39,6 +41,14 @@ object DaosModule {
     @Provides
     @Singleton
     fun providesFavoriteTopicDao(appDatabase: AppDatabase): FavoriteTopicDao = appDatabase.favoriteTopicDao()
+
+    @Provides
+    @Singleton
+    fun providesForumCategoryDao(appDatabase: AppDatabase): ForumCategoryDao = appDatabase.forumCategoryDao()
+
+    @Provides
+    @Singleton
+    fun providesForumMetadataDao(appDatabase: AppDatabase): ForumMetadataDao = appDatabase.forumMetadataDao()
 
     @Provides
     @Singleton

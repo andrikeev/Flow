@@ -3,16 +3,19 @@ package flow.navigation.ui
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.ui.Alignment
 import androidx.navigation.NavBackStackEntry
 
-typealias EnterAnimation = (from: String?) -> EnterTransition
-typealias ExitAnimation = (from: String?) -> ExitTransition
+typealias EnterAnimation = AnimationScope.() -> EnterTransition
+typealias ExitAnimation = AnimationScope.() -> ExitTransition
 
 data class NavigationAnimations(
     val enterTransition: EnterAnimation? = null,
@@ -23,18 +26,67 @@ data class NavigationAnimations(
     companion object {
         val Default = NavigationAnimations()
         val ScaleInOutAnimation = NavigationAnimations(
-            enterTransition = { scaleIn(initialScale = 1.5f) + fadeIn() },
-            exitTransition = { scaleOut(targetScale = 1.5f) + fadeOut() },
+            enterTransition = {
+                scaleIn(initialScale = 0.75f) +
+                expandIn(
+                    expandFrom = Alignment.Center,
+                    initialSize = { it / 4 },
+                ) +
+                fadeIn()
+            },
+            exitTransition = null,
+            popEnterTransition = null,
+            popExitTransition = {
+                fadeOut() +
+                shrinkOut(
+                    shrinkTowards = Alignment.Center,
+                    targetSize = { it / 4 }
+                ) +
+                scaleOut(targetScale = 0.75f)
+            },
         )
-        fun slideInLeft() = slideInHorizontally { it } + fadeIn()
-        fun slideOutLeft() = slideOutHorizontally { it } + fadeOut()
-        fun slideInRight() = slideInHorizontally { -it } + fadeIn()
-        fun slideOutRight() = slideOutHorizontally { -it } + fadeOut()
+        val FadeInOutAnimations = NavigationAnimations(
+            enterTransition = { fadeIn() },
+            exitTransition = null,
+            popEnterTransition = null,
+            popExitTransition = { fadeOut() },
+        )
+
+        fun slideInLeft() = slideInHorizontally { it / 4 } + fadeIn()
+        fun slideOutLeft() = fadeOut() + slideOutHorizontally { it / 4 }
+        fun slideInRight() = slideInHorizontally { -it / 4 } + fadeIn()
+        fun slideOutRight() = fadeOut() + slideOutHorizontally { -it / 4 }
     }
 }
 
+data class AnimationScope(
+    val from: AnimationDestination,
+    val to: AnimationDestination,
+)
+
+data class AnimationDestination(
+    val graph: String? = null,
+    val route: String?,
+)
+
 internal fun EnterAnimation?.toEnterTransition(): (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?)? =
-    this?.let { { invoke(initialState.destination.parent?.route ?: initialState.destination.route) } }
+    this?.let { animation -> { withAnimationScope(animation::invoke) } }
 
 internal fun ExitAnimation?.toExitTransition(): (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?)? =
-    this?.let { { invoke(initialState.destination.parent?.route ?: initialState.destination.route) } }
+    this?.let { animation -> { withAnimationScope(animation::invoke) } }
+
+private inline fun <reified R> AnimatedContentScope<NavBackStackEntry>.withAnimationScope(
+    block: AnimationScope.() -> R,
+) = with(
+    AnimationScope(
+        from = AnimationDestination(
+            graph = initialState.destination.parent?.route,
+            route = initialState.destination.route,
+        ),
+        to = AnimationDestination(
+            graph = targetState.destination.parent?.route,
+            route = targetState.destination.route,
+        ),
+    ),
+    block,
+)

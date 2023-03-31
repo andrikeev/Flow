@@ -1,1 +1,22 @@
-<resources></resources>
+<resources>
+    <string name="topic_action_comments">Comments</string>
+    <string name="topic_action_magnet" translatable="false">Magnet</string>
+    <string name="topic_action_torrent" translatable="false">Torrent</string>
+    <string name="topic_author_label">Author:</string>
+    <string name="topic_category_label">Category:</string>
+    <string name="topic_empty_content_subtitle">Could not find any content for this torrent</string>
+    <string name="topic_empty_content_title">Empty</string>
+    <string name="topic_empty_subtitle">No comments yet</string>
+    <string name="topic_empty_title">Empty</string>
+    <string name="topic_file_download_in_progress">Downloading file…</string>
+    <string name="topic_file_download_completed">Download completed</string>
+
+    <string name="topics_login_required_title">Login required</string>
+    <string name="topics_login_required_for_download">To download the torrent file you need to be authorized. If you do not have an account you can use a magnet link.</string>
+    <string name="topics_login_required_for_comment">In order to write messages you need to be authorized</string>
+
+    <string name="topic_new_comment">New message</string>
+
+    <string name="permission_write_storage_rationale_title">Grant access to storage?</string>
+    <string name="permission_write_storage_rationale">To download the torrent file you must grant permission to access the download folder</string>
+</resources>

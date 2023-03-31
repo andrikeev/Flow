@@ -3,11 +3,14 @@
     <string name="app_version">Версия: %1$s</string>
 
     <string name="menu_data_clear_bookmarks">Очистить закладки</string>
-    <string name="menu_data_clear_bookmarks_confirmation">Удалить все сохарненные закладки?</string>
+    <string name="menu_data_clear_bookmarks_title">Очистить закладки?</string>
+    <string name="menu_data_clear_bookmarks_confirmation">Все сохраненные разделы форума будут удалены</string>
     <string name="menu_data_clear_favorites">Очистить избранное</string>
-    <string name="menu_data_clear_favorites_confirmation">Удалить все избарнные темы?</string>
+    <string name="menu_data_clear_favorites_title">Очистить избранное?</string>
+    <string name="menu_data_clear_favorites_confirmation">Все избранные темы и раздачи будут удалены</string>
     <string name="menu_data_clear_history">Очистить историю</string>
-    <string name="menu_data_clear_history_confirmation">Удалить историю запросов, подсказки и все посещённые темы?</string>
+    <string name="menu_data_clear_history_title">Очистить историю?</string>
+    <string name="menu_data_clear_history_confirmation">История запросов и просмотренные темы и раздачи будут удалены</string>
     <string name="menu_label_data">Данные</string>
     <string name="menu_label_misc">Другое</string>
     <string name="menu_label_settings">Настройки</string>
@@ -17,7 +20,12 @@
     <string name="menu_misc_rights">Информация для правообладателей</string>
     <string name="menu_settings_bookmarks_sync">Синхронизация закладок</string>
     <string name="menu_settings_favorites_sync">Синхронизация избранного</string>
+    <string name="menu_settings_endpoint">Сервер</string>
     <string name="menu_settings_theme">Тема</string>
+    <string name="menu_title">Меню</string>
+
+    <string name="permission_show_notifications_rationale_title">Включить уведомления?</string>
+    <string name="permission_show_notifications_rationale">Получайте уведомления, когда ваши избранные раздачи обновляются или появляются новые темы в отмеченных разделах форума</string>
 
     <string name="sync_period_daily">Раз в день</string>
     <string name="sync_period_hour">Каждый час</string>

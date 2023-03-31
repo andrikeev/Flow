@@ -32,12 +32,12 @@ import kotlin.time.Duration.Companion.minutes
 internal class WorkBackgroundService @Inject constructor(
     private val workManager: WorkManager,
 ) : BackgroundService {
-    override suspend fun addFavoriteTopic(id: String, isTorrent: Boolean) {
+    override suspend fun addFavoriteTopic(id: String) {
         val data = DelegatingWorker.delegateData(
             AddFavoriteWorker::class,
-            AddFavoriteWorker.workerData(id, isTorrent),
+            AddFavoriteWorker.workerData(id),
         )
-        val workRequest = oneTimeWorkRequest<DelegatingWorker>(data)
+        val workRequest = oneTimeWorkRequest<DelegatingWorker>(AddFavoriteWork, data)
         workManager.enqueueUniqueWork(id, ExistingWorkPolicy.REPLACE, workRequest)
     }
 
@@ -46,7 +46,7 @@ internal class WorkBackgroundService @Inject constructor(
             RemoveFavoriteWorker::class,
             RemoveFavoriteWorker.workerData(id),
         )
-        val workRequest = oneTimeWorkRequest<DelegatingWorker>(data)
+        val workRequest = oneTimeWorkRequest<DelegatingWorker>(RemoveFavoriteWork, data)
         workManager.enqueueUniqueWork(id, ExistingWorkPolicy.REPLACE, workRequest)
     }
 
@@ -55,13 +55,13 @@ internal class WorkBackgroundService @Inject constructor(
             UpdateBookmarkWorker::class,
             UpdateBookmarkWorker.workerData(id),
         )
-        val workRequest = oneTimeWorkRequest<DelegatingWorker>(data)
+        val workRequest = oneTimeWorkRequest<DelegatingWorker>(UpdateBookmarkWork, data)
         workManager.enqueueUniqueWork(id, ExistingWorkPolicy.REPLACE, workRequest)
     }
 
     override suspend fun loadFavorites() {
         val data = DelegatingWorker.delegateData(LoadFavoritesWorker::class)
-        val workRequest = oneTimeWorkRequest<DelegatingWorker>(data)
+        val workRequest = oneTimeWorkRequest<DelegatingWorker>(LoadFavoritesWork, data)
         workManager.enqueueUniqueWork(LoadFavoritesWork, ExistingWorkPolicy.REPLACE, workRequest)
     }
 
@@ -70,7 +70,7 @@ internal class WorkBackgroundService @Inject constructor(
             workManager.cancelUniqueWork(SyncFavoritesWork)
         } else {
             val data = DelegatingWorker.delegateData(SyncFavoritesWorker::class)
-            val workRequest = periodicWorkRequest<DelegatingWorker>(syncPeriod, data)
+            val workRequest = periodicWorkRequest<DelegatingWorker>(SyncFavoritesWork, syncPeriod, data)
             workManager.enqueueUniquePeriodicWork(
                 SyncFavoritesWork,
                 ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
@@ -84,7 +84,7 @@ internal class WorkBackgroundService @Inject constructor(
             workManager.cancelUniqueWork(SyncBookmarksWork)
         } else {
             val data = DelegatingWorker.delegateData(SyncBookmarksWorker::class)
-            val workRequest = periodicWorkRequest<DelegatingWorker>(syncPeriod, data)
+            val workRequest = periodicWorkRequest<DelegatingWorker>(SyncBookmarksWork, syncPeriod, data)
             workManager.enqueueUniquePeriodicWork(
                 SyncBookmarksWork,
                 ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
@@ -98,13 +98,18 @@ internal class WorkBackgroundService @Inject constructor(
     }
 
     private companion object {
+        const val AddFavoriteWork = "AddFavoriteWork"
         const val LoadFavoritesWork = "LoadFavoritesWork"
-        const val SyncFavoritesWork = "SyncFavoritesWork"
+        const val RemoveFavoriteWork = "RemoveFavoriteWork"
         const val SyncBookmarksWork = "SyncBookmarksWork"
+        const val SyncFavoritesWork = "SyncFavoritesWork"
+        const val UpdateBookmarkWork = "UpdateBookmarkWork"
 
         inline fun <reified T : ListenableWorker> oneTimeWorkRequest(
+            tag: String,
             inputData: Data = Data.EMPTY,
         ) = OneTimeWorkRequestBuilder<T>().apply {
+            addTag(tag)
             setInputData(inputData)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
@@ -118,16 +123,15 @@ internal class WorkBackgroundService @Inject constructor(
         }.build()
 
         inline fun <reified T : ListenableWorker> periodicWorkRequest(
+            tag: String,
             syncPeriod: SyncPeriod,
             inputData: Data = Data.EMPTY,
         ) = PeriodicWorkRequestBuilder<T>(
             syncPeriod.repeatIntervalMillis, TimeUnit.MILLISECONDS,
             syncPeriod.flexIntervalMillis, TimeUnit.MILLISECONDS,
         ).apply {
+            addTag(tag)
             setInputData(inputData)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            }
             setConstraints(requiredNetworkConstraints())
             setBackoffCriteria(
                 BackoffPolicy.LINEAR,

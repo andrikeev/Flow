@@ -1,18 +1,17 @@
 package flow.network.domain
 
 import flow.network.api.RuTrackerInnerApi
-import flow.network.dto.ResultDto
 import flow.network.dto.forum.CategoryDto
 import flow.network.dto.forum.ForumDto
 import org.jsoup.Jsoup
 
 internal class GetForumUseCase(private val api: RuTrackerInnerApi) {
 
-    suspend operator fun invoke(): ResultDto<ForumDto> = tryCatching {
+    suspend operator fun invoke(): ForumDto {
         if (ForumCache.expired()) {
             ForumCache.cache = System.currentTimeMillis() to parseForumTree(api.forum())
         }
-        return ForumCache.cache!!.second.toResult()
+        return ForumCache.cache!!.second
     }
 
     companion object {

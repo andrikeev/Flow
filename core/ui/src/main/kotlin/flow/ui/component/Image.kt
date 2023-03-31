@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
@@ -34,13 +35,16 @@ fun RemoteImage(
 @Composable
 fun RemoteImage(
     src: String?,
+    modifier: Modifier = Modifier,
     contentDescription: String?,
     onLoading: @Composable () -> Unit,
     onSuccess: @Composable (Painter) -> Unit,
     onError: @Composable () -> Unit,
 ) = SubcomposeAsyncImage(
+    modifier = modifier,
     model = src,
     contentDescription = contentDescription,
+    filterQuality = FilterQuality.High,
     content = {
         when (painter.state) {
             is AsyncImagePainter.State.Loading -> onLoading()

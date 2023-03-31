@@ -2,19 +2,15 @@ package flow.favorites
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import flow.designsystem.component.DynamicBox
 import flow.designsystem.component.Empty
-import flow.designsystem.component.FocusableLazyColumn
+import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.Loading
-import flow.designsystem.component.focusableItems
 import flow.designsystem.drawables.FlowIcons
+import flow.designsystem.theme.AppTheme
 import flow.models.topic.BaseTopic
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
@@ -65,46 +61,22 @@ private fun FavoritesScreen(
             subtitleRes = R.string.favorites_empty_subtitle,
             imageRes = R.drawable.ill_favorites,
         )
-
-        is FavoritesState.FavoritesList -> DynamicBox(
-            mobileContent = {
-                LazyList(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(vertical = 8.dp),
-                ) {
-                    dividedItems(
-                        items = state.items,
-                        key = { it.topic.id },
-                        contentType = { it.topic::class },
-                    ) {
-                        FavoriteTopic(
-                            topicModel = it,
-                            onTopicClick = { topic -> onAction(FavoritesAction.TopicClick(topic)) },
-                            onTorrentClick = { torrent -> onAction(FavoritesAction.TorrentClick(torrent)) },
-                        )
-                    }
-                }
-            },
-            tvContent = {
-                FocusableLazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(32.dp),
-                    refocusFirst = false,
-                ) {
-                    focusableItems(
-                        items = state.items,
-                        key = { it.topic.id },
-                        contentType = { it.topic::class },
-                    ) {
-                        FavoriteTopic(
-                            topicModel = it,
-                            onTopicClick = { topic -> onAction(FavoritesAction.TopicClick(topic)) },
-                            onTorrentClick = { torrent -> onAction(FavoritesAction.TorrentClick(torrent)) },
-                        )
-                    }
-                }
-            },
-        )
+        is FavoritesState.FavoritesList -> LazyList(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
+        ) {
+            dividedItems(
+                items = state.items,
+                key = { it.topic.id },
+                contentType = { it.topic::class },
+            ) {
+                FavoriteTopic(
+                    topicModel = it,
+                    onTopicClick = { topic -> onAction(FavoritesAction.TopicClick(topic)) },
+                    onTorrentClick = { torrent -> onAction(FavoritesAction.TorrentClick(torrent)) },
+                )
+            }
+        }
     }
 }
 
@@ -124,9 +96,9 @@ private fun FavoriteTopic(
     action = {
         if (topicModel.hasUpdate) {
             Icon(
-                imageVector = FlowIcons.NewBadge,
+                icon = FlowIcons.NewBadge,
+                tint = AppTheme.colors.primary,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.tertiary,
             )
         }
     },

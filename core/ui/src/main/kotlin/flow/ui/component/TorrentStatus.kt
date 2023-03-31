@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -17,8 +15,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import flow.designsystem.component.Divider
+import flow.designsystem.component.Icon
+import flow.designsystem.component.Text
 import flow.designsystem.drawables.FlowIcons
-import flow.designsystem.theme.TopicColors
+import flow.designsystem.theme.AppTheme
 import flow.models.forum.Category
 import flow.models.topic.Author
 import flow.models.topic.Torrent
@@ -30,7 +30,10 @@ fun TorrentStatus(
     torrent: Torrent,
     contentPadding: PaddingValues = PaddingValues(),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
-    itemsPadding: PaddingValues = PaddingValues(horizontal = 6.dp, vertical = 2.dp),
+    itemsPadding: PaddingValues = PaddingValues(
+        horizontal = AppTheme.spaces.mediumSmall,
+        vertical = AppTheme.spaces.extraSmall,
+    ),
 ) {
     with(torrent) {
         LazyRow(
@@ -56,13 +59,13 @@ fun TorrentStatus(
             status?.let { status ->
                 withDivider {
                     Icon(
-                        imageVector = status.icon,
+                        icon = status.icon,
                         tint = status.color,
                         contentDescription = null,
                     )
                     if (!status.isValid()) {
                         Text(
-                            modifier = Modifier.padding(start = 4.dp),
+                            modifier = Modifier.padding(start = AppTheme.spaces.small),
                             text = stringResource(status.resId),
                         )
                     }
@@ -72,8 +75,8 @@ fun TorrentStatus(
                 seeds?.let { seeds ->
                     withDivider {
                         Icon(
-                            imageVector = FlowIcons.Seeds,
-                            tint = TopicColors.seeds,
+                            icon = FlowIcons.Seeds,
+                            tint = AppTheme.colors.accentGreen,
                             contentDescription = null,
                         )
                         Text(seeds.toString())
@@ -82,8 +85,8 @@ fun TorrentStatus(
                 leeches?.let { leeches ->
                     withDivider {
                         Icon(
-                            imageVector = FlowIcons.Leaches,
-                            tint = TopicColors.leaches,
+                            icon = FlowIcons.Leaches,
+                            tint = AppTheme.colors.accentRed,
                             contentDescription = null,
                         )
                         Text(leeches.toString())
@@ -92,8 +95,8 @@ fun TorrentStatus(
                 size?.let { size ->
                     withDivider {
                         Icon(
-                            imageVector = FlowIcons.File,
-                            tint = TopicColors.file,
+                            icon = FlowIcons.File,
+                            tint = AppTheme.colors.accentBlue,
                             contentDescription = null,
                         )
                         Text(size)

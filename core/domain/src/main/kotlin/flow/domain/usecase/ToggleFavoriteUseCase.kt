@@ -1,23 +1,28 @@
 package flow.domain.usecase
 
-import flow.models.topic.Topic
-import flow.models.topic.TopicModel
-import flow.models.topic.Torrent
+import flow.data.api.repository.FavoritesRepository
+import flow.dispatchers.api.Dispatchers
 import flow.work.api.BackgroundService
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ToggleFavoriteUseCase @Inject constructor(
     private val addLocalFavoriteUseCase: AddLocalFavoriteUseCase,
     private val removeLocalFavoriteUseCase: RemoveLocalFavoriteUseCase,
+    private val favoritesRepository: FavoritesRepository,
     private val backgroundService: BackgroundService,
+    private val dispatchers: Dispatchers,
 ) {
-    suspend operator fun <T : Topic> invoke(topic: TopicModel<T>) {
-        if (topic.isFavorite) {
-            removeLocalFavoriteUseCase(topic.topic.id)
-            backgroundService.removeFavoriteTopic(topic.topic.id)
-        } else {
-            addLocalFavoriteUseCase(topic.topic)
-            backgroundService.addFavoriteTopic(topic.topic.id, topic.topic is Torrent)
+    suspend operator fun invoke(id: String) {
+        withContext(dispatchers.default) {
+            val isFavorites = favoritesRepository.contains(id)
+            if (isFavorites) {
+                removeLocalFavoriteUseCase(id)
+                backgroundService.removeFavoriteTopic(id)
+            } else {
+                addLocalFavoriteUseCase(id)
+                backgroundService.addFavoriteTopic(id)
+            }
         }
     }
 }

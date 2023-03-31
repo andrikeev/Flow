@@ -2,21 +2,21 @@ package flow.search
 
 import flow.models.search.Filter
 import flow.navigation.model.NavigationGraphBuilder
+import flow.navigation.model.buildRoute
 import flow.navigation.ui.NavigationAnimations
 import flow.navigation.viewModel
 
-private val NavigationGraphBuilder.SearchHistoryRoute
-    get() = route("SearchHistory")
+private const val SearchHistoryRoute = "search_history"
 
-fun NavigationGraphBuilder.addSearchHistory(
+context(NavigationGraphBuilder)
+fun addSearchHistory(
     openLogin: () -> Unit,
     openSearchInput: () -> Unit,
     openSearchResult: (Filter) -> Unit,
     animations: NavigationAnimations,
 ) = addDestination(
-    route = SearchHistoryRoute,
+    route = buildRoute(SearchHistoryRoute),
     isStartRoute = true,
-    arguments = emptyList(),
     content = {
         SearchScreen(
             viewModel = viewModel(),

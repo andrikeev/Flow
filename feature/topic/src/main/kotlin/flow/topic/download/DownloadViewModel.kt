@@ -23,11 +23,11 @@ class DownloadViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val observeAuthStateUseCase: ObserveAuthStateUseCase,
     private val downloadTorrentUseCase: DownloadTorrentUseCase,
-) : ViewModel(), ContainerHost<DownloadState, DownloadSideEffect> {
+) : ViewModel(), ContainerHost<DownloadDialogState, DownloadSideEffect> {
     private val torrent = savedStateHandle.torrent
 
-    override val container: Container<DownloadState, DownloadSideEffect> = container(
-        initialState = DownloadState.Initial,
+    override val container: Container<DownloadDialogState, DownloadSideEffect> = container(
+        initialState = DownloadDialogState.Initial,
     )
 
     fun perform(action: DownloadAction) = intent {
@@ -36,12 +36,10 @@ class DownloadViewModel @Inject constructor(
             DownloadAction.Download -> startDownload()
             DownloadAction.LoginClick -> postSideEffect(DownloadSideEffect.OpenLogin)
             DownloadAction.OpenFile -> state.let { downloadState ->
-                if (downloadState is DownloadState.Completed) {
+                if (downloadState is DownloadDialogState.DownloadState.Completed) {
                     postSideEffect(DownloadSideEffect.OpenFile(downloadState.uri))
                 }
             }
-
-            DownloadAction.SettingsClick -> postSideEffect(DownloadSideEffect.OpenSettings)
         }
     }
 
@@ -50,13 +48,13 @@ class DownloadViewModel @Inject constructor(
             observeAuthStateUseCase().collectLatest { authState ->
                 intent {
                     if (authState.isAuthorized) {
-                        reduce { DownloadState.Loading }
+                        reduce { DownloadDialogState.DownloadState.Loading }
                         val uri = downloadTorrentUseCase(torrent)
                         if (uri != null) {
-                            reduce { DownloadState.Completed(uri) }
+                            reduce { DownloadDialogState.DownloadState.Completed(uri) }
                         }
                     } else {
-                        reduce { DownloadState.Unauthorised }
+                        reduce { DownloadDialogState.Unauthorised }
                     }
                 }
             }

@@ -1,7 +1,7 @@
 package flow.data.impl.repository
 
 import flow.data.api.repository.BookmarksRepository
-import flow.data.converters.toEntity
+import flow.data.converters.toBookmarkEntity
 import flow.database.dao.BookmarkDao
 import flow.database.entity.BookmarkEntity
 import flow.models.forum.Category
@@ -57,8 +57,12 @@ class BookmarksRepositoryImpl @Inject constructor(
         return bookmarkDao.get(id)?.newTopics ?: emptyList()
     }
 
+    override suspend fun isBookmark(id: String): Boolean {
+        return bookmarkDao.contains(id)
+    }
+
     override suspend fun add(category: Category) {
-        bookmarkDao.insert(category.toEntity())
+        bookmarkDao.insert(category.toBookmarkEntity())
     }
 
     override suspend fun update(id: String, topics: List<String>, newTopics: List<String>) {
@@ -72,8 +76,8 @@ class BookmarksRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun remove(category: Category) {
-        bookmarkDao.deleteById(category.id)
+    override suspend fun remove(id: String) {
+        bookmarkDao.deleteById(id)
     }
 
     override suspend fun clear() {

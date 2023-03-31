@@ -1,19 +1,18 @@
 package flow.network.domain
 
-import flow.network.dto.ResultDto
-import flow.network.dto.error.FlowError
+import flow.network.model.Unauthorized
 
 internal class WithTokenVerificationUseCase(
     private val verifyTokenUseCase: VerifyTokenUseCase,
 ) {
     suspend operator fun <T> invoke(
         token: String,
-        block: suspend (validToken: String) -> ResultDto<T>
-    ): ResultDto<T> {
+        block: suspend (validToken: String) -> T,
+    ): T {
         return if (verifyTokenUseCase(token)) {
-            ResultDto.Error(FlowError.Unauthorized)
-        } else {
             block(token)
+        } else {
+            throw Unauthorized
         }
     }
 }

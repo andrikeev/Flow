@@ -9,5 +9,5 @@ android {
 
 dependencies {
     implementation(project(":core:models"))
-    implementation(project(":core:ui"))
+    implementation(project(":core:designsystem"))
 }

@@ -13,20 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,36 +25,58 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import flow.designsystem.component.AddCommentFloatingActionButton
 import flow.designsystem.component.AppBarDefaults
+import flow.designsystem.component.AppBarState
 import flow.designsystem.component.BackButton
+import flow.designsystem.component.BodyLarge
+import flow.designsystem.component.BodySmall
+import flow.designsystem.component.CircularProgressIndicator
+import flow.designsystem.component.Dialog
+import flow.designsystem.component.DialogState
 import flow.designsystem.component.ExpandableAppBar
 import flow.designsystem.component.FavoriteButton
+import flow.designsystem.component.Icon
 import flow.designsystem.component.IconButton
 import flow.designsystem.component.LazyList
+import flow.designsystem.component.LocalSnackbarHostState
 import flow.designsystem.component.Scaffold
+import flow.designsystem.component.Surface
+import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
+import flow.designsystem.component.TextField
+import flow.designsystem.component.ThemePreviews
+import flow.designsystem.component.rememberDialogState
+import flow.designsystem.component.rememberExpandState
+import flow.designsystem.component.rememberFocusRequester
 import flow.designsystem.drawables.FlowIcons
+import flow.designsystem.theme.AppTheme
+import flow.designsystem.theme.FlowTheme
+import flow.designsystem.utils.RunOnFirstComposition
+import flow.models.LoadState
+import flow.models.topic.Author
 import flow.models.topic.Post
+import flow.models.topic.TextContent
+import flow.topic.R
 import flow.ui.component.Avatar
-import flow.ui.component.PageResult
 import flow.ui.component.Post
 import flow.ui.component.appendItems
 import flow.ui.component.dividedItems
 import flow.ui.component.emptyItem
 import flow.ui.component.errorItem
 import flow.ui.component.loadingItem
-import kotlinx.coroutines.job
-import flow.designsystem.R as DesignsystemR
-import flow.ui.R as UiR
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
+import flow.designsystem.R as dsR
+import flow.ui.R as uiR
 
 @Composable
 internal fun TopicScreen(
@@ -71,226 +84,225 @@ internal fun TopicScreen(
     back: () -> Unit,
     openLogin: () -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
-    val onAction: (TopicAction) -> Unit = { action ->
-        when (action) {
-            is TopicAction.BackClick -> back()
-            is TopicAction.LoginClick -> openLogin()
-            else -> viewModel.perform(action)
+    val resources = LocalContext.current.resources
+    val snackbarState = LocalSnackbarHostState.current
+    val addCommentDialogState = rememberDialogState()
+    AddCommentDialog(addCommentDialogState, viewModel::perform)
+    val loginRequiredDialogState = rememberDialogState()
+    LoginRequiredDialog(loginRequiredDialogState, viewModel::perform)
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is TopicSideEffect.Back -> back()
+            is TopicSideEffect.OpenLogin -> openLogin()
+            is TopicSideEffect.ShowAddCommentDialog -> addCommentDialogState.show()
+            is TopicSideEffect.ShowAddCommentError -> {
+                snackbarState.showSnackbar(resources.getString(uiR.string.error_something_goes_wrong))
+            }
+
+            is TopicSideEffect.ShowLoginRequired -> loginRequiredDialogState.show()
         }
     }
-    MobileTopicScreen(state, onAction)
+    val state by viewModel.collectAsState()
+    MobileTopicScreen(state, viewModel::perform)
 }
 
 @Composable
 private fun MobileTopicScreen(
-    state: TopicState,
+    state: TopicPageState,
     onAction: (TopicAction) -> Unit,
 ) {
-    val (topic, _, isFavorite) = state.topic
     val scrollBehavior = AppBarDefaults.appBarScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            var isExpanded by remember { mutableStateOf(false) }
-            ExpandableAppBar(
-                navigationIcon = { BackButton { onAction(TopicAction.BackClick) } },
-                title = {
-                    Text(
-                        text = topic.title,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleSmall,
+            TopicAppBar(
+                state = state,
+                appBarState = scrollBehavior.state,
+                onAction = onAction
+            )
+        },
+        floatingActionButton = {
+            AddCommentFloatingActionButton(onClick = { onAction(TopicAction.AddCommentClick) })
+        },
+    ) { padding ->
+        val scrollState = rememberLazyListState()
+        PostsList(
+            modifier = Modifier.padding(padding),
+            state = state,
+            scrollState = scrollState,
+            onAction = onAction
+        )
+    }
+}
+
+@Composable
+private fun TopicAppBar(
+    state: TopicPageState,
+    appBarState: AppBarState,
+    onAction: (TopicAction) -> Unit,
+) {
+    val expandState = rememberExpandState()
+    ExpandableAppBar(
+        navigationIcon = { BackButton { onAction(TopicAction.BackClick) } },
+        title = {
+            when (val topicState = state.topicState) {
+                is TopicState.Initial -> Unit
+                is TopicState.Topic -> Text(
+                    text = topicState.name,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    style = AppTheme.typography.titleSmall,
+                )
+            }
+        },
+        actions = {
+            Crossfade(
+                targetState = state.topicState,
+                label = "TopicFavoriteButton_Crossfade",
+            ) { topicState ->
+                when (topicState) {
+                    is TopicState.Initial -> Unit
+                    is TopicState.Topic -> FavoriteButton(
+                        favorite = topicState.isFavorite,
+                        onClick = { onAction(TopicAction.FavoriteClick) },
                     )
-                },
-                actions = {
-                    FavoriteButton(
-                        isFavorite = isFavorite,
-                        onClick = { onAction(TopicAction.FavoriteClick(state.topic)) },
-                    )
-                    AnimatedVisibility(visible = state.pages > 1) {
+                }
+            }
+            when (state.paginationState) {
+                is PaginationState.Initial -> Unit
+                is PaginationState.Pagination -> {
+                    AnimatedVisibility(visible = expandState.expanded || state.paginationState.pages > 1) {
                         val rotation by animateFloatAsState(
-                            targetValue = if (isExpanded) 180f else 0f
+                            targetValue = if (expandState.expanded) 180f else 0f,
+                            label = "TopicPagingActionButton_Rotation",
                         )
                         IconButton(
                             modifier = Modifier.rotate(rotation),
-                            onClick = { isExpanded = !isExpanded },
-                            imageVector = if (isExpanded) {
-                                FlowIcons.Collapse
+                            icon = if (expandState.expanded) {
+                                FlowIcons.Expand
                             } else {
                                 FlowIcons.Pages
                             },
+                            contentDescription = null, //TODO: add contentDescription
+                            onClick = expandState::toggle,
                         )
                     }
-                },
-                expandableContent = {
-                    Row(
+                }
+            }
+        },
+        expandableContent = {
+            Crossfade(
+                targetState = state.paginationState,
+                label = "TopicPaginationBar_Crossfade",
+            ) { pagingState ->
+                when (pagingState) {
+                    is PaginationState.Initial -> Unit
+                    is PaginationState.Pagination -> Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp),
+                            .padding(AppTheme.spaces.medium),
                         horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        val isEnabled = state.content !is PageResult.Loading
                         fun goToPage(page: Int) = onAction(TopicAction.GoToPage(page))
+                        val notLoading = state.loadStates.refresh != LoadState.Loading
                         IconButton(
+                            icon = FlowIcons.FirstPage,
+                            contentDescription = null, //TODO: add contentDescription
+                            enabled = notLoading && pagingState.page != 1,
                             onClick = { goToPage(1) },
-                            enabled = isEnabled && state.page != 1,
-                            imageVector = FlowIcons.FirstPage,
                         )
                         IconButton(
-                            onClick = { goToPage(state.page - 1) },
-                            enabled = isEnabled && state.page != 1,
-                            imageVector = FlowIcons.PrevPage,
+                            icon = FlowIcons.PrevPage,
+                            contentDescription = null, //TODO: add contentDescription
+                            enabled = notLoading && pagingState.page != 1,
+                            onClick = { goToPage(pagingState.page - 1) },
                         )
                         Box(
-                            modifier = Modifier.width(48.dp),
+                            modifier = Modifier.width(AppTheme.sizes.default),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Crossfade(targetState = isEnabled) { showPage ->
+                            Crossfade(
+                                targetState = notLoading,
+                                label = "TopicPaginationBar_CurrentPage_Crossfade",
+                            ) { showPage ->
                                 if (showPage) {
                                     Text(
-                                        text = "${state.page}/${state.pages}",
-                                        style = MaterialTheme.typography.labelLarge,
+                                        text = buildString {
+                                            append(pagingState.page)
+                                            if (pagingState.pages > 0) {
+                                                append('/', pagingState.pages)
+                                            }
+                                        },
+                                        style = AppTheme.typography.labelLarge,
                                     )
                                 } else {
                                     CircularProgressIndicator(
-                                        modifier = Modifier.size(16.dp),
+                                        modifier = Modifier.size(AppTheme.sizes.small),
                                         strokeWidth = 1.dp,
                                     )
                                 }
                             }
                         }
                         IconButton(
-                            onClick = { goToPage(state.page + 1) },
-                            enabled = isEnabled && state.page != state.pages,
-                            imageVector = FlowIcons.NextPage,
+                            icon = FlowIcons.NextPage,
+                            contentDescription = null, //TODO: add contentDescription
+                            enabled = notLoading && pagingState.page != pagingState.pages,
+                            onClick = { goToPage(pagingState.page + 1) },
                         )
                         IconButton(
-                            onClick = { goToPage(state.pages) },
-                            enabled = isEnabled && state.page != state.pages,
-                            imageVector = FlowIcons.LastPage,
+                            icon = FlowIcons.LastPage,
+                            contentDescription = null, //TODO: add contentDescription
+                            enabled = notLoading && pagingState.page != pagingState.pages,
+                            onClick = { goToPage(pagingState.pages) },
                         )
-                    }
-                },
-                isExpanded = isExpanded,
-                appBarState = scrollBehavior.state,
-            )
-        },
-        floatingActionButton = {
-            var showAddCommentDialog by remember { mutableStateOf(false) }
-            FloatingActionButton(
-                onClick = { showAddCommentDialog = true },
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.secondary,
-            ) {
-                Icon(imageVector = FlowIcons.Comment, contentDescription = null)
-            }
-            if (showAddCommentDialog) {
-                var textValue by remember { mutableStateOf("") }
-                Dialog(onDismissRequest = { showAddCommentDialog = false }) {
-                    Surface(
-                        shape = MaterialTheme.shapes.medium,
-                        color = MaterialTheme.colorScheme.surface,
-                    ) {
-                        Column {
-                            val focusRequester = remember { FocusRequester() }
-                            OutlinedTextField(
-                                modifier = Modifier
-                                    .padding(
-                                        start = 24.dp,
-                                        top = 16.dp,
-                                        end = 24.dp,
-                                    )
-                                    .focusRequester(focusRequester)
-                                    .defaultMinSize(minHeight = 96.dp),
-                                value = textValue,
-                                onValueChange = { textValue = it },
-                                label = { Text("Новый комментарий") },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Text,
-                                    autoCorrect = true,
-                                    imeAction = ImeAction.Done,
-                                ),
-                                keyboardActions = KeyboardActions(
-                                    onDone = {
-                                        showAddCommentDialog = false
-                                        onAction(TopicAction.AddComment(textValue))
-                                    }
-                                ),
-                                maxLines = 3,
-                            )
-                            LaunchedEffect(Unit) {
-                                coroutineContext.job.invokeOnCompletion { error ->
-                                    if (error == null) {
-                                        focusRequester.requestFocus()
-                                    }
-                                }
-                            }
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp),
-                                horizontalArrangement = Arrangement.End,
-                            ) {
-                                TextButton(
-                                    text = stringResource(DesignsystemR.string.designsystem_action_cancel),
-                                    onClick = { showAddCommentDialog = false },
-                                )
-                                TextButton(
-                                    text = stringResource(DesignsystemR.string.designsystem_action_send),
-                                    onClick = {
-                                        showAddCommentDialog = false
-                                        onAction(TopicAction.AddComment(textValue))
-                                    },
-                                )
-                            }
-                        }
                     }
                 }
             }
         },
-    ) { padding ->
-        val scrollState = rememberLazyListState()
-        val firstVisibleItemIndex by remember {
-            derivedStateOf {
-                val layoutInfo = scrollState.layoutInfo
-                val visibleItemsInfo = layoutInfo.visibleItemsInfo
-                visibleItemsInfo.firstOrNull()?.index ?: 0
-            }
-        }
-        LaunchedEffect(firstVisibleItemIndex) {
-            onAction(TopicAction.FirstVisibleItemIndexChanged(firstVisibleItemIndex))
-        }
-        LazyList(
-            modifier = Modifier.padding(padding),
-            state = scrollState,
-            contentPadding = PaddingValues(top = 8.dp, bottom = 56.dp),
-            onEndOfListReached = { onAction(TopicAction.EndOfListReached) },
-        ) {
-            when (state.content) {
-                is PageResult.Loading -> loadingItem()
-                is PageResult.Error -> errorItem(
-                    error = state.content.error,
-                    onRetryClick = { onAction(TopicAction.RetryClick) },
+        expanded = expandState.expanded,
+        appBarState = appBarState,
+    )
+}
+
+@Composable
+private fun PostsList(
+    modifier: Modifier = Modifier,
+    state: TopicPageState,
+    scrollState: LazyListState,
+    onAction: (TopicAction) -> Unit,
+) = LazyList(
+    modifier = modifier,
+    state = scrollState,
+    contentPadding = PaddingValues(
+        top = AppTheme.spaces.medium,
+        bottom = AppTheme.spaces.extraLargeBottom,
+    ),
+    onFirstItemVisible = { onAction(TopicAction.ListTopReached) },
+    onLastItemVisible = { onAction(TopicAction.ListBottomReached) },
+    onLastVisibleIndexChanged = { index -> onAction(TopicAction.LastVisibleIndexChanged(index)) }
+) {
+    when (state.loadStates.refresh) {
+        is LoadState.Error -> errorItem(onRetryClick = { onAction(TopicAction.RetryClick) })
+        is LoadState.Loading -> loadingItem()
+        is LoadState.NotLoading -> {
+            when (val topicContent = state.topicContent) {
+                is TopicContent.Empty -> emptyItem(
+                    titleRes = R.string.topic_empty_title,
+                    subtitleRes = R.string.topic_empty_subtitle,
+                    imageRes = uiR.drawable.ill_empty,
                 )
 
-                is PageResult.Empty -> emptyItem(
-                    titleRes = UiR.string.topic_empty_title,
-                    subtitleRes = UiR.string.topic_empty_subtitle,
-                    imageRes = UiR.drawable.ill_empty,
-                )
-
-                is PageResult.Content -> {
+                is TopicContent.Initial -> loadingItem()
+                is TopicContent.Posts -> {
                     dividedItems(
-                        items = state.content.content,
+                        items = topicContent.posts,
                         key = Post::id,
                         contentType = { it::class },
                         itemContent = { post -> PostItem(post = post) },
                     )
                     appendItems(
-                        state = state.content.append,
+                        state = state.loadStates.append,
                         onRetryClick = { onAction(TopicAction.RetryClick) },
                     )
                 }
@@ -303,35 +315,133 @@ private fun MobileTopicScreen(
 private fun PostItem(
     modifier: Modifier = Modifier,
     post: Post,
+) = Column(
+    modifier = modifier.padding(
+        horizontal = AppTheme.spaces.large,
+        vertical = AppTheme.spaces.mediumLarge,
+    ),
 ) {
-    Row(
-        modifier = modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.Top,
-    ) {
-        Avatar(post.author.avatarUrl)
-        Column(modifier = Modifier.padding(start = 8.dp)) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = post.author.name,
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        color = MaterialTheme.colorScheme.primary,
-                    ),
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(modifier = Modifier.size(AppTheme.sizes.default)) {
+            Avatar(post.author.avatarUrl)
+        }
+        Column(modifier = Modifier.padding(start = AppTheme.spaces.medium)) {
+            BodyLarge(
+                text = post.author.name,
+                color = AppTheme.colors.primary,
+            )
+            BodySmall(
+                text = post.date,
+                color = AppTheme.colors.outline,
+            )
+        }
+    }
+    Post(
+        modifier = Modifier.padding(top = AppTheme.spaces.small),
+        content = post.content,
+    )
+}
+
+@Composable
+private fun LoginRequiredDialog(
+    dialogState: DialogState,
+    onAction: (TopicAction) -> Unit,
+) {
+    if (dialogState.visible) {
+        Dialog(
+            icon = {
+                Icon(
+                    icon = FlowIcons.Account,
+                    contentDescription = null,
                 )
-                Text(
-                    text = post.date,
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        color = MaterialTheme.colorScheme.outline,
-                    ),
+            },
+            title = { Text(stringResource(R.string.topics_login_required_title)) },
+            text = { Text(stringResource(R.string.topics_login_required_for_comment)) },
+            confirmButton = {
+                TextButton(
+                    text = stringResource(dsR.string.designsystem_action_login),
+                    onClick = {
+                        dialogState.hide()
+                        onAction(TopicAction.LoginClick)
+                    },
                 )
-            }
-            Post(
-                modifier = Modifier.padding(top = 4.dp),
-                content = post.content,
+            },
+            dismissButton = {
+                TextButton(
+                    text = stringResource(dsR.string.designsystem_action_cancel),
+                    onClick = dialogState::hide,
+                )
+            },
+            onDismissRequest = dialogState::hide,
+        )
+    }
+}
+
+@Composable
+private fun AddCommentDialog(
+    dialogState: DialogState,
+    onAction: (TopicAction) -> Unit,
+) {
+    if (dialogState.visible) {
+        var textValue by remember { mutableStateOf("") }
+        Dialog(
+            title = { Text(stringResource(R.string.topic_new_comment)) },
+            text = {
+                val focusRequester = rememberFocusRequester()
+                RunOnFirstComposition(focusRequester::requestFocus)
+                TextField(
+                    modifier = Modifier
+                        .defaultMinSize(minHeight = 96.dp)
+                        .focusRequester(focusRequester),
+                    value = textValue,
+                    onValueChange = { textValue = it },
+                    label = { Text(stringResource(R.string.topic_new_comment)) },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        autoCorrect = true,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            dialogState.hide()
+                            onAction(TopicAction.AddComment(textValue))
+                        }
+                    ),
+                    maxLines = 3,
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    text = stringResource(dsR.string.designsystem_action_send),
+                    onClick = {
+                        dialogState.hide()
+                        onAction(TopicAction.AddComment(textValue))
+                    },
+                )
+            },
+            dismissButton = {
+                TextButton(
+                    text = stringResource(dsR.string.designsystem_action_cancel),
+                    onClick = dialogState::hide,
+                )
+            },
+            onDismissRequest = dialogState::hide,
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun PostItemPreview() {
+    FlowTheme {
+        Surface {
+            PostItem(
+                post = Post(
+                    id = "1",
+                    author = Author(name = "Author name"),
+                    date = "21.12.2020",
+                    content = TextContent.Text("Просто-напросто текст"),
+                ),
             )
         }
     }

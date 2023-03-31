@@ -1,24 +1,24 @@
 package flow.network.domain
 
 import flow.network.api.RuTrackerInnerApi
-import flow.network.dto.ResultDto
-import flow.network.dto.error.FlowError
 import flow.network.dto.forum.CategoryDto
 import flow.network.dto.forum.CategoryPageDto
 import flow.network.dto.topic.AuthorDto
 import flow.network.dto.topic.ForumTopicDto
 import flow.network.dto.topic.TopicDto
 import flow.network.dto.topic.TorrentDto
+import flow.network.model.Forbidden
+import flow.network.model.NotFound
 import org.jsoup.Jsoup
 
 internal class GetCategoryPageUseCase(private val api: RuTrackerInnerApi) {
 
-    suspend operator fun invoke(id: String, page: Int?): ResultDto<CategoryPageDto> = tryCatching {
+    suspend operator fun invoke(id: String, page: Int?): CategoryPageDto {
         val html = api.category(id, page)
         return when {
-            !isForumExists(html) -> ResultDto.Error(FlowError.NotFound)
-            !isForumAvailableForUser(html) -> ResultDto.Error(FlowError.Forbidden)
-            else -> parseCategoryPage(html, id).toResult()
+            !isForumExists(html) -> throw NotFound
+            !isForumAvailableForUser(html) -> throw Forbidden
+            else -> parseCategoryPage(html, id)
         }
     }
 

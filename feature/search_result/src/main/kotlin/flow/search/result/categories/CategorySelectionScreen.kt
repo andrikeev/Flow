@@ -6,9 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
-import androidx.compose.ui.unit.dp
 import flow.designsystem.component.LazyList
-import flow.designsystem.component.RunOnComposition
+import flow.designsystem.theme.AppTheme
+import flow.designsystem.utils.RunOnFirstComposition
 import flow.models.forum.Category
 import flow.navigation.viewModel
 import flow.search.result.categories.CategorySelectionAction.ExpandClick
@@ -46,7 +46,7 @@ private fun CategorySelectionScreen(
     onCategoriesSelected: (List<Category>) -> Unit,
     onCategoriesRemoved: (List<Category>) -> Unit,
 ) {
-    RunOnComposition { viewModel.setSelectedCategories(selectedCategories) }
+    RunOnFirstComposition { viewModel.setSelectedCategories(selectedCategories) }
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is CategorySelectionSideEffect.OnSelect -> onCategoriesSelected(sideEffect.items)
@@ -66,7 +66,7 @@ private fun CategorySelectionScreen(
     onAction: (CategorySelectionAction) -> Unit,
 ) = LazyList(
     modifier = Modifier.fillMaxSize(),
-    contentPadding = PaddingValues(vertical = 8.dp),
+    contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
 ) {
     when (state) {
         is CategorySelectionState.Loading -> loadingItem()
@@ -109,7 +109,10 @@ private fun ForumTreeItem(
                 ExpandableSelectableCategoryListItem(
                     modifier = modifier,
                     text = item.name,
-                    contentPadding = PaddingValues(start = 32.dp, end = 4.dp),
+                    contentPadding = PaddingValues(
+                        start = AppTheme.spaces.extraExtraLarge,
+                        end = AppTheme.spaces.small,
+                    ),
                     expanded = item.expanded,
                     selected = item.selectState.toUiState(),
                     onExpand = onExpandClick,
@@ -119,7 +122,10 @@ private fun ForumTreeItem(
                 SelectableCategoryListItem(
                     modifier = modifier,
                     text = item.name,
-                    contentPadding = PaddingValues(start = 32.dp, end = 4.dp),
+                    contentPadding = PaddingValues(
+                        start = AppTheme.spaces.extraExtraLarge,
+                        end = AppTheme.spaces.small,
+                    ),
                     selected = item.selectState.toUiState(),
                     onSelect = onSelectClick,
                 )
@@ -130,7 +136,10 @@ private fun ForumTreeItem(
             SelectableCategoryListItem(
                 modifier = modifier,
                 text = item.name,
-                contentPadding = PaddingValues(start = 48.dp, end = 4.dp),
+                contentPadding = PaddingValues(
+                    start = AppTheme.spaces.extraExtraLarge,
+                    end = AppTheme.spaces.small,
+                ),
                 selected = item.selectState.toUiState(),
                 onSelect = onSelectClick,
             )

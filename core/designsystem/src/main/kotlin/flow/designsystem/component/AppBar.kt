@@ -6,20 +6,21 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -36,88 +37,97 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import flow.designsystem.theme.Elevation
+import flow.designsystem.R
+import flow.designsystem.drawables.FlowIcons
+import flow.designsystem.theme.AppTheme
+import flow.designsystem.theme.FlowTheme
 
 @Composable
+@NonRestartableComposable
 fun AppBar(
     modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit = {},
     title: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     appBarState: AppBarState = rememberAppBarState(),
+) = AppBarContainer(
+    modifier = modifier,
+    appBarState = appBarState,
 ) {
-    AppBarContainer(
-        modifier = modifier,
-        appBarState = appBarState,
-    ) {
-        FlowTopAppBar(
-            title = title,
-            navigationIcon = navigationIcon,
-            actions = actions,
-        )
-    }
+    AppBar(
+        title = title,
+        navigationIcon = navigationIcon,
+        actions = actions,
+    )
 }
 
 @Composable
+@NonRestartableComposable
 fun ExpandableAppBar(
     modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit = {},
     title: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
-    expandableContent: @Composable () -> Unit = {},
-    isExpanded: Boolean,
+    expanded: Boolean,
     appBarState: AppBarState = rememberAppBarState(),
+    expandableContent: @Composable () -> Unit = {},
+) = AppBarContainer(
+    modifier = modifier,
+    appBarState = appBarState,
 ) {
-    AppBarContainer(
-        modifier = modifier,
-        appBarState = appBarState,
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            FlowTopAppBar(
-                title = title,
-                navigationIcon = navigationIcon,
-                actions = actions,
-            )
-            AnimatedVisibility(
-                visible = isExpanded,
-                enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
-                exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
-                content = { expandableContent() },
-            )
-        }
+    Column(modifier = Modifier.fillMaxWidth()) {
+        AppBar(
+            title = title,
+            navigationIcon = navigationIcon,
+            actions = actions,
+        )
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
+            exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
+            content = { expandableContent() },
+        )
     }
 }
 
 @Composable
+@NonRestartableComposable
 fun TabAppBar(
     modifier: Modifier = Modifier,
     pages: List<Page>,
     selectedPage: Int,
     onSelectPage: (Int) -> Unit,
     appBarState: AppBarState = rememberAppBarState(),
+) = AppBarContainer(
+    modifier = modifier,
+    appBarState = appBarState,
 ) {
-    AppBarContainer(
-        modifier = modifier,
-        appBarState = appBarState,
+    TabRow(
+        modifier = Modifier.statusBarsPadding(),
+        selectedTabIndex = selectedPage,
+        containerColor = Color.Transparent,
+        contentColor = AppTheme.colors.onSurface,
+        indicator = { tabPositions ->
+            TabRowDefaults.Indicator(
+                modifier = Modifier.tabIndicatorOffset(tabPositions[selectedPage]),
+                color = AppTheme.colors.primary,
+            )
+        },
     ) {
-        TabRow(
-            modifier = Modifier.statusBarsPadding(),
-            selectedTabIndex = selectedPage,
-            containerColor = Color.Transparent,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        ) {
-            pages.forEachIndexed { index, page ->
-                Tab(
-                    selected = selectedPage == index,
-                    onClick = { onSelectPage(index) },
-                    text = { Text(stringResource(page.labelResId)) },
-                    icon = page.icon?.let {
-                        { Icon(imageVector = page.icon, contentDescription = null) }
-                    },
-                )
-            }
+        pages.forEachIndexed { index, page ->
+            Tab(
+                selected = selectedPage == index,
+                onClick = { onSelectPage(index) },
+                text = page.labelResId?.let {
+                    { Text(stringResource(page.labelResId)) }
+                },
+                icon = page.icon?.let {
+                    { Icon(icon = page.icon, contentDescription = page.labelResId?.let { stringResource(it) }) }
+                },
+            )
         }
     }
 }
@@ -126,14 +136,15 @@ fun TabAppBar(
 private fun AppBarContainer(
     modifier: Modifier = Modifier,
     appBarState: AppBarState,
-    content: @Composable () -> Unit,
+    content: @Composable BoxScope.() -> Unit,
 ) {
     val elevation by animateDpAsState(
-        if (appBarState.elevated) {
-            Elevation.small
+        targetValue = if (appBarState.elevated) {
+            AppTheme.elevations.medium
         } else {
-            Elevation.zero
-        }
+            AppTheme.elevations.zero
+        },
+        label = "AppBarContainer_Elevation",
     )
     Surface(
         modifier = modifier,
@@ -144,25 +155,24 @@ private fun AppBarContainer(
 }
 
 @Composable
-private fun FlowTopAppBar(
+@NonRestartableComposable
+private fun AppBar(
     navigationIcon: @Composable () -> Unit = {},
     title: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
-) {
-    TopAppBar(
-        modifier = Modifier.statusBarsPadding(),
-        title = title,
-        navigationIcon = navigationIcon,
-        actions = actions,
-        colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = Color.Transparent,
-            scrolledContainerColor = Color.Transparent,
-            navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-            titleContentColor = MaterialTheme.colorScheme.onSurface,
-            actionIconContentColor = MaterialTheme.colorScheme.onSurface,
-        ),
-    )
-}
+) = TopAppBar(
+    modifier = Modifier.statusBarsPadding(),
+    navigationIcon = navigationIcon,
+    title = title,
+    actions = actions,
+    colors = TopAppBarDefaults.smallTopAppBarColors(
+        containerColor = Color.Transparent,
+        scrolledContainerColor = Color.Transparent,
+        navigationIconContentColor = AppTheme.colors.onSurface,
+        titleContentColor = AppTheme.colors.onSurface,
+        actionIconContentColor = AppTheme.colors.onSurface,
+    ),
+)
 
 @Stable
 interface AppBarScrollBehavior {
@@ -171,16 +181,14 @@ interface AppBarScrollBehavior {
 }
 
 @Stable
-class AppBarState(initialElevation: Boolean) {
+class AppBarState internal constructor(initialElevation: Boolean) {
     var elevated by mutableStateOf(initialElevation)
+        internal set
 
     companion object {
-        val Saver: Saver<AppBarState, *> = listSaver(
-            save = { listOf(it.elevated) },
-            restore = {
-                AppBarState(initialElevation = it[0])
-            }
-        )
+        val Saver: Saver<AppBarState, *> = listSaver(save = { listOf(it.elevated) }, restore = {
+            AppBarState(initialElevation = it[0])
+        })
     }
 }
 
@@ -193,7 +201,7 @@ fun rememberAppBarState(): AppBarState {
 
 object AppBarDefaults {
 
-    private val Height: Dp = 64.dp
+    val Height: Dp = 64.dp
 
     @Composable
     fun appBarScrollBehavior(): AppBarScrollBehavior {
@@ -216,7 +224,7 @@ object AppBarDefaults {
             override fun onPostScroll(
                 consumed: Offset,
                 available: Offset,
-                source: NestedScrollSource
+                source: NestedScrollSource,
             ): Offset {
                 scrollBehavior.nestedScrollConnection.onPostScroll(consumed, available, source)
                 state.elevated = scrollBehavior.state.overlappedFraction > 0.01f
@@ -225,3 +233,101 @@ object AppBarDefaults {
         }
     }
 }
+
+@ThemePreviews
+@Composable
+private fun AppBarPreview(@PreviewParameter(AppBarParamsProvider::class) params: AppBarParams) {
+    FlowTheme {
+        AppBar(
+            navigationIcon = { BackButton {} },
+            title = { Text(params.title) },
+            actions = {
+                SearchButton {}
+                FavoriteButton(favorite = true) {}
+            },
+            appBarState = AppBarState(params.elevated),
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ExpandableAppBarPreview(
+    @PreviewParameter(ExpandableAppBarParamsProvider::class) params: ExpandableAppBarParams,
+) {
+    FlowTheme {
+        ExpandableAppBar(
+            navigationIcon = { BackButton {} },
+            title = { Text(params.title) },
+            actions = {
+                SearchButton {}
+                IconButton(onClick = {}) { ExpandCollapseIcon(expanded = params.expanded) }
+            },
+            expanded = params.expanded,
+            appBarState = AppBarState(params.elevated),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(AppTheme.spaces.large),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(text = "Title")
+                Text(text = "Subtitle")
+                TextButton(text = "Button", onClick = {})
+            }
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun TabBarPreview(@PreviewParameter(AppBarParamsProvider::class) params: AppBarParams) {
+    FlowTheme {
+        TabAppBar(
+            pages = listOf(
+                Page(
+                    icon = FlowIcons.AppIcon,
+                    labelResId = R.string.designsystem_hint_search,
+                    content = {},
+                ),
+                Page(
+                    icon = null,
+                    labelResId = R.string.designsystem_action_login,
+                    content = {},
+                ),
+                Page(
+                    icon = FlowIcons.Favorite,
+                    labelResId = null,
+                    content = {},
+                ),
+            ),
+            selectedPage = 1,
+            onSelectPage = {},
+            appBarState = AppBarState(params.elevated),
+        )
+    }
+}
+
+private data class AppBarParams(
+    val title: String,
+    val elevated: Boolean,
+)
+
+private class AppBarParamsProvider : CollectionPreviewParameterProvider<AppBarParams>(
+    AppBarParams("App bar title", false),
+    AppBarParams("App bar title elevated", true),
+)
+
+private data class ExpandableAppBarParams(
+    val title: String,
+    val expanded: Boolean,
+    val elevated: Boolean,
+)
+
+private class ExpandableAppBarParamsProvider : CollectionPreviewParameterProvider<ExpandableAppBarParams>(
+    ExpandableAppBarParams(title = "Expandable app bar title", expanded = false, elevated = false),
+    ExpandableAppBarParams(title = "Expandable app bar title elevated", expanded = false, elevated = true),
+    ExpandableAppBarParams(title = "Expandable app bar title expanded", expanded = true, elevated = false),
+    ExpandableAppBarParams(title = "Expandable app bar title expanded, elevated", expanded = true, elevated = true),
+)

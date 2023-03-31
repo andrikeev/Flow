@@ -15,12 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,21 +28,25 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.AppBarDefaults
 import flow.designsystem.component.BackButton
+import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.Button
+import flow.designsystem.component.CircularProgressIndicator
+import flow.designsystem.component.Dialog
 import flow.designsystem.component.Error
 import flow.designsystem.component.FavoriteButton
+import flow.designsystem.component.Icon
 import flow.designsystem.component.IconButton
 import flow.designsystem.component.Loading
 import flow.designsystem.component.Scaffold
+import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
+import flow.designsystem.component.ThemePreviews
 import flow.designsystem.drawables.FlowIcons
-import flow.designsystem.theme.Elevation
-import flow.designsystem.theme.TopicColors
+import flow.designsystem.theme.AppTheme
+import flow.designsystem.theme.FlowTheme
 import flow.models.forum.Category
 import flow.models.search.Filter
 import flow.models.topic.Author
@@ -55,6 +55,7 @@ import flow.models.topic.PostContent
 import flow.models.topic.Topic
 import flow.models.topic.TorrentDescription
 import flow.models.topic.isValid
+import flow.topic.R
 import flow.topic.download.DownloadDialog
 import flow.ui.component.Post
 import flow.ui.component.RemoteImage
@@ -63,10 +64,11 @@ import flow.ui.component.getIllRes
 import flow.ui.component.getStringRes
 import flow.ui.platform.LocalOpenLinkHandler
 import flow.ui.platform.LocalShareLinkHandler
+import flow.ui.platform.OpenLinkHandler
+import flow.ui.platform.ShareLinkHandler
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-import flow.designsystem.R as DesignsystemR
-import flow.ui.R as UiR
+import flow.designsystem.R as dsR
 
 @Composable
 internal fun TorrentScreen(
@@ -74,7 +76,7 @@ internal fun TorrentScreen(
     back: () -> Unit,
     openLogin: () -> Unit,
     openComments: (Topic) -> Unit,
-    openCategory: (Category) -> Unit,
+    openCategory: (String) -> Unit,
     openSearch: (Filter) -> Unit,
 ) {
     val shareLinkHandler = LocalShareLinkHandler.current
@@ -100,7 +102,7 @@ internal fun TorrentScreen(
                 torrentFileDialogState = TorrentFileDialogState.Show
             }
 
-            is TorrentSideEffect.OpenCategory -> openCategory(sideEffect.category)
+            is TorrentSideEffect.OpenCategory -> openCategory(sideEffect.categoryId)
             is TorrentSideEffect.OpenComments -> openComments(sideEffect.topic)
             is TorrentSideEffect.OpenMagnet -> {
                 magnetLinkDialogState = MagnetLinkDialogState.Show(sideEffect.magnetLink)
@@ -132,18 +134,18 @@ private fun MobileTorrentScreen(
                         text = title,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleSmall,
+                        style = AppTheme.typography.titleSmall,
                     )
                 },
                 actions = {
                     FavoriteButton(
-                        isFavorite = isFavorite,
+                        favorite = isFavorite,
                         onClick = { onAction(TorrentAction.FavoriteClick) },
                     )
                     IconButton(
+                        icon = FlowIcons.Share,
+                        contentDescription = stringResource(dsR.string.designsystem_action_share),
                         onClick = { onAction(TorrentAction.ShareClick) },
-                        imageVector = FlowIcons.Share,
-                        contentDescription = stringResource(DesignsystemR.string.designsystem_action_share),
                     )
                 },
                 appBarState = scrollBehavior.state,
@@ -152,15 +154,15 @@ private fun MobileTorrentScreen(
     ) { padding ->
         LazyColumn(
             modifier = Modifier.padding(padding),
-            contentPadding = PaddingValues(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(vertical = AppTheme.spaces.large),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spaces.large),
         ) {
             item {
                 Row(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = AppTheme.spaces.large)
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spaces.large),
                 ) {
                     TorrentImage(
                         modifier = Modifier.weight(1f),
@@ -168,7 +170,7 @@ private fun MobileTorrentScreen(
                     )
                     Column(
                         modifier = Modifier.weight(3f),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(AppTheme.spaces.medium),
                     ) {
                         TorrentStatus(
                             modifier = Modifier.fillMaxWidth(),
@@ -177,13 +179,13 @@ private fun MobileTorrentScreen(
                         category?.let { category ->
                             Category(
                                 category = category,
-                                onClick = { onAction(TorrentAction.CategoryClick(category)) },
+                                onClick = { onAction(TorrentAction.CategoryClick) },
                             )
                         }
                         author?.let { author ->
                             Author(
                                 author = author,
-                                onClick = { onAction(TorrentAction.AuthorClick(author)) },
+                                onClick = { onAction(TorrentAction.AuthorClick) },
                             )
                         }
                     }
@@ -193,32 +195,32 @@ private fun MobileTorrentScreen(
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(
-                        space = 16.dp,
+                        space = AppTheme.spaces.large,
                         alignment = Alignment.CenterHorizontally,
                     ),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    contentPadding = PaddingValues(horizontal = AppTheme.spaces.large),
                 ) {
                     if (status.isValid()) {
                         item {
                             Button(
-                                text = stringResource(UiR.string.topic_action_magnet),
+                                text = stringResource(R.string.topic_action_magnet),
                                 onClick = { magnetLink?.also { onAction(TorrentAction.MagnetClick) } },
-                                color = TopicColors.magnet,
+                                color = AppTheme.colors.accentRed,
                             )
                         }
                         item {
                             Button(
-                                text = stringResource(UiR.string.topic_action_torrent),
+                                text = stringResource(R.string.topic_action_torrent),
                                 onClick = { onAction(TorrentAction.TorrentFileClick) },
-                                color = TopicColors.torrent,
+                                color = AppTheme.colors.accentBlue,
                             )
                         }
                     }
                     item {
                         Button(
-                            text = stringResource(UiR.string.topic_action_comments),
+                            text = stringResource(R.string.topic_action_comments),
                             onClick = { onAction(TorrentAction.CommentsClick) },
-                            color = TopicColors.comments,
+                            color = AppTheme.colors.accentOrange,
                         )
                     }
                 }
@@ -227,7 +229,7 @@ private fun MobileTorrentScreen(
                 when {
                     state.isLoading -> Loading()
                     state.error != null -> Error(
-                        titleRes = UiR.string.error_title,
+                        titleRes = flow.ui.R.string.error_title,
                         subtitleRes = state.error.getStringRes(),
                         imageRes = state.error.getIllRes(),
                         onRetryClick = { onAction(TorrentAction.RetryClick) },
@@ -235,8 +237,8 @@ private fun MobileTorrentScreen(
 
                     description != null -> Post(
                         modifier = Modifier.padding(
-                            horizontal = 16.dp,
-                            vertical = 8.dp,
+                            horizontal = AppTheme.spaces.large,
+                            vertical = AppTheme.spaces.medium,
                         ),
                         content = description.content,
                     )
@@ -255,7 +257,7 @@ private fun TorrentImage(
     Box(
         modifier = modifier
             .aspectRatio(2 / 3f)
-            .clip(MaterialTheme.shapes.extraSmall),
+            .clip(AppTheme.shapes.extraSmall),
         contentAlignment = Alignment.TopCenter,
     ) {
         RemoteImage(
@@ -265,12 +267,11 @@ private fun TorrentImage(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                        .background(AppTheme.colors.outlineVariant),
                     contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(32.dp),
-                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(AppTheme.sizes.medium),
                     )
                 }
             },
@@ -284,14 +285,14 @@ private fun TorrentImage(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                        .background(AppTheme.colors.outlineVariant),
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
-                        modifier = Modifier.size(48.dp),
-                        imageVector = FlowIcons.ImagePlaceholder,
+                        modifier = Modifier.size(AppTheme.sizes.default),
+                        icon = FlowIcons.ImagePlaceholder,
+                        tint = AppTheme.colors.outline,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.outline,
                     )
                 }
             },
@@ -306,18 +307,15 @@ private fun Category(
     onClick: () -> Unit,
 ) {
     Row(modifier = modifier) {
-        Text(
-            text = stringResource(UiR.string.topic_category_label),
-            style = MaterialTheme.typography.bodyLarge,
-        )
+        BodyLarge(text = stringResource(R.string.topic_category_label))
         Text(
             modifier = Modifier
-                .padding(start = 8.dp)
+                .padding(start = AppTheme.spaces.medium)
                 .clickable { onClick() },
             text = category.name,
-            style = MaterialTheme.typography.titleMedium.copy(
+            style = AppTheme.typography.titleMedium.copy(
                 textDecoration = TextDecoration.Underline,
-                color = MaterialTheme.colorScheme.primary,
+                color = AppTheme.colors.primary,
             ),
         )
     }
@@ -330,18 +328,15 @@ private fun Author(
     onClick: () -> Unit,
 ) {
     Row(modifier = modifier) {
-        Text(
-            text = stringResource(UiR.string.topic_author_label),
-            style = MaterialTheme.typography.bodyLarge,
-        )
+        BodyLarge(text = stringResource(R.string.topic_author_label))
         Text(
             modifier = Modifier
-                .padding(start = 8.dp)
+                .padding(start = AppTheme.spaces.medium)
                 .clickable { onClick() },
             text = author.name,
-            style = MaterialTheme.typography.titleMedium.copy(
+            style = AppTheme.typography.titleMedium.copy(
                 textDecoration = TextDecoration.Underline,
-                color = MaterialTheme.colorScheme.primary,
+                color = AppTheme.colors.primary,
             ),
         )
     }
@@ -354,51 +349,34 @@ private fun MagnetDialog(
 ) {
     if (state is MagnetLinkDialogState.Show) {
         val link = state.link
-        Dialog(onDismissRequest = onDismiss) {
-            val openLinkHandler = LocalOpenLinkHandler.current
-            val shareLinkHandler = LocalShareLinkHandler.current
-            Surface(
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.surface,
-            ) {
-                Column {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 18.dp),
-                    ) {
-                        Text(link)
-                    }
-                    Surface(tonalElevation = Elevation.small) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(4.dp),
-                            horizontalArrangement = Arrangement.End,
-                        ) {
-                            TextButton(
-                                text = stringResource(DesignsystemR.string.designsystem_action_cancel),
-                                onClick = onDismiss,
-                            )
-                            TextButton(
-                                text = stringResource(DesignsystemR.string.designsystem_action_share),
-                                onClick = {
-                                    shareLinkHandler.shareLink(link)
-                                    onDismiss()
-                                },
-                            )
-                            TextButton(
-                                text = stringResource(DesignsystemR.string.designsystem_action_open),
-                                onClick = {
-                                    openLinkHandler.openLink(link)
-                                    onDismiss()
-                                },
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        val openLinkHandler = LocalOpenLinkHandler.current
+        val shareLinkHandler = LocalShareLinkHandler.current
+        Dialog(
+            text = { Text(link) },
+            confirmButton = {
+                TextButton(
+                    text = stringResource(dsR.string.designsystem_action_share),
+                    onClick = {
+                        shareLinkHandler.shareLink(link)
+                        onDismiss()
+                    },
+                )
+                TextButton(
+                    text = stringResource(dsR.string.designsystem_action_open),
+                    onClick = {
+                        openLinkHandler.openLink(link)
+                        onDismiss()
+                    },
+                )
+            },
+            dismissButton = {
+                TextButton(
+                    text = stringResource(dsR.string.designsystem_action_cancel),
+                    onClick = onDismiss,
+                )
+            },
+            onDismissRequest = onDismiss,
+        )
     }
 }
 
@@ -432,5 +410,22 @@ private fun Content.torrentImage(): PostContent.TorrentMainImage? {
         is PostContent.TorrentMainImage -> this
         is PostContent.Default -> children.firstNotNullOfOrNull { it.torrentImage() }
         else -> null
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun MagnetDialogPreview() {
+    FlowTheme {
+        CompositionLocalProvider(
+            LocalOpenLinkHandler provides object : OpenLinkHandler {
+                override fun openLink(link: String) = Unit
+            },
+            LocalShareLinkHandler provides object : ShareLinkHandler {
+                override fun shareLink(link: String) = Unit
+            },
+        ) {
+            MagnetDialog(state = MagnetLinkDialogState.Show("magnet://test")) {}
+        }
     }
 }

@@ -22,7 +22,6 @@ class OpenTopicViewModel @Inject constructor(
     private val getTopicUseCase: GetTopicUseCase,
 ) : ViewModel(), ContainerHost<OpenTopicState, OpenTopicSideEffect> {
     private val id: String = savedStateHandle.id
-    private val pid: String = savedStateHandle.pid
 
     override val container: Container<OpenTopicState, OpenTopicSideEffect> = container(
         initialState = OpenTopicState.Loading,
@@ -43,7 +42,7 @@ class OpenTopicViewModel @Inject constructor(
     private fun loadTopic() = intent {
         reduce { OpenTopicState.Loading }
         viewModelScope.launch {
-            runCatching { getTopicUseCase(id, pid) }
+            runCatching { getTopicUseCase(id) }
                 .onSuccess { topic ->
                     when (topic) {
                         is BaseTopic -> postSideEffect(OpenTopicSideEffect.OpenTopic(topic))

@@ -1,55 +1,47 @@
 package flow.forum.category
 
-import android.os.Bundle
 import androidx.lifecycle.SavedStateHandle
-import flow.models.forum.Category
-import flow.models.search.Filter
 import flow.models.topic.Topic
 import flow.models.topic.Torrent
 import flow.navigation.NavigationController
+import flow.navigation.model.NavigationArgument
+import flow.navigation.model.NavigationDeepLink
 import flow.navigation.model.NavigationGraphBuilder
+import flow.navigation.model.appendOptionalArgs
+import flow.navigation.model.appendRequiredArgs
+import flow.navigation.model.appendRequiredParams
+import flow.navigation.model.buildDeepLink
+import flow.navigation.model.buildRoute
+import flow.navigation.require
 import flow.navigation.ui.NavigationAnimations
-import flow.ui.args.require
-import flow.ui.parcel.CategoryWrapper
 
-private val NavigationGraphBuilder.CategoryRoute: String
-    get() = route("Category")
-private const val CategoryKey = "Category"
+private const val CategoryIdKey = "f"
+private const val CategoryRoute = "category"
 
-data class CategoryNavigation(
-    val addCategory: NavigationGraphBuilder.(
-        back: () -> Unit,
-        openCategory: (Category) -> Unit,
-        openSearchInput: (Filter) -> Unit,
-        openTopic: (Topic) -> Unit,
-        openTorrent: (Torrent) -> Unit,
-        animations: NavigationAnimations,
-    ) -> Unit,
-    val openCategory: NavigationController.(category: Category) -> Unit,
-)
-
-fun NavigationGraphBuilder.buildCategoryNavigation() = CategoryNavigation(
-    addCategory = NavigationGraphBuilder::addCategory,
-    openCategory = { category ->
-        navigate(CategoryRoute) {
-            putCategory(category)
-        }
-    },
-)
-
-fun NavigationGraphBuilder.addCategory(
+context(NavigationGraphBuilder)
+fun addCategory(
     back: () -> Unit,
-    openCategory: (Category) -> Unit,
-    openSearchInput: (Filter) -> Unit,
+    openCategory: (String) -> Unit,
+    openLogin: () -> Unit,
+    openSearchInput: (String) -> Unit,
     openTopic: (Topic) -> Unit,
     openTorrent: (Torrent) -> Unit,
+    deepLinkUrls: List<String> = emptyList(),
     animations: NavigationAnimations,
 ) = addDestination(
-    route = CategoryRoute,
+    route = buildRoute(
+        route = CategoryRoute,
+        requiredArgsBuilder = { appendRequiredArgs(CategoryIdKey) }
+    ),
+    arguments = listOf(NavigationArgument(CategoryIdKey)),
+    deepLinks = deepLinkUrls.map { url ->
+        NavigationDeepLink(buildDeepLink(url) { appendOptionalArgs(CategoryIdKey) })
+    },
     content = {
         CategoryScreen(
             back = back,
             openCategory = openCategory,
+            openLogin = openLogin,
             openSearchInput = openSearchInput,
             openTopic = openTopic,
             openTorrent = openTorrent,
@@ -58,9 +50,15 @@ fun NavigationGraphBuilder.addCategory(
     animations = animations,
 )
 
-private fun Bundle.putCategory(category: Category) {
-    putParcelable(CategoryKey, CategoryWrapper(category))
+context(NavigationGraphBuilder, NavigationController)
+fun openCategory(id: String) {
+    navigate(
+        buildRoute(
+            route = CategoryRoute,
+            requiredArgsBuilder = { appendRequiredParams(id) }
+        )
+    )
 }
 
-internal val SavedStateHandle.category: Category
-    get() = require<CategoryWrapper>(CategoryKey).category
+internal val SavedStateHandle.categoryId: String
+    get() = require(CategoryIdKey)

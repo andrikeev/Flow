@@ -20,7 +20,7 @@ internal class AddFavoriteWorker @AssistedInject constructor(
     private val notificationService: NotificationService,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork() = runCatching(
-        block = { addRemoteFavoriteUseCase(inputData.id, inputData.isTorrent) },
+        block = { addRemoteFavoriteUseCase(inputData.id) },
         onFailure = { removeLocalFavoriteUseCase(inputData.id) }
     )
 
@@ -28,17 +28,12 @@ internal class AddFavoriteWorker @AssistedInject constructor(
 
     companion object {
         private const val IdKey = "id"
-        private const val IsTorrentKey = "is_torrent"
 
         private val Data.id: String
             get() = requireNotNull(getString(IdKey))
 
-        private val Data.isTorrent: Boolean
-            get() = getBoolean(IsTorrentKey, false)
-
-        fun workerData(id: String, isTorrent: Boolean): Data.Builder.() -> Unit = {
+        fun workerData(id: String): Data.Builder.() -> Unit = {
             putString(IdKey, id)
-            putBoolean(IsTorrentKey, isTorrent)
         }
     }
 }

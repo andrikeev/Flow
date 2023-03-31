@@ -12,8 +12,9 @@ interface BookmarksRepository {
     suspend fun getAllBookmarks(): List<Category>
     suspend fun getTopics(id: String): List<String>
     suspend fun getNewTopics(id: String): List<String>
+    suspend fun isBookmark(id: String): Boolean
     suspend fun add(category: Category)
-    suspend fun remove(category: Category)
+    suspend fun remove(id: String)
     suspend fun update(id: String, topics: List<String>, newTopics: List<String>)
     suspend fun clear()
 }
