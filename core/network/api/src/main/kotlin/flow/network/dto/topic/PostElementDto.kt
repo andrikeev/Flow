@@ -1,5 +1,6 @@
 package flow.network.dto.topic
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -9,80 +10,65 @@ enum class Alignment { Start, Top, End, Bottom; }
 sealed interface PostElementDto
 
 @Serializable
-data class Text(val value: String) : PostElementDto {
-    override fun toString(): String = value
-}
+@SerialName("Text")
+data class Text(val value: String) : PostElementDto
 
 @Serializable
-data class Box(val children: List<PostElementDto>) : PostElementDto {
-    override fun toString(): String = "Box { $children }"
-}
+@SerialName("Box")
+data class Box(val children: List<PostElementDto>) : PostElementDto
 
 @Serializable
-data class Bold(val children: List<PostElementDto>) : PostElementDto {
-    override fun toString(): String = "Bold { $children }"
-}
+@SerialName("Bold")
+data class Bold(val children: List<PostElementDto>) : PostElementDto
 
 @Serializable
-data class Italic(val children: List<PostElementDto>) : PostElementDto {
-    override fun toString(): String = "Italic { $children }"
-}
+@SerialName("Italic")
+data class Italic(val children: List<PostElementDto>) : PostElementDto
 
 @Serializable
-data class Underscore(val children: List<PostElementDto>) : PostElementDto {
-    override fun toString(): String = "Underscore { $children }"
-}
+@SerialName("Underscore")
+data class Underscore(val children: List<PostElementDto>) : PostElementDto
 
 @Serializable
-data class Crossed(val children: List<PostElementDto>) : PostElementDto {
-    override fun toString(): String = "Crossed { $children }"
-}
+@SerialName("Crossed")
+data class Crossed(val children: List<PostElementDto>) : PostElementDto
 
 @Serializable
+@SerialName("Quote")
 data class Quote(
     val title: String,
     val id: String,
     val children: List<PostElementDto>,
-) : PostElementDto {
-    override fun toString(): String = "Quote($title)<id> { $children }"
-}
+) : PostElementDto
 
 @Serializable
-data class Code(val title: String, val children: List<PostElementDto>) : PostElementDto {
-    override fun toString(): String = "Code($title) { $children }"
-}
+@SerialName("Code")
+data class Code(val title: String, val children: List<PostElementDto>) : PostElementDto
 
 @Serializable
-data class Spoiler(val title: String, val children: List<PostElementDto>) : PostElementDto {
-    override fun toString(): String = "Spoiler($title) { $children }"
-}
+@SerialName("Spoiler")
+data class Spoiler(val title: String, val children: List<PostElementDto>) : PostElementDto
 
 @Serializable
-data class Image(val src: String) : PostElementDto {
-    override fun toString(): String = "Image { $src }"
-}
+@SerialName("Image")
+data class Image(val src: String) : PostElementDto
 
 @Serializable
-data class ImageAligned(val src: String, val alignment: Alignment) : PostElementDto {
-    override fun toString(): String = "Image { $src <$alignment> }"
-}
+@SerialName("ImageAligned")
+data class ImageAligned(val src: String, val alignment: Alignment) : PostElementDto
 
 @Serializable
-data class Link(val src: String, val children: List<PostElementDto>) : PostElementDto {
-    override fun toString(): String = "Link($src) { $children }"
-}
+@SerialName("Link")
+data class Link(val src: String, val children: List<PostElementDto>) : PostElementDto
 
 @Serializable
-data class UList(val children: List<PostElementDto>) : PostElementDto {
-    override fun toString(): String = "UList { $children }"
-}
+@SerialName("List")
+data class UList(val children: List<PostElementDto>) : PostElementDto
 
 @Serializable
-object Hr : PostElementDto {
-    override fun toString(): String = "<hr>"
-}
+@SerialName("Hr")
+object Hr : PostElementDto
 
 @Serializable
-object Br : PostElementDto {
-    override fun toString(): String = "<br>"
-}
+@SerialName("Br")
+object Br : PostElementDto

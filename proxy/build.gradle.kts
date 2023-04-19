@@ -16,8 +16,7 @@ ktor {
 }
 
 dependencies {
-    implementation(libs.bundles.ktor.client)
-    implementation(libs.bundles.ktor.server)
+    implementation(libs.bundles.ktor)
     implementation(libs.jsoup)
     implementation(libs.koin)
     implementation(libs.logback.classic)

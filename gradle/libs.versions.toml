@@ -84,15 +84,15 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
-ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-server-content-negotiation-jvm = { group = "io.ktor", name = "ktor-server-content-negotiation-jvm", version.ref = "ktor" }
 ktor-server-core-jvm = { group = "io.ktor", name = "ktor-server-core-jvm", version.ref = "ktor" }
 ktor-server-call-logging-jvm = { group = "io.ktor", name = "ktor-server-call-logging-jvm", version.ref = "ktor" }
 ktor-server-host-common-jvm = { group = "io.ktor", name = "ktor-server-host-common-jvm", version.ref = "ktor" }
 ktor-server-status-pages-jvm = { group = "io.ktor", name = "ktor-server-status-pages-jvm", version.ref = "ktor" }
 ktor-server-netty-jvm = { group = "io.ktor", name = "ktor-server-netty-jvm", version.ref = "ktor" }
-ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
 logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
 material3 = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -116,22 +116,18 @@ coil = [
     "coil-kt-compose",
     "coil-kt-svg"
 ]
-ktor-client = [
+ktor = [
     "ktor-client-cio",
     "ktor-client-content-negotiation",
     "ktor-client-core",
     "ktor-client-logging",
-    "ktor-client-okhttp",
-    "ktor-serialization-kotlinx-json"
-]
-ktor-server = [
+    "ktor-serialization-kotlinx-json",
     "ktor-server-content-negotiation-jvm",
     "ktor-server-core-jvm",
     "ktor-server-call-logging-jvm",
     "ktor-server-host-common-jvm",
     "ktor-server-status-pages-jvm",
-    "ktor-server-netty-jvm",
-    "ktor-serialization-kotlinx-json"
+    "ktor-server-netty-jvm"
 ]
 orbit = [
     "orbit-core",
