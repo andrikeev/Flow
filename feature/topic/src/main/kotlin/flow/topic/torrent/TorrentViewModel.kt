@@ -11,6 +11,7 @@ import flow.domain.usecase.EnrichTorrentUseCase
 import flow.domain.usecase.ObserveAuthStateUseCase
 import flow.domain.usecase.ToggleFavoriteUseCase
 import flow.domain.usecase.VisitTopicUseCase
+import flow.logger.api.LoggerFactory
 import flow.models.auth.isAuthorized
 import flow.models.search.Filter
 import flow.models.topic.TopicModel
@@ -32,7 +33,9 @@ class TorrentViewModel @Inject constructor(
     private val enrichTorrentUseCase: EnrichTorrentUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val visitTopicUseCase: VisitTopicUseCase,
+    loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<TorrentState, TorrentSideEffect> {
+    private val logger = loggerFactory.get("TorrentViewModel")
     private val observeTorrentScope = viewModelScope.newCancelableScope()
 
     override val container: Container<TorrentState, TorrentSideEffect> = container(
@@ -98,11 +101,13 @@ class TorrentViewModel @Inject constructor(
         observeTorrentScope.relaunch {
             runCatching { enrichTorrentUseCase(state.torrent.topic) }
                 .onSuccess { torrent ->
+                    logger.d { "Torrent loaded" }
                     enrichTopicUseCase(torrent).collectLatest { topicModel ->
                         reduce { state.copy(torrent = topicModel, isLoading = false) }
                     }
                 }
                 .onFailure { error ->
+                    logger.e(error) { "Torrent load error" }
                     reduce { state.copy(isLoading = false, error = error) }
                 }
         }

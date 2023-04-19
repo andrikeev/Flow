@@ -14,6 +14,7 @@ class KtorApplicationConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("flow.kotlin.library")
+                apply("flow.kotlin.serialization")
                 apply("org.gradle.application")
                 apply("io.ktor.plugin")
             }

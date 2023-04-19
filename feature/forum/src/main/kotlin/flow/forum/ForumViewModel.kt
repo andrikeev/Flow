@@ -49,7 +49,7 @@ internal class ForumViewModel @Inject constructor(
                     intent { reduce { ForumState.Loaded(forum.children.map(::Expandable)) } }
                 }
                 .onFailure { error ->
-                    logger.d { "Forum load error" }
+                    logger.e(error) { "Forum load error" }
                     intent { reduce { ForumState.Error(error) } }
                 }
         }

@@ -3,8 +3,8 @@ package flow.network.data
 import flow.data.api.repository.SettingsRepository
 import flow.models.settings.Endpoint
 import flow.network.api.NetworkApi
-import flow.network.api.ProxyApiFactory
 import flow.network.api.RuTrackerApiFactory
+import flow.network.impl.ProxyNetworkApi
 import flow.network.serialization.JsonFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -36,7 +36,7 @@ internal class NetworkApiRepositoryImpl @Inject constructor(
     }
 
     private fun proxyApi(host: String): NetworkApi {
-        return ProxyApiFactory.create(
+        return ProxyNetworkApi(
             HttpClient(OkHttp) {
                 engine { preconfigured = okHttpClient }
                 defaultRequest { url(scheme = "https", host = host) }

@@ -26,5 +26,7 @@
 -dontwarn org.conscrypt.*
 -dontwarn org.openjsse.javax.net.ssl.*
 -dontwarn org.openjsse.net.ssl.*
+-dontwarn org.slf4j.impl.StaticLoggerBinder
 
 -keep class com.google.crypto.tink.** { *; }
+-keep class flow.network.dto.** { *; }
