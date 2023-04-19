@@ -1,10 +1,9 @@
 package flow.forum
 
-import flow.models.forum.Category
-import flow.models.forum.RootCategory
+import flow.models.forum.ForumCategory
 
 internal sealed interface ForumAction {
-    data class CategoryClick(val category: Category) : ForumAction
-    data class ExpandClick(val expandable: Expandable<RootCategory>) : ForumAction
+    data class CategoryClick(val category: ForumCategory) : ForumAction
+    data class ExpandClick(val expandable: Expandable<ForumCategory>) : ForumAction
     object RetryClick : ForumAction
 }

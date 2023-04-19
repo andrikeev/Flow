@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.ObserveFavoritesUseCase
 import flow.domain.usecase.RefreshFavoritesUseCase
+import flow.logger.api.LoggerFactory
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -19,15 +20,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    refreshFavoritesUseCase: RefreshFavoritesUseCase,
+    private val refreshFavoritesUseCase: RefreshFavoritesUseCase,
     private val observeFavoritesUseCase: ObserveFavoritesUseCase,
+    loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<FavoritesState, FavoritesSideEffect> {
+    private val logger = loggerFactory.get("FavoritesViewModel")
+
     override val container: Container<FavoritesState, FavoritesSideEffect> = container(
         initialState = FavoritesState.Initial,
-        onCreate = {
-            viewModelScope.launch { refreshFavoritesUseCase() }
-            observeFavorites()
-        },
+        onCreate = { observeFavorites() },
     )
 
     fun perform(action: FavoritesAction) = intent {
@@ -39,6 +40,11 @@ class FavoritesViewModel @Inject constructor(
 
     private fun observeFavorites() {
         viewModelScope.launch {
+            logger.d { "Launch refresh favorites" }
+            refreshFavoritesUseCase()
+        }
+        viewModelScope.launch {
+            logger.d { "Start observing favorites" }
             observeFavoritesUseCase()
                 .catch { emit(emptyList()) }
                 .map { items ->

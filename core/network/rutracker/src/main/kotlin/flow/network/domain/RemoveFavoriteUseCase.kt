@@ -1,7 +1,6 @@
 package flow.network.domain
 
 import flow.network.api.RuTrackerInnerApi
-import flow.network.dto.ResultDto
 
 internal class RemoveFavoriteUseCase(
     private val api: RuTrackerInnerApi,
@@ -9,13 +8,12 @@ internal class RemoveFavoriteUseCase(
     private val withAuthorisedCheckUseCase: WithAuthorisedCheckUseCase,
     private val withFormTokenUseCase: WithFormTokenUseCase,
 ) {
-    suspend operator fun invoke(token: String, id: String): ResultDto<Boolean> = tryCatching {
-        withTokenVerificationUseCase(token) { validToken ->
+    suspend operator fun invoke(token: String, id: String): Boolean {
+        return withTokenVerificationUseCase(token) { validToken ->
             withAuthorisedCheckUseCase(api.mainPage(validToken)) { html ->
                 withFormTokenUseCase(html) { formToken ->
-                    api.addFavorite(validToken, id, formToken)
+                    api.removeFavorite(validToken, id, formToken)
                         .contains("Тема удалена")
-                        .toResult()
                 }
             }
         }

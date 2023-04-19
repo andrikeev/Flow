@@ -22,6 +22,7 @@ internal sealed interface NavigationDestination {
     data class Destination(
         override val route: String,
         val arguments: List<NavigationArgument> = emptyList(),
+        val deepLinks: List<NavigationDeepLink> = emptyList(),
         val content: @Composable () -> Unit,
         override val animations: NavigationAnimations = NavigationAnimations.Default,
         val options: NavigationOptions,

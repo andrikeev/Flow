@@ -7,12 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,14 +27,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
 import flow.designsystem.component.Button
+import flow.designsystem.component.CircularProgressIndicator
+import flow.designsystem.component.Icon
 import flow.designsystem.component.Placeholder
+import flow.designsystem.component.Text
+import flow.designsystem.component.TextField
 import flow.designsystem.drawables.FlowIcons
+import flow.designsystem.theme.AppTheme
 import flow.models.InputState
 import flow.models.auth.Captcha
 import flow.ui.component.RemoteImage
-import flow.ui.R as UiR
 
 @Composable
 internal fun LoginScreenHeader() = Placeholder(
@@ -55,10 +52,9 @@ internal fun UsernameInputField(
     state: LoginState,
     onChanged: (String) -> Unit,
     onSelectNext: () -> Unit,
-    colors: TextFieldColors,
-) = OutlinedTextField(
+) = TextField(
     modifier = modifier
-        .padding(4.dp)
+        .padding(AppTheme.spaces.small)
         .onKeyEvent { event ->
             when (event.key.keyCode) {
                 Key.DirectionDown.keyCode -> {
@@ -96,8 +92,8 @@ internal fun UsernameInputField(
     },
     leadingIcon = {
         Icon(
-            imageVector = FlowIcons.Username,
-            contentDescription = null,
+            icon = FlowIcons.Username,
+            contentDescription = stringResource(R.string.login_screen_username_hint),
         )
     },
     keyboardOptions = KeyboardOptions(
@@ -108,7 +104,6 @@ internal fun UsernameInputField(
     keyboardActions = KeyboardActions(
         onNext = { onSelectNext() }
     ),
-    colors = colors,
 )
 
 @Composable
@@ -119,10 +114,9 @@ internal fun PasswordInputField(
     onSelectNext: () -> Unit,
     onSelectPrevious: () -> Unit = {},
     onSubmit: () -> Unit,
-    colors: TextFieldColors,
-) = OutlinedTextField(
+) = TextField(
     modifier = modifier
-        .padding(4.dp)
+        .padding(AppTheme.spaces.small)
         .onKeyEvent { event ->
             when (event.key.keyCode) {
                 Key.DirectionUp.keyCode -> {
@@ -163,8 +157,8 @@ internal fun PasswordInputField(
     },
     leadingIcon = {
         Icon(
-            imageVector = FlowIcons.Password,
-            contentDescription = null,
+            icon = FlowIcons.Password,
+            contentDescription = stringResource(R.string.login_screen_password_hint),
         )
     },
     keyboardOptions = KeyboardOptions(
@@ -180,7 +174,6 @@ internal fun PasswordInputField(
         onNext = { onSelectNext() },
         onDone = { onSubmit() },
     ),
-    colors = colors,
 )
 
 @Composable
@@ -190,10 +183,9 @@ internal fun CaptchaInputField(
     onChanged: (String) -> Unit,
     onSelectPrevious: () -> Unit = {},
     onSubmit: () -> Unit,
-    colors: TextFieldColors,
-) = OutlinedTextField(
+) = TextField(
     modifier = modifier
-        .padding(4.dp)
+        .padding(AppTheme.spaces.small)
         .onKeyEvent { event ->
             when (event.key.keyCode) {
                 Key.DirectionUp.keyCode -> {
@@ -224,8 +216,8 @@ internal fun CaptchaInputField(
     },
     leadingIcon = {
         Icon(
-            imageVector = FlowIcons.Captcha,
-            contentDescription = null,
+            icon = FlowIcons.Captcha,
+            contentDescription = stringResource(R.string.login_screen_captcha_hint),
         )
     },
     keyboardOptions = KeyboardOptions(
@@ -236,7 +228,6 @@ internal fun CaptchaInputField(
     keyboardActions = KeyboardActions(
         onDone = { onSubmit() },
     ),
-    colors = colors,
 )
 
 @Composable
@@ -244,18 +235,13 @@ internal fun CaptchaImage(
     modifier: Modifier = Modifier,
     captcha: Captcha,
 ) = Box(
-    modifier = modifier.padding(8.dp),
+    modifier = modifier.padding(AppTheme.spaces.medium),
     contentAlignment = Alignment.Center,
     content = {
         RemoteImage(
             src = captcha.url,
             contentDescription = stringResource(R.string.login_screen_captcha_hint),
-            onLoading = {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(32.dp),
-                    strokeWidth = 2.dp,
-                )
-            },
+            onLoading = { CircularProgressIndicator(modifier = Modifier.size(AppTheme.sizes.medium)) },
             onSuccess = { painter ->
                 Image(
                     modifier = Modifier.fillMaxSize(),
@@ -266,9 +252,9 @@ internal fun CaptchaImage(
             onError = {
                 Image(
                     modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(UiR.drawable.ill_placeholder),
+                    painter = painterResource(flow.ui.R.drawable.ill_placeholder),
                     contentDescription = stringResource(R.string.login_screen_captcha_hint),
-                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary),
+                    colorFilter = ColorFilter.tint(color = AppTheme.colors.primary),
                 )
             },
         )
@@ -288,9 +274,8 @@ internal fun LoginButton(
         if (state.isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier
-                    .padding(end = 8.dp)
-                    .size(16.dp),
-                strokeWidth = 2.dp,
+                    .padding(end = AppTheme.spaces.medium)
+                    .size(AppTheme.sizes.small),
             )
         }
         Text(stringResource(R.string.login_screen_action_sign_in))

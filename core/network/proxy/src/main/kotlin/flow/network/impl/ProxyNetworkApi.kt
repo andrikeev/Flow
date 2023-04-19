@@ -1,10 +1,7 @@
 package flow.network.impl
 
 import flow.network.api.NetworkApi
-import flow.network.api.ProxyInnerApi
-import flow.network.dto.ResultDto
 import flow.network.dto.auth.AuthResponseDto
-import flow.network.dto.error.FlowError
 import flow.network.dto.forum.CategoryPageDto
 import flow.network.dto.forum.ForumDto
 import flow.network.dto.search.SearchPageDto
@@ -15,11 +12,18 @@ import flow.network.dto.topic.CommentsPageDto
 import flow.network.dto.topic.TopicDto
 import flow.network.dto.topic.TorrentDto
 import flow.network.dto.user.FavoritesDto
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 
-internal class ProxyNetworkApi(private val api: ProxyInnerApi) : NetworkApi {
-    override suspend fun checkAuthorized(token: String) = ResultDto.Error(FlowError.Forbidden)
+internal class ProxyNetworkApi(private val httpClient: HttpClient) : NetworkApi {
+    override suspend fun checkAuthorized(token: String) = error("Not implemented")
 
     override suspend fun login(
         username: String,
@@ -27,22 +31,44 @@ internal class ProxyNetworkApi(private val api: ProxyInnerApi) : NetworkApi {
         captchaSid: String?,
         captchaCode: String?,
         captchaValue: String?,
-    ): ResultDto<AuthResponseDto> =
-        Json.decodeFromString(api.login(username, password, captchaSid, captchaCode, captchaValue))
+    ): AuthResponseDto = httpClient.post("/login") {
+        formData {
+            append("username", username)
+            append("password", password)
+            append("cap_sid", captchaSid.orEmpty())
+            append("cap_code", captchaCode.orEmpty())
+            append("cap_val", captchaValue.orEmpty())
+        }
+    }.body()
 
-    override suspend fun getFavorites(token: String): ResultDto<FavoritesDto> =
-        Json.decodeFromString(api.favorites(token))
+    override suspend fun getFavorites(
+        token: String,
+    ): FavoritesDto = httpClient.get("/favorites") {
+        token(token)
+    }.body()
 
-    override suspend fun addFavorite(token: String, id: String): ResultDto<Boolean> =
-        Json.decodeFromString(api.addFavorite(token, id))
+    override suspend fun addFavorite(
+        token: String,
+        id: String,
+    ): Boolean = httpClient.post("/favorites/add/$id") {
+        token(token)
+    }.body()
 
-    override suspend fun removeFavorite(token: String, id: String): ResultDto<Boolean> =
-        Json.decodeFromString(api.removeFavorite(token, id))
+    override suspend fun removeFavorite(
+        token: String,
+        id: String,
+    ): Boolean = httpClient.post("/favorites/remove/$id") {
+        token(token)
+    }.body()
 
-    override suspend fun getForum(): ResultDto<ForumDto> = Json.decodeFromString(api.forum())
+    override suspend fun getForum(): ForumDto = httpClient.get("/forum").body()
 
-    override suspend fun getCategory(id: String, page: Int?): ResultDto<CategoryPageDto> =
-        Json.decodeFromString(api.category(id, page))
+    override suspend fun getCategory(
+        id: String,
+        page: Int?,
+    ): CategoryPageDto = httpClient.get("/forum/$id") {
+        parameter("page", page)
+    }.body()
 
     override suspend fun getSearchPage(
         token: String,
@@ -54,25 +80,59 @@ internal class ProxyNetworkApi(private val api: ProxyInnerApi) : NetworkApi {
         sortOrder: SearchSortOrderDto?,
         period: SearchPeriodDto?,
         page: Int?,
-    ): ResultDto<SearchPageDto> = Json.decodeFromString(
-        api.search(token, searchQuery, categories, author, authorId, sortType, sortOrder, period, page)
-    )
+    ): SearchPageDto = httpClient.get("/search") {
+        token(token)
+        parameter("query", searchQuery)
+        parameter("categories", categories)
+        parameter("author", author)
+        parameter("authorId", authorId)
+        parameter("sort", sortType)
+        parameter("order", sortOrder)
+        parameter("period", period)
+        parameter("page", page)
+    }.body()
 
-    override suspend fun getTopic(token: String, id: String?, pid: String?, page: Int?): ResultDto<TopicDto> =
-        Json.decodeFromString(api.topic(token, id, pid, page))
+    override suspend fun getTopic(
+        token: String,
+        id: String,
+        page: Int?,
+    ): TopicDto = httpClient.get("/topic/$id") {
+        token(token)
+        parameter("page", page)
+    }.body()
 
-    override suspend fun getTorrent(token: String, id: String): ResultDto<TorrentDto> =
-        Json.decodeFromString(api.torrent(token, id))
+    override suspend fun getTorrent(
+        token: String,
+        id: String,
+    ): TorrentDto = httpClient.get("/torrent/$id") {
+        token(token)
+    }.body()
 
     override suspend fun getCommentsPage(
         token: String,
-        id: String?,
-        pid: String?,
+        id: String,
         page: Int?,
-    ): ResultDto<CommentsPageDto> = Json.decodeFromString(api.comments(token, id, pid, page))
+    ): CommentsPageDto = httpClient.get("/comments/$id") {
+        token(token)
+        parameter("page", page)
+    }.body()
 
-    override suspend fun addComment(token: String, topicId: String, message: String): ResultDto<Boolean> =
-        Json.decodeFromString(api.addComment(token, topicId, message))
+    override suspend fun addComment(
+        token: String,
+        topicId: String,
+        message: String,
+    ): Boolean = httpClient.post("/comments/$topicId/add") {
+        token(token)
+        setBody(message)
+    }.body()
 
-    override suspend fun download(token: String, id: String) = ResultDto.Error(FlowError.Forbidden)
+    override suspend fun download(token: String, id: String) = error("Not implemented")
+
+    companion object {
+        fun HttpRequestBuilder.token(token: String?) {
+            if (token != null) {
+                header("Auth-Token", token)
+            }
+        }
+    }
 }

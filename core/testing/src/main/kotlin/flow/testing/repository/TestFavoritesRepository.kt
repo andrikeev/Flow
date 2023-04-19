@@ -27,6 +27,10 @@ class TestFavoritesRepository : FavoritesRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun contains(id: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun add(topic: Topic) {
         TODO("Not yet implemented")
     }

@@ -1,7 +1,6 @@
 package flow.network.domain
 
 import flow.network.api.RuTrackerInnerApi
-import flow.network.dto.ResultDto
 import flow.network.dto.forum.CategoryDto
 import flow.network.dto.topic.AuthorDto
 import flow.network.dto.topic.ForumTopicDto
@@ -16,8 +15,8 @@ internal class GetFavoritesUseCase(
     private val withAuthorisedCheckUseCase: WithAuthorisedCheckUseCase,
 ) {
 
-    suspend operator fun invoke(token: String): ResultDto<FavoritesDto> = tryCatching {
-        withTokenVerificationUseCase(token) { validToken ->
+    suspend operator fun invoke(token: String): FavoritesDto {
+        return withTokenVerificationUseCase(token) { validToken ->
             withAuthorisedCheckUseCase(api.favorites(validToken, 1)) { html ->
                 val pagesCount = parsePagesCount(html)
                 FavoritesDto(
@@ -26,7 +25,7 @@ internal class GetFavoritesUseCase(
                                 .map { page -> api.favorites(token, page) }
                                 .map(::parseFavorites))
                         .flatten()
-                ).toResult()
+                )
             }
         }
     }

@@ -1,7 +1,7 @@
 package flow.login
 
 import flow.domain.usecase.LoginUseCase
-import flow.domain.usecase.TextValidationUseCase
+import flow.domain.usecase.ValidateInputUseCase
 import flow.models.InputState
 import flow.models.auth.AuthResult
 import flow.models.auth.Captcha
@@ -28,7 +28,7 @@ class LoginViewModelTest {
     fun setUp() {
         viewModel = LoginViewModel(
             loginUseCase = LoginUseCase(authService, backgroundService),
-            textValidationUseCase = TextValidationUseCase(),
+            validateInputUseCase = ValidateInputUseCase(),
             loggerFactory = TestLoggerFactory(),
         )
     }

@@ -4,20 +4,24 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import flow.common.launchCatching
-import flow.common.newCancelableScope
-import flow.common.relaunch
-import flow.domain.usecase.*
+import flow.domain.model.PagingAction
+import flow.domain.model.append
+import flow.domain.model.category.isEmpty
+import flow.domain.model.retry
+import flow.domain.usecase.ObserveAuthStateUseCase
+import flow.domain.usecase.ObserveCategoryModelUseCase
+import flow.domain.usecase.ObserveCategoryPagingDataUseCase
+import flow.domain.usecase.ToggleBookmarkUseCase
+import flow.domain.usecase.ToggleFavoriteUseCase
+import flow.logger.api.LoggerFactory
+import flow.models.auth.AuthState
 import flow.models.forum.Category
-import flow.models.forum.CategoryModel
-import flow.models.search.Filter
+import flow.models.topic.BaseTopic
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import flow.models.topic.Torrent
-import flow.ui.component.LoadState
-import flow.ui.component.LoadStates
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -30,174 +34,124 @@ import javax.inject.Inject
 @HiltViewModel
 internal class CategoryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val enrichCategoriesUseCase: EnrichCategoriesUseCase,
-    private val enrichCategoryUseCase: EnrichCategoryUseCase,
-    private val enrichTopicsUseCase: EnrichTopicsUseCase,
-    private val getCategoryPageUseCase: GetCategoryPageUseCase,
+    loggerFactory: LoggerFactory,
+    private val authStateUseCase: ObserveAuthStateUseCase,
+    private val observeCategoryPagingDataUseCase: ObserveCategoryPagingDataUseCase,
+    private val observeCategoryModelUseCase: ObserveCategoryModelUseCase,
     private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-    private val visitCategoryUseCase: VisitCategoryUseCase,
-) : ViewModel(), ContainerHost<CategoryState, CategorySideEffect> {
-    private val enrichScope = viewModelScope.newCancelableScope()
+) : ViewModel(), ContainerHost<CategoryPageState, CategorySideEffect> {
+    private val logger = loggerFactory.get("CategoryViewModel")
+    private val categoryId = savedStateHandle.categoryId
+    private val pagingActions = MutableSharedFlow<PagingAction>()
 
-    override val container: Container<CategoryState, CategorySideEffect> = container(
-        initialState = CategoryState(CategoryModelState.Initial(savedStateHandle.category)),
+    override val container: Container<CategoryPageState, CategorySideEffect> = container(
+        initialState = CategoryPageState(),
         onCreate = {
+            observeAuthState()
             observeCategoryModel()
-            loadFirstPage()
+            observePagingData()
         },
     )
 
-    fun perform(action: CategoryAction) = when (action) {
-        is CategoryAction.BackClick -> onBackClick()
-        is CategoryAction.BookmarkClick -> onBookmarkClick()
-        is CategoryAction.CategoryClick -> onCategoryClick(action.category)
-        is CategoryAction.EndOfListReached -> appendPage()
-        is CategoryAction.FavoriteClick -> onFavoriteClick(action.topicModel)
-        is CategoryAction.RetryClick -> onRetryClick()
-        is CategoryAction.SearchClick -> onSearchClick()
-        is CategoryAction.TopicClick -> onTopicClick(action.topic)
-        is CategoryAction.TorrentClick -> onTorrentClick(action.torrent)
-    }
-
-    private fun observeCategoryModel() {
-        intent {
-            viewModelScope.launchCatching {
-                enrichCategoryUseCase(state.categoryModelState.category)
-                    .collectLatest { categoryModel ->
-                        val categoryModelState = CategoryModelState.Loaded(categoryModel)
-                        reduce { state.copy(categoryModelState = categoryModelState) }
-                    }
-            }
+    fun perform(action: CategoryAction) {
+        logger.d { "Perform $action" }
+        when (action) {
+            is CategoryAction.BackClick -> onBackClick()
+            is CategoryAction.BookmarkClick -> onBookmarkClick()
+            is CategoryAction.CategoryClick -> onCategoryClick(action.category)
+            is CategoryAction.EndOfListReached -> appendPage()
+            is CategoryAction.FavoriteClick -> onFavoriteClick(action.topicModel)
+            is CategoryAction.LoginClick -> onLoginClick()
+            is CategoryAction.RetryClick -> onRetryClick()
+            is CategoryAction.SearchClick -> onSearchClick()
+            is CategoryAction.TopicClick -> onTopicClick(action.topicModel)
         }
     }
 
-    private fun loadFirstPage() = intent {
-        reduce {
-            state.copy(
-                content = CategoryContent.Initial,
-                loadStates = LoadStates.refresh,
+    private fun observeAuthState() = viewModelScope.launch {
+        logger.d { "Start observing auth state" }
+        authStateUseCase().collectLatest { authState ->
+            intent { reduce { state.copy(authState = authState) } }
+        }
+    }
+
+    private fun observeCategoryModel() = viewModelScope.launch {
+        logger.d { "Start observing category model" }
+        observeCategoryModelUseCase(categoryId).collectLatest { categoryModel ->
+            val categoryState = CategoryState.Category(
+                name = categoryModel.category.name,
+                isBookmark = categoryModel.isBookmark,
             )
+            intent { reduce { state.copy(categoryState = categoryState) } }
         }
-        viewModelScope.launchCatching(
-            onFailure = { reduce { state.copy(loadStates = LoadStates(refresh = LoadState.Error(it))) } }
-        ) {
-            val id = state.categoryModelState.category.id
-            val categoryPage = getCategoryPageUseCase(id, 1)
-            visitCategoryUseCase(state.categoryModelState.category, categoryPage.items.topics())
-            enrichScope.relaunch {
-                val items = categoryPage.items
-                if (items.isEmpty()) {
+    }
+
+    private fun observePagingData() = viewModelScope.launch {
+        logger.d { "Start observing paging data" }
+        observeCategoryPagingDataUseCase(
+            id = categoryId,
+            actionsFlow = pagingActions,
+            scope = viewModelScope,
+        )
+            .collectLatest { (data, loadStates) ->
+                intent {
                     reduce {
                         state.copy(
-                            content = CategoryContent.Empty,
-                            loadStates = LoadStates(),
+                            categoryContent = when {
+                                data == null -> CategoryContent.Initial
+                                data.isEmpty() -> CategoryContent.Empty
+                                else -> CategoryContent.Content(
+                                    categories = data.categories,
+                                    topics = data.topics,
+                                )
+                            },
+                            loadStates = loadStates,
                         )
-                    }
-                } else {
-                    val categories = items.categories()
-                    val topics = items.topics()
-                    combine(
-                        enrichCategoriesUseCase(categories),
-                        enrichTopicsUseCase(topics),
-                    ) { categoryModels, topicModels ->
-                        CategoryContent.Content(
-                            categories = categoryModels,
-                            topics = topicModels,
-                            page = categoryPage.page,
-                            pages = categoryPage.pages,
-                        )
-                    }.collectLatest { content ->
-                        reduce {
-                            state.copy(
-                                content = content,
-                                loadStates = LoadStates(),
-                            )
-                        }
                     }
                 }
             }
-        }
     }
 
-    private fun onBackClick() {
-        intent { postSideEffect(CategorySideEffect.Back) }
+    private fun onBackClick() = intent {
+        postSideEffect(CategorySideEffect.Back)
     }
 
-    private fun onBookmarkClick() {
-        intent {
-            state.categoryModelState.let { categoryModelState ->
-                if (categoryModelState is CategoryModelState.Loaded) {
-                    viewModelScope.launch { toggleBookmarkUseCase(categoryModelState.categoryModel) }
-                }
-            }
-        }
+    private fun onBookmarkClick() = viewModelScope.launch {
+        toggleBookmarkUseCase(categoryId)
     }
 
-    private fun onCategoryClick(category: Category) {
-        intent { postSideEffect(CategorySideEffect.OpenCategory(category)) }
+    private fun onCategoryClick(category: Category) = intent {
+        postSideEffect(CategorySideEffect.OpenCategory(category.id))
     }
 
-    private fun appendPage() = intent {
-        val content = state.content
-        val isNotLoading = state.loadStates.append != LoadState.Loading
-        if (isNotLoading && content is CategoryContent.Content && content.page < content.pages) {
-            reduce { state.copy(loadStates = LoadStates.append) }
-            viewModelScope.launchCatching(
-                onFailure = { reduce { state.copy(loadStates = LoadStates(append = LoadState.Error(it))) } }
-            ) {
-                val id = state.categoryModelState.category.id
-                val categoryPage = getCategoryPageUseCase(id, content.page + 1)
-                enrichScope.relaunch {
-                    val categories = LinkedHashSet(content.categories.map(CategoryModel::category))
-                        .plus(categoryPage.items.categories())
-                        .toList()
-                    val topics = LinkedHashSet(content.topics.map(TopicModel<out Topic>::topic))
-                        .plus(categoryPage.items.topics())
-                        .toList()
-                    combine(
-                        enrichCategoriesUseCase(categories),
-                        enrichTopicsUseCase(topics),
-                    ) { categoryModels, topicModels ->
-                        CategoryContent.Content(
-                            categories = categoryModels,
-                            topics = topicModels,
-                            page = categoryPage.page,
-                            pages = categoryPage.pages,
-                        )
-                    }.collectLatest { content ->
-                        reduce {
-                            state.copy(
-                                content = content,
-                                loadStates = LoadStates(),
-                            )
-                        }
-                    }
-                }
-            }
-        }
+    private fun appendPage() = viewModelScope.launch {
+        pagingActions.append()
     }
 
-    private fun onFavoriteClick(topicModel: TopicModel<out Topic>) {
-        intent { viewModelScope.launch { toggleFavoriteUseCase(topicModel) } }
+    private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = viewModelScope.launch {
+        toggleFavoriteUseCase(topicModel.topic.id)
     }
 
-    private fun onRetryClick() {
-        intent {
-            if (state.loadStates.refresh is LoadState.Error) {
-                loadFirstPage()
-            } else if (state.loadStates.append is LoadState.Error) {
-                appendPage()
-            }
-        }
+    private fun onLoginClick() = intent {
+        postSideEffect(CategorySideEffect.OpenLogin)
+    }
+
+    private fun onRetryClick() = viewModelScope.launch {
+        pagingActions.retry()
     }
 
     private fun onSearchClick() = intent {
-        val filter = Filter(categories = listOf(state.categoryModelState.category))
-        postSideEffect(CategorySideEffect.OpenSearch(filter))
+        when (state.authState) {
+            is AuthState.Authorized -> postSideEffect(CategorySideEffect.OpenSearch(categoryId))
+            is AuthState.Unauthorized -> postSideEffect(CategorySideEffect.ShowLoginDialog)
+        }
     }
 
-    private fun onTopicClick(topic: Topic) = intent { postSideEffect(CategorySideEffect.OpenTopic(topic)) }
-
-    private fun onTorrentClick(torrent: Torrent) = intent { postSideEffect(CategorySideEffect.OpenTorrent(torrent)) }
+    private fun onTopicClick(topicModel: TopicModel<out Topic>) = intent {
+        when (val topic = topicModel.topic) {
+            is BaseTopic -> postSideEffect(CategorySideEffect.OpenTopic(topic))
+            is Torrent -> postSideEffect(CategorySideEffect.OpenTorrent(topic))
+        }
+    }
 }

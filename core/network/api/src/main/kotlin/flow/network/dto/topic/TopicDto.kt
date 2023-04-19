@@ -1,8 +1,10 @@
 package flow.network.dto.topic
 
 import flow.network.dto.forum.CategoryDto
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Serializable
 sealed interface ForumTopicDto {
     val id: String
     val title: String
@@ -11,14 +13,16 @@ sealed interface ForumTopicDto {
 }
 
 @Serializable
+@SerialName("Topic")
 data class TopicDto(
     override val id: String,
     override val title: String,
     override val author: AuthorDto? = null,
-    override val category: CategoryDto? = null
+    override val category: CategoryDto? = null,
 ) : ForumTopicDto
 
 @Serializable
+@SerialName("Torrent")
 data class TorrentDto(
     override val id: String,
     override val title: String,
@@ -35,6 +39,7 @@ data class TorrentDto(
 ) : ForumTopicDto
 
 @Serializable
+@SerialName("CommentsPage")
 data class CommentsPageDto(
     override val id: String,
     override val title: String,
@@ -42,5 +47,5 @@ data class CommentsPageDto(
     override val category: CategoryDto? = null,
     val page: Int,
     val pages: Int,
-    val posts: List<PostDto>
+    val posts: List<PostDto>,
 ) : ForumTopicDto

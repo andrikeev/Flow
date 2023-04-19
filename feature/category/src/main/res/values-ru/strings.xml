@@ -2,4 +2,7 @@
 <resources>
     <string name="forum_screen_forum_empty_subtitle">Кажется, пока здесь ничего нет</string>
     <string name="forum_screen_forum_empty_title">Пусто</string>
+
+    <string name="forum_screen_login_required_title">Необходима авторизация</string>
+    <string name="forum_screen_login_required_for_search">Для того чтобы воспользоваться поиском, необходимо авторизоваться</string>
 </resources>

@@ -3,5 +3,6 @@
     <string name="account_item_avatar_content_description">Аватарка</string>
     <string name="account_item_login_action">Войти</string>
     <string name="account_item_logout_action">Выйти</string>
-    <string name="account_item_logout_confirmation">Вы точно хотите выйти?</string>
+    <string name="account_item_logout_title">Вы точно хотите выйти?</string>
+    <string name="account_item_logout_confirmation">Все данные будут очищены, нельзя будет пользоваться поиском и загружать torrent-файлы</string>
 </resources>

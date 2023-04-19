@@ -6,41 +6,20 @@ import flow.models.Page
 import flow.models.topic.Author
 import flow.models.topic.BaseTopic
 import flow.models.topic.Post
-import flow.models.topic.PostContent
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import flow.models.topic.Torrent
-import flow.models.topic.TorrentDescription
 import flow.models.topic.TorrentStatus
-import flow.network.dto.ResultDto
 import flow.network.dto.topic.AuthorDto
 import flow.network.dto.topic.CommentsPageDto
 import flow.network.dto.topic.ForumTopicDto
 import flow.network.dto.topic.TopicDto
-import flow.network.dto.topic.TorrentDescriptionDto
 import flow.network.dto.topic.TorrentDto
 import flow.network.dto.topic.TorrentStatusDto
 import flow.network.dto.user.FavoritesDto
 
-
-internal fun ResultDto<ForumTopicDto>.toTopic(): Topic {
-    require(this is ResultDto.Data)
-    return value.toTopic()
-}
-
-internal fun ResultDto<CommentsPageDto>.toCommentsPage(): Page<Post> {
-    require(this is ResultDto.Data)
-    return value.toCommentsPage()
-}
-
-internal fun ResultDto<TorrentDto>.toTorrent(): Torrent {
-    require(this is ResultDto.Data)
-    return value.toTorrent()
-}
-
-internal fun ResultDto<FavoritesDto>.toFavorites(): List<Topic> {
-    require(this is ResultDto.Data)
-    return value.topics.map(ForumTopicDto::toTopic)
+internal fun FavoritesDto.toFavorites(): List<Topic> {
+    return topics.map(ForumTopicDto::toTopic)
 }
 
 internal fun ForumTopicDto.toTopic(): Topic = when (this) {
@@ -63,23 +42,21 @@ internal fun TorrentDto.toTorrent(): Torrent = Torrent(
     seeds = seeds,
     leeches = leeches,
     magnetLink = magnetLink,
-    description = description?.toDescription(),
+    description = description?.toTorrentDescription(),
 )
 
-internal fun CommentsPageDto.toCommentsPage(): Page<Post> = Page(page = page, pages = pages, items = emptyList())
+internal fun CommentsPageDto.toCommentsPage(): Page<Post> = Page(page = page, pages = pages, items = posts.toPosts())
 
 internal fun TorrentStatusDto.toStatus(): TorrentStatus = when (this) {
-    TorrentStatusDto.DUPLICATE -> TorrentStatus.DUPLICATE
-    TorrentStatusDto.NOT_APPROVED -> TorrentStatus.NOT_APPROVED
-    TorrentStatusDto.CHECKING -> TorrentStatus.CHECKING
-    TorrentStatusDto.APPROVED -> TorrentStatus.APPROVED
-    TorrentStatusDto.NEED_EDIT -> TorrentStatus.NEED_EDIT
-    TorrentStatusDto.CLOSED -> TorrentStatus.CLOSED
-    TorrentStatusDto.NO_DESCRIPTION -> TorrentStatus.NO_DESCRIPTION
-    TorrentStatusDto.CONSUMED -> TorrentStatus.CONSUMED
+    TorrentStatusDto.Duplicate -> TorrentStatus.DUPLICATE
+    TorrentStatusDto.NotApproved -> TorrentStatus.NOT_APPROVED
+    TorrentStatusDto.Checking -> TorrentStatus.CHECKING
+    TorrentStatusDto.Approved -> TorrentStatus.APPROVED
+    TorrentStatusDto.NeedEdit -> TorrentStatus.NEEDS_EDIT
+    TorrentStatusDto.Closed -> TorrentStatus.CLOSED
+    TorrentStatusDto.NoDescription -> TorrentStatus.NO_DESCRIPTION
+    TorrentStatusDto.Consumed -> TorrentStatus.CONSUMED
 }
-
-internal fun TorrentDescriptionDto.toDescription(): TorrentDescription = TorrentDescription(PostContent.Default(emptyList()))
 
 internal fun FavoriteTopicEntity.toTopic(): Topic =
     if (tags == null && status == null && size == null && seeds == null && leeches == null) {
@@ -114,11 +91,10 @@ internal fun FavoriteTopicEntity.toTopicModel(): TopicModel<out Topic> {
 }
 
 internal fun Topic.toFavoriteEntity(): FavoriteTopicEntity {
-    val timestamp = System.currentTimeMillis()
     return when (this) {
         is BaseTopic -> FavoriteTopicEntity(
             id = id,
-            timestamp = timestamp,
+            timestamp = System.currentTimeMillis(),
             title = title,
             author = author,
             category = category,
@@ -126,7 +102,7 @@ internal fun Topic.toFavoriteEntity(): FavoriteTopicEntity {
 
         is Torrent -> FavoriteTopicEntity(
             id = id,
-            timestamp = timestamp,
+            timestamp = System.currentTimeMillis(),
             title = title,
             author = author,
             category = category,

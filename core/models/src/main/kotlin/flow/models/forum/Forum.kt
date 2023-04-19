@@ -1,12 +1,13 @@
 package flow.models.forum
 
 data class Forum(
-    val children: List<RootCategory>,
+    val children: List<ForumCategory>,
 )
 
-data class RootCategory(
+data class ForumCategory(
+    val id: String,
     val name: String,
-    val children: List<Category>,
+    val children: List<ForumCategory> = emptyList(),
 )
 
 sealed interface ForumItem {

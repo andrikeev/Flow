@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="label_search">Поиск</string>
+    <string name="label_forum">Форум</string>
+    <string name="label_topics">Темы</string>
+    <string name="label_menu">Меню</string>
+
     <string name="tab_title_forum">Форум</string>
     <string name="tab_title_recents">Недавние</string>
     <string name="tab_title_bookmarks">Закладки</string>

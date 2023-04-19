@@ -6,5 +6,5 @@ plugins {
 dependencies {
     api(project(":core:network:api"))
 
-    implementation(libs.ktor.client.core)
+    implementation(libs.bundles.ktor.client)
 }

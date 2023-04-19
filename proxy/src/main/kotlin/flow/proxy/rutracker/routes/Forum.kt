@@ -2,23 +2,28 @@ package flow.proxy.rutracker.routes
 
 import flow.network.api.NetworkApi
 import flow.proxy.rutracker.di.inject
-import io.ktor.server.application.*
-import io.ktor.server.routing.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
+import io.ktor.server.util.getOrFail
 
 internal fun Application.configureForumRoutes() {
     val api by inject<NetworkApi>()
 
     routing {
         get("/forum") {
-            respond(api.getForum())
+            call.respond(api.getForum())
         }
 
-        get("/category") {
-            val id = call.request.queryParameters.require("id")
-            require(id.isNotEmpty())
-            val page = call.request.queryParameters["page"]?.toIntOrNull()
-            require(page == null || page > 0)
-            respond(api.getCategory(id = id, page = page))
+        get("/forum/{id}") {
+            call.respond(
+                api.getCategory(
+                    id = call.parameters.getOrFail("id"),
+                    page = call.request.queryParameters["page"]?.toIntOrNull(),
+                )
+            )
         }
     }
 }

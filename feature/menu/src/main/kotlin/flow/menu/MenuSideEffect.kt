@@ -7,6 +7,7 @@ internal sealed interface MenuSideEffect {
     data class OpenLink(val link: String) : MenuSideEffect
     object ShowAbout : MenuSideEffect
     data class ShowConfirmation(
+        @StringRes val title: Int,
         @StringRes val confirmationMessage: Int,
         val action: () -> Unit,
     ) : MenuSideEffect

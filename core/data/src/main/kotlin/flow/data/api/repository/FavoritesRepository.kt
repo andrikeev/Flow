@@ -11,6 +11,7 @@ interface FavoritesRepository {
     fun observeUpdatedIds(): Flow<List<String>>
     suspend fun getIds(): List<String>
     suspend fun getTorrents(): List<Torrent>
+    suspend fun contains(id: String): Boolean
     suspend fun add(topic: Topic)
     suspend fun add(topics: List<Topic>)
     suspend fun remove(topic: Topic)

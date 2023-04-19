@@ -123,13 +123,13 @@ class MenuViewModelTest {
         val containerTest = viewModel.liveTest()
         containerTest.runOnCreate()
         // do
-        containerTest.testIntent { perform(MenuAction.ConfirmableAction(TestMessageId, TestAction)) }
+        containerTest.testIntent { perform(MenuAction.ConfirmableAction(TestTitleId, TestMessageId, TestAction)) }
         // check
         containerTest.assert(MenuState()) {
             states(
                 { this },
             )
-            postedSideEffects(MenuSideEffect.ShowConfirmation(TestMessageId, TestAction))
+            postedSideEffects(MenuSideEffect.ShowConfirmation(TestTitleId, TestMessageId, TestAction))
         }
     }
 
@@ -166,6 +166,7 @@ class MenuViewModelTest {
     }
 
     companion object {
+        const val TestTitleId = 0
         const val TestMessageId = 0
         val TestAction = {}
     }

@@ -15,7 +15,7 @@ internal sealed interface SearchResultAction {
     data class SetOrder(val order: Order) : SearchResultAction
     data class SetPeriod(val period: Period) : SearchResultAction
     data class SetSort(val sort: Sort) : SearchResultAction
-    data class TorrentClick(val torrent: Torrent) : SearchResultAction
+    data class TorrentClick(val torrent: TopicModel<Torrent>) : SearchResultAction
     object BackClick : SearchResultAction
     object ExpandAppBarClick : SearchResultAction
     object ListBottomReached : SearchResultAction

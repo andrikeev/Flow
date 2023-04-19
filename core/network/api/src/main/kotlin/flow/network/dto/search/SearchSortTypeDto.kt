@@ -1,14 +1,13 @@
 package flow.network.dto.search
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 @Serializable
-enum class SearchSortTypeDto(@Transient val value: String) {
-    DATE("1"),
-    TITLE("2"),
-    DOWNLOADED("4"),
-    SEEDS("10"),
-    LEECHES("11"),
-    SIZE("7"),
+enum class SearchSortTypeDto(val value: String) {
+    Date("1"),
+    Title("2"),
+    Downloaded("4"),
+    Seeds("10"),
+    Leeches("11"),
+    Size("7"),
 }

@@ -13,8 +13,6 @@ import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -26,33 +24,29 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import flow.designsystem.theme.Elevation
-import flow.designsystem.theme.Scale
+import flow.designsystem.theme.AppTheme
 import kotlinx.coroutines.job
 
 @Composable
 fun FocusableLazyColumn(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+    contentPadding: PaddingValues = PaddingValues(AppTheme.spaces.zero),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     onEndOfListReached: () -> Unit = {},
     refocusFirst: Boolean = true,
     focusableSpec: FocusableSpec = focusableSpec(
-        scale = Scale.small,
-        elevation = Elevation.small,
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surface,
+        elevation = AppTheme.elevations.small,
+        shape = AppTheme.shapes.large,
+        color = AppTheme.colors.surface,
     ),
-    content: FocusableLazyListScope.() -> Unit
+    content: FocusableLazyListScope.() -> Unit,
 ) {
     val focusRequester = rememberFocusRequester()
     var hasFocus by rememberSaveable { mutableStateOf(false) }
@@ -119,7 +113,7 @@ fun FocusableLazyColumn(
             contentPadding = contentPadding,
             verticalArrangement = verticalArrangement,
             horizontalAlignment = horizontalAlignment,
-            onEndOfListReached = onEndOfListReached,
+            onLastItemVisible = onEndOfListReached,
         ) {
             FocusableLazyListScopeImpl(
                 lazyListScope = this,
@@ -138,25 +132,18 @@ private fun FocusableItem(
     onFocused: () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    val scale by animateFloatAsState(
-        if (isFocused) {
-            focusableSpec.scale
-        } else {
-            Scale.no
-        }
-    )
     val elevation by animateDpAsState(
         if (isFocused) {
             focusableSpec.elevation
         } else {
-            Elevation.zero
+            AppTheme.elevations.zero
         }
     )
     val zIndex by animateFloatAsState(
         if (isFocused) {
             focusableSpec.elevation.value
         } else {
-            Elevation.zero.value
+            AppTheme.elevations.zero.value
         }
     )
     val itemFocusRequester = if (isFocused) {
@@ -172,9 +159,8 @@ private fun FocusableItem(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 48.dp)
-            .padding(2.dp)
-            .scale(scale)
+            .heightIn(min = AppTheme.sizes.default)
+            .padding(AppTheme.spaces.extraSmall)
             .zIndex(zIndex)
             .focusRequester(itemFocusRequester)
             .onFocusChanged {
@@ -273,7 +259,7 @@ private class FocusableLazyListScopeImpl(
         count: Int,
         key: ((index: Int) -> Any)?,
         contentType: (index: Int) -> Any?,
-        itemContent: @Composable LazyItemScope.(index: Int) -> Unit
+        itemContent: @Composable LazyItemScope.(index: Int) -> Unit,
     ) {
         val startIndex = focusableItemsCount
         lazyListScope.items(
@@ -317,7 +303,7 @@ inline fun <T> FocusableLazyListScope.focusableItems(
     items: List<T>,
     noinline key: ((item: T) -> Any)? = null,
     noinline contentType: (item: T) -> Any? = { null },
-    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit
+    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit,
 ) = focusableItems(
     count = items.size,
     key = if (key != null) { index: Int -> key(items[index]) } else null,

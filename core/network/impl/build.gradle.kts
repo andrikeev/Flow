@@ -10,12 +10,12 @@ android {
 dependencies {
     api(project(":core:network:api"))
 
+    implementation(project(":core:data"))
     implementation(project(":core:dispatchers"))
+    implementation(project(":core:logger"))
     implementation(project(":core:models"))
     implementation(project(":core:network:proxy"))
     implementation(project(":core:network:rutracker"))
 
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.okhttp)
-    implementation(libs.ktor.client.logging)
+    implementation(libs.bundles.ktor.client)
 }

@@ -8,19 +8,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import flow.designsystem.component.Body
+import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
+import flow.designsystem.component.Surface
+import flow.designsystem.component.Text
 import flow.designsystem.drawables.FlowIcons
-import flow.models.forum.Category
+import flow.designsystem.theme.AppTheme
 import flow.models.forum.CategoryModel
 import flow.navigation.viewModel
 import flow.ui.component.dividedItems
@@ -31,7 +29,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun BookmarksScreen(
-    openCategory: (Category) -> Unit,
+    openCategory: (String) -> Unit,
 ) {
     BookmarksScreen(
         viewModel = viewModel(),
@@ -42,11 +40,11 @@ fun BookmarksScreen(
 @Composable
 private fun BookmarksScreen(
     viewModel: BookmarksViewModel,
-    openCategory: (Category) -> Unit,
+    openCategory: (String) -> Unit,
 ) {
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is BookmarksSideEffect.OpenCategory -> openCategory(sideEffect.category)
+            is BookmarksSideEffect.OpenCategory -> openCategory(sideEffect.categoryId)
         }
     }
     val state by viewModel.collectAsState()
@@ -59,7 +57,7 @@ private fun BookmarksScreen(
     onAction: (BookmarksAction) -> Unit,
 ) = LazyList(
     modifier = Modifier.fillMaxSize(),
-    contentPadding = PaddingValues(vertical = 8.dp),
+    contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
 ) {
     when (state) {
         is BookmarksState.Initial -> loadingItem()
@@ -86,45 +84,42 @@ private fun BookmarksScreen(
 private fun Bookmark(
     bookmark: CategoryModel,
     onClick: () -> Unit,
+) = Surface(
+    modifier = Modifier
+        .fillMaxWidth()
+        .height(AppTheme.sizes.default),
+    onClick = onClick,
 ) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
-        onClick = onClick,
+    Row(
+        modifier = Modifier.padding(horizontal = AppTheme.spaces.large),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Icon(
+            icon = FlowIcons.BookmarkChecked,
+            tint = AppTheme.colors.primary,
+            contentDescription = null,
+        )
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = AppTheme.spaces.large)
         ) {
-            Icon(
-                imageVector = FlowIcons.BookmarkChecked,
-                tint = MaterialTheme.colorScheme.tertiary,
-                contentDescription = null,
+            Text(
+                modifier = Modifier.padding(vertical = AppTheme.spaces.medium),
+                text = bookmark.category.name,
             )
-            Box(
+        }
+        if (bookmark.newTopicsCount > 0) {
+            Body(
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp)
-            ) {
-                Text(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    text = bookmark.category.name,
-                )
-            }
-            if (bookmark.newTopicsCount > 0) {
-                Text(
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = CircleShape,
-                        )
-                        .padding(8.dp),
-                    text = "+${bookmark.newTopicsCount}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-            }
+                    .background(
+                        color = AppTheme.colors.primary,
+                        shape = AppTheme.shapes.circle,
+                    )
+                    .padding(AppTheme.spaces.medium),
+                text = "+${bookmark.newTopicsCount}",
+                color = AppTheme.colors.onPrimaryContainer,
+            )
         }
     }
 }

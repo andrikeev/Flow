@@ -10,43 +10,41 @@ import flow.models.search.Period
 import flow.models.search.Search
 import flow.models.search.Sort
 import flow.models.topic.Torrent
-import flow.network.dto.ResultDto
 import flow.network.dto.search.SearchPageDto
 import flow.network.dto.search.SearchPeriodDto
 import flow.network.dto.search.SearchSortOrderDto
 import flow.network.dto.search.SearchSortTypeDto
 import flow.network.dto.topic.TorrentDto
 
-internal fun ResultDto<SearchPageDto>.toSearchPage(): Page<Torrent> {
-    require(this is ResultDto.Data)
+internal fun SearchPageDto.toSearchPage(): Page<Torrent> {
     return Page(
-        page = value.page,
-        pages = value.pages,
-        items = value.torrents.map(TorrentDto::toTorrent),
+        page = page,
+        pages = pages,
+        items = torrents.map(TorrentDto::toTorrent),
     )
 }
 
 internal fun Period.toDto(): SearchPeriodDto = when (this) {
-    Period.ALL_TIME -> SearchPeriodDto.ALL_TIME
-    Period.TODAY -> SearchPeriodDto.TODAY
-    Period.LAST_THREE_DAYS -> SearchPeriodDto.LAST_THREE_DAYS
-    Period.LAST_WEEK -> SearchPeriodDto.LAST_WEEK
-    Period.LAST_TWO_WEEKS -> SearchPeriodDto.LAST_TWO_WEEKS
-    Period.LAST_MONTH -> SearchPeriodDto.LAST_MONTH
+    Period.ALL_TIME -> SearchPeriodDto.AllTime
+    Period.TODAY -> SearchPeriodDto.Today
+    Period.LAST_THREE_DAYS -> SearchPeriodDto.LastThreeDays
+    Period.LAST_WEEK -> SearchPeriodDto.LastWeek
+    Period.LAST_TWO_WEEKS -> SearchPeriodDto.LastTwoWeeks
+    Period.LAST_MONTH -> SearchPeriodDto.LastMonth
 }
 
 internal fun Sort.toDto(): SearchSortTypeDto = when (this) {
-    Sort.DATE -> SearchSortTypeDto.DATE
-    Sort.TITLE -> SearchSortTypeDto.TITLE
-    Sort.DOWNLOADED -> SearchSortTypeDto.DOWNLOADED
-    Sort.SEEDS -> SearchSortTypeDto.SEEDS
-    Sort.LEECHES -> SearchSortTypeDto.LEECHES
-    Sort.SIZE -> SearchSortTypeDto.SIZE
+    Sort.DATE -> SearchSortTypeDto.Date
+    Sort.TITLE -> SearchSortTypeDto.Title
+    Sort.DOWNLOADED -> SearchSortTypeDto.Downloaded
+    Sort.SEEDS -> SearchSortTypeDto.Seeds
+    Sort.LEECHES -> SearchSortTypeDto.Leeches
+    Sort.SIZE -> SearchSortTypeDto.Size
 }
 
 internal fun Order.toDto(): SearchSortOrderDto = when (this) {
-    Order.ASCENDING -> SearchSortOrderDto.ASCENDING
-    Order.DESCENDING -> SearchSortOrderDto.DESCENDING
+    Order.ASCENDING -> SearchSortOrderDto.Ascending
+    Order.DESCENDING -> SearchSortOrderDto.Descending
 }
 
 internal fun SearchHistoryEntity.toSearch(): Search {

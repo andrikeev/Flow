@@ -1,10 +1,9 @@
 package flow.network.dto.search
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 @Serializable
-enum class SearchSortOrderDto(@Transient val value: String) {
-    ASCENDING("1"),
-    DESCENDING("2"),
+enum class SearchSortOrderDto(val value: String) {
+    Ascending("1"),
+    Descending("2"),
 }

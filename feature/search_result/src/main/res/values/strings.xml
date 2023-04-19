@@ -10,7 +10,6 @@
     <string name="search_screen_filter_order_label">Order by</string>
     <string name="search_screen_filter_period_label">For</string>
     <string name="search_screen_filter_sort_label">Sort by</string>
-    <string name="search_screen_input_hint">Search..</string>
     <string name="search_screen_result_empty_subtitle">Try to use keywords or change filter parameters</string>
     <string name="search_screen_result_empty_title">Nothing found</string>
 </resources>

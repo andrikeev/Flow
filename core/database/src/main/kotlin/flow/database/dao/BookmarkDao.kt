@@ -55,6 +55,9 @@ interface BookmarkDao {
     @Query("SELECT newTopics FROM Bookmark")
     fun observeNewTopics(): Flow<List<String>>
 
+    @Query("SELECT COUNT(*) > 0 FROM Bookmark WHERE id = :id")
+    suspend fun contains(id: String): Boolean
+
     /**
      * Insert new [BookmarkEntity] or replace existed.
      *

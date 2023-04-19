@@ -25,7 +25,6 @@ private object TorrentParceler : Parceler<Torrent> {
         seeds = parcel.read(OptionalIntParceler),
         leeches = parcel.read(OptionalIntParceler),
         magnetLink = parcel.read(OptionalStringParceler),
-        description = parcel.read(OptionTorrentDescriptionParceler),
     )
 
     override fun Torrent.write(parcel: Parcel, flags: Int) {
@@ -40,6 +39,5 @@ private object TorrentParceler : Parceler<Torrent> {
         parcel.write(seeds, OptionalIntParceler, flags)
         parcel.write(leeches, OptionalIntParceler, flags)
         parcel.write(magnetLink, OptionalStringParceler, flags)
-        parcel.write(description, OptionTorrentDescriptionParceler, flags)
     }
 }

@@ -19,9 +19,7 @@ class EnrichTopicUseCase @Inject constructor(
             favoritesRepository.observeIds(),
             favoritesRepository.observeUpdatedIds(),
             visitedRepository.observeIds(),
-            topic.category?.id?.let { id ->
-                bookmarksRepository.observeNewTopics(id)
-            } ?: bookmarksRepository.observeNewTopics(),
+            bookmarksRepository.observeNewTopics(),
         ) { favoriteTopics, updatedIds, visitedTopics, newTopics ->
             TopicModel(
                 topic = topic,

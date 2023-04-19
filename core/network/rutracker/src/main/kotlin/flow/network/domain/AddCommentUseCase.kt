@@ -1,7 +1,6 @@
 package flow.network.domain
 
 import flow.network.api.RuTrackerInnerApi
-import flow.network.dto.ResultDto
 
 internal class AddCommentUseCase(
     private val api: RuTrackerInnerApi,
@@ -13,14 +12,11 @@ internal class AddCommentUseCase(
         token: String,
         topicId: String,
         message: String,
-    ): ResultDto<Boolean> = tryCatching {
-        withTokenVerificationUseCase(token) { validToken ->
-            withAuthorisedCheckUseCase(api.mainPage(validToken)) { html ->
-                withFormTokenUseCase(html) { formToken ->
-                    api.postMessage(validToken, topicId, formToken, message)
-                        .contains("Сообщение было успешно отправлено")
-                        .toResult()
-                }
+    ): Boolean = withTokenVerificationUseCase(token) { validToken ->
+        withAuthorisedCheckUseCase(api.mainPage(validToken)) { html ->
+            withFormTokenUseCase(html) { formToken ->
+                api.postMessage(validToken, topicId, formToken, message)
+                    .contains("Сообщение было успешно отправлено")
             }
         }
     }

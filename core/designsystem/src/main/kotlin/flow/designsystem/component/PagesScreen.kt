@@ -7,14 +7,15 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import flow.designsystem.drawables.Icon
 import kotlinx.coroutines.launch
 
 @Composable
 fun PagesScreen(
+    pages: List<Page>,
     modifier: Modifier = Modifier,
-    pages: List<Page>
+    bottomBar: @Composable () -> Unit = {},
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
@@ -32,10 +33,11 @@ fun PagesScreen(
                 },
                 appBarState = scrollBehavior.state,
             )
-        }
-    ) {
+        },
+        bottomBar = bottomBar,
+    ) { padding ->
         HorizontalPager(
-            modifier = Modifier.padding(it),
+            modifier = Modifier.padding(padding),
             pageCount = pages.size,
             state = pagerState
         ) { page ->
@@ -45,7 +47,7 @@ fun PagesScreen(
 }
 
 data class Page(
-    val icon: ImageVector? = null,
-    @StringRes val labelResId: Int,
+    val icon: Icon? = null,
+    @StringRes val labelResId: Int? = null,
     val content: @Composable () -> Unit,
 )

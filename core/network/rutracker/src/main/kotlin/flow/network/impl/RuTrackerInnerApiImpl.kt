@@ -5,17 +5,22 @@ import flow.network.dto.FileDto
 import flow.network.dto.search.SearchPeriodDto
 import flow.network.dto.search.SearchSortOrderDto
 import flow.network.dto.search.SearchSortTypeDto
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.readBytes
+import io.ktor.http.Parameters
 import java.net.URLEncoder
 
 internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTrackerInnerApi {
 
-    override suspend fun mainPage(token: String) = httpClient.get(INDEX) {
-        header(COOKIE_HEADER, token)
+    override suspend fun mainPage(token: String) = httpClient.get(Index) {
+        header(CookieHeader, token)
     }.bodyAsText()
 
     override suspend fun login(
@@ -25,7 +30,7 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
         captchaCode: String?,
         captchaValue: String?,
     ): Pair<String?, String> = httpClient.submitForm(
-        url = LOGIN,
+        url = Login,
         formParameters = Parameters.build {
             append("login_username", username.toCp1251())
             append("login_password", password.toCp1251())
@@ -51,8 +56,8 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
         sortOrder: SearchSortOrderDto?,
         period: SearchPeriodDto?,
         page: Int?,
-    ) = httpClient.get(TRACKER) {
-        header(COOKIE_HEADER, token)
+    ) = httpClient.get(Tracker) {
+        header(CookieHeader, token)
         parameter("nm", searchQuery)
         parameter("f", categories)
         parameter("pn", author)
@@ -63,32 +68,27 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
         parameter("start", page?.let { (50 * (page - 1)).toString() })
     }.bodyAsText()
 
-    override suspend fun forum() = httpClient.get(INDEX) {
+    override suspend fun forum() = httpClient.get(Index) {
         parameter("map", "0")
     }.bodyAsText()
 
-    override suspend fun category(id: String, page: Int?) = httpClient.get(FORUM) {
+    override suspend fun category(id: String, page: Int?) = httpClient.get(Forum) {
         parameter("f", id)
         parameter("start", page?.let { (50 * (page - 1)).toString() })
     }.bodyAsText()
 
     override suspend fun topic(
         token: String,
-        id: String?,
-        pid: String?,
+        id: String,
         page: Int?,
-    ) = httpClient.get(TOPIC) {
-        header(COOKIE_HEADER, token)
-        if (!id.isNullOrEmpty()) {
-            parameter("t", id)
-        } else {
-            parameter("p", pid)
-        }
+    ) = httpClient.get(Topic) {
+        header(CookieHeader, token)
+        parameter("t", id)
         parameter("start", page?.let { (30 * (page - 1)).toString() })
     }.bodyAsText()
 
-    override suspend fun download(token: String, id: String) = httpClient.get(DOWNLOAD) {
-        header(COOKIE_HEADER, token)
+    override suspend fun download(token: String, id: String) = httpClient.get(Download) {
+        header(CookieHeader, token)
         parameter("t", id)
     }.let { response ->
         FileDto(
@@ -98,7 +98,7 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
         )
     }
 
-    override suspend fun profile(userId: String) = httpClient.get(PROFILE) {
+    override suspend fun profile(userId: String) = httpClient.get(Profile) {
         parameter("mode", "viewprofile")
         parameter("u", userId)
     }.bodyAsText()
@@ -108,8 +108,8 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
         topicId: String,
         formToken: String,
         message: String,
-    ) = httpClient.post(POSTING) {
-        header(COOKIE_HEADER, token)
+    ) = httpClient.submitForm(Posting) {
+        header(CookieHeader, token)
         formData {
             append("mode", "reply")
             append("submit_mode", "submit")
@@ -119,8 +119,8 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
         }
     }.bodyAsText()
 
-    override suspend fun favorites(token: String, page: Int?) = httpClient.get(BOOKMARKS) {
-        header(COOKIE_HEADER, token)
+    override suspend fun favorites(token: String, page: Int?) = httpClient.get(Bookmarks) {
+        header(CookieHeader, token)
         parameter("start", page?.let { (50 * (page - 1)).toString() })
 
     }.bodyAsText()
@@ -129,31 +129,33 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
         token: String,
         id: String,
         formToken: String,
-    ) = httpClient.post(BOOKMARKS) {
-        header(COOKIE_HEADER, token)
-        formData {
+    ) = httpClient.submitForm(
+        url = Bookmarks,
+        block = { header(CookieHeader, token) },
+        formParameters = Parameters.build {
             append("action", "bookmark_add")
             append("topic_id", id)
             append("form_token", formToken)
-        }
-    }.bodyAsText()
+        },
+    ).bodyAsText()
 
     override suspend fun removeFavorite(
         token: String,
         id: String,
         formToken: String,
-    ) = httpClient.post(BOOKMARKS) {
-        header(COOKIE_HEADER, token)
-        formData {
+    ) = httpClient.submitForm(
+        url = Bookmarks,
+        block = { header(CookieHeader, token) },
+        formParameters = Parameters.build {
             append("action", "bookmark_delete")
             append("topic_id", id)
             append("form_token", formToken)
             append("request_origin", "from_topic_page")
-        }
-    }.bodyAsText()
+        },
+    ).bodyAsText()
 
-    override suspend fun futureDownloads(token: String, page: Int?) = httpClient.get(SEARCH) {
-        header(COOKIE_HEADER, token)
+    override suspend fun futureDownloads(token: String, page: Int?) = httpClient.get(Search) {
+        header(CookieHeader, token)
         parameter("future_dls", null)
         parameter("start", page?.let { (50 * (page - 1)).toString() })
     }.bodyAsText()
@@ -162,8 +164,8 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
         token: String,
         id: String,
         formToken: String,
-    ) = httpClient.post(AJAX) {
-        header(COOKIE_HEADER, token)
+    ) = httpClient.post(Ajax) {
+        header(CookieHeader, token)
         parameter("action", "add_future_dl")
         parameter("topic_id", id)
         parameter("form_token", formToken)
@@ -173,28 +175,27 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
         token: String,
         id: String,
         formToken: String,
-    ) = httpClient.post(AJAX) {
-        header(COOKIE_HEADER, token)
+    ) = httpClient.post(Ajax) {
+        header(CookieHeader, token)
         parameter("action", "del_future_dl")
         parameter("topic_id", id)
         parameter("form_token", formToken)
     }.bodyAsText()
 
     private companion object {
+        const val Login: String = "login.php"
+        const val Profile: String = "profile.php"
+        const val Index: String = "index.php"
+        const val Tracker: String = "tracker.php"
+        const val Forum: String = "viewforum.php"
+        const val Topic: String = "viewtopic.php"
+        const val Posting: String = "posting.php"
+        const val Bookmarks: String = "bookmarks.php"
+        const val Ajax: String = "ajax.php"
+        const val Search: String = "search.php"
+        const val Download: String = "dl.php"
 
-        const val LOGIN: String = "login.php"
-        const val PROFILE: String = "profile.php"
-        const val INDEX: String = "index.php"
-        const val TRACKER: String = "tracker.php"
-        const val FORUM: String = "viewforum.php"
-        const val TOPIC: String = "viewtopic.php"
-        const val POSTING: String = "posting.php"
-        const val BOOKMARKS: String = "bookmarks.php"
-        const val AJAX: String = "ajax.php"
-        const val SEARCH: String = "search.php"
-        const val DOWNLOAD: String = "dl.php"
-
-        const val COOKIE_HEADER: String = "Cookie"
+        const val CookieHeader: String = "Cookie"
     }
 
     private fun String.toCp1251(): String = URLEncoder.encode(this, "Windows-1251")

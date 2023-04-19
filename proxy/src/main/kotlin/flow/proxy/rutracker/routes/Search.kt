@@ -5,15 +5,18 @@ import flow.network.dto.search.SearchPeriodDto
 import flow.network.dto.search.SearchSortOrderDto
 import flow.network.dto.search.SearchSortTypeDto
 import flow.proxy.rutracker.di.inject
-import io.ktor.server.application.*
-import io.ktor.server.routing.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 
 internal fun Application.configureSearchRoutes() {
     val api by inject<NetworkApi>()
 
     routing {
         get("/search") {
-            respond(
+            call.respond(
                 api.getSearchPage(
                     token = call.request.authToken,
                     searchQuery = call.request.queryParameters["query"],

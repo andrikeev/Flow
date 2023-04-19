@@ -8,8 +8,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "me.rutrackersearch.app"
-        versionCode = 24
-        versionName = "4.1.1"
+        versionCode = 25
+        versionName = "4.2.0"
     }
 
     buildTypes {
@@ -72,4 +72,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.bundles.orbit)
+
+    debugImplementation(libs.leakcanary)
 }

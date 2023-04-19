@@ -1,10 +1,5 @@
 package flow.search.input
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,39 +8,28 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.AppBarDefaults
 import flow.designsystem.component.AppBarScrollBehavior
 import flow.designsystem.component.BackButton
+import flow.designsystem.component.Icon
 import flow.designsystem.component.IconButton
-import flow.designsystem.component.RunOnComposition
 import flow.designsystem.component.Scaffold
-import flow.designsystem.component.rememberFocusRequester
+import flow.designsystem.component.SearchInputField
+import flow.designsystem.component.Surface
+import flow.designsystem.component.Text
 import flow.designsystem.drawables.FlowIcons
+import flow.designsystem.theme.AppTheme
 import flow.models.search.Filter
 import flow.models.search.Suggest
 import org.orbitmvi.orbit.compose.collectAsState
@@ -94,7 +78,7 @@ private fun SearchInputScreen(
         content = { padding ->
             LazyColumn(
                 modifier = Modifier.padding(padding),
-                contentPadding = PaddingValues(vertical = 8.dp),
+                contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
             ) {
                 items(
                     items = state.suggests,
@@ -103,7 +87,7 @@ private fun SearchInputScreen(
                     SuggestItem(
                         suggest = item,
                         onClick = { onAction(SearchInputAction.SuggestClick(item)) },
-                        onSubmit = { onAction(SearchInputAction.SuggestSelected(item)) },
+                        onSubmit = { onAction(SearchInputAction.SuggestEditClick(item)) },
                     )
                 }
             }
@@ -121,81 +105,50 @@ private fun SearchInputAppBar(
     onSubmitClick: () -> Unit,
     onBackClick: () -> Unit,
     scrollBehavior: AppBarScrollBehavior,
-) {
-    AppBar(
-        modifier = modifier,
-        navigationIcon = { BackButton(onBackClick) },
-        title = {
-            val focusRequester = rememberFocusRequester()
-            RunOnComposition { focusRequester.requestFocus() }
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                value = inputValue,
-                placeholder = { Text(stringResource(R.string.search_screen_input_hint)) },
-                onValueChange = onInputValueChange,
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                ),
-                trailingIcon = {
-                    AnimatedVisibility(
-                        visible = showClearButton,
-                        enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-                        exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center),
-                    ) {
-                        IconButton(
-                            onClick = onClearButtonClick,
-                            imageVector = FlowIcons.Clear,
-                        )
-                    }
-                },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    autoCorrect = true,
-                    imeAction = ImeAction.Search,
-                ),
-                keyboardActions = KeyboardActions(
-                    onSearch = { onSubmitClick() }
-                )
-            )
-        },
-        appBarState = scrollBehavior.state,
-    )
-}
+) = AppBar(
+    modifier = modifier,
+    navigationIcon = { BackButton(onBackClick) },
+    title = {
+        SearchInputField(
+            modifier = Modifier.fillMaxWidth(),
+            inputValue = inputValue,
+            onInputValueChange = onInputValueChange,
+            showClearButton = showClearButton,
+            onClearButtonClick = onClearButtonClick,
+            onSubmitClick = onSubmitClick,
+        )
+    },
+    appBarState = scrollBehavior.state,
+)
 
 @Composable
 private fun SuggestItem(
     suggest: Suggest,
     onClick: () -> Unit,
     onSubmit: () -> Unit,
+) = Surface(
+    modifier = Modifier
+        .fillMaxWidth()
+        .height(AppTheme.sizes.default),
+    onClick = onClick,
 ) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
-        onClick = onClick,
+    Row(
+        modifier = Modifier.padding(horizontal = AppTheme.spaces.large),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Icon(icon = FlowIcons.History, contentDescription = null)
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = AppTheme.spaces.large)
         ) {
-            Icon(imageVector = FlowIcons.History, contentDescription = null)
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp)
-            ) {
-                SuggestText(value = suggest.value, substring = suggest.substring)
-            }
-            IconButton(
-                onClick = onSubmit,
-                imageVector = FlowIcons.ArrowTopLeft,
-            )
+            SuggestText(value = suggest.value, substring = suggest.substring)
         }
+        IconButton(
+            icon = FlowIcons.InsertSuggest,
+            contentDescription = null, //TODO: add contentDescription
+            onClick = onSubmit,
+        )
     }
 }
 
@@ -211,7 +164,7 @@ private fun SuggestText(value: String, substring: IntRange?) {
                 if (substringStartIndex > 0) {
                     append(value.substring(0, substringStartIndex))
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)) {
+                withStyle(style = SpanStyle(color = AppTheme.colors.accentOrange)) {
                     append(value.substring(substring))
                 }
                 if (value.lastIndex > substringEndIndex) {

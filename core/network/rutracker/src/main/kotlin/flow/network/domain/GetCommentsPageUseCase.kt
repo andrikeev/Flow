@@ -1,9 +1,9 @@
 package flow.network.domain
 
 import flow.network.api.RuTrackerInnerApi
-import flow.network.dto.ResultDto
-import flow.network.dto.error.FlowError
 import flow.network.dto.topic.CommentsPageDto
+import flow.network.model.Forbidden
+import flow.network.model.NotFound
 
 internal class GetCommentsPageUseCase(
     private val api: RuTrackerInnerApi,
@@ -12,16 +12,15 @@ internal class GetCommentsPageUseCase(
 
     suspend operator fun invoke(
         token: String,
-        id: String?,
-        pid: String?,
+        id: String,
         page: Int?,
-    ): ResultDto<CommentsPageDto> = tryCatching {
-        val html = api.topic(token = token, id = id, pid = pid, page = page)
+    ): CommentsPageDto {
+        val html = api.topic(token, id, page)
         return when {
-            !isTopicExists(html) -> ResultDto.Error(FlowError.NotFound)
-            isTopicModerated(html) -> ResultDto.Error(FlowError.NotFound)
-            isBlockedForRegion(html) -> ResultDto.Error(FlowError.NotFound)
-            else -> parseCommentsPageUseCase(html).toResult()
+            !isTopicExists(html) -> throw NotFound
+            isTopicModerated(html) -> throw Forbidden
+            isBlockedForRegion(html) -> throw Forbidden
+            else -> parseCommentsPageUseCase(html)
         }
     }
 }

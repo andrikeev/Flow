@@ -4,30 +4,29 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
+import flow.designsystem.component.Body
 import flow.designsystem.component.ConfirmationDialog
-import flow.designsystem.component.DialogState
+import flow.designsystem.component.IconButton
+import flow.designsystem.component.Surface
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
+import flow.designsystem.component.rememberConfirmationDialogState
+import flow.designsystem.drawables.FlowIcons
+import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
 import flow.models.auth.AuthState
 import flow.navigation.viewModel
 import flow.ui.component.Avatar
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-import flow.designsystem.R as DesignsystemR
+import flow.designsystem.R as dsR
 
 @Composable
 fun AccountItem(
@@ -47,18 +46,19 @@ internal fun AccountItem(
     viewModel: AccountViewModel,
     onLoginClick: () -> Unit,
 ) {
-    var confirmationDialogState by remember { mutableStateOf<DialogState>(DialogState.Hide) }
+    val confirmationDialogState = rememberConfirmationDialogState()
+    ConfirmationDialog(confirmationDialogState)
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is AccountSideEffect.OpenLogin -> onLoginClick()
-            is AccountSideEffect.HideLogoutConfirmation -> confirmationDialogState = DialogState.Hide
-            is AccountSideEffect.ShowLogoutConfirmation -> confirmationDialogState = DialogState.Show
+            is AccountSideEffect.ShowLogoutConfirmation -> confirmationDialogState.show(
+                title = R.string.account_item_logout_title,
+                text = R.string.account_item_logout_confirmation,
+                onConfirm = { viewModel.perform(AccountAction.ConfirmLogoutClick) },
+                onDismiss = confirmationDialogState::hide,
+            )
         }
     }
-    LogoutConfirmationDialog(
-        state = confirmationDialogState,
-        onAction = viewModel::perform,
-    )
     val state by viewModel.collectAsState()
     AccountItem(
         modifier = modifier,
@@ -82,26 +82,27 @@ internal fun AccountItem(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = AppTheme.sizes.large),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = AppTheme.spaces.large),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Avatar(avatarUrl)
             when (state) {
                 is AuthState.Authorized -> {
-                    Text(
+                    Body(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = AppTheme.spaces.large),
                         text = state.name,
-                        style = MaterialTheme.typography.bodyMedium,
                         overflow = TextOverflow.Ellipsis,
                         softWrap = false,
                     )
-                    TextButton(
-                        text = stringResource(R.string.account_item_logout_action),
+                    IconButton(
+                        icon = FlowIcons.Logout,
+                        contentDescription = stringResource(dsR.string.designsystem_action_logout),
+                        tint = AppTheme.colors.primary,
                         onClick = { onAction(AccountAction.LogoutClick) },
                     )
                 }
@@ -114,23 +115,6 @@ internal fun AccountItem(
                 }
             }
         }
-    }
-}
-
-@Composable
-internal fun LogoutConfirmationDialog(
-    state: DialogState,
-    onAction: (AccountAction) -> Unit,
-) {
-    when (state) {
-        is DialogState.Hide -> Unit
-        is DialogState.Show -> ConfirmationDialog(
-            message = stringResource(R.string.account_item_logout_confirmation),
-            positiveButtonText = stringResource(DesignsystemR.string.designsystem_action_yes),
-            negativeButtonText = stringResource(DesignsystemR.string.designsystem_action_no),
-            onDismiss = { onAction(AccountAction.CancelLogoutClick) },
-            onConfirm = { onAction(AccountAction.ConfirmLogoutClick) },
-        )
     }
 }
 
@@ -148,17 +132,6 @@ private fun AccountItem_Authorized_Preview() {
     FlowTheme {
         AccountItem(
             state = AuthState.Authorized("Long-long user name", null),
-            onAction = {},
-        )
-    }
-}
-
-@ThemePreviews
-@Composable
-private fun LogoutConfirmationDialog_Preview() {
-    FlowTheme {
-        LogoutConfirmationDialog(
-            state = DialogState.Show,
             onAction = {},
         )
     }

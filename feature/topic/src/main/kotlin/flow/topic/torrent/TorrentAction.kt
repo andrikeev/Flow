@@ -1,8 +1,5 @@
 package flow.topic.torrent
 
-import flow.models.forum.Category
-import flow.models.topic.Author
-
 sealed interface TorrentAction {
     object BackClick : TorrentAction
     object RetryClick : TorrentAction
@@ -11,6 +8,6 @@ sealed interface TorrentAction {
     object ShareClick : TorrentAction
     object MagnetClick : TorrentAction
     object TorrentFileClick : TorrentAction
-    data class CategoryClick(val value: Category) : TorrentAction
-    data class AuthorClick(val value: Author) : TorrentAction
+    object CategoryClick : TorrentAction
+    object AuthorClick : TorrentAction
 }

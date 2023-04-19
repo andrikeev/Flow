@@ -1,7 +1,6 @@
 package flow.network.domain
 
 import flow.network.api.RuTrackerInnerApi
-import flow.network.dto.ResultDto
 import flow.network.dto.forum.CategoryDto
 import flow.network.dto.search.SearchPageDto
 import flow.network.dto.search.SearchPeriodDto
@@ -28,8 +27,8 @@ internal class GetSearchPageUseCase(
         sortOrder: SearchSortOrderDto?,
         period: SearchPeriodDto?,
         page: Int?,
-    ): ResultDto<SearchPageDto> = tryCatching {
-        withTokenVerificationUseCase(token) { validToken ->
+    ): SearchPageDto {
+        return withTokenVerificationUseCase(token) { validToken ->
             withAuthorisedCheckUseCase(
                 api.search(
                     token = validToken,
@@ -41,10 +40,9 @@ internal class GetSearchPageUseCase(
                     sortOrder = sortOrder,
                     period = period,
                     page = page,
-                )
-            ) { html ->
-                parseSearchPage(html).toResult()
-            }
+                ),
+                ::parseSearchPage,
+            )
         }
     }
 
@@ -57,7 +55,7 @@ internal class GetSearchPageUseCase(
             val totalPages = navigation.select("b:nth-child(2)").toInt(1)
             val torrents = doc.select(".hl-tr").map { element ->
                 val id = element.select(".t-title > a").attr("data-topic_id")
-                val status = ParseTorrentStatusUseCase(element) ?: TorrentStatusDto.CHECKING
+                val status = ParseTorrentStatusUseCase(element) ?: TorrentStatusDto.Checking
                 val titleWithTags = element.select(".t-title > a").toStr()
                 val title = getTitle(titleWithTags)
                 val tags = getTags(titleWithTags)

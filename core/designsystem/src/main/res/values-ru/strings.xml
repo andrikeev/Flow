@@ -3,19 +3,28 @@
     <string name="designsystem_action_apply">Применить</string>
     <string name="designsystem_action_back">Назад</string>
     <string name="designsystem_action_cancel">Отмена</string>
+    <string name="designsystem_action_clear">Очистить текст</string>
+    <string name="designsystem_action_collapse">Свернуть</string>
     <string name="designsystem_action_confirmation">Вы уверены?</string>
+    <string name="designsystem_action_expand">Развернуть</string>
     <string name="designsystem_action_favorite">Избранное</string>
     <string name="designsystem_action_login">Войти</string>
+    <string name="designsystem_action_logout">Выйти</string>
     <string name="designsystem_action_no">Нет</string>
     <string name="designsystem_action_ok">ОК</string>
     <string name="designsystem_action_open">Открыть</string>
     <string name="designsystem_action_open_file">Открыть</string>
-    <string name="designsystem_action_open_settings">Настройки</string>
     <string name="designsystem_action_reset">Сбросить</string>
     <string name="designsystem_action_retry">Повторить</string>
+    <string name="designsystem_action_search">Поиск</string>
     <string name="designsystem_action_send">Отправить</string>
     <string name="designsystem_action_share">Поделиться</string>
     <string name="designsystem_action_yes">Да</string>
-    <string name="designsystem_content_description_action_expand">Раскрыть</string>
+
+    <string name="designsystem_hint_search">Поиск…</string>
+
     <string name="designsystem_content_description_action_collapse">Свернуть</string>
+    <string name="designsystem_content_description_action_expand">Раскрыть</string>
+    <string name="designsystem_content_description_state_collapsed">Скрыто</string>
+    <string name="designsystem_content_description_state_expanded">Раскрыто</string>
 </resources>

@@ -1,15 +1,15 @@
 package flow.search.result.domain
 
 import flow.dispatchers.api.Dispatchers
-import flow.domain.usecase.GetForumTreeUseCase
-import flow.models.forum.Category
+import flow.domain.usecase.GetForumUseCase
+import flow.models.forum.ForumCategory
 import flow.search.result.domain.models.ForumTreeItem
 import flow.search.result.domain.models.SelectState
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class GetFlattenForumTreeUseCase @Inject constructor(
-    private val getForumTreeUseCase: GetForumTreeUseCase,
+    private val getForumUseCase: GetForumUseCase,
     private val dispatchers: Dispatchers,
 ) {
     suspend operator fun invoke(
@@ -17,25 +17,24 @@ internal class GetFlattenForumTreeUseCase @Inject constructor(
         selected: Set<String>,
     ): List<ForumTreeItem> {
         return withContext(dispatchers.default) {
-            val forumTree = getForumTreeUseCase()
+            val forumTree = getForumUseCase()
             mutableListOf<ForumTreeItem>().apply {
-                forumTree.children.mapIndexed { index, root ->
-                    val rootId = "c-$index"
+                forumTree.children.map { root ->
                     val rootItem = ForumTreeItem.Root(
-                        id = rootId,
+                        id = root.id,
                         name = root.name,
                         expandable = root.children.isNotEmpty(),
-                        expanded = expanded.contains(rootId),
+                        expanded = expanded.contains(root.id),
                     )
                     add(rootItem)
-                    if (expanded.contains(rootId)) {
+                    if (expanded.contains(root.id)) {
                         root.children.forEach { forum ->
-                            val forumId = forum.category.id
+                            val forumId = forum.id
                             val children = forum.children
-                            val childrenIds = forum.children.map(Category::id)
+                            val childrenIds = forum.children.map(ForumCategory::id)
                             val groupItem = ForumTreeItem.Group(
                                 id = forumId,
-                                name = forum.category.name,
+                                name = forum.name,
                                 expandable = children.isNotEmpty(),
                                 expanded = expanded.contains(forumId),
                                 selectState = when {

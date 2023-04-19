@@ -1,11 +1,10 @@
 package flow.network.domain
 
 import flow.network.api.RuTrackerInnerApi
-import flow.network.dto.ResultDto
 import flow.network.dto.auth.AuthResponseDto
 import flow.network.dto.auth.CaptchaDto
 import flow.network.dto.auth.UserDto
-import flow.network.dto.error.FlowError
+import flow.network.model.NoData
 import java.util.regex.Pattern
 
 internal class LoginUseCase(
@@ -19,7 +18,7 @@ internal class LoginUseCase(
         captchaSid: String?,
         captchaCode: String?,
         captchaValue: String?,
-    ): ResultDto<AuthResponseDto> = tryCatching {
+    ): AuthResponseDto {
         val (token, html) = api.login(
             username,
             password,
@@ -28,30 +27,31 @@ internal class LoginUseCase(
             captchaValue,
         )
         return if (token != null) {
-            val (userId, _, avatarUrl) = (getCurrentProfileUseCase(token) as ResultDto.Data).value
-            AuthResponseDto.Success(UserDto(userId, token, avatarUrl)).toResult()
-        } else if (html.contains(LOGIN_FORM_KEY)) {
+            val (userId, _, avatarUrl) = getCurrentProfileUseCase(token)
+            AuthResponseDto.Success(UserDto(userId, token, avatarUrl))
+        } else if (html.contains(LoginFormKey)) {
             val captcha = ParseCaptchaUseCase(html)
-            if (html.contains(WRONG_CREDITS_MESSAGE)) {
+            if (html.contains(WrongCreditsMessage)) {
                 AuthResponseDto.WrongCredits(captcha)
             } else {
                 AuthResponseDto.CaptchaRequired(captcha)
-            }.toResult()
+            }
         } else {
-            ResultDto.Error(FlowError.NoData)
+            throw NoData
         }
     }
 
     private companion object {
 
-        const val LOGIN_FORM_KEY = "login-form"
-        const val WRONG_CREDITS_MESSAGE = "неверный пароль"
+        const val LoginFormKey = "login-form"
+        const val WrongCreditsMessage = "неверный пароль"
     }
 
     private object ParseCaptchaUseCase {
         private val codeRegex =
             Pattern.compile("<input[^>]*name=\"(cap_code_[^\"]+)\"[^>]*value=\"[^\"]*\"[^>]*>")
-        private val sidRegex = Pattern.compile("<input[^>]*name=\"cap_sid\"[^>]*value=\"([^\"]+)\"[^>]*>")
+        private val sidRegex =
+            Pattern.compile("<input[^>]*name=\"cap_sid\"[^>]*value=\"([^\"]+)\"[^>]*>")
         private val urlRegex = Pattern.compile("<img[^>]*src=\"([^\"]+/captcha/[^\"]+)\"[^>]*>")
 
         operator fun invoke(from: String): CaptchaDto? {

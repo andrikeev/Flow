@@ -14,13 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import flow.designsystem.component.Divider
+import flow.designsystem.theme.AppTheme
 import flow.forum.ForumAction.CategoryClick
 import flow.forum.ForumAction.ExpandClick
 import flow.forum.ForumAction.RetryClick
-import flow.models.forum.Category
-import flow.models.forum.RootCategory
+import flow.models.forum.ForumCategory
 import flow.navigation.viewModel
 import flow.ui.component.CategoryListItem
 import flow.ui.component.ExpandableCategoryListItem
@@ -32,7 +31,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun ForumScreen(
-    openCategory: (Category) -> Unit,
+    openCategory: (String) -> Unit,
 ) {
     ForumScreen(
         viewModel = viewModel(),
@@ -43,11 +42,11 @@ fun ForumScreen(
 @Composable
 private fun ForumScreen(
     viewModel: ForumViewModel,
-    openCategory: (Category) -> Unit,
+    openCategory: (String) -> Unit,
 ) {
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is ForumSideEffect.OpenCategory -> openCategory(sideEffect.category)
+            is ForumSideEffect.OpenCategory -> openCategory(sideEffect.categoryId)
         }
     }
     val state by viewModel.collectAsState()
@@ -60,7 +59,7 @@ private fun ForumScreen(
     onAction: (ForumAction) -> Unit,
 ) = LazyColumn(
     modifier = Modifier.fillMaxSize(),
-    contentPadding = PaddingValues(vertical = 8.dp),
+    contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
 ) {
     when (state) {
         is ForumState.Loading -> loadingItem()
@@ -81,9 +80,9 @@ private fun ForumScreen(
 
 @Composable
 private fun RootCategory(
-    rootCategory: RootCategory,
+    rootCategory: ForumCategory,
     isExpanded: Boolean,
-    onCategoryClick: (Category) -> Unit,
+    onCategoryClick: (ForumCategory) -> Unit,
     onExpandClick: () -> Unit,
 ) {
     ExpandableCategoryListItem(
@@ -96,15 +95,18 @@ private fun RootCategory(
         enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
         exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
     ) {
-        Column(modifier = Modifier.padding(vertical = 8.dp)) {
+        Column(modifier = Modifier.padding(vertical = AppTheme.spaces.medium)) {
             rootCategory.children.forEachIndexed { index, category ->
                 CategoryListItem(
                     text = category.name,
                     onClick = { onCategoryClick(category) },
-                    contentPadding = PaddingValues(start = 24.dp, end = 16.dp),
+                    contentPadding = PaddingValues(
+                        start = AppTheme.spaces.extraLarge,
+                        end = AppTheme.spaces.large,
+                    ),
                 )
                 if (index < rootCategory.children.lastIndex) {
-                    Divider(startIndent = 24.dp)
+                    Divider(startIndent = AppTheme.spaces.extraLarge,)
                 }
             }
         }

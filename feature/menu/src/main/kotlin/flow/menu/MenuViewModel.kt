@@ -8,8 +8,10 @@ import flow.domain.usecase.ClearHistoryUseCase
 import flow.domain.usecase.ClearLocalFavoritesUseCase
 import flow.domain.usecase.ObserveSettingsUseCase
 import flow.domain.usecase.SetBookmarksSyncPeriodUseCase
+import flow.domain.usecase.SetEndpointUseCase
 import flow.domain.usecase.SetFavoritesSyncPeriodUseCase
 import flow.domain.usecase.SetThemeUseCase
+import flow.logger.api.LoggerFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
@@ -27,38 +29,46 @@ internal class MenuViewModel @Inject constructor(
     private val clearHistoryUseCase: ClearHistoryUseCase,
     private val observeSettingsUseCase: ObserveSettingsUseCase,
     private val setBookmarksSyncPeriodUseCase: SetBookmarksSyncPeriodUseCase,
+    private val setEndpointUseCase: SetEndpointUseCase,
     private val setFavoritesSyncPeriodUseCase: SetFavoritesSyncPeriodUseCase,
     private val setThemeUseCase: SetThemeUseCase,
+    loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<MenuState, MenuSideEffect> {
+    private val logger = loggerFactory.get("MenuViewModel")
+
     override val container: Container<MenuState, MenuSideEffect> = container(
         initialState = MenuState(),
         onCreate = { observeSettings() }
     )
 
-    fun perform(action: MenuAction) = intent {
+    fun perform(action: MenuAction) {
+        logger.d { "Perform $action" }
         when (action) {
-            is MenuAction.AboutClick -> postSideEffect(MenuSideEffect.ShowAbout)
-            is MenuAction.ConfirmableAction -> postSideEffect(action.toConfirmation())
-            is MenuAction.ClearBookmarksConfirmation -> clearBookmarksUseCase()
-            is MenuAction.ClearFavoritesConfirmation -> clearLocalFavoritesUseCase()
-            is MenuAction.ClearHistoryConfirmation -> clearHistoryUseCase()
-            is MenuAction.LoginClick -> postSideEffect(MenuSideEffect.OpenLogin)
-            is MenuAction.PrivacyPolicyClick -> postSideEffect(MenuSideEffect.OpenLink(PrivacyPolicyURL))
-            is MenuAction.RightsClick -> postSideEffect(MenuSideEffect.OpenLink(InformationForRightOwnersURL))
-            is MenuAction.SendFeedbackClick -> postSideEffect(MenuSideEffect.OpenLink(DeveloperEmailURI))
-            is MenuAction.SetBookmarksSyncPeriod -> setBookmarksSyncPeriodUseCase(action.syncPeriod)
-            is MenuAction.SetFavoritesSyncPeriod -> setFavoritesSyncPeriodUseCase(action.syncPeriod)
-            is MenuAction.SetTheme -> setThemeUseCase(action.theme)
+            is MenuAction.AboutClick -> intent { postSideEffect(MenuSideEffect.ShowAbout) }
+            is MenuAction.ConfirmableAction -> intent { postSideEffect(action.toConfirmation()) }
+            is MenuAction.ClearBookmarksConfirmation -> viewModelScope.launch { clearBookmarksUseCase() }
+            is MenuAction.ClearFavoritesConfirmation -> viewModelScope.launch { clearLocalFavoritesUseCase() }
+            is MenuAction.ClearHistoryConfirmation -> viewModelScope.launch { clearHistoryUseCase() }
+            is MenuAction.LoginClick -> intent { postSideEffect(MenuSideEffect.OpenLogin) }
+            is MenuAction.PrivacyPolicyClick -> intent { postSideEffect(MenuSideEffect.OpenLink(PrivacyPolicy)) }
+            is MenuAction.RightsClick -> intent { postSideEffect(MenuSideEffect.OpenLink(Copyrights)) }
+            is MenuAction.SendFeedbackClick -> intent { postSideEffect(MenuSideEffect.OpenLink(DeveloperEmail)) }
+            is MenuAction.SetBookmarksSyncPeriod -> viewModelScope.launch { setBookmarksSyncPeriodUseCase(action.syncPeriod) }
+            is MenuAction.SetEndpoint -> viewModelScope.launch { setEndpointUseCase(action.endpoint) }
+            is MenuAction.SetFavoritesSyncPeriod -> viewModelScope.launch { setFavoritesSyncPeriodUseCase(action.syncPeriod) }
+            is MenuAction.SetTheme -> viewModelScope.launch { setThemeUseCase(action.theme) }
         }
     }
 
     private fun observeSettings() {
+        logger.d { "Start observing settings" }
         viewModelScope.launch {
             observeSettingsUseCase().collectLatest { settings ->
                 intent {
                     reduce {
                         MenuState(
                             theme = settings.theme,
+                            endpoint = settings.endpoint,
                             favoritesSyncPeriod = settings.favoritesSyncPeriod,
                             bookmarksSyncPeriod = settings.bookmarksSyncPeriod,
                         )
@@ -68,12 +78,12 @@ internal class MenuViewModel @Inject constructor(
         }
     }
 
-    private fun MenuAction.ConfirmableAction.toConfirmation(): MenuSideEffect.ShowConfirmation =
-        MenuSideEffect.ShowConfirmation(confirmationMessage, onConfirmAction)
+    private fun MenuAction.ConfirmableAction.toConfirmation() =
+        MenuSideEffect.ShowConfirmation(title, confirmationMessage, onConfirmAction)
 
     companion object {
-        private const val DeveloperEmailURI = "mailto:rutracker.search@gmail.com"
-        private const val InformationForRightOwnersURL = "http://flow.rutrackersearch.me/rights"
-        private const val PrivacyPolicyURL = "http://flow.rutrackersearch.me/privacy-policy"
+        private const val DeveloperEmail = "mailto:rutracker.search@gmail.com"
+        private const val Copyrights = "https://flow-proxy-m7o3b.ondigitalocean.app/copyrights.html"
+        private const val PrivacyPolicy = "https://flow-proxy-m7o3b.ondigitalocean.app/privacy-policy.html"
     }
 }

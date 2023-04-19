@@ -2,93 +2,87 @@ package flow.network.dto.topic
 
 import kotlinx.serialization.Serializable
 
-enum class ElementType {
-    text,
-    box,
-    bold,
-    italic,
-    underscore,
-    crossed,
-    quote,
-    code,
-    spoiler,
-    image,
-    imageAligned,
-    link,
-    list,
-    hr,
-    br
-}
-
-enum class Alignment {
-    start,
-    top,
-    end,
-    bottom
-}
+@Serializable
+enum class Alignment { Start, Top, End, Bottom; }
 
 @Serializable
-abstract class PostElementDto(
-    @Suppress("unused") val type: ElementType
-)
+sealed interface PostElementDto
 
-data class Text(val value: String) : PostElementDto(ElementType.text) {
+@Serializable
+data class Text(val value: String) : PostElementDto {
     override fun toString(): String = value
 }
 
-data class Box(val children: List<PostElementDto>) : PostElementDto(ElementType.box) {
+@Serializable
+data class Box(val children: List<PostElementDto>) : PostElementDto {
     override fun toString(): String = "Box { $children }"
 }
 
-data class Bold(val children: List<PostElementDto>) : PostElementDto(ElementType.bold) {
+@Serializable
+data class Bold(val children: List<PostElementDto>) : PostElementDto {
     override fun toString(): String = "Bold { $children }"
 }
 
-data class Italic(val children: List<PostElementDto>) : PostElementDto(ElementType.italic) {
+@Serializable
+data class Italic(val children: List<PostElementDto>) : PostElementDto {
     override fun toString(): String = "Italic { $children }"
 }
 
-data class Underscore(val children: List<PostElementDto>) : PostElementDto(ElementType.underscore) {
+@Serializable
+data class Underscore(val children: List<PostElementDto>) : PostElementDto {
     override fun toString(): String = "Underscore { $children }"
 }
 
-data class Crossed(val children: List<PostElementDto>) : PostElementDto(ElementType.crossed) {
+@Serializable
+data class Crossed(val children: List<PostElementDto>) : PostElementDto {
     override fun toString(): String = "Crossed { $children }"
 }
 
-data class Quote(val title: String, val id: String, val children: List<PostElementDto>) :
-    PostElementDto(ElementType.quote) {
+@Serializable
+data class Quote(
+    val title: String,
+    val id: String,
+    val children: List<PostElementDto>,
+) : PostElementDto {
     override fun toString(): String = "Quote($title)<id> { $children }"
 }
 
-data class Code(val title: String, val children: List<PostElementDto>) : PostElementDto(ElementType.code) {
+@Serializable
+data class Code(val title: String, val children: List<PostElementDto>) : PostElementDto {
     override fun toString(): String = "Code($title) { $children }"
 }
 
-data class Spoiler(val title: String, val children: List<PostElementDto>) : PostElementDto(ElementType.spoiler) {
+@Serializable
+data class Spoiler(val title: String, val children: List<PostElementDto>) : PostElementDto {
     override fun toString(): String = "Spoiler($title) { $children }"
 }
 
-data class Image(val src: String) : PostElementDto(ElementType.image) {
+@Serializable
+data class Image(val src: String) : PostElementDto {
     override fun toString(): String = "Image { $src }"
 }
 
-data class ImageAligned(val src: String, val alignment: Alignment) : PostElementDto(ElementType.imageAligned) {
+@Serializable
+data class ImageAligned(val src: String, val alignment: Alignment) : PostElementDto {
     override fun toString(): String = "Image { $src <$alignment> }"
 }
 
-data class Link(val src: String, val children: List<PostElementDto>) : PostElementDto(ElementType.link) {
+@Serializable
+data class Link(val src: String, val children: List<PostElementDto>) : PostElementDto {
     override fun toString(): String = "Link($src) { $children }"
 }
 
-data class UList(val children: List<PostElementDto>) : PostElementDto(ElementType.list) {
+@Serializable
+data class UList(val children: List<PostElementDto>) : PostElementDto {
     override fun toString(): String = "UList { $children }"
 }
 
-class Hr : PostElementDto(ElementType.hr) {
+@Serializable
+object Hr : PostElementDto {
     override fun toString(): String = "<hr>"
 }
 
-class Br : PostElementDto(ElementType.br) {
+@Serializable
+object Br : PostElementDto {
     override fun toString(): String = "<br>"
 }

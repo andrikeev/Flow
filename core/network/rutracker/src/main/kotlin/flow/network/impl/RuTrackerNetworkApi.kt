@@ -67,17 +67,15 @@ internal class RuTrackerNetworkApi(
 
     override suspend fun getTopic(
         token: String,
-        id: String?,
-        pid: String?,
+        id: String,
         page: Int?,
-    ) = getTopicUseCase.invoke(token, id, pid, page)
+    ) = getTopicUseCase.invoke(token, id, page)
 
     override suspend fun getCommentsPage(
         token: String,
-        id: String?,
-        pid: String?,
+        id: String,
         page: Int?,
-    ) = getCommentsPageUseCase.invoke(token, id, pid, page)
+    ) = getCommentsPageUseCase.invoke(token, id, page)
 
     override suspend fun addComment(
         token: String,

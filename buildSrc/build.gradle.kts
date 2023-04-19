@@ -12,11 +12,12 @@ dependencies {
     implementation(libs.android.gradlePlugin)
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.kotlin.serializationPlugin)
+    implementation(libs.ktor.gradlePlugin)
     implementation(libs.hilt.gradlePlugin)
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(17)
 }
 
 gradlePlugin {

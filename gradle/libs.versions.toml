@@ -1,23 +1,22 @@
 [versions]
 accompanist = "0.30.0"
-androidGradlePlugin = "7.4.1"
+androidGradlePlugin = "8.0.0"
 androidxActivity = "1.7.0"
-androidxComposeBom = "2023.03.00"
+androidxComposeBom = "2023.04.00"
 androidxComposeCompiler = "1.4.4"
-androidxCore = "1.9.0"
+androidxCore = "1.10.0"
 androidxCoreSplashscreen = "1.0.0"
 androidxLifecycle = "2.6.1"
 androidxNavigation = "2.5.3"
-androidxPaging = "3.1.1"
 androidxSavedState = "1.2.1"
 androidxSecurity = "1.1.0-alpha03"
-androidxTestCore = "1.5.0-rc01"
-androidxTestExt = "1.1.3"
-androidxTestRunner = "1.4.0"
-androidxTestRules = "1.4.0"
+androidxTestCore = "1.5.0"
+androidxTestExt = "1.1.5"
+androidxTestRunner = "1.5.2"
+androidxTestRules = "1.5.0"
 androidxWork = "2.8.1"
 coil = "2.3.0"
-hilt = "2.44"
+hilt = "2.44.2"
 hiltExt = "1.0.0"
 jsoup = "1.15.3"
 junit4 = "4.13.2"
@@ -26,22 +25,25 @@ kotlin = "1.8.10"
 kotlinxCoroutines = "1.6.4"
 kotlinxDatetime = "0.3.1"
 kotlinxSerialization = "1.4.1"
-ktor = "2.0.0"
+ktor = "2.2.4"
+leakcanary = "2.10"
 logback = "1.2.11"
 material = "1.8.0"
 orbit = "4.4.0"
-room = "2.4.3"
+room = "2.5.1"
 
 [libraries]
 accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "accompanist" }
 accompanist-navigation-animation = { group = "com.google.accompanist", name = "accompanist-navigation-animation", version.ref = "accompanist" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
+accompanist-swiperefresh = { group = "com.google.accompanist", name = "accompanist-swiperefresh", version.ref = "accompanist" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
 androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
+androidx-compose-material-ui = { group = "androidx.compose.material", name = "material" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
@@ -55,7 +57,6 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 androidx-lifecycle-viewModel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModel-savedState = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "androidxLifecycle" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
-androidx-paging-compose = { group = "androidx.paging", name = "paging-runtime", version.ref = "androidxPaging" }
 androidx-savedstate-ktx = { group = "androidx.savedstate", name = "savedstate-ktx", version.ref = "androidxSavedState" }
 androidx-security-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "androidxSecurity" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
@@ -80,8 +81,9 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
-ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-server-content-negotiation-jvm = { group = "io.ktor", name = "ktor-server-content-negotiation-jvm", version.ref = "ktor" }
@@ -90,7 +92,8 @@ ktor-server-call-logging-jvm = { group = "io.ktor", name = "ktor-server-call-log
 ktor-server-host-common-jvm = { group = "io.ktor", name = "ktor-server-host-common-jvm", version.ref = "ktor" }
 ktor-server-status-pages-jvm = { group = "io.ktor", name = "ktor-server-status-pages-jvm", version.ref = "ktor" }
 ktor-server-netty-jvm = { group = "io.ktor", name = "ktor-server-netty-jvm", version.ref = "ktor" }
-ktor-serialization-gson = { group = "io.ktor", name = "ktor-serialization-gson", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
 logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
 material3 = { group = "com.google.android.material", name = "material", version.ref = "material" }
 orbit-compose = { group = "org.orbit-mvi", name = "orbit-compose", version.ref = "orbit" }
@@ -105,6 +108,7 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-serializationPlugin = { group = "org.jetbrains.kotlin", name = "kotlin-serialization", version.ref = "kotlin" }
+ktor-gradlePlugin = { group = "io.ktor.plugin", name = "plugin", version.ref = "ktor" }
 
 [bundles]
 coil = [
@@ -113,9 +117,12 @@ coil = [
     "coil-kt-svg"
 ]
 ktor-client = [
-    "ktor-client-core",
     "ktor-client-cio",
-    "ktor-client-logging"
+    "ktor-client-content-negotiation",
+    "ktor-client-core",
+    "ktor-client-logging",
+    "ktor-client-okhttp",
+    "ktor-serialization-kotlinx-json"
 ]
 ktor-server = [
     "ktor-server-content-negotiation-jvm",
@@ -124,7 +131,7 @@ ktor-server = [
     "ktor-server-host-common-jvm",
     "ktor-server-status-pages-jvm",
     "ktor-server-netty-jvm",
-    "ktor-serialization-gson"
+    "ktor-serialization-kotlinx-json"
 ]
 orbit = [
     "orbit-core",

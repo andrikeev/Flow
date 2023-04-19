@@ -4,12 +4,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class TorrentStatusDto {
-    DUPLICATE,
-    NOT_APPROVED,
-    CHECKING,
-    APPROVED,
-    NEED_EDIT,
-    CLOSED,
-    NO_DESCRIPTION,
-    CONSUMED,
+    Approved,
+    Checking,
+    Closed,
+    Consumed,
+    Duplicate,
+    NeedEdit,
+    NoDescription,
+    NotApproved,
 }

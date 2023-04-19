@@ -102,18 +102,6 @@ internal class AccountViewModelTest {
     }
 
     @Test
-    fun `HideLogoutConfirmation when CancelLogoutClick`() = runTest {
-        //set
-        val containerTest = viewModel.test()
-        //do
-        containerTest.testIntent { perform(AccountAction.CancelLogoutClick) }
-        //check
-        containerTest.assert(AuthState.Unauthorized) {
-            postedSideEffects(AccountSideEffect.HideLogoutConfirmation)
-        }
-    }
-
-    @Test
     fun `OpenLogin when LoginClick`() = runTest {
         //set
         val containerTest = viewModel.test()

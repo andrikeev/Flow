@@ -1,47 +1,32 @@
 package flow.topic.download
 
-import android.Manifest
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
+import flow.designsystem.component.CircularProgressIndicator
+import flow.designsystem.component.Dialog
+import flow.designsystem.component.Icon
+import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.drawables.FlowIcons
-import flow.designsystem.theme.Elevation
+import flow.designsystem.theme.AppTheme
+import flow.designsystem.theme.FlowTheme
+import flow.designsystem.utils.RunOnFirstComposition
 import flow.navigation.viewModel
+import flow.topic.R
+import flow.ui.permissions.Permission
+import flow.ui.permissions.isGranted
+import flow.ui.permissions.rememberPermissionState
+import flow.ui.permissions.shouldShowRationale
 import flow.ui.platform.LocalOpenFileHandler
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-import flow.designsystem.R as DesignsystemR
-import flow.ui.R as UiR
-
+import flow.designsystem.R as dsR
 
 @Composable
 fun DownloadDialog(
@@ -61,7 +46,6 @@ private fun DownloadDialog(
     dismiss: () -> Unit,
     openLogin: () -> Unit,
 ) {
-    val context = LocalContext.current
     val openFileHandler = LocalOpenFileHandler.current
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -71,8 +55,10 @@ private fun DownloadDialog(
                 dismiss()
             }
 
-            is DownloadSideEffect.OpenLogin -> openLogin()
-            is DownloadSideEffect.OpenSettings -> openAppSettings(context)
+            is DownloadSideEffect.OpenLogin -> {
+                openLogin()
+                dismiss()
+            }
         }
     }
     val state by viewModel.collectAsState()
@@ -81,169 +67,167 @@ private fun DownloadDialog(
 
 @Composable
 private fun DownloadDialog(
-    state: DownloadState,
-    onAction: (flow.topic.download.DownloadAction) -> Unit,
-) {
-    val diskPermissionState =
-        rememberPermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    when (state) {
-        is DownloadState.Initial -> {
-            if (
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-                !diskPermissionState.status.isGranted
-            ) {
-                LaunchedEffect(Unit) {
-                    diskPermissionState.launchPermissionRequest()
-                }
-                if (diskPermissionState.status.shouldShowRationale) {
-                    AlertDialog(
-                        text = { Text(stringResource(UiR.string.topic_permission_required)) },
-                        confirmButton = {
-                            TextButton(
-                                text = stringResource(DesignsystemR.string.designsystem_action_open_settings),
-                                onClick = { onAction(flow.topic.download.DownloadAction.SettingsClick) },
-                            )
-                        },
-                        dismissButton = {
-                            TextButton(
-                                text = stringResource(DesignsystemR.string.designsystem_action_cancel),
-                                onClick = { onAction(flow.topic.download.DownloadAction.Dismiss) },
-                            )
-                        },
-                        onDismissRequest = { onAction(flow.topic.download.DownloadAction.Dismiss) },
+    state: DownloadDialogState,
+    onAction: (DownloadAction) -> Unit,
+) = when (state) {
+    is DownloadDialogState.Initial -> {
+        val permission = rememberPermissionState(Permission.WriteExternalStorage)
+        when {
+            permission.status.isGranted -> {
+                RunOnFirstComposition { onAction(DownloadAction.Download) }
+            }
+
+            permission.status.shouldShowRationale -> {
+                WriteStoragePermissionRationaleDialog(
+                    onOk = permission::requestPermission,
+                    dismiss = { onAction(DownloadAction.Dismiss) },
+                )
+            }
+
+            else -> {
+                RunOnFirstComposition { permission.requestPermission() }
+            }
+        }
+    }
+
+    is DownloadDialogState.Unauthorised -> Dialog(
+        icon = {
+            Icon(
+                icon = FlowIcons.Account,
+                contentDescription = null,
+            )
+        },
+        title = { Text(stringResource(R.string.topics_login_required_title)) },
+        text = { Text(stringResource(R.string.topics_login_required_for_download)) },
+        confirmButton = {
+            TextButton(
+                text = stringResource(flow.designsystem.R.string.designsystem_action_login),
+                onClick = { onAction(DownloadAction.LoginClick) },
+            )
+        },
+        dismissButton = {
+            TextButton(
+                text = stringResource(flow.designsystem.R.string.designsystem_action_cancel),
+                onClick = { onAction(DownloadAction.Dismiss) },
+            )
+        },
+        onDismissRequest = { onAction(DownloadAction.Dismiss) },
+    )
+
+    is DownloadDialogState.DownloadState -> Dialog(
+        icon = {
+            when (state) {
+                is DownloadDialogState.DownloadState.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(AppTheme.sizes.mediumSmall),
+                        strokeWidth = 3.dp,
                     )
                 }
-            } else {
-                LaunchedEffect(Unit) {
-                    onAction(flow.topic.download.DownloadAction.Dismiss)
+
+                is DownloadDialogState.DownloadState.Completed -> {
+                    Icon(
+                        icon = FlowIcons.FileDownloadDone,
+                        contentDescription = null
+                    )
                 }
             }
-        }
+        },
+        title = {
+            Text(
+                text = stringResource(
+                    when (state) {
+                        is DownloadDialogState.DownloadState.Loading -> {
+                            R.string.topic_file_download_in_progress
+                        }
 
-        is DownloadState.Loading -> Dialog(onDismissRequest = { onAction(flow.topic.download.DownloadAction.Dismiss) }) {
-            Surface(
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.surface,
-            ) {
-                Column {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 18.dp),
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = FlowIcons.FileDownloading,
-                                contentDescription = null
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(56.dp)
-                                    .padding(horizontal = 16.dp)
-                                    .weight(1f),
-                                contentAlignment = Alignment.CenterStart,
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(16.dp),
-                                    strokeWidth = 2.dp,
-                                )
-                            }
+                        is DownloadDialogState.DownloadState.Completed -> {
+                            R.string.topic_file_download_completed
                         }
                     }
-                    Surface(tonalElevation = Elevation.small) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(4.dp),
-                            horizontalArrangement = Arrangement.End,
-                        ) {
-                            TextButton(
-                                text = stringResource(DesignsystemR.string.designsystem_action_cancel),
-                                onClick = { onAction(flow.topic.download.DownloadAction.Dismiss) },
-                            )
-                        }
-                    }
+                ),
+                textAlign = TextAlign.Center
+            )
+        },
+        confirmButton = {
+            when (state) {
+                is DownloadDialogState.DownloadState.Loading -> Unit
+                is DownloadDialogState.DownloadState.Completed -> {
+                    TextButton(
+                        text = stringResource(dsR.string.designsystem_action_open_file),
+                        onClick = { onAction(DownloadAction.OpenFile) },
+                    )
                 }
             }
-        }
+        },
+        dismissButton = {
+            TextButton(
+                text = stringResource(dsR.string.designsystem_action_cancel),
+                onClick = { onAction(DownloadAction.Dismiss) },
+            )
+        },
+        onDismissRequest = { onAction(DownloadAction.Dismiss) },
+    )
+}
 
-        is DownloadState.Completed -> Dialog(onDismissRequest = { onAction(flow.topic.download.DownloadAction.Dismiss) }) {
-            Surface(
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.surface,
-            ) {
-                Column {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 18.dp),
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = FlowIcons.FileDownloadDone,
-                                contentDescription = null
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(56.dp)
-                                    .padding(horizontal = 16.dp)
-                                    .weight(1f),
-                                contentAlignment = Alignment.CenterStart,
-                                content = { Text(text = stringResource(UiR.string.topic_file_download_completed)) },
-                            )
-                        }
-                    }
-                    Surface(tonalElevation = Elevation.small) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(4.dp),
-                            horizontalArrangement = Arrangement.End,
-                        ) {
-                            TextButton(
-                                text = stringResource(DesignsystemR.string.designsystem_action_cancel),
-                                onClick = { onAction(flow.topic.download.DownloadAction.Dismiss) },
-                            )
-                            TextButton(
-                                text = stringResource(DesignsystemR.string.designsystem_action_open_file),
-                                onClick = { onAction(flow.topic.download.DownloadAction.OpenFile) },
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        is DownloadState.Unauthorised -> AlertDialog(
-            text = { Text(stringResource(UiR.string.topic_login_required)) },
-            confirmButton = {
-                TextButton(
-                    text = stringResource(DesignsystemR.string.designsystem_action_login),
-                    onClick = { onAction(flow.topic.download.DownloadAction.LoginClick) },
-                )
-            },
-            dismissButton = {
-                TextButton(
-                    text = stringResource(DesignsystemR.string.designsystem_action_cancel),
-                    onClick = { onAction(flow.topic.download.DownloadAction.Dismiss) },
-                )
-            },
-            onDismissRequest = { onAction(flow.topic.download.DownloadAction.Dismiss) },
+@Composable
+private fun WriteStoragePermissionRationaleDialog(
+    onOk: () -> Unit,
+    dismiss: () -> Unit,
+) = Dialog(
+    icon = {
+        Icon(
+            icon = FlowIcons.Storage,
+            contentDescription = null,
         )
+    },
+    title = { Text(stringResource(R.string.permission_write_storage_rationale_title)) },
+    text = { Text(stringResource(R.string.permission_write_storage_rationale)) },
+    confirmButton = {
+        TextButton(
+            text = stringResource(flow.designsystem.R.string.designsystem_action_ok),
+            onClick = {
+                dismiss()
+                onOk()
+            },
+        )
+    },
+    dismissButton = {
+        TextButton(
+            text = stringResource(flow.designsystem.R.string.designsystem_action_cancel),
+            onClick = dismiss,
+        )
+    },
+    onDismissRequest = dismiss,
+)
+
+@Preview
+@Composable
+private fun WriteStoragePermissionRationaleDialogPreview() {
+    FlowTheme {
+        WriteStoragePermissionRationaleDialog({}, {})
     }
 }
 
-private fun openAppSettings(context: Context) {
-    val intent = Intent().apply {
-        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-        addCategory(Intent.CATEGORY_DEFAULT)
-        data = Uri.parse("package:${context.packageName}")
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-        addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+@Preview
+@Composable
+private fun DownloadDialogPreview_Unauthorised() {
+    FlowTheme {
+        DownloadDialog(DownloadDialogState.Unauthorised) {}
     }
-    val openSettingsIntent = Intent.createChooser(intent, null)
-    context.startActivity(openSettingsIntent)
+}
+
+@Preview
+@Composable
+private fun DownloadDialogPreview_Loading() {
+    FlowTheme {
+        DownloadDialog(DownloadDialogState.DownloadState.Loading) {}
+    }
+}
+
+@Preview
+@Composable
+private fun DownloadDialogPreview_Completed() {
+    FlowTheme {
+        DownloadDialog(DownloadDialogState.DownloadState.Completed("url")) {}
+    }
 }

@@ -6,6 +6,10 @@ import flow.logger.api.Logger
 internal class LoggerImpl(
     private val tag: String,
 ) : Logger {
+    override fun i(message: () -> String) {
+        Log.i(tag, message())
+    }
+
     override fun d(message: () -> String) {
         Log.d(tag, message())
     }

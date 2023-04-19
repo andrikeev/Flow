@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name" translatable="false">Flow</string>
+    <string name="label_search">Search</string>
+    <string name="label_forum">Forum</string>
+    <string name="label_topics">Topics</string>
+    <string name="label_menu">Menu</string>
+
     <string name="tab_title_bookmarks">Bookmarks</string>
     <string name="tab_title_favorites">Favorites</string>
     <string name="tab_title_forum">Forum</string>

@@ -2,5 +2,6 @@
     <string name="account_item_avatar_content_description">Avatar image</string>
     <string name="account_item_login_action">Login</string>
     <string name="account_item_logout_action">Logout</string>
-    <string name="account_item_logout_confirmation">Sure want to logout?</string>
+    <string name="account_item_logout_title">Sure want to log out?</string>
+    <string name="account_item_logout_confirmation">All saved data will be cleared, search and torrent files will be unavailable</string>
 </resources>

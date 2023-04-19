@@ -1,6 +1,7 @@
 package flow.search.result.categories
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.logger.api.LoggerFactory
 import flow.models.forum.Category
@@ -11,6 +12,7 @@ import flow.search.result.domain.GetCategoriesByGroupIdUseCase
 import flow.search.result.domain.GetFlattenForumTreeUseCase
 import flow.search.result.domain.models.ForumTreeItem
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -52,40 +54,42 @@ internal class CategorySelectionViewModel @Inject constructor(
     }
 
     private fun loadForumTree() {
-        intent {
-            coroutineScope {
-                runCatching { getFlattenForumTreeUseCase.invoke(expandedIds, selectedIds) }
-                    .onSuccess { forumTreeItems ->
-                        reduce { CategorySelectionState.Success(forumTreeItems) }
-                    }
-                    .onFailure { error ->
-                        logger.e(error) { "loadForumTree" }
-                        reduce { CategorySelectionState.Error(error) }
-                    }
+        viewModelScope.launch {
+            runCatching {
+                coroutineScope {
+                    getFlattenForumTreeUseCase.invoke(expandedIds, selectedIds)
+                }
             }
+                .onSuccess { forumTreeItems ->
+                    intent { reduce { CategorySelectionState.Success(forumTreeItems) } }
+                }
+                .onFailure { error ->
+                    logger.e(error) { "loadForumTree" }
+                    intent { reduce { CategorySelectionState.Error(error) } }
+                }
         }
     }
 
     private fun onExpandClick(item: ForumTreeItem) {
-        intent {
-            coroutineScope {
-                runCatching {
+        viewModelScope.launch {
+            runCatching {
+                coroutineScope {
                     if (expandedIds.contains(item.id)) {
                         expandedIds.remove(item.id)
                     } else {
                         expandedIds.add(item.id)
                     }
                     val forumTreeItems = getFlattenForumTreeUseCase.invoke(expandedIds, selectedIds)
-                    reduce { CategorySelectionState.Success(forumTreeItems) }
-                }.onFailure { logger.e(it) { "onExpandClick($item)" } }
+                    intent { reduce { CategorySelectionState.Success(forumTreeItems) } }
+                }
             }
         }
     }
 
     private fun onSelectClick(item: ForumTreeItem) {
-        intent {
-            coroutineScope {
-                runCatching {
+        viewModelScope.launch {
+            runCatching {
+                coroutineScope {
                     val id = item.id
                     val updatedCategories = when (item) {
                         is ForumTreeItem.Group -> getCategoriesByGroupIdUseCase.invoke(id)
@@ -93,17 +97,19 @@ internal class CategorySelectionViewModel @Inject constructor(
                         is ForumTreeItem.Root -> emptyList()
                     }
                     val updatedIds = updatedCategories.map(Category::id).toSet()
-                    if (selectedIds.contains(id)) {
-                        selectedIds.removeAll(updatedIds)
-                        postSideEffect(CategorySelectionSideEffect.OnRemove(updatedCategories))
-                    } else {
-                        selectedIds.addAll(updatedIds)
-                        postSideEffect(CategorySelectionSideEffect.OnSelect(updatedCategories))
+                    intent {
+                        if (selectedIds.contains(id)) {
+                            selectedIds.removeAll(updatedIds)
+                            postSideEffect(CategorySelectionSideEffect.OnRemove(updatedCategories))
+                        } else {
+                            selectedIds.addAll(updatedIds)
+                            postSideEffect(CategorySelectionSideEffect.OnSelect(updatedCategories))
+                        }
+                        val forumTreeItems = getFlattenForumTreeUseCase.invoke(expandedIds, selectedIds)
+                        reduce { CategorySelectionState.Success(forumTreeItems) }
                     }
-                    val forumTreeItems = getFlattenForumTreeUseCase.invoke(expandedIds, selectedIds)
-                    reduce { CategorySelectionState.Success(forumTreeItems) }
                 }
-            }.onFailure { logger.e(it) { "onSelectClick($item)" } }
+            }
         }
     }
 }
