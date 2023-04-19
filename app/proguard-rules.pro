@@ -28,3 +28,4 @@
 -dontwarn org.openjsse.net.ssl.*
 
 -keep class com.google.crypto.tink.** { *; }
+-dontwarn org.slf4j.impl.StaticLoggerBinder
