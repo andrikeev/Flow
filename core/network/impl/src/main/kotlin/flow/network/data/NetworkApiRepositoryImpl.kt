@@ -31,9 +31,27 @@ internal class NetworkApiRepositoryImpl @Inject constructor(
         return apiMap.values
     }
 
-    override suspend fun getCurrentApi(): NetworkApi {
+    override suspend fun getApi(): NetworkApi {
         return apiMap.getValue(settingsRepository.getSettings().endpoint)
     }
+
+    override suspend fun getDownloadUri(id: String): String {
+        return when (val endpoint = endpoint()) {
+            Endpoint.Proxy -> "https://${endpoint.host}/download/$id"
+            Endpoint.RutrackerOrg -> "https://${endpoint.host}/forum/dl.php?t=$id"
+            Endpoint.RutrackerNet -> "https://${endpoint.host}/forum/dl.php?t=$id"
+        }
+    }
+
+    override suspend fun getAuthHeader(token: String): Pair<String, String> {
+        return when (endpoint()) {
+            Endpoint.Proxy -> "Auth-Token" to token
+            Endpoint.RutrackerOrg -> "Cookie" to token
+            Endpoint.RutrackerNet -> "Cookie" to token
+        }
+    }
+
+    private suspend fun endpoint() = settingsRepository.getSettings().endpoint
 
     private fun proxyApi(host: String): NetworkApi {
         return ProxyNetworkApi(

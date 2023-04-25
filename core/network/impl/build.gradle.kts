@@ -11,6 +11,7 @@ android {
 dependencies {
     api(project(":core:network:api"))
 
+    implementation(project(":core:auth:api"))
     implementation(project(":core:data"))
     implementation(project(":core:dispatchers"))
     implementation(project(":core:logger"))

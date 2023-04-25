@@ -6,7 +6,3 @@ plugins {
 android {
     namespace = "flow.downloads"
 }
-dependencies {
-    implementation(project(":core:auth:api"))
-}
-

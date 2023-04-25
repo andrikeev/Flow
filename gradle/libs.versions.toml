@@ -2,7 +2,7 @@
 accompanist = "0.30.0"
 androidGradlePlugin = "8.0.0"
 androidxActivity = "1.7.0"
-androidxComposeBom = "2023.04.00"
+androidxComposeBom = "2023.04.01"
 androidxComposeCompiler = "1.4.4"
 androidxCore = "1.10.0"
 androidxCoreSplashscreen = "1.0.0"

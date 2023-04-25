@@ -11,7 +11,7 @@ class SwitchingNetworkApi @Inject constructor(
     private val networkApiRepository: NetworkApiRepository,
 ) : NetworkApi {
 
-    private suspend fun api(): NetworkApi = networkApiRepository.getCurrentApi()
+    private suspend fun api(): NetworkApi = networkApiRepository.getApi()
 
     override suspend fun checkAuthorized(token: String) =
         api().checkAuthorized(token)

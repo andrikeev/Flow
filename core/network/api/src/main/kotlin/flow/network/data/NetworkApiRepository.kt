@@ -4,5 +4,7 @@ import flow.network.api.NetworkApi
 
 interface NetworkApiRepository {
     suspend fun getAvailableApiList(): Collection<NetworkApi>
-    suspend fun getCurrentApi(): NetworkApi
+    suspend fun getApi(): NetworkApi
+    suspend fun getDownloadUri(id: String): String
+    suspend fun getAuthHeader(token: String): Pair<String, String>
 }

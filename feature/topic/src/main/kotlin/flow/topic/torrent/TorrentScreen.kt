@@ -1,19 +1,15 @@
 package flow.topic.torrent
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -21,29 +17,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import flow.designsystem.component.AppBar
-import flow.designsystem.component.AppBarDefaults
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.Button
-import flow.designsystem.component.CircularProgressIndicator
+import flow.designsystem.component.CollapsingAppBar
+import flow.designsystem.component.CollapsingAppBarState
 import flow.designsystem.component.Dialog
-import flow.designsystem.component.Error
 import flow.designsystem.component.FavoriteButton
-import flow.designsystem.component.Icon
 import flow.designsystem.component.IconButton
-import flow.designsystem.component.Loading
+import flow.designsystem.component.ProvideTextStyle
 import flow.designsystem.component.Scaffold
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
+import flow.designsystem.component.rememberCollapsingAppBarBehavior
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
@@ -53,6 +46,7 @@ import flow.models.topic.Author
 import flow.models.topic.Content
 import flow.models.topic.PostContent
 import flow.models.topic.Topic
+import flow.models.topic.Torrent
 import flow.models.topic.TorrentDescription
 import flow.models.topic.isValid
 import flow.topic.R
@@ -60,8 +54,9 @@ import flow.topic.download.DownloadDialog
 import flow.ui.component.Post
 import flow.ui.component.RemoteImage
 import flow.ui.component.TorrentStatus
-import flow.ui.component.getIllRes
-import flow.ui.component.getStringRes
+import flow.ui.component.emptyItem
+import flow.ui.component.errorItem
+import flow.ui.component.loadingItem
 import flow.ui.platform.LocalOpenLinkHandler
 import flow.ui.platform.LocalShareLinkHandler
 import flow.ui.platform.OpenLinkHandler
@@ -113,98 +108,95 @@ internal fun TorrentScreen(
         }
     }
     val state by viewModel.collectAsState()
-    MobileTorrentScreen(state, viewModel::perform)
+    TorrentScreen(state, viewModel::perform)
 }
 
 @Composable
-private fun MobileTorrentScreen(
-    state: TorrentState,
+private fun TorrentScreen(
+    state: TorrentScreenState,
     onAction: (TorrentAction) -> Unit,
 ) {
-    val (torrent, _, isFavorite) = state.torrent
-    val (_, title, author, category, _, status, _, _, _, _, magnetLink, description) = torrent
-    val scrollBehavior = AppBarDefaults.appBarScrollBehavior()
+    val appBarBehavior = rememberCollapsingAppBarBehavior()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(appBarBehavior.nesterScrollConnection),
         topBar = {
-            AppBar(
-                navigationIcon = { BackButton { onAction(TorrentAction.BackClick) } },
-                title = {
-                    Text(
-                        text = title,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        style = AppTheme.typography.titleSmall,
-                    )
-                },
-                actions = {
-                    FavoriteButton(
-                        favorite = isFavorite,
-                        onClick = { onAction(TorrentAction.FavoriteClick) },
-                    )
-                    IconButton(
-                        icon = FlowIcons.Share,
-                        contentDescription = stringResource(dsR.string.designsystem_action_share),
-                        onClick = { onAction(TorrentAction.ShareClick) },
-                    )
-                },
-                appBarState = scrollBehavior.state,
+            TorrentAppBar(
+                torrent = state.torrentState.torrent,
+                favoriteState = state.favoriteState,
+                appBarState = appBarBehavior.collapsingAppBarState,
+                onAction = onAction,
             )
         },
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier.padding(padding),
-            contentPadding = PaddingValues(vertical = AppTheme.spaces.large),
-            verticalArrangement = Arrangement.spacedBy(AppTheme.spaces.large),
-        ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = AppTheme.spaces.large)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spaces.large),
-                ) {
-                    TorrentImage(
-                        modifier = Modifier.weight(1f),
-                        torrentDescription = description,
+        content = { padding ->
+            TorrentContent(
+                modifier = Modifier.padding(padding),
+                state = state.torrentState,
+                onAction = onAction,
+            )
+        },
+    )
+}
+
+@Composable
+private fun TorrentAppBar(
+    torrent: Torrent,
+    favoriteState: TorrentFavoriteState,
+    appBarState: CollapsingAppBarState,
+    onAction: (TorrentAction) -> Unit,
+) = CollapsingAppBar(
+        backgroundImage = {
+            RemoteImage(
+                src = torrent.description?.content?.torrentImage()?.src,
+                modifier = Modifier.fillMaxWidth(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+            )
+        },
+        navigationIcon = { BackButton { onAction(TorrentAction.BackClick) } },
+        title = {
+            Text(
+                text = torrent.title,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        actions = {
+            when (favoriteState) {
+                is TorrentFavoriteState.FavoriteState -> {
+                    FavoriteButton(
+                        favorite = favoriteState.favorite,
+                        onClick = { onAction(TorrentAction.FavoriteClick) },
                     )
-                    Column(
-                        modifier = Modifier.weight(3f),
-                        verticalArrangement = Arrangement.spacedBy(AppTheme.spaces.medium),
-                    ) {
-                        TorrentStatus(
-                            modifier = Modifier.fillMaxWidth(),
-                            torrent = torrent,
-                        )
-                        category?.let { category ->
-                            Category(
-                                category = category,
-                                onClick = { onAction(TorrentAction.CategoryClick) },
-                            )
-                        }
-                        author?.let { author ->
-                            Author(
-                                author = author,
-                                onClick = { onAction(TorrentAction.AuthorClick) },
-                            )
-                        }
-                    }
                 }
+
+                is TorrentFavoriteState.Initial -> Unit
             }
-            item {
+            IconButton(
+                icon = FlowIcons.Share,
+                contentDescription = stringResource(dsR.string.designsystem_action_share),
+                onClick = { onAction(TorrentAction.ShareClick) },
+            )
+        },
+        additionalContent = {
+            Column {
+                ProvideTextStyle(value = AppTheme.typography.labelMedium) {
+                    TorrentStatus(
+                        modifier = Modifier
+                            .padding(top = AppTheme.spaces.small)
+                            .fillMaxWidth()
+                            .height(AppTheme.sizes.small),
+                        torrent = torrent,
+                    )
+                }
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        space = AppTheme.spaces.large,
-                        alignment = Alignment.CenterHorizontally,
-                    ),
-                    contentPadding = PaddingValues(horizontal = AppTheme.spaces.large),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    contentPadding = PaddingValues(AppTheme.spaces.large),
                 ) {
-                    if (status.isValid()) {
+                    if (torrent.status.isValid()) {
                         item {
                             Button(
                                 text = stringResource(R.string.topic_action_magnet),
-                                onClick = { magnetLink?.also { onAction(TorrentAction.MagnetClick) } },
+                                onClick = { onAction(TorrentAction.MagnetClick) },
                                 color = AppTheme.colors.accentRed,
                             )
                         }
@@ -225,119 +217,103 @@ private fun MobileTorrentScreen(
                     }
                 }
             }
-            item {
-                when {
-                    state.isLoading -> Loading()
-                    state.error != null -> Error(
-                        titleRes = flow.ui.R.string.error_title,
-                        subtitleRes = state.error.getStringRes(),
-                        imageRes = state.error.getIllRes(),
-                        onRetryClick = { onAction(TorrentAction.RetryClick) },
-                    )
+        },
+        appBarState = appBarState,
+    )
 
-                    description != null -> Post(
-                        modifier = Modifier.padding(
-                            horizontal = AppTheme.spaces.large,
-                            vertical = AppTheme.spaces.medium,
-                        ),
-                        content = description.content,
-                    )
-                }
+@Composable
+private fun TorrentContent(
+    state: TorrentState,
+    modifier: Modifier = Modifier,
+    onAction: (TorrentAction) -> Unit,
+) = LazyColumn(
+    modifier = modifier,
+    contentPadding = PaddingValues(vertical = AppTheme.spaces.large),
+    verticalArrangement = Arrangement.spacedBy(AppTheme.spaces.large),
+) {
+    category(state.torrent.category) {
+        onAction(TorrentAction.CategoryClick)
+    }
+    author(state.torrent.author) {
+        onAction(TorrentAction.AuthorClick)
+    }
+    when (state) {
+        is TorrentState.Error -> errorItem(
+            error = RuntimeException(),
+            fillParentMaxSize = false,
+            onRetryClick = { onAction(TorrentAction.RetryClick) },
+        )
+
+        is TorrentState.Initial -> loadingItem(fillParentMaxSize = false)
+        is TorrentState.Loaded -> description(state.torrent.description)
+    }
+}
+
+private fun LazyListScope.category(
+    category: Category?,
+    onClick: () -> Unit,
+) {
+    if (category != null) {
+        item {
+            Row(modifier = Modifier.padding(horizontal = AppTheme.spaces.large)) {
+                BodyLarge(text = stringResource(R.string.topic_category_label))
+                Text(
+                    modifier = Modifier
+                        .padding(start = AppTheme.spaces.medium)
+                        .clickable { onClick() },
+                    text = category.name,
+                    style = AppTheme.typography.titleMedium.copy(
+                        textDecoration = TextDecoration.Underline,
+                        color = AppTheme.colors.primary,
+                    ),
+                )
             }
         }
     }
 }
 
-@Composable
-private fun TorrentImage(
-    modifier: Modifier = Modifier,
-    torrentDescription: TorrentDescription?,
+private fun LazyListScope.author(
+    author: Author?,
+    onClick: () -> Unit,
 ) {
-    val src = torrentDescription?.content?.torrentImage()?.src
-    Box(
-        modifier = modifier
-            .aspectRatio(2 / 3f)
-            .clip(AppTheme.shapes.extraSmall),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        RemoteImage(
-            src = src,
-            contentDescription = null,
-            onLoading = {
-                Box(
+    if (author != null) {
+        item {
+            Row(modifier = Modifier.padding(horizontal = AppTheme.spaces.large)) {
+                BodyLarge(text = stringResource(R.string.topic_author_label))
+                Text(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(AppTheme.colors.outlineVariant),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(AppTheme.sizes.medium),
-                    )
-                }
-            },
-            onSuccess = { painter ->
-                Image(
-                    painter = painter,
-                    contentDescription = null,
+                        .padding(start = AppTheme.spaces.medium)
+                        .clickable { onClick() },
+                    text = author.name,
+                    style = AppTheme.typography.titleMedium.copy(
+                        textDecoration = TextDecoration.Underline,
+                        color = AppTheme.colors.primary,
+                    ),
                 )
-            },
-            onError = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(AppTheme.colors.outlineVariant),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        modifier = Modifier.size(AppTheme.sizes.default),
-                        icon = FlowIcons.ImagePlaceholder,
-                        tint = AppTheme.colors.outline,
-                        contentDescription = null,
-                    )
-                }
-            },
-        )
+            }
+        }
     }
 }
 
-@Composable
-private fun Category(
-    modifier: Modifier = Modifier,
-    category: Category,
-    onClick: () -> Unit,
+private fun LazyListScope.description(
+    description: TorrentDescription?,
 ) {
-    Row(modifier = modifier) {
-        BodyLarge(text = stringResource(R.string.topic_category_label))
-        Text(
-            modifier = Modifier
-                .padding(start = AppTheme.spaces.medium)
-                .clickable { onClick() },
-            text = category.name,
-            style = AppTheme.typography.titleMedium.copy(
-                textDecoration = TextDecoration.Underline,
-                color = AppTheme.colors.primary,
-            ),
-        )
-    }
-}
-
-@Composable
-private fun Author(
-    modifier: Modifier = Modifier,
-    author: Author,
-    onClick: () -> Unit,
-) {
-    Row(modifier = modifier) {
-        BodyLarge(text = stringResource(R.string.topic_author_label))
-        Text(
-            modifier = Modifier
-                .padding(start = AppTheme.spaces.medium)
-                .clickable { onClick() },
-            text = author.name,
-            style = AppTheme.typography.titleMedium.copy(
-                textDecoration = TextDecoration.Underline,
-                color = AppTheme.colors.primary,
-            ),
+    if (description != null) {
+        item {
+            Post(
+                modifier = Modifier.padding(
+                    horizontal = AppTheme.spaces.large,
+                    vertical = AppTheme.spaces.medium,
+                ),
+                content = description.content,
+            )
+        }
+    } else {
+        emptyItem(
+            titleRes = R.string.topic_empty_title,
+            subtitleRes = R.string.topic_empty_subtitle,
+            imageRes = flow.ui.R.drawable.ill_empty,
+            fillParentMaxSize = false,
         )
     }
 }
