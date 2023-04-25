@@ -15,12 +15,13 @@ import flow.network.dto.user.FavoritesDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.Parameters
 
 internal class ProxyNetworkApi(private val httpClient: HttpClient) : NetworkApi {
     override suspend fun checkAuthorized(token: String) = error("Not implemented")
@@ -31,15 +32,16 @@ internal class ProxyNetworkApi(private val httpClient: HttpClient) : NetworkApi 
         captchaSid: String?,
         captchaCode: String?,
         captchaValue: String?,
-    ): AuthResponseDto = httpClient.post("/login") {
-        formData {
+    ): AuthResponseDto = httpClient.submitForm(
+        url = "/login",
+        formParameters = Parameters.build {
             append("username", username)
             append("password", password)
             append("cap_sid", captchaSid.orEmpty())
             append("cap_code", captchaCode.orEmpty())
             append("cap_val", captchaValue.orEmpty())
-        }
-    }.body()
+        },
+    ).body()
 
     override suspend fun getFavorites(
         token: String,
@@ -121,7 +123,7 @@ internal class ProxyNetworkApi(private val httpClient: HttpClient) : NetworkApi 
         token: String,
         topicId: String,
         message: String,
-    ): Boolean = httpClient.post("/comments/$topicId/add") {
+    ): Boolean = httpClient.submitForm("/comments/$topicId/add") {
         token(token)
         setBody(message)
     }.body()

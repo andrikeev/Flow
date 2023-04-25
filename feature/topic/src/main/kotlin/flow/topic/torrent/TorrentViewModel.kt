@@ -4,17 +4,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import flow.common.newCancelableScope
-import flow.common.relaunch
 import flow.domain.usecase.EnrichTopicUseCase
 import flow.domain.usecase.EnrichTorrentUseCase
 import flow.domain.usecase.ObserveAuthStateUseCase
 import flow.domain.usecase.ToggleFavoriteUseCase
 import flow.domain.usecase.VisitTopicUseCase
 import flow.logger.api.LoggerFactory
-import flow.models.auth.isAuthorized
 import flow.models.search.Filter
-import flow.models.topic.TopicModel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
@@ -34,18 +31,29 @@ class TorrentViewModel @Inject constructor(
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val visitTopicUseCase: VisitTopicUseCase,
     loggerFactory: LoggerFactory,
-) : ViewModel(), ContainerHost<TorrentState, TorrentSideEffect> {
+) : ViewModel(), ContainerHost<TorrentScreenState, TorrentSideEffect> {
     private val logger = loggerFactory.get("TorrentViewModel")
-    private val observeTorrentScope = viewModelScope.newCancelableScope()
+    private val torrent = savedStateHandle.torrent
 
-    override val container: Container<TorrentState, TorrentSideEffect> = container(
-        initialState = TorrentState(TopicModel(savedStateHandle.torrent)),
-        onCreate = { state ->
-            viewModelScope.launch { visitTopicUseCase(state.torrent.topic) }
+    override val container: Container<TorrentScreenState, TorrentSideEffect> = container(
+        initialState = TorrentScreenState(torrentState = TorrentState.Initial(torrent)),
+        onCreate = {
             viewModelScope.launch {
                 observeAuthStateUseCase().collectLatest { authState ->
-                    intent { reduce { state.copy(isAuthorised = authState.isAuthorized) } }
+                    intent { reduce { state.copy(authState = authState) } }
                 }
+            }
+            viewModelScope.launch {
+                enrichTopicUseCase(torrent).collectLatest { topicModel ->
+                    intent {
+                        reduce {
+                            state.copy(favoriteState = TorrentFavoriteState.FavoriteState(topicModel.isFavorite))
+                        }
+                    }
+                }
+            }
+            viewModelScope.launch {
+                visitTopicUseCase(torrent)
             }
             loadTorrent()
         },
@@ -66,49 +74,61 @@ class TorrentViewModel @Inject constructor(
     }
 
     private fun onAuthorClick() = intent {
-        postSideEffect(TorrentSideEffect.OpenSearch(Filter(author = state.torrent.topic.author)))
+        postSideEffect(TorrentSideEffect.OpenSearch(Filter(author = torrent.author)))
     }
 
     private fun onBackClick() = intent { postSideEffect(TorrentSideEffect.Back) }
 
     private fun onCategoryClick() = intent {
-        postSideEffect(TorrentSideEffect.OpenCategory(state.torrent.topic.category?.id!!)) //FIXME
+        torrent.category?.id?.let { categoryId ->
+            postSideEffect(TorrentSideEffect.OpenCategory(categoryId))
+        }
     }
 
     private fun onCommentsClick() = intent {
-        postSideEffect(TorrentSideEffect.OpenComments(state.torrent.topic))
+        postSideEffect(TorrentSideEffect.OpenComments(torrent))
     }
 
-    private fun onFavoriteClick() = intent { toggleFavoriteUseCase(state.torrent.topic.id) }
+    private fun onFavoriteClick() = intent { toggleFavoriteUseCase(torrent.id) }
 
     private fun onMagnetClick() = intent {
-        state.torrent.topic.magnetLink?.let { link ->
+        torrent.magnetLink?.let { link ->
             postSideEffect(TorrentSideEffect.OpenMagnet(link))
         }
     }
 
     private fun onShareClick() = intent {
-        val link = "https://rutracker.org/forum/viewtopic.php?t=${state.torrent.topic.id}"
+        val link = "https://rutracker.org/forum/viewtopic.php?t=${torrent.id}"
         postSideEffect(TorrentSideEffect.Share(link))
     }
 
     private fun onTorrentFileClick() = intent {
-        postSideEffect(TorrentSideEffect.Download(state.torrent.topic))
+        postSideEffect(TorrentSideEffect.Download(torrent))
     }
 
-    private fun loadTorrent() = intent {
-        reduce { state.copy(isLoading = true, error = null) }
-        observeTorrentScope.relaunch {
-            runCatching { enrichTorrentUseCase(state.torrent.topic) }
+    private fun loadTorrent() {
+        intent { reduce { state.copy(torrentState = TorrentState.Initial(state.torrentState.torrent)) } }
+        viewModelScope.launch {
+            runCatching {
+                coroutineScope {
+                    enrichTorrentUseCase(torrent)
+                }
+            }
                 .onSuccess { torrent ->
                     logger.d { "Torrent loaded" }
-                    enrichTopicUseCase(torrent).collectLatest { topicModel ->
-                        reduce { state.copy(torrent = topicModel, isLoading = false) }
+                    intent {
+                        reduce {
+                            state.copy(torrentState = TorrentState.Loaded(torrent))
+                        }
                     }
                 }
                 .onFailure { error ->
                     logger.e(error) { "Torrent load error" }
-                    reduce { state.copy(isLoading = false, error = error) }
+                    intent {
+                        reduce {
+                            state.copy(torrentState = TorrentState.Error(state.torrentState.torrent))
+                        }
+                    }
                 }
         }
     }

@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":core:downloads"))
     implementation(project(":core:logger"))
     implementation(project(":core:models"))
+    implementation(project(":core:network:api"))
     implementation(project(":core:notifications"))
     implementation(project(":core:work:api"))
 

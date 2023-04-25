@@ -140,7 +140,7 @@ fun InvertedSurface(
 
 
 @Composable
-private fun Color.atElevation(elevation: Dp): Color {
+internal fun Color.atElevation(elevation: Dp): Color {
     return if (elevation == AppTheme.elevations.zero) {
         this
     } else {

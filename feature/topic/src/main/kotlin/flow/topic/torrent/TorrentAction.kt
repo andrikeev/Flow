@@ -1,13 +1,13 @@
 package flow.topic.torrent
 
 sealed interface TorrentAction {
+    object AuthorClick : TorrentAction
     object BackClick : TorrentAction
-    object RetryClick : TorrentAction
+    object CategoryClick : TorrentAction
     object CommentsClick : TorrentAction
     object FavoriteClick : TorrentAction
-    object ShareClick : TorrentAction
     object MagnetClick : TorrentAction
+    object RetryClick : TorrentAction
+    object ShareClick : TorrentAction
     object TorrentFileClick : TorrentAction
-    object CategoryClick : TorrentAction
-    object AuthorClick : TorrentAction
 }

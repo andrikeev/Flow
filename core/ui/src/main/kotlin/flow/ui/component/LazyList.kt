@@ -93,14 +93,21 @@ fun LazyListScope.appendItems(
     }
 }
 
-fun LazyListScope.loadingItem() = item { Loading(modifier = Modifier.fillParentMaxSize()) }
+fun LazyListScope.loadingItem(
+    fillParentMaxSize: Boolean = true,
+) = item {
+    Loading(
+        modifier = if (fillParentMaxSize) Modifier.fillParentMaxSize() else Modifier,
+    )
+}
 
 fun LazyListScope.errorItem(
     error: Throwable,
+    fillParentMaxSize: Boolean = true,
     onRetryClick: () -> Unit,
 ) = item {
     Error(
-        modifier = Modifier.fillParentMaxSize(),
+        modifier = if (fillParentMaxSize) Modifier.fillParentMaxSize() else Modifier,
         titleRes = error.getStringRes(),
         subtitleRes = error.getStringRes(),
         imageRes = error.getIllRes(),
@@ -112,10 +119,11 @@ fun LazyListScope.errorItem(
     @StringRes titleRes: Int = R.string.error_title,
     @StringRes subtitleRes: Int = R.string.error_something_goes_wrong,
     @DrawableRes imageRes: Int = R.drawable.ill_error,
+    fillParentMaxSize: Boolean = true,
     onRetryClick: () -> Unit,
 ) = item {
     Error(
-        modifier = Modifier.fillParentMaxSize(),
+        modifier = if (fillParentMaxSize) Modifier.fillParentMaxSize() else Modifier,
         titleRes = titleRes,
         subtitleRes = subtitleRes,
         imageRes = imageRes,
@@ -127,9 +135,10 @@ fun LazyListScope.emptyItem(
     @StringRes titleRes: Int,
     @StringRes subtitleRes: Int,
     @DrawableRes imageRes: Int,
+    fillParentMaxSize: Boolean = true,
 ) = item {
     Empty(
-        modifier = Modifier.fillParentMaxSize(),
+        modifier = if (fillParentMaxSize) Modifier.fillParentMaxSize() else Modifier,
         titleRes = titleRes,
         subtitleRes = subtitleRes,
         imageRes = imageRes,

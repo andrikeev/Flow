@@ -19,7 +19,7 @@ import android.os.Environment.DIRECTORY_DOWNLOADS
 import android.os.StrictMode
 import androidx.core.content.getSystemService
 import dagger.hilt.android.qualifiers.ApplicationContext
-import flow.auth.api.TokenProvider
+import flow.downloads.api.DownloadRequest
 import flow.downloads.api.DownloadService
 import java.io.File
 import java.net.URI
@@ -29,31 +29,33 @@ import kotlin.coroutines.suspendCoroutine
 
 class DownloadServiceImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val tokenProvider: TokenProvider,
 ) : DownloadService {
     private val cache = mutableMapOf<String, String>()
 
-    override suspend fun downloadTorrentFile(id: String, title: String): String? {
-        val cachedUri = cache.getOrDefault(id, null)
+    override suspend fun downloadTorrentFile(downloadRequest: DownloadRequest): String? {
+        val cachedUri = cache.getOrDefault(downloadRequest.id, null)
         if (cachedUri != null && File(URI.create(cachedUri)).exists()) {
             return cachedUri
         } else {
             return suspendCoroutine { continuation ->
                 context.getSystemService<DownloadManager>()?.let { downloadManager ->
-                    val fileName = buildValidFatFilename(title.plus(".torrent"))
-                    val uri = Uri.parse("https://rutracker.org/forum/dl.php?t=$id")
-                    val request = DownloadManager.Request(uri)
-                        .addRequestHeader("Cookie", tokenProvider.getToken())
-                        .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, fileName)
-                        .setTitle(title)
-                        .setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                    val fileName = buildValidFatFilename(downloadRequest.title.plus(".torrent"))
+                    val uri = Uri.parse(downloadRequest.uri)
+                    val request = DownloadManager.Request(uri).apply {
+                        downloadRequest.headers.forEach { (key, value) ->
+                            addRequestHeader(key, value)
+                        }
+                        setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, fileName)
+                        setTitle(downloadRequest.title)
+                        setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                    }
                     val downloadId = downloadManager.enqueue(request)
                     context.registerDownloadCompleteReceiver(downloadId) {
                         val fileUri = allowDiskReads {
                             downloadManager.getDownloadedFileUri(downloadId)
                         }
                         if (fileUri != null) {
-                            cache[id] = fileUri
+                            cache[downloadRequest.id] = fileUri
                         }
                         continuation.resume(fileUri)
                     }
