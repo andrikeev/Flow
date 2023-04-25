@@ -16,10 +16,8 @@ import flow.domain.usecase.ToggleFavoriteUseCase
 import flow.logger.api.LoggerFactory
 import flow.models.auth.AuthState
 import flow.models.forum.Category
-import flow.models.topic.BaseTopic
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
-import flow.models.topic.Torrent
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -149,9 +147,6 @@ internal class CategoryViewModel @Inject constructor(
     }
 
     private fun onTopicClick(topicModel: TopicModel<out Topic>) = intent {
-        when (val topic = topicModel.topic) {
-            is BaseTopic -> postSideEffect(CategorySideEffect.OpenTopic(topic))
-            is Torrent -> postSideEffect(CategorySideEffect.OpenTorrent(topic))
-        }
+        postSideEffect(CategorySideEffect.OpenTopic(topicModel.topic.id))
     }
 }

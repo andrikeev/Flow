@@ -97,7 +97,7 @@ private fun Bookmark(
         Icon(
             icon = FlowIcons.BookmarkChecked,
             tint = AppTheme.colors.primary,
-            contentDescription = null,
+            contentDescription = null, //TODO: add contentDescription
         )
         Box(
             modifier = Modifier

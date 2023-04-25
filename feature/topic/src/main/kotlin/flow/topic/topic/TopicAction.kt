@@ -1,6 +1,6 @@
 package flow.topic.topic
 
-sealed interface TopicAction {
+internal sealed interface TopicAction {
     data class AddComment(val comment: String) : TopicAction
     object AddCommentClick : TopicAction
     object BackClick : TopicAction

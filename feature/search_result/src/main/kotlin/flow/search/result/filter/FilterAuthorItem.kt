@@ -51,7 +51,7 @@ internal fun FilterAuthorItem(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        Icon(icon = FlowIcons.Author, contentDescription = null)
+        Icon(icon = FlowIcons.Author, contentDescription = null /* TODO: add contentDescription */)
     }
 }
 
@@ -76,7 +76,7 @@ private fun AuthorDialog(
             icon = {
                 Icon(
                     icon = FlowIcons.Author,
-                    contentDescription = null,
+                    contentDescription = null, //TODO: add contentDescription
                 )
             },
             title = { Text(stringResource(R.string.search_screen_filter_author_label)) },

@@ -21,11 +21,10 @@ private const val CategoryRoute = "category"
 context(NavigationGraphBuilder)
 fun addCategory(
     back: () -> Unit,
-    openCategory: (String) -> Unit,
+    openCategory: (id: String) -> Unit,
     openLogin: () -> Unit,
-    openSearchInput: (String) -> Unit,
-    openTopic: (Topic) -> Unit,
-    openTorrent: (Torrent) -> Unit,
+    openSearchInput: (query: String) -> Unit,
+    openTopic: (id: String) -> Unit,
     deepLinkUrls: List<String> = emptyList(),
     animations: NavigationAnimations,
 ) = addDestination(
@@ -44,7 +43,6 @@ fun addCategory(
             openLogin = openLogin,
             openSearchInput = openSearchInput,
             openTopic = openTopic,
-            openTorrent = openTorrent,
         )
     },
     animations = animations,

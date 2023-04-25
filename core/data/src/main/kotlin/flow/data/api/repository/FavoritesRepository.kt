@@ -19,6 +19,6 @@ interface FavoritesRepository {
     suspend fun removeById(id: String)
     suspend fun removeById(ids: List<String>)
     suspend fun updateTorrent(torrent: Torrent, hasUpdate: Boolean)
-    suspend fun update(topic: Topic)
+    suspend fun markVisited(id: String)
     suspend fun clear()
 }

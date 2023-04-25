@@ -17,7 +17,7 @@ import flow.ui.R
 @Composable
 fun Avatar(url: String?) = RemoteImage(
     src = url,
-    contentDescription = null,
+    contentDescription = null, //TODO: add contentDescription
     onLoading = { AvatarPlaceholder() },
     onSuccess = { painter ->
         Image(
@@ -26,7 +26,7 @@ fun Avatar(url: String?) = RemoteImage(
                 .size(AppTheme.sizes.default)
                 .clip(AppTheme.shapes.circle),
             painter = painter,
-            contentDescription = null,
+            contentDescription = null, //TODO: add contentDescription
         )
     },
     onError = { AvatarPlaceholder() },
@@ -46,7 +46,7 @@ private fun AvatarPlaceholder() {
                 R.drawable.ic_avatar_light
             }
         ),
-        contentDescription = null,
+        contentDescription = null, //TODO: add contentDescription
         colorFilter = ColorFilter.tint(color = AppTheme.colors.onPrimaryContainer),
     )
 }

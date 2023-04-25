@@ -10,18 +10,18 @@ import flow.domain.model.prepend
 import flow.domain.model.refresh
 import flow.domain.model.retry
 import flow.domain.usecase.AddCommentUseCase
-import flow.domain.usecase.EnrichTopicUseCase
 import flow.domain.usecase.ObserveAuthStateUseCase
+import flow.domain.usecase.ObserveFavoriteStateUseCase
 import flow.domain.usecase.ObserveTopicPagingDataUseCase
 import flow.domain.usecase.ToggleFavoriteUseCase
-import flow.domain.usecase.VisitTopicUseCase
 import flow.logger.api.LoggerFactory
 import flow.models.auth.isAuthorized
+import flow.topic.open.id
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -36,24 +36,21 @@ internal class TopicViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     loggerFactory: LoggerFactory,
     private val addCommentUseCase: AddCommentUseCase,
-    private val authStateUseCase: ObserveAuthStateUseCase,
-    private val enrichTopicUseCase: EnrichTopicUseCase,
+    private val observeAuthStateUseCase: ObserveAuthStateUseCase,
+    private val observeFavoriteStateUseCase: ObserveFavoriteStateUseCase,
     private val observeTopicPagingDataUseCase: ObserveTopicPagingDataUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-    private val visitTopicUseCase: VisitTopicUseCase,
-) : ViewModel(), ContainerHost<TopicPageState, TopicSideEffect> {
+) : ViewModel(), ContainerHost<TopicScreenState, TopicSideEffect> {
     private val logger = loggerFactory.get("TopicViewModel")
-    private val topic = savedStateHandle.topic
+    private val id = savedStateHandle.id
     private val pagingActions = MutableSharedFlow<PagingAction>()
     private val lastVisibleIndex = MutableStateFlow(0)
 
-    override val container: Container<TopicPageState, TopicSideEffect> = container(
-        initialState = TopicPageState(),
+    override val container: Container<TopicScreenState, TopicSideEffect> = container(
+        initialState = TopicScreenState(),
         onCreate = {
-            observeAuthState()
             observeTopicModel()
             observePagingData()
-            viewModelScope.launch { visitTopicUseCase(topic) }
         },
     )
 
@@ -72,25 +69,16 @@ internal class TopicViewModel @Inject constructor(
         }
     }
 
-    private fun observeAuthState() = viewModelScope.launch {
-        authStateUseCase().collectLatest { authState ->
-            intent { reduce { state.copy(authState = authState) } }
-        }
-    }
-
     private fun observeTopicModel() = viewModelScope.launch {
-        enrichTopicUseCase(topic).collectLatest { topicModel ->
-            val topicState = TopicState.Topic(
-                name = topicModel.topic.title,
-                isFavorite = topicModel.isFavorite,
-            )
-            intent { reduce { state.copy(topicState = topicState) } }
+        observeFavoriteStateUseCase(id).collectLatest { isFavorite ->
+            val favoriteState = TopicFavoriteState.FavoriteState(isFavorite)
+            intent { reduce { state.copy(favoriteState = favoriteState) } }
         }
     }
 
     private fun observePagingData() = viewModelScope.launch {
         observeTopicPagingDataUseCase(
-            id = topic.id,
+            id = id,
             actions = pagingActions,
             scope = viewModelScope,
         )
@@ -127,7 +115,7 @@ internal class TopicViewModel @Inject constructor(
     }
 
     private fun onAddComment(comment: String) = viewModelScope.launch {
-        if (addCommentUseCase(topic.id, comment)) {
+        if (addCommentUseCase(id, comment)) {
             pagingActions.refresh()
         } else {
             intent { postSideEffect(TopicSideEffect.ShowAddCommentError) }
@@ -135,7 +123,7 @@ internal class TopicViewModel @Inject constructor(
     }
 
     private fun onAddCommentClick() = intent {
-        if (state.authState.isAuthorized) {
+        if (observeAuthStateUseCase().firstOrNull().isAuthorized) {
             postSideEffect(TopicSideEffect.ShowAddCommentDialog)
         } else {
             postSideEffect(TopicSideEffect.ShowLoginRequired)
@@ -146,8 +134,8 @@ internal class TopicViewModel @Inject constructor(
         postSideEffect(TopicSideEffect.Back)
     }
 
-    private fun onFavoriteClick() = intent {
-        enrichTopicUseCase(topic).take(1).collectLatest { toggleFavoriteUseCase(topic.id) }
+    private fun onFavoriteClick() = viewModelScope.launch {
+        toggleFavoriteUseCase(id)
     }
 
     private fun onLastVisibleIndexChanged(index: Int) = viewModelScope.launch {

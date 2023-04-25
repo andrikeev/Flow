@@ -1,5 +1,6 @@
 package flow.favorites
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -11,10 +12,8 @@ import flow.designsystem.component.LazyList
 import flow.designsystem.component.Loading
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
-import flow.models.topic.BaseTopic
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
-import flow.models.topic.Torrent
 import flow.navigation.viewModel
 import flow.ui.component.TopicListItem
 import flow.ui.component.dividedItems
@@ -23,26 +22,20 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun FavoritesScreen(
-    openTopic: (Topic) -> Unit,
-    openTorrent: (Torrent) -> Unit,
-) {
-    FavoritesScreen(
-        viewModel = viewModel(),
-        openTopic = openTopic,
-        openTorrent = openTorrent,
-    )
-}
+    openTopic: (id: String) -> Unit,
+) = FavoritesScreen(
+    viewModel = viewModel(),
+    openTopic = openTopic,
+)
 
 @Composable
 private fun FavoritesScreen(
     viewModel: FavoritesViewModel,
-    openTopic: (Topic) -> Unit,
-    openTorrent: (Torrent) -> Unit,
+    openTopic: (id: String) -> Unit,
 ) {
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is FavoritesSideEffect.OpenTopic -> openTopic(sideEffect.topic)
-            is FavoritesSideEffect.OpenTorrent -> openTorrent(sideEffect.torrent)
+            is FavoritesSideEffect.OpenTopic -> openTopic(sideEffect.id)
         }
     }
     val state by viewModel.collectAsState()
@@ -53,8 +46,8 @@ private fun FavoritesScreen(
 private fun FavoritesScreen(
     state: FavoritesState,
     onAction: (FavoritesAction) -> Unit,
-) {
-    when (state) {
+) = Crossfade(targetState = state) { targetState ->
+    when (targetState) {
         is FavoritesState.Initial -> Loading()
         is FavoritesState.Empty -> Empty(
             titleRes = R.string.favorites_empty_title,
@@ -66,14 +59,13 @@ private fun FavoritesScreen(
             contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
         ) {
             dividedItems(
-                items = state.items,
+                items = targetState.items,
                 key = { it.topic.id },
                 contentType = { it.topic::class },
             ) {
                 FavoriteTopic(
                     topicModel = it,
-                    onTopicClick = { topic -> onAction(FavoritesAction.TopicClick(topic)) },
-                    onTorrentClick = { torrent -> onAction(FavoritesAction.TorrentClick(torrent)) },
+                    onClick = { onAction(FavoritesAction.TopicClick(it)) },
                 )
             }
         }
@@ -83,22 +75,16 @@ private fun FavoritesScreen(
 @Composable
 private fun FavoriteTopic(
     topicModel: TopicModel<out Topic>,
-    onTopicClick: (Topic) -> Unit,
-    onTorrentClick: (Torrent) -> Unit,
+    onClick: () -> Unit,
 ) = TopicListItem(
     topic = topicModel.topic,
-    onClick = {
-        when (val topic = topicModel.topic) {
-            is BaseTopic -> onTopicClick(topic)
-            is Torrent -> onTorrentClick(topic)
-        }
-    },
+    onClick = onClick,
     action = {
         if (topicModel.hasUpdate) {
             Icon(
                 icon = FlowIcons.NewBadge,
                 tint = AppTheme.colors.primary,
-                contentDescription = null,
+                contentDescription = null, //TODO: add contentDescription
             )
         }
     },

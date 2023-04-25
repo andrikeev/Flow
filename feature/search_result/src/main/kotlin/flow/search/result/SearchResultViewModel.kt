@@ -18,8 +18,8 @@ import flow.models.search.Order
 import flow.models.search.Period
 import flow.models.search.Sort
 import flow.models.topic.Author
+import flow.models.topic.Topic
 import flow.models.topic.TopicModel
-import flow.models.topic.Torrent
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -59,7 +59,7 @@ internal class SearchResultViewModel @Inject constructor(
         when (action) {
             is SearchResultAction.BackClick -> onBackClick()
             is SearchResultAction.ExpandAppBarClick -> onExpandAppBarClick()
-            is SearchResultAction.FavoriteClick -> onFavoriteClick(action.torrent)
+            is SearchResultAction.FavoriteClick -> onFavoriteClick(action.topicModel)
             is SearchResultAction.ListBottomReached -> onListBottomReached()
             is SearchResultAction.RetryClick -> onRetryClick()
             is SearchResultAction.SearchClick -> onSearchClick()
@@ -68,7 +68,7 @@ internal class SearchResultViewModel @Inject constructor(
             is SearchResultAction.SetOrder -> onSetOrder(action.order)
             is SearchResultAction.SetPeriod -> onSetPeriod(action.period)
             is SearchResultAction.SetSort -> onSetSort(action.sort)
-            is SearchResultAction.TorrentClick -> onTorrentClick(action.torrent)
+            is SearchResultAction.TopicClick -> onTopicClick(action.topicModel)
         }
     }
 
@@ -121,8 +121,8 @@ internal class SearchResultViewModel @Inject constructor(
         reduce { state.copy(appBarExpanded = !state.appBarExpanded) }
     }
 
-    private fun onFavoriteClick(torrent: TopicModel<Torrent>) = viewModelScope.launch {
-        toggleFavoriteUseCase(torrent.topic.id)
+    private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = viewModelScope.launch {
+        toggleFavoriteUseCase(topicModel.topic.id)
     }
 
     private fun onListBottomReached() = viewModelScope.launch {
@@ -158,8 +158,8 @@ internal class SearchResultViewModel @Inject constructor(
         postSideEffect(SearchResultSideEffect.OpenSearchResult(filter))
     }
 
-    private fun onTorrentClick(torrent: TopicModel<Torrent>) = intent {
-        postSideEffect(SearchResultSideEffect.OpenTorrent(torrent.topic))
+    private fun onTopicClick(topicModel: TopicModel<out Topic>) = intent {
+        postSideEffect(SearchResultSideEffect.OpenTopic(topicModel.topic.id))
     }
 
     private inline fun onSortChanged(crossinline transformer: (Filter) -> Filter) {

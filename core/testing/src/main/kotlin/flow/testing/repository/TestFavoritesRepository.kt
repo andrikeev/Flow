@@ -59,7 +59,7 @@ class TestFavoritesRepository : FavoritesRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun update(topic: Topic) {
+    override suspend fun markVisited(id: String) {
         TODO("Not yet implemented")
     }
 

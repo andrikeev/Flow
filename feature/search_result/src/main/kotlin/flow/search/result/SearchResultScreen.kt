@@ -34,7 +34,6 @@ import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.models.LoadState
 import flow.models.search.Filter
-import flow.models.topic.Torrent
 import flow.search.result.filter.FilterBar
 import flow.ui.component.TopicListItem
 import flow.ui.component.appendItems
@@ -49,16 +48,16 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 internal fun SearchResultScreen(
     viewModel: SearchResultViewModel,
     back: () -> Unit,
-    openSearchInput: (Filter) -> Unit,
-    openSearchResult: (Filter) -> Unit,
-    openTorrent: (Torrent) -> Unit,
+    openSearchInput: (filter: Filter) -> Unit,
+    openSearchResult: (filter: Filter) -> Unit,
+    openTopic: (id: String) -> Unit,
 ) {
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is SearchResultSideEffect.Back -> back()
             is SearchResultSideEffect.OpenSearchInput -> openSearchInput(sideEffect.filter)
             is SearchResultSideEffect.OpenSearchResult -> openSearchResult(sideEffect.filter)
-            is SearchResultSideEffect.OpenTorrent -> openTorrent(sideEffect.torrent)
+            is SearchResultSideEffect.OpenTopic -> openTopic(sideEffect.id)
         }
     }
     val state by viewModel.collectAsState()
@@ -214,7 +213,7 @@ private fun SearchResultList(
                         contentType = { it.topic::class }) { item ->
                         TopicListItem(
                             topicModel = item,
-                            onClick = { onAction(SearchResultAction.TorrentClick(item)) },
+                            onClick = { onAction(SearchResultAction.TopicClick(item)) },
                             onFavoriteClick = { onAction(SearchResultAction.FavoriteClick(item)) },
                         )
                     }

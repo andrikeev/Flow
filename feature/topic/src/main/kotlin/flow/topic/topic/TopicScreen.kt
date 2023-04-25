@@ -81,6 +81,7 @@ import flow.ui.R as uiR
 @Composable
 internal fun TopicScreen(
     viewModel: TopicViewModel,
+    topicState: TopicState,
     back: () -> Unit,
     openLogin: () -> Unit,
 ) {
@@ -103,12 +104,13 @@ internal fun TopicScreen(
         }
     }
     val state by viewModel.collectAsState()
-    MobileTopicScreen(state, viewModel::perform)
+    MobileTopicScreen(state, topicState, viewModel::perform)
 }
 
 @Composable
 private fun MobileTopicScreen(
-    state: TopicPageState,
+    state: TopicScreenState,
+    topicState: TopicState,
     onAction: (TopicAction) -> Unit,
 ) {
     val scrollBehavior = AppBarDefaults.appBarScrollBehavior()
@@ -117,12 +119,13 @@ private fun MobileTopicScreen(
         topBar = {
             TopicAppBar(
                 state = state,
+                topicState = topicState,
                 appBarState = scrollBehavior.state,
                 onAction = onAction
             )
         },
         floatingActionButton = {
-            AddCommentFloatingActionButton(onClick = { onAction(TopicAction.AddCommentClick) })
+            /*AddCommentFloatingActionButton(onClick = { onAction(TopicAction.AddCommentClick) })*/
         },
     ) { padding ->
         val scrollState = rememberLazyListState()
@@ -137,7 +140,8 @@ private fun MobileTopicScreen(
 
 @Composable
 private fun TopicAppBar(
-    state: TopicPageState,
+    state: TopicScreenState,
+    topicState: TopicState,
     appBarState: AppBarState,
     onAction: (TopicAction) -> Unit,
 ) {
@@ -145,25 +149,22 @@ private fun TopicAppBar(
     ExpandableAppBar(
         navigationIcon = { BackButton { onAction(TopicAction.BackClick) } },
         title = {
-            when (val topicState = state.topicState) {
-                is TopicState.Initial -> Unit
-                is TopicState.Topic -> Text(
-                    text = topicState.name,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    style = AppTheme.typography.titleSmall,
-                )
-            }
+            Text(
+                text = topicState.title,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                style = AppTheme.typography.titleSmall,
+            )
         },
         actions = {
             Crossfade(
-                targetState = state.topicState,
+                targetState = state.favoriteState,
                 label = "TopicFavoriteButton_Crossfade",
             ) { topicState ->
                 when (topicState) {
-                    is TopicState.Initial -> Unit
-                    is TopicState.Topic -> FavoriteButton(
-                        favorite = topicState.isFavorite,
+                    is TopicFavoriteState.Initial -> Unit
+                    is TopicFavoriteState.FavoriteState -> FavoriteButton(
+                        favorite = topicState.favorite,
                         onClick = { onAction(TopicAction.FavoriteClick) },
                     )
                 }
@@ -268,7 +269,7 @@ private fun TopicAppBar(
 @Composable
 private fun PostsList(
     modifier: Modifier = Modifier,
-    state: TopicPageState,
+    state: TopicScreenState,
     scrollState: LazyListState,
     onAction: (TopicAction) -> Unit,
 ) = LazyList(
@@ -295,6 +296,10 @@ private fun PostsList(
 
                 is TopicContent.Initial -> loadingItem()
                 is TopicContent.Posts -> {
+                    appendItems(
+                        state = state.loadStates.prepend,
+                        onRetryClick = { onAction(TopicAction.RetryClick) },
+                    )
                     dividedItems(
                         items = topicContent.posts,
                         key = Post::id,
@@ -349,12 +354,7 @@ private fun LoginRequiredDialog(
 ) {
     if (dialogState.visible) {
         Dialog(
-            icon = {
-                Icon(
-                    icon = FlowIcons.Account,
-                    contentDescription = null,
-                )
-            },
+            icon = { Icon(icon = FlowIcons.Account, contentDescription = null) },
             title = { Text(stringResource(R.string.topics_login_required_title)) },
             text = { Text(stringResource(R.string.topics_login_required_for_comment)) },
             confirmButton = {

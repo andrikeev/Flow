@@ -89,7 +89,7 @@ interface FavoriteTopicDao {
      * @see FavoriteTopicEntity.hasUpdate
      */
     @Query("UPDATE FavoriteTopic SET hasUpdate = 0 WHERE id == :id")
-    suspend fun update(id: String)
+    suspend fun clearHasUpdates(id: String)
 
     /**
      * Clear all [FavoriteTopicEntity]s.

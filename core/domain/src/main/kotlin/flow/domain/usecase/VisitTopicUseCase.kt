@@ -14,7 +14,7 @@ class VisitTopicUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(topic: Topic) {
         withContext(dispatchers.default) {
-            favoritesRepository.update(topic)
+            favoritesRepository.markVisited(topic.id)
             visitedRepository.add(topic)
         }
     }

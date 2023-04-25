@@ -81,7 +81,7 @@ private fun ConfirmationDialog(
     onConfirm: () -> Unit,
 ) = Dialog(
     onDismissRequest = onDismiss,
-    icon = icon?.let { { Icon(icon = icon, contentDescription = null) } } ,
+    icon = icon?.let { { Icon(icon = icon, contentDescription = null /* TODO: add contentDescription */) } } ,
     title = { Text(title) },
     text = { Text(message) },
     confirmButton = {
@@ -171,7 +171,7 @@ internal sealed interface DialogConfirmationState {
 private fun DialogPreview() {
     FlowTheme {
         Dialog(
-            icon = { Icon(icon = FlowIcons.AppIcon, contentDescription = null) },
+            icon = { Icon(icon = FlowIcons.AppIcon, contentDescription = null /* TODO: add contentDescription */) },
             title = { Text("Dialog title") },
             text = { Text("Dialog description text with some explanation or questions to user") },
             confirmButton = { TextButton(text = "Yes!", onClick = {}) },

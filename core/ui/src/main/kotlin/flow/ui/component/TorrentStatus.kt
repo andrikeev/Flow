@@ -22,6 +22,7 @@ import flow.designsystem.theme.AppTheme
 import flow.models.forum.Category
 import flow.models.topic.Author
 import flow.models.topic.Torrent
+import flow.models.topic.TorrentStatus
 import flow.models.topic.isValid
 
 @Composable
@@ -34,87 +35,110 @@ fun TorrentStatus(
         horizontal = AppTheme.spaces.mediumSmall,
         vertical = AppTheme.spaces.extraSmall,
     ),
+) = TorrentStatus(
+    modifier = modifier,
+    status = torrent.status,
+    date = torrent.date,
+    size = torrent.size,
+    seeds = torrent.seeds,
+    leeches = torrent.leeches,
+    contentPadding = contentPadding,
+    horizontalArrangement = horizontalArrangement,
+    itemsPadding = itemsPadding,
+)
+
+@Composable
+fun TorrentStatus(
+    modifier: Modifier = Modifier,
+    status: TorrentStatus? = null,
+    date: Long? = null,
+    size: String? = null,
+    seeds: Int? = null,
+    leeches: Int? = null,
+    contentPadding: PaddingValues = PaddingValues(),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    itemsPadding: PaddingValues = PaddingValues(
+        horizontal = AppTheme.spaces.mediumSmall,
+        vertical = AppTheme.spaces.extraSmall,
+    ),
 ) {
-    with(torrent) {
-        LazyRow(
-            modifier = modifier,
-            contentPadding = contentPadding,
-            horizontalArrangement = horizontalArrangement,
-        ) {
-            var divider = false
-            fun withDivider(content: @Composable LazyItemScope.() -> Unit) {
-                item {
-                    if (divider) {
-                        Divider(
-                            modifier = Modifier
-                                .padding(itemsPadding)
-                                .height(20.dp)
-                                .width(1.dp),
-                        )
-                    }
-                    content()
-                    divider = true
+    LazyRow(
+        modifier = modifier,
+        contentPadding = contentPadding,
+        horizontalArrangement = horizontalArrangement,
+    ) {
+        var divider = false
+        fun withDivider(content: @Composable LazyItemScope.() -> Unit) {
+            item {
+                if (divider) {
+                    Divider(
+                        modifier = Modifier
+                            .padding(itemsPadding)
+                            .height(20.dp)
+                            .width(1.dp),
+                    )
+                }
+                content()
+                divider = true
+            }
+        }
+        status?.let { status ->
+            withDivider {
+                Icon(
+                    icon = status.icon,
+                    tint = status.color,
+                    contentDescription = null, //TODO: add contentDescription
+                )
+                if (!status.isValid()) {
+                    Text(
+                        modifier = Modifier.padding(start = AppTheme.spaces.small),
+                        text = stringResource(status.resId),
+                    )
                 }
             }
-            status?.let { status ->
+        }
+        if (status.isValid()) {
+            seeds?.let { seeds ->
                 withDivider {
                     Icon(
-                        icon = status.icon,
-                        tint = status.color,
-                        contentDescription = null,
+                        icon = FlowIcons.Seeds,
+                        tint = AppTheme.colors.accentGreen,
+                        contentDescription = null, //TODO: add contentDescription
                     )
-                    if (!status.isValid()) {
-                        Text(
-                            modifier = Modifier.padding(start = AppTheme.spaces.small),
-                            text = stringResource(status.resId),
-                        )
-                    }
+                    Text(seeds.toString())
                 }
             }
-            if (status.isValid()) {
-                seeds?.let { seeds ->
-                    withDivider {
-                        Icon(
-                            icon = FlowIcons.Seeds,
-                            tint = AppTheme.colors.accentGreen,
-                            contentDescription = null,
-                        )
-                        Text(seeds.toString())
-                    }
+            leeches?.let { leeches ->
+                withDivider {
+                    Icon(
+                        icon = FlowIcons.Leaches,
+                        tint = AppTheme.colors.accentRed,
+                        contentDescription = null, //TODO: add contentDescription
+                    )
+                    Text(leeches.toString())
                 }
-                leeches?.let { leeches ->
-                    withDivider {
-                        Icon(
-                            icon = FlowIcons.Leaches,
-                            tint = AppTheme.colors.accentRed,
-                            contentDescription = null,
-                        )
-                        Text(leeches.toString())
-                    }
+            }
+            size?.let { size ->
+                withDivider {
+                    Icon(
+                        icon = FlowIcons.File,
+                        tint = AppTheme.colors.accentBlue,
+                        contentDescription = null, //TODO: add contentDescription
+                    )
+                    Text(size)
                 }
-                size?.let { size ->
-                    withDivider {
-                        Icon(
-                            icon = FlowIcons.File,
-                            tint = AppTheme.colors.accentBlue,
-                            contentDescription = null,
-                        )
-                        Text(size)
-                    }
-                }
-                date?.let { date ->
-                    withDivider {
-                        Text(
-                            DateFormat
-                                .getDateFormat(LocalContext.current)
-                                .format(date * 1000)
-                        )
-                    }
+            }
+            date?.let { date ->
+                withDivider {
+                    Text(
+                        DateFormat
+                            .getDateFormat(LocalContext.current)
+                            .format(date * 1000)
+                    )
                 }
             }
         }
     }
-
 }
 
 @Preview

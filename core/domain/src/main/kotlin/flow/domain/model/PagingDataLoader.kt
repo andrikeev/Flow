@@ -55,24 +55,28 @@ class PagingDataLoader<Item : Any, Data>(
     }
 
     private suspend fun append() {
-        logger.d { "append" }
-        val lastPage = pagination.lastPage
-        if (lastPage < pagination.totalPages) {
-            runCatching {
-                loadStates.append()
-                fetchData(lastPage + 1)
-            }.onSuccess(::updateItems).onFailure(::onFailure)
+        if (!loadStates.isAppend()) {
+            logger.d { "append" }
+            val lastPage = pagination.lastPage
+            if (lastPage < pagination.totalPages) {
+                runCatching {
+                    loadStates.append()
+                    fetchData(lastPage + 1)
+                }.onSuccess(::updateItems).onFailure(::onFailure)
+            }
         }
     }
 
     private suspend fun prepend() {
-        logger.d { "prepend" }
-        val firstPage = pagination.firstPage
-        if (firstPage > 1) {
-            runCatching {
-                loadStates.prepend()
-                fetchData(firstPage - 1)
-            }.onSuccess(::updateItems).onFailure(::onFailure)
+        if (!loadStates.isPrepend()) {
+            logger.d { "prepend" }
+            val firstPage = pagination.firstPage
+            if (firstPage > 1) {
+                runCatching {
+                    loadStates.prepend()
+                    fetchData(firstPage - 1)
+                }.onSuccess(::updateItems).onFailure(::onFailure)
+            }
         }
     }
 

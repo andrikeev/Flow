@@ -9,8 +9,6 @@ import androidx.compose.ui.Modifier
 import flow.designsystem.component.Empty
 import flow.designsystem.component.Loading
 import flow.designsystem.theme.AppTheme
-import flow.models.topic.Topic
-import flow.models.topic.Torrent
 import flow.navigation.viewModel
 import flow.ui.component.TopicListItem
 import flow.ui.component.dividedItems
@@ -19,26 +17,20 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun VisitedScreen(
-    openTopic: (Topic) -> Unit,
-    openTorrent: (Torrent) -> Unit,
-) {
-    VisitedScreen(
-        viewModel = viewModel(),
-        openTopic = openTopic,
-        openTorrent = openTorrent,
-    )
-}
+    openTopic: (id: String) -> Unit,
+) = VisitedScreen(
+    viewModel = viewModel(),
+    openTopic = openTopic,
+)
 
 @Composable
 private fun VisitedScreen(
     viewModel: VisitedViewModel,
-    openTopic: (Topic) -> Unit,
-    openTorrent: (Torrent) -> Unit,
+    openTopic: (id: String) -> Unit,
 ) {
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is VisitedSideEffect.OpenTopic -> openTopic(sideEffect.topic)
-            is VisitedSideEffect.OpenTorrent -> openTorrent(sideEffect.torrent)
+            is VisitedSideEffect.OpenTopic -> openTopic(sideEffect.id)
         }
     }
     val state by viewModel.collectAsState()

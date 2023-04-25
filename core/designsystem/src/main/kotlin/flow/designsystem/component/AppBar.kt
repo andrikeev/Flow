@@ -20,6 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
@@ -40,10 +41,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import flow.designsystem.R
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
+import flow.designsystem.utils.RunOnFirstComposition
 
 @Composable
 @NonRestartableComposable
@@ -133,11 +136,20 @@ fun TabAppBar(
 }
 
 @Composable
-private fun AppBarContainer(
+internal fun AppBarContainer(
     modifier: Modifier = Modifier,
-    appBarState: AppBarState,
+    appBarState: AppBarState = rememberAppBarState(),
     content: @Composable BoxScope.() -> Unit,
 ) {
+    val systemUiController = rememberSystemUiController()
+    val darkIcons = !AppTheme.colors.isDark
+    RunOnFirstComposition {
+        systemUiController.setStatusBarColor(
+            color = Color.Transparent,
+            darkIcons = darkIcons,
+            transformColorForLightContent = { Color.Transparent },
+        )
+    }
     val elevation by animateDpAsState(
         targetValue = if (appBarState.elevated) {
             AppTheme.elevations.medium

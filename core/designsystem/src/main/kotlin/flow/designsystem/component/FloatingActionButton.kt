@@ -39,7 +39,7 @@ fun ScrollBackFloatingActionButton(
                 Icon(
                     modifier = Modifier.padding(AppTheme.spaces.medium),
                     icon = FlowIcons.ScrollToTop,
-                    contentDescription = null,
+                    contentDescription = null, //TODO: add contentDescription
                 )
             },
         )
@@ -61,7 +61,7 @@ fun AddCommentFloatingActionButton(
         Icon(
             modifier = Modifier.padding(AppTheme.spaces.medium),
             icon = FlowIcons.Comment,
-            contentDescription = null,
+            contentDescription = null, //TODO: add contentDescription
         )
     },
 )
