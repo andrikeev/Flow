@@ -1,6 +1,6 @@
 package flow.topic.topic
 
-sealed interface TopicSideEffect {
+internal sealed interface TopicSideEffect {
     object Back: TopicSideEffect
     object OpenLogin: TopicSideEffect
     object ShowAddCommentDialog: TopicSideEffect

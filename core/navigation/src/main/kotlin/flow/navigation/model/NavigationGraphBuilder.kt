@@ -3,12 +3,14 @@ package flow.navigation.model
 import androidx.compose.runtime.Composable
 import flow.navigation.ui.NavigationAnimations
 
+private const val Root = "root"
+
 interface NavigationGraphBuilder {
     val graph: String?
 
     fun addDestination(
-        route: String,
-        isStartRoute: Boolean = false,
+        route: String = Root,
+        isStartRoute: Boolean = route == Root,
         arguments: List<NavigationArgument> = emptyList(),
         deepLinks: List<NavigationDeepLink> = emptyList(),
         animations: NavigationAnimations = NavigationAnimations.Default,

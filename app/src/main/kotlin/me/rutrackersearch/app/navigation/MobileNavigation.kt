@@ -15,8 +15,6 @@ import flow.forum.category.openCategory
 import flow.login.addLogin
 import flow.login.openLogin
 import flow.menu.MenuScreen
-import flow.models.topic.Topic
-import flow.models.topic.Torrent
 import flow.navigation.NavigationController
 import flow.navigation.model.NavigationBarItem
 import flow.navigation.model.NavigationGraphBuilder
@@ -24,7 +22,6 @@ import flow.navigation.model.buildRoute
 import flow.navigation.rememberNestedNavigationController
 import flow.navigation.ui.MobileNavigation
 import flow.navigation.ui.NavigationAnimations
-import flow.navigation.ui.NavigationAnimations.Companion.slideInLeft
 import flow.navigation.ui.NavigationAnimations.Companion.slideInRight
 import flow.navigation.ui.NavigationAnimations.Companion.slideOutLeft
 import flow.navigation.ui.NavigationAnimations.Companion.slideOutRight
@@ -34,11 +31,9 @@ import flow.search.input.addSearchInput
 import flow.search.input.openSearchInput
 import flow.search.result.addSearchResult
 import flow.search.result.openSearchResult
-import flow.topic.open.addOpenTopic
-import flow.topic.topic.addTopic
-import flow.topic.topic.openTopic
-import flow.topic.torrent.addTorrent
-import flow.topic.torrent.openTorrent
+import flow.topic.open.addTopic
+import flow.topic.open.openComments
+import flow.topic.open.openTopic
 import flow.visited.VisitedScreen
 import me.rutrackersearch.app.R
 
@@ -52,55 +47,42 @@ fun MobileNavigation(navigationController: NavigationController) {
             )
             addSearchInput(
                 back = ::popBackStack,
-                openSearchResult = { filter ->
+                openSearchResult = {
                     popBackStack()
-                    openSearchResult(filter)
+                    openSearchResult(it)
                 },
                 animations = NavigationAnimations.Default,
             )
             addSearchResult(
                 back = ::popBackStack,
-                openSearchInput = { filter -> openSearchInput(filter) },
-                openSearchResult = { filter -> openSearchResult(filter) },
-                openTorrent = { torrent -> openTorrent(torrent) },
+                openSearchInput = { openSearchInput(it) },
+                openSearchResult = { openSearchResult(it) },
+                openTopic = { openTopic(it) },
                 deepLinkUrls = DeepLinks.searchResultUrls,
                 animations = NavigationAnimations.Default,
             )
             addCategory(
                 back = ::popBackStack,
-                openCategory = { id -> openCategory(id) },
+                openCategory = { openCategory(it) },
                 openLogin = { openLogin() },
-                openSearchInput = { categoryId -> openSearchInput(categoryId) },
-                openTopic = { topic -> openTopic(topic) },
-                openTorrent = { torrent -> openTorrent(torrent) },
+                openSearchInput = { openSearchInput(it) },
+                openTopic = { openTopic(it) },
                 deepLinkUrls = DeepLinks.categoryUrls,
-                animations = NavigationAnimations.ScaleInOutAnimation,
-            )
-            addOpenTopic(
-                back = ::popBackStack,
-                openTopic = { topic -> openTopic(topic) },
-                openTorrent = { torrent -> openTorrent(torrent) },
-                deepLinkUrls = DeepLinks.topicUrls,
                 animations = NavigationAnimations.ScaleInOutAnimation,
             )
             addTopic(
                 back = ::popBackStack,
+                openCategory = { openCategory(it) },
+                openComments = { openComments(it) },
                 openLogin = { openLogin() },
-                animations = NavigationAnimations.ScaleInOutAnimation,
-            )
-            addTorrent(
-                back = ::popBackStack,
-                openLogin = { openLogin() },
-                openComments = { topic -> openTopic(topic) },
-                openCategory = { id -> openCategory(id) },
-                openSearch = { filter -> openSearchResult(filter) },
+                openSearch = { openSearchResult(it) },
+                deepLinkUrls = DeepLinks.topicUrls,
                 animations = NavigationAnimations.ScaleInOutAnimation,
             )
             addNestedNavigation(
-                openSearchInput = { filter -> openSearchInput(filter) },
+                openSearchInput = { openSearchInput(it) },
                 openLogin = { openLogin() },
-                openTopic = { topic -> openTopic(topic) },
-                openTorrent = { torrent -> openTorrent(torrent) },
+                openTopic = { openTopic(it) },
             )
         }
     }
@@ -108,34 +90,28 @@ fun MobileNavigation(navigationController: NavigationController) {
 
 context(NavigationGraphBuilder)
 private fun addNestedNavigation(
-    openSearchInput: (String) -> Unit,
+    openSearchInput: (id: String) -> Unit,
     openLogin: () -> Unit,
-    openTopic: (Topic) -> Unit,
-    openTorrent: (Torrent) -> Unit,
-) = addDestination(
-    isStartRoute = true,
-    route = "root",
-) {
+    openTopic: (id: String) -> Unit,
+) = addDestination {
+    val navigationBarItems = remember { BottomRoute.values().map(BottomRoute::navigationBarItem) }
     val navigationController = rememberNestedNavigationController()
     with(navigationController) {
-        val navigationBarItems = remember { BottomRoute.values().map(BottomRoute::navigationBarItem) }
         NestedMobileNavigation(
             navigationController = navigationController,
             navigationBarItems = navigationBarItems,
         ) {
             addSearch(
                 openLogin = openLogin,
-                openTorrent = openTorrent,
+                openTopic = openTopic,
             )
             addForum(
                 openSearchInput = openSearchInput,
                 openLogin = openLogin,
                 openTopic = openTopic,
-                openTorrent = openTorrent,
             )
             addTopics(
                 openTopic = openTopic,
-                openTorrent = openTorrent,
             )
             addMenu(
                 openLogin = openLogin,
@@ -147,7 +123,7 @@ private fun addNestedNavigation(
 context(NavigationGraphBuilder, NavigationController)
 private fun addSearch(
     openLogin: () -> Unit,
-    openTorrent: (Torrent) -> Unit,
+    openTopic: (id: String) -> Unit,
 ) = addGraph(
     isStartRoute = true,
     route = BottomRoute.Search.route,
@@ -156,43 +132,41 @@ private fun addSearch(
     addSearchHistory(
         openLogin = openLogin,
         openSearchInput = { openSearchInput() },
-        openSearchResult = { filter -> openSearchResult(filter) },
+        openSearchResult = { openSearchResult(it) },
         animations = NavigationAnimations.Default,
     )
     addSearchInput(
         back = ::popBackStack,
-        openSearchResult = { filter ->
+        openSearchResult = {
             popBackStack()
-            openSearchResult(filter)
+            openSearchResult(it)
         },
         animations = NavigationAnimations.FadeInOutAnimations,
     )
     addSearchResult(
         back = ::popBackStack,
-        openSearchInput = { filter -> openSearchInput(filter) },
-        openSearchResult = { filter -> openSearchResult(filter) },
-        openTorrent = openTorrent,
+        openSearchInput = { openSearchInput(it) },
+        openSearchResult = { openSearchResult(it) },
+        openTopic = openTopic,
         animations = NavigationAnimations.Default,
     )
 }
 
 context(NavigationGraphBuilder, NavigationController)
 private fun addForum(
-    openSearchInput: (String) -> Unit,
+    openSearchInput: (categoryId: String) -> Unit,
     openLogin: () -> Unit,
-    openTopic: (Topic) -> Unit,
-    openTorrent: (Torrent) -> Unit,
+    openTopic: (id: String) -> Unit,
 ) = addGraph(
     route = BottomRoute.Forum.route,
     animations = BottomRoute.Forum.animations,
 ) {
     addCategory(
         back = ::popBackStack,
-        openCategory = { id -> openCategory(id) },
+        openCategory = { openCategory(it) },
         openLogin = openLogin,
         openSearchInput = openSearchInput,
         openTopic = openTopic,
-        openTorrent = openTorrent,
         animations = BottomRoute.Forum.animations,
     )
     addDestination(
@@ -204,12 +178,12 @@ private fun addForum(
                 Page(
                     labelResId = R.string.tab_title_forum,
                     icon = FlowIcons.Forum,
-                    content = { ForumScreen { id -> openCategory(id) } },
+                    content = { ForumScreen { openCategory(it) } },
                 ),
                 Page(
                     labelResId = R.string.tab_title_bookmarks,
                     icon = FlowIcons.Bookmarks,
-                    content = { BookmarksScreen { id -> openCategory(id) } },
+                    content = { BookmarksScreen { openCategory(it) } },
                 ),
             )
         )
@@ -218,32 +192,22 @@ private fun addForum(
 
 context(NavigationGraphBuilder)
 private fun addTopics(
-    openTopic: (Topic) -> Unit,
-    openTorrent: (Torrent) -> Unit,
+    openTopic: (id: String) -> Unit,
 ) = addDestination(
-    route = BottomRoute.Topics.route, animations = BottomRoute.Topics.animations
+    route = BottomRoute.Topics.route,
+    animations = BottomRoute.Topics.animations,
 ) {
     PagesScreen(
         pages = listOf(
             Page(
                 labelResId = R.string.tab_title_favorites,
                 icon = FlowIcons.Favorite,
-                content = {
-                    FavoritesScreen(
-                        openTopic = openTopic,
-                        openTorrent = openTorrent,
-                    )
-                },
+                content = { FavoritesScreen(openTopic = openTopic) },
             ),
             Page(
                 labelResId = R.string.tab_title_recents,
                 icon = FlowIcons.History,
-                content = {
-                    VisitedScreen(
-                        openTopic = openTopic,
-                        openTorrent = openTorrent,
-                    )
-                },
+                content = { VisitedScreen(openTopic = openTopic) },
             ),
         )
     )
@@ -296,7 +260,6 @@ private enum class BottomRoute(val navigationBarItem: NavigationBarItem) {
             when {
                 route == null -> fadeIn()
                 route.ordinal > ordinal -> slideInRight()
-                route.ordinal <= ordinal -> slideInLeft()
                 else -> fadeIn()
             }
         },

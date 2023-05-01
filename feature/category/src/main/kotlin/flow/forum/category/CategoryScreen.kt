@@ -47,11 +47,10 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun CategoryScreen(
     back: () -> Unit,
-    openCategory: (String) -> Unit,
+    openCategory: (id: String) -> Unit,
     openLogin: () -> Unit,
-    openSearchInput: (String) -> Unit,
-    openTopic: (Topic) -> Unit,
-    openTorrent: (Torrent) -> Unit,
+    openSearchInput: (categoryId: String) -> Unit,
+    openTopic: (id: String) -> Unit,
 ) = CategoryScreen(
     viewModel = viewModel(),
     back = back,
@@ -59,18 +58,16 @@ fun CategoryScreen(
     openLogin = openLogin,
     openSearchInput = openSearchInput,
     openTopic = openTopic,
-    openTorrent = openTorrent,
 )
 
 @Composable
 private fun CategoryScreen(
     viewModel: CategoryViewModel,
     back: () -> Unit,
-    openCategory: (String) -> Unit,
+    openCategory: (id: String) -> Unit,
     openLogin: () -> Unit,
-    openSearchInput: (String) -> Unit,
-    openTopic: (Topic) -> Unit,
-    openTorrent: (Torrent) -> Unit,
+    openSearchInput: (categoryId: String) -> Unit,
+    openTopic: (id: String) -> Unit,
 ) {
     val loginDialogState = rememberDialogState()
     LoginDialog(loginDialogState, viewModel::perform)
@@ -79,8 +76,7 @@ private fun CategoryScreen(
             is CategorySideEffect.Back -> back()
             is CategorySideEffect.OpenCategory -> openCategory(sideEffect.categoryId)
             is CategorySideEffect.OpenSearch -> openSearchInput(sideEffect.categoryId)
-            is CategorySideEffect.OpenTopic -> openTopic(sideEffect.topic)
-            is CategorySideEffect.OpenTorrent -> openTorrent(sideEffect.torrent)
+            is CategorySideEffect.OpenTopic -> openTopic(sideEffect.id)
             is CategorySideEffect.ShowLoginDialog -> loginDialogState.show()
             is CategorySideEffect.OpenLogin -> openLogin()
         }
@@ -217,7 +213,7 @@ private fun LoginDialog(
         icon = {
             Icon(
                 icon = FlowIcons.Account,
-                contentDescription = null,
+                contentDescription = null, //TODO: add contentDescription
             )
         },
         title = { Text(stringResource(R.string.forum_screen_login_required_title)) },

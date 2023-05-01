@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.layout.Placeable
@@ -31,7 +32,6 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.SubcomposeMeasureScope
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.lerp
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -39,10 +39,37 @@ import flow.designsystem.component.CollapsingAppBarDefaults.MaxAppBarHeight
 import flow.designsystem.component.CollapsingAppBarDefaults.MinAppBarHeight
 import flow.designsystem.component.CollapsingAppBarDefaults.MinHeight
 import flow.designsystem.theme.AppTheme
+import flow.designsystem.theme.FlowTheme
 import kotlin.math.roundToInt
 
 @Composable
 fun CollapsingAppBar(
+    modifier: Modifier = Modifier,
+    isDark: Boolean = true,
+    backgroundImage: @Composable () -> Unit = {},
+    navigationIcon: @Composable () -> Unit = {},
+    title: @Composable () -> Unit = {},
+    actions: @Composable (RowScope.() -> Unit) = {},
+    additionalContent: @Composable () -> Unit = {},
+    appBarState: CollapsingAppBarState = rememberCollapsingAppBarState(),
+) {
+    FlowTheme(isDark = isDark) {
+        AppBarContainer {
+            CollapsingAppBar(
+                modifier = modifier,
+                backgroundImage = backgroundImage,
+                navigationIcon = navigationIcon,
+                title = title,
+                actions = actions,
+                additionalContent = additionalContent,
+                appBarState = appBarState,
+            )
+        }
+    }
+}
+
+@Composable
+internal fun CollapsingAppBar(
     modifier: Modifier = Modifier,
     backgroundImage: @Composable () -> Unit = {},
     navigationIcon: @Composable () -> Unit = {},
@@ -98,7 +125,7 @@ fun CollapsingAppBar(
         )
 
         @Composable
-        fun titleContent(collapseFraction: Float) {
+        fun titleContent() {
             Box(
                 modifier = Modifier
                     .statusBarsPadding()
@@ -108,12 +135,7 @@ fun CollapsingAppBar(
                     .fillMaxWidth(),
                 contentAlignment = Alignment.CenterStart,
             ) {
-                val textStyle = lerp(
-                    AppTheme.typography.headlineSmall,
-                    AppTheme.typography.titleMedium,
-                    collapseFraction,
-                )
-                ProvideTextStyle(textStyle) {
+                ProvideTextStyle(AppTheme.typography.titleMedium) {
                     title()
                 }
             }
@@ -125,7 +147,7 @@ fun CollapsingAppBar(
                 maxWidth = width - 2 * horizontalOffset,
                 maxHeight = Int.MAX_VALUE,
             ),
-            content = { titleContent(1f) },
+            content = { titleContent() },
         )
 
         val collapsedShrunkTitleSize = measure(
@@ -135,17 +157,12 @@ fun CollapsingAppBar(
                     maxOf(actionsPlaceable.width, horizontalOffset),
                 maxHeight = Int.MAX_VALUE,
             ),
-            content = { titleContent(1f) },
+            content = { titleContent() },
         )
 
         val titleAvailableHeight = height - additionalContentPlaceable.height
         val collapsedTitleAppBarHeight = (minHeight + collapsedTitleSize.height)
 
-        val heightCollapseFraction = coercedFraction(
-            max = maxHeight,
-            min = collapsedTitleAppBarHeight,
-            current = height,
-        )
         val widthCollapseFraction = coercedFraction(
             max = collapsedTitleAppBarHeight,
             min = collapsedShrunkTitleSize.height + additionalContentPlaceable.height,
@@ -162,9 +179,7 @@ fun CollapsingAppBar(
                 ),
                 maxHeight = titleAvailableHeight,
             ),
-            content = {
-                titleContent(heightCollapseFraction)
-            },
+            content = { titleContent() },
         )
 
         val backgroundImagePlaceable = measure(
@@ -179,15 +194,20 @@ fun CollapsingAppBar(
                 },
                 label = "CollapsingAppBar_Elevation"
             )
-            val color = AppTheme.colors.surface.atElevation(elevation)
-            val fade = color.copy(alpha = collapseFraction.coerceAtLeast(0.37f))
+            val color = lerp(
+                AppTheme.colors.surface,
+                AppTheme.colors.primaryContainer,
+                collapseFraction,
+            )
+            val fade = color.copy(alpha = collapseFraction)
             val gradientHeight = height.toFloat()
             val topGradientStop = maxOf(
                 navigationIconPlaceable.height,
                 actionsPlaceable.height,
                 MinHeight.roundToPx(),
             ) / gradientHeight
-            val bottomGradientStop = (height - additionalContentPlaceable.height) / gradientHeight
+            val bottomGradientStop =
+                (height - additionalContentPlaceable.height - titlePlaceable.height) / gradientHeight
             val gradient = Brush.verticalGradient(
                 0f to color,
                 topGradientStop to fade,

@@ -4,20 +4,16 @@ import flow.domain.model.LoadStates
 import flow.models.auth.AuthState
 import flow.models.topic.Post
 
-internal data class TopicPageState(
-    val authState: AuthState = AuthState.Unauthorized,
-    val topicState: TopicState = TopicState.Initial,
+internal data class TopicScreenState(
+    val favoriteState: TopicFavoriteState = TopicFavoriteState.Initial,
     val paginationState: PaginationState = PaginationState.Initial,
     val topicContent: TopicContent = TopicContent.Initial,
     val loadStates: LoadStates = LoadStates.Idle,
 )
 
-internal sealed interface TopicState {
-    object Initial : TopicState
-    data class Topic(
-        val name: String,
-        val isFavorite: Boolean,
-    ) : TopicState
+internal sealed interface TopicFavoriteState {
+    object Initial : TopicFavoriteState
+    data class FavoriteState(val favorite: Boolean) : TopicFavoriteState
 }
 
 internal sealed interface PaginationState {
@@ -33,3 +29,5 @@ internal sealed interface TopicContent {
     object Empty : TopicContent
     data class Posts(val posts: List<Post>) : TopicContent
 }
+
+internal data class TopicState(val title: String)

@@ -15,6 +15,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
 
             extensions.configure<ApplicationExtension> {
                 defaultConfig.targetSdk = 33
+                buildToolsVersion = "33.0.1"
                 configureKotlinAndroid(this)
                 configureAndroidCompose(this)
             }

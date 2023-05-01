@@ -1,38 +1,39 @@
 package flow.topic.torrent
 
-import flow.models.auth.AuthState
-import flow.models.topic.Torrent
+import flow.models.forum.Category
+import flow.models.topic.Author
+import flow.models.topic.TorrentDescription
+import flow.models.topic.TorrentStatus
 
-data class TorrentScreenState(
-    val authState: AuthState = AuthState.Unauthorized,
+internal data class TorrentScreenState(
     val favoriteState: TorrentFavoriteState = TorrentFavoriteState.Initial,
-    val torrentState: TorrentState,
     val downloadState: DownloadState = DownloadState.Initial,
 )
 
-sealed interface TorrentState {
-    val torrent: Torrent
-
-    data class Initial(
-        override val torrent: Torrent,
-    ) : TorrentState
-
-    data class Loaded(
-        override val torrent: Torrent,
-    ) : TorrentState
-
-    data class Error(
-        override val torrent: Torrent,
-    ) : TorrentState
-}
-
-sealed interface TorrentFavoriteState {
+internal sealed interface TorrentFavoriteState {
     object Initial : TorrentFavoriteState
     data class FavoriteState(val favorite: Boolean) : TorrentFavoriteState
 }
 
-sealed interface DownloadState {
+internal sealed interface DownloadState {
+    data class Completed(val uri: String) : DownloadState
+    object Error : DownloadState
     object Initial : DownloadState
     object Started : DownloadState
-    data class Downloaded(val uri: String) : DownloadState
 }
+
+internal data class TorrentState(
+    val title: String,
+    val posterImage: String?,
+    val author: Author?,
+    val category: Category?,
+    val status: TorrentStatus?,
+    val date: Long?,
+    val size: String?,
+    val seeds: Int?,
+    val leeches: Int?,
+    val magnetLink: String?,
+    val description: TorrentDescription?,
+    val showMagnetLink: Boolean,
+    val showTorrentFile: Boolean,
+)

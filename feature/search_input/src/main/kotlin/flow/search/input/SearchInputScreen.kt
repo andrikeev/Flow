@@ -136,7 +136,7 @@ private fun SuggestItem(
         modifier = Modifier.padding(horizontal = AppTheme.spaces.large),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon = FlowIcons.History, contentDescription = null)
+        Icon(icon = FlowIcons.History, contentDescription = null /* TODO: add contentDescription */)
         Box(
             modifier = Modifier
                 .weight(1f)

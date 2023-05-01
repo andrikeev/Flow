@@ -8,11 +8,14 @@ import javax.inject.Inject
 
 class GetTopicUseCase @Inject constructor(
     private val topicService: TopicService,
+    private val visitTopicUseCase: VisitTopicUseCase,
     private val dispatchers: Dispatchers,
 ) {
     suspend operator fun invoke(id: String): Topic {
         return withContext(dispatchers.default) {
-            topicService.getTopic(id)
+            topicService.getTopic(id).also {
+                visitTopicUseCase(it)
+            }
         }
     }
 }

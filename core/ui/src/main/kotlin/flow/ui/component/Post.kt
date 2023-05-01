@@ -241,14 +241,14 @@ private fun Image(src: String) {
     SubcomposeAsyncImage(
         modifier = Modifier.padding(AppTheme.spaces.extraSmall),
         model = src,
-        contentDescription = null,
+        contentDescription = null, //TODO: add contentDescription
     ) {
         when (painter.state) {
             AsyncImagePainter.State.Empty,
             is AsyncImagePainter.State.Success,
             -> Image(
                 painter = painter,
-                contentDescription = null,
+                contentDescription = null, //TODO: add contentDescription
             )
 
             is AsyncImagePainter.State.Loading -> CircularProgressIndicator(
@@ -259,7 +259,7 @@ private fun Image(src: String) {
                 modifier = Modifier.size(AppTheme.sizes.default),
                 icon = FlowIcons.ImagePlaceholder,
                 tint = AppTheme.colors.outline,
-                contentDescription = null,
+                contentDescription = null, //TODO: add contentDescription
             )
         }
     }

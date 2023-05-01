@@ -15,6 +15,7 @@ dependencies {
     api(libs.androidx.compose.ui.util)
     api(libs.androidx.compose.runtime)
 
+    implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.iconsExtended)
     implementation(libs.material3)

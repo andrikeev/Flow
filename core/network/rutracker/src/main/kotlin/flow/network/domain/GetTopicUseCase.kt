@@ -25,7 +25,7 @@ internal class GetTopicUseCase(
         }
     }
 
-    private fun parseTopic(html: String) = if (html.contains("magnet-link")) {
+    private fun parseTopic(html: String) = if (html.contains("magnet:?")) {
         parseTorrentUseCase(html)
     } else {
         parseCommentsPageUseCase(html)

@@ -15,14 +15,14 @@ class DownloadTorrentUseCase @Inject constructor(
     private val tokenProvider: TokenProvider,
     private val dispatchers: Dispatchers,
 ) {
-    suspend operator fun invoke(torrent: Torrent): String? {
+    suspend operator fun invoke(id: String, title: String): String? {
         return withContext(dispatchers.default) {
             val token = tokenProvider.getToken()
             downloadService.downloadTorrentFile(
                 DownloadRequest(
-                    id = torrent.id,
-                    title = torrent.title,
-                    uri = networkApiRepository.getDownloadUri(torrent.id),
+                    id = id,
+                    title = title,
+                    uri = networkApiRepository.getDownloadUri(id),
                     headers = listOf(networkApiRepository.getAuthHeader(token)),
                 )
             )

@@ -58,9 +58,6 @@ internal class VisitedViewModel @Inject constructor(
     }
 
     private fun onTopicClick(topicModel: TopicModel<out Topic>) = intent {
-        when (val topic = topicModel.topic) {
-            is BaseTopic -> postSideEffect(VisitedSideEffect.OpenTopic(topic))
-            is Torrent -> postSideEffect(VisitedSideEffect.OpenTorrent(topic))
-        }
+        postSideEffect(VisitedSideEffect.OpenTopic(topicModel.topic.id))
     }
 }

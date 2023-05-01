@@ -53,9 +53,9 @@ data class NavigationAnimations(
         )
 
         fun slideInLeft() = slideInHorizontally { it / 4 } + fadeIn()
-        fun slideOutLeft() = fadeOut() + slideOutHorizontally { it / 4 }
+        fun slideOutLeft() = fadeOut() + slideOutHorizontally { it }
         fun slideInRight() = slideInHorizontally { -it / 4 } + fadeIn()
-        fun slideOutRight() = fadeOut() + slideOutHorizontally { -it / 4 }
+        fun slideOutRight() = fadeOut() + slideOutHorizontally { -it }
     }
 }
 

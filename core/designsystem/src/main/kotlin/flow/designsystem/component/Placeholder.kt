@@ -185,6 +185,6 @@ internal fun Illustration(
 ) = Image(
     modifier = Modifier.size(160.dp),
     painter = painterResource(resId),
-    contentDescription = null,
+    contentDescription = null, //TODO: add contentDescription
     colorFilter = ColorFilter.tint(color = AppTheme.colors.primary),
 )

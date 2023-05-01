@@ -59,6 +59,10 @@ class FavoritesRepositoryImpl @Inject constructor(
     override suspend fun add(topics: List<Topic>) {
         val topicsToAdd = topics
             .map(Topic::toFavoriteEntity)
+            .mapIndexed { index, entity ->
+                // To save order
+                entity.copy(timestamp = entity.timestamp - index)
+            }
             .associateBy(FavoriteTopicEntity::id)
         val oldTopicIds = favoriteTopicDao.getAllIds().toSet()
         val newTopicEntities = topicsToAdd
@@ -131,8 +135,8 @@ class FavoritesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun update(topic: Topic) {
-        favoriteTopicDao.update(topic.id)
+    override suspend fun markVisited(id: String) {
+        favoriteTopicDao.clearHasUpdates(id)
     }
 
     override suspend fun clear() {

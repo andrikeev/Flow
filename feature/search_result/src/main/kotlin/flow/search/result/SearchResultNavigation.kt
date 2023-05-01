@@ -7,7 +7,6 @@ import flow.models.search.Order
 import flow.models.search.Period
 import flow.models.search.Sort
 import flow.models.topic.Author
-import flow.models.topic.Torrent
 import flow.navigation.NavigationController
 import flow.navigation.model.NavigationArgument
 import flow.navigation.model.NavigationDeepLink
@@ -31,9 +30,9 @@ private const val SearchResultRoute = "search_result"
 context(NavigationGraphBuilder)
 fun addSearchResult(
     back: () -> Unit,
-    openSearchInput: (Filter) -> Unit,
-    openSearchResult: (Filter) -> Unit,
-    openTorrent: (Torrent) -> Unit,
+    openSearchInput: (filter: Filter) -> Unit,
+    openSearchResult: (filter: Filter) -> Unit,
+    openTopic: (id: String) -> Unit,
     deepLinkUrls: List<String> = emptyList(),
     animations: NavigationAnimations,
 ) = addDestination(
@@ -82,7 +81,7 @@ fun addSearchResult(
         back = back,
         openSearchInput = openSearchInput,
         openSearchResult = openSearchResult,
-        openTorrent = openTorrent,
+        openTopic = openTopic,
     )
 }
 

@@ -9,7 +9,7 @@ import flow.network.dto.search.SearchPeriodDto
 import flow.network.dto.search.SearchSortOrderDto
 import flow.network.dto.search.SearchSortTypeDto
 import flow.network.dto.topic.CommentsPageDto
-import flow.network.dto.topic.TopicDto
+import flow.network.dto.topic.ForumTopicDto
 import flow.network.dto.topic.TorrentDto
 import flow.network.dto.user.FavoritesDto
 import io.ktor.client.HttpClient
@@ -98,7 +98,7 @@ internal class ProxyNetworkApi(private val httpClient: HttpClient) : NetworkApi 
         token: String,
         id: String,
         page: Int?,
-    ): TopicDto = httpClient.get("/topic/$id") {
+    ): ForumTopicDto = httpClient.get("/topic/$id") {
         token(token)
         parameter("page", page)
     }.body()

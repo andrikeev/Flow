@@ -68,7 +68,7 @@ internal fun FilterCategoryItem(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        Icon(icon = FlowIcons.Forum, contentDescription = null)
+        Icon(icon = FlowIcons.Forum, contentDescription = null /* TODO: add contentDescription */)
     }
 }
 

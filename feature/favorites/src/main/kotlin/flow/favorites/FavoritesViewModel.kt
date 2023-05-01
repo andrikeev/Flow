@@ -31,10 +31,11 @@ class FavoritesViewModel @Inject constructor(
         onCreate = { observeFavorites() },
     )
 
-    fun perform(action: FavoritesAction) = intent {
+    fun perform(action: FavoritesAction) {
         when (action) {
-            is FavoritesAction.TopicClick -> postSideEffect(FavoritesSideEffect.OpenTopic(action.topics))
-            is FavoritesAction.TorrentClick -> postSideEffect(FavoritesSideEffect.OpenTorrent(action.torrent))
+            is FavoritesAction.TopicClick -> intent {
+                postSideEffect(FavoritesSideEffect.OpenTopic(action.topicModel.topic.id))
+            }
         }
     }
 
