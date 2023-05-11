@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.AppBarDefaults
-import flow.designsystem.component.AppBarState
+import flow.designsystem.component.PinnedAppBarState
 import flow.designsystem.component.Body
 import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.Button
@@ -76,7 +76,7 @@ private fun SearchScreen(
         topBar = {
             SearchScreenAppBar(
                 state = state,
-                appBarState = scrollBehavior.state,
+                appBarState = scrollBehavior.appBarState,
                 onAction = onAction,
             )
         }
@@ -118,7 +118,7 @@ private fun SearchScreen(
 @Composable
 private fun SearchScreenAppBar(
     state: SearchState,
-    appBarState: AppBarState,
+    appBarState: PinnedAppBarState,
     onAction: (SearchAction) -> Unit,
 ) = AppBar(
     title = { Text(stringResource(R.string.search_screen_title)) },

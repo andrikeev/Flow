@@ -42,7 +42,7 @@ internal class GetCategoryPageUseCase(private val api: RuTrackerInnerApi) {
             val subforumNodes = doc.select(".forumlink > a")
             val children = mutableListOf<CategoryDto>()
             for (subforumNode in subforumNodes) {
-                val id = requireIdFromUrl(subforumNode.url(), "f")
+                val id = subforumNode.queryParam("f")
                 val name = subforumNode.toStr()
                 val subforum = CategoryDto(id, name)
                 children.add(subforum)
@@ -52,7 +52,7 @@ internal class GetCategoryPageUseCase(private val api: RuTrackerInnerApi) {
             val topics = mutableListOf<ForumTopicDto>()
             for (topicNode in topicNodes) {
                 val id = topicNode.select("td").attr("id")
-                val authorId = getIdFromUrl(topicNode.select("a.topicAuthor").url(), "u")
+                val authorId = topicNode.select("a.topicAuthor").queryParamOrNull("u")
                 val authorName = topicNode.select("a.topicAuthor").toStr()
                 val seeds = topicNode.select(".seedmed").toIntOrNull()
                 val leeches = topicNode.select(".leechmed").toIntOrNull()

@@ -117,7 +117,7 @@ internal fun MenuScreen(
         topBar = {
             AppBar(
                 title = { Text(stringResource(R.string.menu_title)) },
-                appBarState = scrollBehavior.state,
+                appBarState = scrollBehavior.appBarState,
             )
         },
     ) { padding ->

@@ -9,10 +9,10 @@ import org.jsoup.Jsoup
 internal object ParseCommentsPageUseCase {
     operator fun invoke(html: String): CommentsPageDto {
         val doc = Jsoup.parse(html)
-        val id = requireIdFromUrl(doc.select("#topic-title").url(), "t")
+        val id = doc.select("#topic-title").queryParam("t")
         val title = doc.select("#topic-title").toStr()
         val categoryNode = doc.select(".nav.w100.pad_2").select("a")
-        val categoryId = requireIdFromUrl(categoryNode.last().url(), "f")
+        val categoryId = categoryNode.last().queryParam("f")
         val categoryName = categoryNode.last().toStr()
 
         val firstPost = doc.select("tbody[id^=post]").first()
@@ -28,7 +28,7 @@ internal object ParseCommentsPageUseCase {
         val topicPosts = posts.map { post ->
             val postId = post.select(".post_body").attr("id").substringAfter("p-")
             val author = AuthorDto(
-                id = getIdFromUrl(post.select(".poster_btn").select(".txtb").first().urlOrNull(), "u"),
+                id = post.select(".poster_btn").select(".txtb").first().queryParamOrNull("u"),
                 name = post.select(".nick").text(),
                 avatarUrl = post.select(".avatar > img").attr("src")
             )

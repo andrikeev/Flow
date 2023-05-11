@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.AppBarDefaults
-import flow.designsystem.component.AppBarState
+import flow.designsystem.component.PinnedAppBarState
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.BookmarkButton
 import flow.designsystem.component.Dialog
@@ -31,8 +31,6 @@ import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.models.LoadState
 import flow.models.forum.Category
-import flow.models.topic.Topic
-import flow.models.topic.Torrent
 import flow.navigation.viewModel
 import flow.ui.component.CategoryListItem
 import flow.ui.component.TopicListItem
@@ -97,7 +95,7 @@ private fun CategoryScreen(
         topBar = {
             CategoryAppBar(
                 state = state.categoryState,
-                appBarState = scrollBehavior.state,
+                appBarState = scrollBehavior.appBarState,
                 onAction = onAction,
             )
         },
@@ -173,7 +171,7 @@ private fun CategoryScreenList(
 @Composable
 private fun CategoryAppBar(
     state: CategoryState,
-    appBarState: AppBarState,
+    appBarState: PinnedAppBarState,
     onAction: (CategoryAction) -> Unit,
 ) {
     AppBar(

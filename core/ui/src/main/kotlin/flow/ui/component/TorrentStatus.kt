@@ -38,7 +38,7 @@ fun TorrentStatus(
 ) = TorrentStatus(
     modifier = modifier,
     status = torrent.status,
-    date = torrent.date,
+    dateSeconds = torrent.date,
     size = torrent.size,
     seeds = torrent.seeds,
     leeches = torrent.leeches,
@@ -51,7 +51,8 @@ fun TorrentStatus(
 fun TorrentStatus(
     modifier: Modifier = Modifier,
     status: TorrentStatus? = null,
-    date: Long? = null,
+    dateSeconds: Long? = null,
+    date: String? = null,
     size: String? = null,
     seeds: Int? = null,
     leeches: Int? = null,
@@ -128,7 +129,7 @@ fun TorrentStatus(
                     Text(size)
                 }
             }
-            date?.let { date ->
+            dateSeconds?.let { date ->
                 withDivider {
                     Text(
                         DateFormat
@@ -136,6 +137,8 @@ fun TorrentStatus(
                             .format(date * 1000)
                     )
                 }
+            } ?: date?.let { date ->
+                withDivider { Text(date) }
             }
         }
     }

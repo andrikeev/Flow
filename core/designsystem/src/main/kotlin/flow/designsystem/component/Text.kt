@@ -8,6 +8,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -170,6 +171,44 @@ fun LabelLarge(
     style = AppTheme.typography.labelLarge,
     color = color,
 )
+
+@Composable
+@NonRestartableComposable
+fun ClickableText(
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    style: TextStyle = LocalTextStyle.current,
+    softWrap: Boolean = true,
+    overflow: TextOverflow = TextOverflow.Clip,
+    maxLines: Int = Int.MAX_VALUE,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+    onClick: (Int) -> Unit
+) {
+    val textColor = style.color.takeOrElse { LocalContentColor.current }
+    val mergedStyle = style.merge(
+        TextStyle(
+            color = textColor,
+            fontSize = style.fontSize,
+            fontWeight = style.fontWeight,
+            textAlign = style.textAlign,
+            lineHeight = style.lineHeight,
+            fontFamily = style.fontFamily,
+            textDecoration = style.textDecoration,
+            fontStyle = style.fontStyle,
+            letterSpacing = style.letterSpacing,
+        )
+    )
+    androidx.compose.foundation.text.ClickableText(
+        text = text,
+        modifier = modifier,
+        style = mergedStyle,
+        softWrap = softWrap,
+        overflow = overflow,
+        maxLines = maxLines,
+        onTextLayout = onTextLayout,
+        onClick = onClick,
+    )
+}
 
 @Composable
 fun ProvideTextStyle(value: TextStyle, content: @Composable () -> Unit) {

@@ -2,6 +2,12 @@
     <string name="topic_action_comments">Comments</string>
     <string name="topic_action_magnet" translatable="false">Magnet</string>
     <string name="topic_action_torrent" translatable="false">Torrent</string>
+    <string name="topic_action_show_pagination">Show pagination</string>
+    <string name="topic_action_hide_pagination">Hide pagination</string>
+    <string name="topic_action_first_page">First page</string>
+    <string name="topic_action_previous_page">Previous page</string>
+    <string name="topic_action_next_page">Next page</string>
+    <string name="topic_action_last_page">Last page</string>
     <string name="topic_author_label">Author:</string>
     <string name="topic_category_label">Category:</string>
     <string name="topic_empty_content_subtitle">Could not find any content for this torrent</string>

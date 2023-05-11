@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="topic_action_comments">Комментарии</string>
+    <string name="topic_action_show_pagination">Показать навигацию по страницам</string>
+    <string name="topic_action_hide_pagination">Скрыть навигацию по страницам</string>
+    <string name="topic_action_first_page">Первая страница</string>
+    <string name="topic_action_previous_page">Предыдущая страница</string>
+    <string name="topic_action_next_page">Следующая страница</string>
+    <string name="topic_action_last_page">Последняя страница</string>
     <string name="topic_author_label">Автор:</string>
     <string name="topic_category_label">Форум:</string>
     <string name="topic_empty_content_subtitle">Не удалось найти описание раздачи</string>

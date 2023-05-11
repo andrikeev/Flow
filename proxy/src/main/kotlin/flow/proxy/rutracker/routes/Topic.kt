@@ -25,6 +25,16 @@ internal fun Application.configureTopicRoutes() {
             )
         }
 
+        get("/topic2/{id}") {
+            call.respond(
+                api.getTopicPage(
+                    token = call.request.authToken,
+                    id = call.parameters.getOrFail("id"),
+                    page = call.request.queryParameters["page"]?.toIntOrNull(),
+                )
+            )
+        }
+
         get("/comments/{id}") {
             call.respond(
                 api.getCommentsPage(

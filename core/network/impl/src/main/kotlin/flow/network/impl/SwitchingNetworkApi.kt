@@ -67,6 +67,12 @@ class SwitchingNetworkApi @Inject constructor(
         page: Int?,
     ) = api().getTopic(token, id, page)
 
+    override suspend fun getTopicPage(
+        token: String,
+        id: String,
+        page: Int?
+    ) = api().getTopicPage(token, id, page)
+
     override suspend fun getCommentsPage(
         token: String,
         id: String,

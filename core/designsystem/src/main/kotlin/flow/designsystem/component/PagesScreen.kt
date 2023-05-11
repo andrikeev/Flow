@@ -31,7 +31,7 @@ fun PagesScreen(
                         pagerState.animateScrollToPage(page = page)
                     }
                 },
-                appBarState = scrollBehavior.state,
+                appBarState = scrollBehavior.appBarState,
             )
         },
         bottomBar = bottomBar,

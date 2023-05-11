@@ -20,7 +20,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.AppBarDefaults
-import flow.designsystem.component.AppBarScrollBehavior
+import flow.designsystem.component.PinnedAppBarBehavior
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.Icon
 import flow.designsystem.component.IconButton
@@ -104,7 +104,7 @@ private fun SearchInputAppBar(
     onClearButtonClick: () -> Unit,
     onSubmitClick: () -> Unit,
     onBackClick: () -> Unit,
-    scrollBehavior: AppBarScrollBehavior,
+    scrollBehavior: PinnedAppBarBehavior,
 ) = AppBar(
     modifier = modifier,
     navigationIcon = { BackButton(onBackClick) },
@@ -118,7 +118,7 @@ private fun SearchInputAppBar(
             onSubmitClick = onSubmitClick,
         )
     },
-    appBarState = scrollBehavior.state,
+    appBarState = scrollBehavior.appBarState,
 )
 
 @Composable

@@ -1,13 +1,14 @@
 package flow.ui.component
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import flow.designsystem.component.Surface
 import flow.designsystem.component.ThemePreviews
 import flow.designsystem.theme.AppTheme
@@ -17,16 +18,16 @@ import flow.ui.R
 @Composable
 fun Avatar(url: String?) = RemoteImage(
     src = url,
-    contentDescription = null, //TODO: add contentDescription
+    contentDescription = null,
     onLoading = { AvatarPlaceholder() },
     onSuccess = { painter ->
         Image(
             modifier = Modifier
-                .padding(vertical = AppTheme.spaces.medium)
-                .size(AppTheme.sizes.default)
+                .size(44.dp)
                 .clip(AppTheme.shapes.circle),
             painter = painter,
-            contentDescription = null, //TODO: add contentDescription
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
         )
     },
     onError = { AvatarPlaceholder() },
@@ -36,7 +37,6 @@ fun Avatar(url: String?) = RemoteImage(
 private fun AvatarPlaceholder() {
     Image(
         modifier = Modifier
-            .padding(vertical = AppTheme.spaces.medium)
             .size(AppTheme.sizes.default)
             .clip(AppTheme.shapes.circle),
         painter = painterResource(

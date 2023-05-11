@@ -13,13 +13,10 @@ internal class GetCurrentProfileUseCase(
     }
 
     companion object {
-
         private fun parseUserId(html: String): String {
-            val doc = Jsoup.parse(html)
-            val userProfileUrl = requireNotNull(
-                doc.select("#logged-in-username").urlOrNull()
-            ) { "profile url is null" }
-            return requireNotNull(getIdFromUrl(userProfileUrl, "u")) { "user id not found" }
+            return Jsoup.parse(html)
+                .select("#logged-in-username")
+                .queryParam("u")
         }
     }
 }

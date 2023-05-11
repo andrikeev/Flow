@@ -55,13 +55,11 @@ internal class GetFavoritesUseCase(
                     val title = getTitle(fullTitle)
                     val tags = getTags(fullTitle)
                     val status = ParseTorrentStatusUseCase(element)
-                    val authorId = getIdFromUrl(element.select(".topicAuthor").urlOrNull(), "u")
+                    val authorId = element.select(".topicAuthor").queryParamOrNull("u")
                     val authorName = element.select(".topicAuthor > .topicAuthor").text()
-                    val author = authorName.let { AuthorDto(id = authorId, name = it) }
-                    val categoryId = requireIdFromUrl(
-                        element.select(".t-forum-cell").select("a").last().url(),
-                        "f"
-                    )
+                    val author = AuthorDto(id = authorId, name = authorName)
+                    val categoryId =
+                        element.select(".t-forum-cell").select("a").last().queryParam("f")
                     val categoryName = element.select(".t-forum-cell > .ts-text").toStr()
                     val category = CategoryDto(categoryId, categoryName)
                     if (status != null) {

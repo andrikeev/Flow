@@ -8,12 +8,16 @@ import flow.models.topic.BaseTopic
 import flow.models.topic.Post
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
+import flow.models.topic.TopicPage
 import flow.models.topic.Torrent
+import flow.models.topic.TorrentData
 import flow.models.topic.TorrentStatus
 import flow.network.dto.topic.AuthorDto
+import flow.network.dto.topic.TopicPageDto
 import flow.network.dto.topic.CommentsPageDto
 import flow.network.dto.topic.ForumTopicDto
 import flow.network.dto.topic.TopicDto
+import flow.network.dto.topic.TorrentDataDto
 import flow.network.dto.topic.TorrentDto
 import flow.network.dto.topic.TorrentStatusDto
 import flow.network.dto.user.FavoritesDto
@@ -26,6 +30,29 @@ internal fun ForumTopicDto.toTopic(): Topic = when (this) {
     is CommentsPageDto -> BaseTopic(id, title, author?.toAuthor(), category?.toCategory())
     is TopicDto -> BaseTopic(id, title, author?.toAuthor(), category?.toCategory())
     is TorrentDto -> toTorrent()
+}
+
+internal fun TopicPageDto.toTopicPage(): TopicPage {
+    return TopicPage(
+        id = id,
+        title = title,
+        author = author?.toAuthor(),
+        category = category?.toCategory(),
+        torrentData = torrentData?.toTorrentData(),
+        commentsPage = Page(
+            page = commentsPage.page,
+            pages = commentsPage.pages,
+            items = commentsPage.posts.toPosts(),
+        ),
+    )
+}
+
+internal fun TopicPageDto.toCommentsPage(): Page<Post> {
+    return Page(
+        page = commentsPage.page,
+        pages = commentsPage.pages,
+        items = commentsPage.posts.toPosts(),
+    )
 }
 
 internal fun AuthorDto.toAuthor(): Author = Author(id, name, avatarUrl)
@@ -42,10 +69,17 @@ internal fun TorrentDto.toTorrent(): Torrent = Torrent(
     seeds = seeds,
     leeches = leeches,
     magnetLink = magnetLink,
-    description = description?.toTorrentDescription(),
 )
 
-internal fun CommentsPageDto.toCommentsPage(): Page<Post> = Page(page = page, pages = pages, items = posts.toPosts())
+internal fun TorrentDataDto.toTorrentData() = TorrentData(
+    posterUrl = posterUrl,
+    status = status?.toStatus(),
+    date = date,
+    size = size,
+    seeds = seeds,
+    leeches = leeches,
+    magnetLink = magnetLink,
+)
 
 internal fun TorrentStatusDto.toStatus(): TorrentStatus = when (this) {
     TorrentStatusDto.Duplicate -> TorrentStatus.DUPLICATE
@@ -142,30 +176,18 @@ internal fun VisitedTopicEntity.toTopic(): Topic {
     }
 }
 
-internal fun Topic.toVisitedEntity(): VisitedTopicEntity {
+internal fun TopicPage.toVisitedEntity(): VisitedTopicEntity {
     val timestamp = System.currentTimeMillis()
-    return when (this) {
-        is BaseTopic -> VisitedTopicEntity(
-            id = id,
-            timestamp = timestamp,
-            title = title,
-            author = author,
-            category = category,
-        )
-
-        is Torrent -> VisitedTopicEntity(
-            id = id,
-            timestamp = timestamp,
-            title = title,
-            author = author,
-            category = category,
-            tags = tags,
-            status = status,
-            date = date,
-            size = size,
-            seeds = seeds,
-            leeches = leeches,
-            magnetLink = magnetLink,
-        )
-    }
+    return VisitedTopicEntity(
+        id = id,
+        timestamp = timestamp,
+        title = title,
+        author = author,
+        category = category,
+        status = torrentData?.status,
+        size = torrentData?.size,
+        seeds = torrentData?.seeds,
+        leeches = torrentData?.leeches,
+        magnetLink = torrentData?.magnetLink,
+    )
 }

@@ -31,9 +31,8 @@ import flow.search.input.addSearchInput
 import flow.search.input.openSearchInput
 import flow.search.result.addSearchResult
 import flow.search.result.openSearchResult
-import flow.topic.open.addTopic
-import flow.topic.open.openComments
-import flow.topic.open.openTopic
+import flow.topic.addTopic
+import flow.topic.openTopic
 import flow.visited.VisitedScreen
 import me.rutrackersearch.app.R
 
@@ -73,7 +72,6 @@ fun MobileNavigation(navigationController: NavigationController) {
             addTopic(
                 back = ::popBackStack,
                 openCategory = { openCategory(it) },
-                openComments = { openComments(it) },
                 openLogin = { openLogin() },
                 openSearch = { openSearchResult(it) },
                 deepLinkUrls = DeepLinks.topicUrls,

@@ -6,6 +6,7 @@ import flow.data.converters.toVisitedEntity
 import flow.database.dao.VisitedTopicDao
 import flow.database.entity.VisitedTopicEntity
 import flow.models.topic.Topic
+import flow.models.topic.TopicPage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -23,7 +24,7 @@ class VisitedRepositoryImpl @Inject constructor(
         return visitedTopicDao.observerAllIds()
     }
 
-    override suspend fun add(topic: Topic) {
+    override suspend fun add(topic: TopicPage) {
         visitedTopicDao.insert(topic.toVisitedEntity())
     }
 

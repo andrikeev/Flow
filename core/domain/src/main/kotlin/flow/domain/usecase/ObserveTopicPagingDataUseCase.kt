@@ -23,7 +23,7 @@ class ObserveTopicPagingDataUseCase @Inject constructor(
         scope: CoroutineScope,
     ): Flow<PagingData<List<Post>>> {
         return PagingDataLoader(
-            fetchData = { page -> topicService.getCommentsPage(id, page) },
+            fetchData = { page -> topicService.getTopicPage(id, page).commentsPage },
             transform = { posts -> flowOf(posts) },
             actions = actions.onStart { refresh() },
             scope = scope,

@@ -8,6 +8,7 @@ import flow.network.dto.search.SearchPageDto
 import flow.network.dto.search.SearchPeriodDto
 import flow.network.dto.search.SearchSortOrderDto
 import flow.network.dto.search.SearchSortTypeDto
+import flow.network.dto.topic.TopicPageDto
 import flow.network.dto.topic.CommentsPageDto
 import flow.network.dto.topic.ForumTopicDto
 import flow.network.dto.topic.TorrentDto
@@ -39,6 +40,7 @@ interface NetworkApi {
         page: Int?,
     ): SearchPageDto
     suspend fun getTopic(token: String, id: String, page: Int?): ForumTopicDto
+    suspend fun getTopicPage(token: String, id: String, page: Int?): TopicPageDto
     suspend fun getCommentsPage(token: String, id: String, page: Int?): CommentsPageDto
     suspend fun addComment(token: String, topicId: String, message: String): Boolean
     suspend fun getTorrent(token: String, id: String): TorrentDto

@@ -20,7 +20,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
@@ -55,7 +54,7 @@ fun AppBar(
     navigationIcon: @Composable () -> Unit = {},
     title: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
-    appBarState: AppBarState = rememberAppBarState(),
+    appBarState: PinnedAppBarState = rememberAppBarState(),
 ) = AppBarContainer(
     modifier = modifier,
     appBarState = appBarState,
@@ -75,7 +74,7 @@ fun ExpandableAppBar(
     title: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     expanded: Boolean,
-    appBarState: AppBarState = rememberAppBarState(),
+    appBarState: PinnedAppBarState = rememberAppBarState(),
     expandableContent: @Composable () -> Unit = {},
 ) = AppBarContainer(
     modifier = modifier,
@@ -103,7 +102,7 @@ fun TabAppBar(
     pages: List<Page>,
     selectedPage: Int,
     onSelectPage: (Int) -> Unit,
-    appBarState: AppBarState = rememberAppBarState(),
+    appBarState: PinnedAppBarState = rememberAppBarState(),
 ) = AppBarContainer(
     modifier = modifier,
     appBarState = appBarState,
@@ -138,7 +137,7 @@ fun TabAppBar(
 @Composable
 internal fun AppBarContainer(
     modifier: Modifier = Modifier,
-    appBarState: AppBarState = rememberAppBarState(),
+    appBarState: PinnedAppBarState = rememberAppBarState(),
     content: @Composable BoxScope.() -> Unit,
 ) {
     val systemUiController = rememberSystemUiController()
@@ -187,27 +186,35 @@ private fun AppBar(
 )
 
 @Stable
-interface AppBarScrollBehavior {
-    val state: AppBarState
+interface AppBarBehavior {
+    val appBarState: AppBarState
     val nestedScrollConnection: NestedScrollConnection
 }
 
 @Stable
-class AppBarState internal constructor(initialElevation: Boolean) {
+interface PinnedAppBarBehavior: AppBarBehavior {
+    override val appBarState: PinnedAppBarState
+}
+
+@Stable
+interface AppBarState
+
+@Stable
+class PinnedAppBarState internal constructor(initialElevation: Boolean): AppBarState {
     var elevated by mutableStateOf(initialElevation)
         internal set
 
     companion object {
-        val Saver: Saver<AppBarState, *> = listSaver(save = { listOf(it.elevated) }, restore = {
-            AppBarState(initialElevation = it[0])
+        val Saver: Saver<PinnedAppBarState, *> = listSaver(save = { listOf(it.elevated) }, restore = {
+            PinnedAppBarState(initialElevation = it[0])
         })
     }
 }
 
 @Composable
-fun rememberAppBarState(): AppBarState {
-    return rememberSaveable(saver = AppBarState.Saver) {
-        AppBarState(false)
+fun rememberAppBarState(initial: Boolean = false): PinnedAppBarState {
+    return rememberSaveable(saver = PinnedAppBarState.Saver) {
+        PinnedAppBarState(initial)
     }
 }
 
@@ -216,7 +223,7 @@ object AppBarDefaults {
     val Height: Dp = 64.dp
 
     @Composable
-    fun appBarScrollBehavior(): AppBarScrollBehavior {
+    fun appBarScrollBehavior(): PinnedAppBarBehavior {
         val appBarState = rememberAppBarState()
         val pinnedScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         val heightOffsetLimit = with(LocalDensity.current) { -(Height.toPx()) }
@@ -225,13 +232,13 @@ object AppBarDefaults {
                 pinnedScrollBehavior.state.heightOffsetLimit = heightOffsetLimit
             }
         }
-        return DelegateAppBarScrollBehavior(appBarState, pinnedScrollBehavior)
+        return DelegatePinnedAppBarBehavior(appBarState, pinnedScrollBehavior)
     }
 
-    private class DelegateAppBarScrollBehavior(
-        override val state: AppBarState,
+    private class DelegatePinnedAppBarBehavior(
+        override val appBarState: PinnedAppBarState,
         private val scrollBehavior: TopAppBarScrollBehavior,
-    ) : AppBarScrollBehavior {
+    ) : PinnedAppBarBehavior {
         override val nestedScrollConnection = object : NestedScrollConnection {
             override fun onPostScroll(
                 consumed: Offset,
@@ -239,7 +246,7 @@ object AppBarDefaults {
                 source: NestedScrollSource,
             ): Offset {
                 scrollBehavior.nestedScrollConnection.onPostScroll(consumed, available, source)
-                state.elevated = scrollBehavior.state.overlappedFraction > 0.01f
+                appBarState.elevated = scrollBehavior.state.overlappedFraction > 0.01f
                 return Offset.Zero
             }
         }
@@ -257,7 +264,7 @@ private fun AppBarPreview(@PreviewParameter(AppBarParamsProvider::class) params:
                 SearchButton {}
                 FavoriteButton(favorite = true) {}
             },
-            appBarState = AppBarState(params.elevated),
+            appBarState = PinnedAppBarState(params.elevated),
         )
     }
 }
@@ -276,7 +283,7 @@ private fun ExpandableAppBarPreview(
                 IconButton(onClick = {}) { ExpandCollapseIcon(expanded = params.expanded) }
             },
             expanded = params.expanded,
-            appBarState = AppBarState(params.elevated),
+            appBarState = PinnedAppBarState(params.elevated),
         ) {
             Column(
                 modifier = Modifier
@@ -316,7 +323,7 @@ private fun TabBarPreview(@PreviewParameter(AppBarParamsProvider::class) params:
             ),
             selectedPage = 1,
             onSelectPage = {},
-            appBarState = AppBarState(params.elevated),
+            appBarState = PinnedAppBarState(params.elevated),
         )
     }
 }

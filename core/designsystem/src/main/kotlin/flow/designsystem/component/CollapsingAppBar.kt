@@ -291,7 +291,7 @@ private object CollapsingAppBarDefaults {
 class CollapsingAppBarState(
     defaultMinHeight: Int,
     defaultMaxHeight: Int,
-) {
+): AppBarState {
     private var isDefaultMinHeight = true
     private var isDefaultMaxHeight = true
 
@@ -321,13 +321,13 @@ class CollapsingAppBarState(
 
 @Stable
 class CollapsingAppBarBehavior(
-    val collapsingAppBarState: CollapsingAppBarState,
-) {
-    private val minHeight get() = collapsingAppBarState.minHeight.value
-    private val maxHeight get() = collapsingAppBarState.maxHeight.value
-    private val height get() = collapsingAppBarState.height.value
+    override val appBarState: CollapsingAppBarState,
+): AppBarBehavior {
+    private val minHeight get() = appBarState.minHeight.value
+    private val maxHeight get() = appBarState.maxHeight.value
+    private val height get() = appBarState.height.value
 
-    val nesterScrollConnection = object : NestedScrollConnection {
+    override val nestedScrollConnection = object : NestedScrollConnection {
         override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
             val offset = available.y
             return if (offset < 0) {
@@ -335,7 +335,7 @@ class CollapsingAppBarBehavior(
                     x = 0f,
                     y = maxOf(offset, (minHeight - height).toFloat())
                 ).also { (_, consumedYOffset) ->
-                    collapsingAppBarState.height.value += consumedYOffset.roundToInt()
+                    appBarState.height.value += consumedYOffset.roundToInt()
                 }
             } else {
                 super.onPreScroll(available, source)
@@ -353,7 +353,7 @@ class CollapsingAppBarBehavior(
                     x = 0f,
                     y = minOf(offset, (maxHeight - height).toFloat())
                 ).also { (_, consumedYOffset) ->
-                    collapsingAppBarState.height.value += consumedYOffset.roundToInt()
+                    appBarState.height.value += consumedYOffset.roundToInt()
                 }
             } else {
                 super.onPostScroll(consumed, available, source)

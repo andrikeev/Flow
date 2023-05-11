@@ -2,6 +2,7 @@ package flow.testing.repository
 
 import flow.data.api.repository.VisitedRepository
 import flow.models.topic.Topic
+import flow.models.topic.TopicPage
 import kotlinx.coroutines.flow.Flow
 
 class TestVisitedRepository : VisitedRepository {
@@ -13,7 +14,7 @@ class TestVisitedRepository : VisitedRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun add(topic: Topic) {
+    override suspend fun add(topic: TopicPage) {
         TODO("Not yet implemented")
     }
 

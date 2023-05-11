@@ -36,6 +36,8 @@ import flow.ui.platform.LocalShareLinkHandler
 import flow.ui.platform.OpenFileHandler
 import flow.ui.platform.OpenLinkHandler
 import flow.ui.platform.ShareLinkHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -66,6 +68,12 @@ open class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
+        var animationCompleted = false
+
+        lifecycleScope.launch(Dispatchers.Default) {
+            delay(800)
+            animationCompleted = true
+        }
 
         setDecorFitsSystemWindows(window, false)
         window.statusBarColor = Color.TRANSPARENT
@@ -81,7 +89,9 @@ open class MainActivity : ComponentActivity() {
                     .collect()
             }
         }
-        splashScreen.setKeepOnScreenCondition { theme == null }
+        splashScreen.setKeepOnScreenCondition {
+            theme == null || !animationCompleted
+        }
 
         setContent {
             theme?.let { theme ->

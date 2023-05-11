@@ -8,6 +8,7 @@ import flow.network.dto.search.SearchPageDto
 import flow.network.dto.search.SearchPeriodDto
 import flow.network.dto.search.SearchSortOrderDto
 import flow.network.dto.search.SearchSortTypeDto
+import flow.network.dto.topic.TopicPageDto
 import flow.network.dto.topic.CommentsPageDto
 import flow.network.dto.topic.ForumTopicDto
 import flow.network.dto.topic.TorrentDto
@@ -99,6 +100,15 @@ internal class ProxyNetworkApi(private val httpClient: HttpClient) : NetworkApi 
         id: String,
         page: Int?,
     ): ForumTopicDto = httpClient.get("/topic/$id") {
+        token(token)
+        parameter("page", page)
+    }.body()
+
+    override suspend fun getTopicPage(
+        token: String,
+        id: String,
+        page: Int?,
+    ): TopicPageDto = httpClient.get("/topic2/$id") {
         token(token)
         parameter("page", page)
     }.body()

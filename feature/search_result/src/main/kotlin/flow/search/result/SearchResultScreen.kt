@@ -19,7 +19,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import flow.designsystem.component.AppBarDefaults
-import flow.designsystem.component.AppBarState
+import flow.designsystem.component.PinnedAppBarState
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.BadgeBox
 import flow.designsystem.component.BodyLarge
@@ -77,7 +77,7 @@ private fun SearchResultScreen(
             SearchAppBar(
                 state = state,
                 onAction = onAction,
-                appBarState = scrollBehavior.state,
+                appBarState = scrollBehavior.appBarState,
             )
         },
         content = { padding ->
@@ -96,7 +96,7 @@ private fun SearchResultScreen(
 private fun SearchAppBar(
     state: SearchPageState,
     onAction: (SearchResultAction) -> Unit,
-    appBarState: AppBarState,
+    appBarState: PinnedAppBarState,
 ) {
     ExpandableAppBar(
         navigationIcon = { BackButton { onAction(SearchResultAction.BackClick) } },

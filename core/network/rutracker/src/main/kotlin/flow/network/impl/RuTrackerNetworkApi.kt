@@ -5,6 +5,7 @@ import flow.network.domain.AddCommentUseCase
 import flow.network.domain.AddFavoriteUseCase
 import flow.network.domain.CheckAuthorisedUseCase
 import flow.network.domain.GetCategoryPageUseCase
+import flow.network.domain.GetTopicPageUseCase
 import flow.network.domain.GetCommentsPageUseCase
 import flow.network.domain.GetFavoritesUseCase
 import flow.network.domain.GetForumUseCase
@@ -28,6 +29,7 @@ internal class RuTrackerNetworkApi(
     private val getForumUseCase: GetForumUseCase,
     private val getSearchPageUseCase: GetSearchPageUseCase,
     private val getTopicUseCase: GetTopicUseCase,
+    private val getTopicPageUseCase: GetTopicPageUseCase,
     private val getTorrentFileUseCase: GetTorrentFileUseCase,
     private val getTorrentUseCase: GetTorrentUseCase,
     private val loginUseCase: LoginUseCase,
@@ -70,6 +72,12 @@ internal class RuTrackerNetworkApi(
         id: String,
         page: Int?,
     ) = getTopicUseCase.invoke(token, id, page)
+
+    override suspend fun getTopicPage(
+        token: String,
+        id: String,
+        page: Int?,
+    ) = getTopicPageUseCase.invoke(token, id, page)
 
     override suspend fun getCommentsPage(
         token: String,

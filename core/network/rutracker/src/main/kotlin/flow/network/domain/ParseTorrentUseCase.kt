@@ -9,16 +9,15 @@ import org.jsoup.Jsoup
 internal object ParseTorrentUseCase {
     operator fun invoke(html: String): TorrentDto {
         val doc = Jsoup.parse(html)
-        val id = requireIdFromUrl(doc.select("#topic-title").url(), "t")
+        val id = doc.select("#topic-title").queryParam("t")
         val author = doc.select(".nick").first()?.text()?.let {
-            val authorId =
-                getIdFromUrl(doc.select(".poster_btn").select(".txtb").first().urlOrNull(), "u")
+            val authorId = doc.select(".poster_btn").select(".txtb").first().queryParamOrNull("u")
             AuthorDto(id = authorId, name = it)
         }
         val title = getTitle(doc.select("#topic-title").toStr())
         val tags = getTags(doc.select("#topic-title").toStr())
         val categoryNode = doc.select(".nav.w100.pad_2").select("a").last()
-        val categoryId = requireIdFromUrl(categoryNode.url(), "f")
+        val categoryId = categoryNode.queryParam("f")
         val categoryName = categoryNode.toStr()
         val magnetLink = doc.select(".magnet-link").url()
         val header = doc.select("table.forumline.dl_list > tbody > tr")

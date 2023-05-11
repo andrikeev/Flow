@@ -6,10 +6,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.EnrichTopicsUseCase
 import flow.domain.usecase.ObserveVisitedUseCase
 import flow.domain.usecase.ToggleFavoriteUseCase
-import flow.models.topic.BaseTopic
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
-import flow.models.topic.Torrent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map

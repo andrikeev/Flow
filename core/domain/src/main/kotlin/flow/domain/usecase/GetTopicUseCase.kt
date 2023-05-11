@@ -2,7 +2,7 @@ package flow.domain.usecase
 
 import flow.data.api.service.TopicService
 import flow.dispatchers.api.Dispatchers
-import flow.models.topic.Topic
+import flow.models.topic.TopicPage
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -11,9 +11,9 @@ class GetTopicUseCase @Inject constructor(
     private val visitTopicUseCase: VisitTopicUseCase,
     private val dispatchers: Dispatchers,
 ) {
-    suspend operator fun invoke(id: String): Topic {
+    suspend operator fun invoke(id: String): TopicPage {
         return withContext(dispatchers.default) {
-            topicService.getTopic(id).also {
+            topicService.getTopicPage(id).also {
                 visitTopicUseCase(it)
             }
         }

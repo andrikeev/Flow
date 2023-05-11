@@ -7,21 +7,60 @@ import java.util.regex.Pattern
 import kotlin.math.ln
 import kotlin.math.pow
 
-internal fun Element?.toInt(default: Int = 0): Int = this?.text()?.toIntOrNull() ?: default
-internal fun Elements?.toInt(default: Int = 0): Int = this?.text()?.toIntOrNull() ?: default
-internal fun Elements?.toIntOrNull(): Int? = this?.text()?.toIntOrNull()
-internal fun Element?.toStr(): String = this?.text().orEmpty()
-internal fun Elements?.toStr(): String = this?.text().orEmpty()
-internal fun Elements?.urlOrNull(): String? = this?.attr("href")
-internal fun Element?.urlOrNull(): String? = this?.attr("href")
-internal fun Element?.url(): String = requireNotNull(this.urlOrNull()) { "url not found" }
-internal fun Elements?.url(): String = requireNotNull(this.urlOrNull()) { "url not found" }
-internal fun getIdFromUrl(url: String?, key: String): String? {
-    return url?.let { parseUrl(url)[key]?.firstOrNull() }
+internal fun Element?.toInt(default: Int = 0): Int {
+    return this?.text()?.toIntOrNull() ?: default
 }
 
-internal fun requireIdFromUrl(url: String, key: String): String {
-    return requireNotNull(parseUrl(url)[key]?.firstOrNull()) { "query param not found in url" }
+internal fun Element?.toStr(): String {
+    return this?.text().orEmpty()
+}
+
+internal fun Element?.urlOrNull(): String? {
+    return this?.attr("href")
+}
+
+internal fun Element?.url(): String {
+    return requireNotNull(urlOrNull()) { "url not found in $this" }
+}
+
+internal fun Element?.queryParamOrNull(key: String): String? {
+    return urlOrNull()?.let(::parseUrl)?.get(key)?.firstOrNull()
+}
+
+internal fun Element?.queryParam(key: String): String {
+    return requireNotNull(queryParamOrNull(key)) { "query param not found in $this" }
+}
+
+internal fun Elements?.toIntOrNull(): Int? {
+    return this?.text()?.toIntOrNull()
+}
+
+internal fun Elements?.toInt(default: Int = 0): Int {
+    return this?.toIntOrNull() ?: default
+}
+
+internal fun Elements?.toStrOrNull(): String? {
+    return this?.text()
+}
+
+internal fun Elements?.toStr(): String {
+    return this?.text().orEmpty()
+}
+
+internal fun Elements?.urlOrNull(): String? {
+    return this?.attr("href")
+}
+
+internal fun Elements?.url(): String {
+    return requireNotNull(urlOrNull()) { "url not found in $this" }
+}
+
+internal fun Elements?.queryParamOrNull(key: String): String? {
+    return urlOrNull()?.let(::parseUrl)?.get(key)?.firstOrNull()
+}
+
+internal fun Elements?.queryParam(key: String): String {
+    return requireNotNull(queryParamOrNull(key)) { "query param not found in $this" }
 }
 
 internal fun isTopicExists(html: String): Boolean {
@@ -58,15 +97,11 @@ internal fun formatSize(sizeBytes: Long): String {
     return String.format("%.1f %sB", sizeBytes / 1024.0.pow(exp.toDouble()), pre)
 }
 
-private fun parseUrl(url: String): Map<String, List<String>> {
-    return try {
-        URI.create(url)
-            .query.split("&")
-            .associate { queryParam ->
-                val split = queryParam.split("=")
-                split[0] to split.drop(1)
-            }
-    } catch (e: Exception) {
-        emptyMap()
-    }
-}
+private fun parseUrl(url: String) = runCatching {
+    URI.create(url)
+        .query.split("&")
+        .associate { queryParam ->
+            val split = queryParam.split("=")
+            split[0] to split.drop(1)
+        }
+}.getOrDefault(emptyMap())
