@@ -72,6 +72,7 @@ internal fun TorrentDto.toTorrent(): Torrent = Torrent(
 )
 
 internal fun TorrentDataDto.toTorrentData() = TorrentData(
+    tags = tags,
     posterUrl = posterUrl,
     status = status?.toStatus(),
     date = date,
@@ -184,6 +185,7 @@ internal fun TopicPage.toVisitedEntity(): VisitedTopicEntity {
         title = title,
         author = author,
         category = category,
+        tags = torrentData?.tags,
         status = torrentData?.status,
         size = torrentData?.size,
         seeds = torrentData?.seeds,

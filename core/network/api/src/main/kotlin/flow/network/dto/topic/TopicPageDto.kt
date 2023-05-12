@@ -15,6 +15,7 @@ data class TopicPageDto(
 
 @Serializable
 data class TorrentDataDto(
+    val tags: String? = null,
     val posterUrl: String? = null,
     val status: TorrentStatusDto? = null,
     val date: String? = null,
