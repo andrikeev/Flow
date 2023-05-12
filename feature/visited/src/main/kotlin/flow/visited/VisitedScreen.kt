@@ -1,5 +1,6 @@
 package flow.visited
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -41,8 +42,11 @@ private fun VisitedScreen(
 private fun VisitedScreen(
     state: VisitedState,
     onAction: (VisitedAction) -> Unit,
-) {
-    when (state) {
+) = Crossfade(
+    targetState = state,
+    label = "VisitedScreen_Crossfade",
+) { targetState ->
+    when (targetState) {
         is VisitedState.Initial -> Loading()
         is VisitedState.Empty -> Empty(
             titleRes = R.string.visited_empty_title,
@@ -54,7 +58,7 @@ private fun VisitedScreen(
             contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
         ) {
             dividedItems(
-                items = state.items,
+                items = targetState.items,
                 key = { it.topic.id },
                 contentType = { it.topic::class },
             ) { item ->
