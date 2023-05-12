@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -25,7 +24,7 @@ fun Scaffold(
     bottomBar: @Composable () -> Unit = { Divider() },
     content: @Composable (PaddingValues) -> Unit,
 ) = MaterialDesignScaffold(
-    modifier = modifier.navigationBarsPadding(),
+    modifier = modifier.consumeWindowInsets(WindowInsets.navigationBars),
     topBar = topBar,
     bottomBar = bottomBar,
     floatingActionButton = floatingActionButton,
