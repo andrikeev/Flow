@@ -1,17 +1,12 @@
 package flow.visited
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import flow.domain.usecase.EnrichTopicsUseCase
 import flow.domain.usecase.ObserveVisitedUseCase
 import flow.domain.usecase.ToggleFavoriteUseCase
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -22,7 +17,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class VisitedViewModel @Inject constructor(
-    private val enrichTopicsUseCase: EnrichTopicsUseCase,
     private val observeVisitedUseCase: ObserveVisitedUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
 ) : ViewModel(), ContainerHost<VisitedState, VisitedSideEffect> {
@@ -38,20 +32,19 @@ internal class VisitedViewModel @Inject constructor(
         }
     }
 
-    private fun observeVisited() = viewModelScope.launch {
-        observeVisitedUseCase()
-            .flatMapLatest(enrichTopicsUseCase::invoke)
-            .map { items ->
+    private fun observeVisited() = intent {
+        observeVisitedUseCase().collectLatest { items ->
+            reduce {
                 if (items.isEmpty()) {
                     VisitedState.Empty
                 } else {
                     VisitedState.VisitedList(items)
                 }
             }
-            .collectLatest { state -> intent { reduce { state } } }
+        }
     }
 
-    private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = viewModelScope.launch {
+    private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = intent {
         toggleFavoriteUseCase(topicModel.topic.id)
     }
 
