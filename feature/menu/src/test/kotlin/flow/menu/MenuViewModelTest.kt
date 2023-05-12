@@ -5,10 +5,14 @@ import flow.domain.usecase.ClearHistoryUseCase
 import flow.domain.usecase.ClearLocalFavoritesUseCase
 import flow.domain.usecase.ObserveSettingsUseCase
 import flow.domain.usecase.SetBookmarksSyncPeriodUseCase
+import flow.domain.usecase.SetEndpointUseCase
 import flow.domain.usecase.SetFavoritesSyncPeriodUseCase
 import flow.domain.usecase.SetThemeUseCase
+import flow.models.settings.Endpoint
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
+import flow.testing.TestDispatchers
+import flow.testing.logger.TestLoggerFactory
 import flow.testing.repository.TestBookmarksRepository
 import flow.testing.repository.TestFavoritesRepository
 import flow.testing.repository.TestSearchHistoryRepository
@@ -35,29 +39,48 @@ class MenuViewModelTest {
     private val topicHistoryRepository = TestVisitedRepository()
     private val settingsRepository = TestSettingsRepository()
     private val backgroundService = TestBackgroundService()
+    private val dispatchers = TestDispatchers()
+    private val loggerFactory = TestLoggerFactory()
 
     private lateinit var viewModel: MenuViewModel
 
     @Before
     fun setUp() {
         viewModel = MenuViewModel(
-            clearBookmarksUseCase = ClearBookmarksUseCase(bookmarksRepository),
-            clearLocalFavoritesUseCase = ClearLocalFavoritesUseCase(favoritesRepository),
+            clearBookmarksUseCase = ClearBookmarksUseCase(
+                bookmarksRepository = bookmarksRepository,
+                dispatchers = dispatchers
+            ),
+            clearLocalFavoritesUseCase = ClearLocalFavoritesUseCase(
+                favoritesRepository = favoritesRepository,
+                dispatchers = dispatchers,
+            ),
             clearHistoryUseCase = ClearHistoryUseCase(
                 suggestsRepository = suggestsRepository,
                 searchHistoryRepository = searchHistoryRepository,
                 visitedRepository = topicHistoryRepository,
+                dispatchers = dispatchers,
             ),
-            observeSettingsUseCase = ObserveSettingsUseCase(settingsRepository),
+            observeSettingsUseCase = ObserveSettingsUseCase(
+                settingsRepository = settingsRepository,
+            ),
             setBookmarksSyncPeriodUseCase = SetBookmarksSyncPeriodUseCase(
                 settingsRepository = settingsRepository,
                 backgroundService = backgroundService,
+                dispatchers = dispatchers,
             ),
             setFavoritesSyncPeriodUseCase = SetFavoritesSyncPeriodUseCase(
                 settingsRepository = settingsRepository,
                 backgroundService = backgroundService,
+                dispatchers = dispatchers,
             ),
-            setThemeUseCase = SetThemeUseCase(settingsRepository),
+            setThemeUseCase = SetThemeUseCase(
+                settingsRepository = settingsRepository,
+            ),
+            setEndpointUseCase = SetEndpointUseCase(
+                settingsRepository = settingsRepository,
+            ),
+            loggerFactory = loggerFactory,
         )
     }
 
@@ -81,6 +104,22 @@ class MenuViewModelTest {
             states(
                 { this },
                 { copy(theme = Theme.DARK) },
+            )
+        }
+    }
+
+    @Test
+    fun `Set endpoint`() = runTest {
+        // set
+        val containerTest = viewModel.liveTest()
+        containerTest.runOnCreate()
+        // do
+        containerTest.testIntent { perform(MenuAction.SetEndpoint(Endpoint.RutrackerOrg)) }
+        // check
+        containerTest.assert(MenuState()) {
+            states(
+                { this },
+                { copy(endpoint = Endpoint.RutrackerOrg) },
             )
         }
     }
@@ -123,13 +162,27 @@ class MenuViewModelTest {
         val containerTest = viewModel.liveTest()
         containerTest.runOnCreate()
         // do
-        containerTest.testIntent { perform(MenuAction.ConfirmableAction(TestTitleId, TestMessageId, TestAction)) }
+        containerTest.testIntent {
+            perform(
+                MenuAction.ConfirmableAction(
+                    TestTitleId,
+                    TestMessageId,
+                    TestAction
+                )
+            )
+        }
         // check
         containerTest.assert(MenuState()) {
             states(
                 { this },
             )
-            postedSideEffects(MenuSideEffect.ShowConfirmation(TestTitleId, TestMessageId, TestAction))
+            postedSideEffects(
+                MenuSideEffect.ShowConfirmation(
+                    TestTitleId,
+                    TestMessageId,
+                    TestAction
+                )
+            )
         }
     }
 

@@ -359,7 +359,7 @@ private fun AboutAppDialog(state: DialogState) {
             icon = {
                 Icon(
                     icon = FlowIcons.AppIcon,
-                    contentDescription = null, //TODO: add contentDescription
+                    contentDescription = null,
                 )
             },
             iconContentColor = AppTheme.colors.primary,
