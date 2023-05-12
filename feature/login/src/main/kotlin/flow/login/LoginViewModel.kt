@@ -1,12 +1,12 @@
 package flow.login
 
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.LoginUseCase
 import flow.domain.usecase.ValidateInputUseCase
 import flow.logger.api.LoggerFactory
-import flow.models.InputState
 import flow.models.auth.AuthResult
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
@@ -37,16 +37,40 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun validateUsername(value: String) = intent {
-        reduce { state.copy(usernameInput = validateInputUseCase(value)) }
+    private fun validateUsername(value: TextFieldValue) = intent {
+        reduce {
+            state.copy(
+                usernameInput = if (validateInputUseCase(value.text)) {
+                    InputState.Valid(value)
+                } else {
+                    InputState.Empty
+                }
+            )
+        }
     }
 
-    private fun validatePassword(value: String) = intent {
-        reduce { state.copy(passwordInput = validateInputUseCase(value)) }
+    private fun validatePassword(value: TextFieldValue) = intent {
+        reduce {
+            state.copy(
+                passwordInput = if (validateInputUseCase(value.text)) {
+                    InputState.Valid(value)
+                } else {
+                    InputState.Empty
+                }
+            )
+        }
     }
 
-    private fun validateCaptcha(value: String) = intent {
-        reduce { state.copy(captchaInput = validateInputUseCase(value)) }
+    private fun validateCaptcha(value: TextFieldValue) = intent {
+        reduce {
+            state.copy(
+                captchaInput = if (validateInputUseCase(value.text)) {
+                    InputState.Valid(value)
+                } else {
+                    InputState.Empty
+                }
+            )
+        }
     }
 
     private fun submit() = viewModelScope.launch {
@@ -54,11 +78,11 @@ internal class LoginViewModel @Inject constructor(
             postSideEffect(LoginSideEffect.HideKeyboard)
             reduce { state.copy(isLoading = true) }
             val response = loginUseCase(
-                state.usernameInput.value,
-                state.passwordInput.value,
+                state.usernameInput.value.text,
+                state.passwordInput.value.text,
                 state.captcha?.id,
                 state.captcha?.code,
-                state.captchaInput.value,
+                state.captchaInput.value.text,
             )
             when (response) {
                 is AuthResult.Success -> {

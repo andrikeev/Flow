@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import flow.designsystem.component.Button
 import flow.designsystem.component.CircularProgressIndicator
 import flow.designsystem.component.Icon
@@ -24,7 +25,6 @@ import flow.designsystem.component.Text
 import flow.designsystem.component.TextField
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
-import flow.models.InputState
 import flow.models.auth.Captcha
 import flow.ui.component.RemoteImage
 
@@ -39,7 +39,7 @@ internal fun LoginScreenHeader() = Placeholder(
 internal fun UsernameInputField(
     modifier: Modifier = Modifier,
     state: LoginState,
-    onChanged: (String) -> Unit,
+    onChanged: (TextFieldValue) -> Unit,
     onSelectNext: () -> Unit,
 ) = TextField(
     modifier = modifier.padding(AppTheme.spaces.small),
@@ -79,7 +79,7 @@ internal fun UsernameInputField(
 internal fun PasswordInputField(
     modifier: Modifier = Modifier,
     state: LoginState,
-    onChanged: (String) -> Unit,
+    onChanged: (TextFieldValue) -> Unit,
     onSelectNext: () -> Unit,
     onSubmit: () -> Unit,
 ) = TextField(
@@ -126,7 +126,7 @@ internal fun PasswordInputField(
 internal fun CaptchaInputField(
     modifier: Modifier = Modifier,
     state: LoginState,
-    onChanged: (String) -> Unit,
+    onChanged: (TextFieldValue) -> Unit,
     onSubmit: () -> Unit,
 ) = TextField(
     modifier = modifier.padding(AppTheme.spaces.small),

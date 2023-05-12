@@ -1,6 +1,6 @@
 package flow.login
 
-import flow.models.InputState
+import androidx.compose.ui.text.input.TextFieldValue
 import flow.models.auth.Captcha
 
 data class LoginState(
@@ -10,6 +10,23 @@ data class LoginState(
     val captchaInput: InputState = InputState.Initial,
     val captcha: Captcha? = null,
 )
+
+sealed interface InputState {
+    val value: TextFieldValue
+        get() = TextFieldValue()
+
+    object Initial : InputState
+
+    object Empty : InputState
+
+    data class Valid(override val value: TextFieldValue) : InputState
+
+    data class Invalid(override val value: TextFieldValue) : InputState
+
+    fun isValid() = this is Valid
+
+    fun isError() = this is Invalid || this is Empty
+}
 
 val LoginState.hasCaptcha: Boolean
     get() = captcha != null

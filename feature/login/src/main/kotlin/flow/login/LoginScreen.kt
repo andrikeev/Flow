@@ -19,6 +19,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import flow.designsystem.component.LocalSnackbarHostState
 import flow.designsystem.component.Scaffold
@@ -26,7 +27,6 @@ import flow.designsystem.component.ThemePreviews
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
 import flow.login.LoginAction.SubmitClick
-import flow.models.InputState
 import flow.models.auth.Captcha
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
@@ -160,7 +160,7 @@ private fun LoginScreenPreview_ErrorState() {
         LoginScreen(
             state = LoginState(
                 usernameInput = InputState.Empty,
-                passwordInput = InputState.Invalid("123"),
+                passwordInput = InputState.Invalid(TextFieldValue("123")),
             ),
             onAction = {},
         )

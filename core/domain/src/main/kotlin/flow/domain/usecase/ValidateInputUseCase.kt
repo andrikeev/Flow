@@ -1,14 +1,9 @@
 package flow.domain.usecase
 
-import flow.models.InputState
 import javax.inject.Inject
 
 class ValidateInputUseCase @Inject constructor() {
-    operator fun invoke(text: String): InputState {
-        return if (text.isNotBlank()) {
-            InputState.Valid(text)
-        } else {
-            InputState.Empty
-        }
+    operator fun invoke(text: String): Boolean {
+        return text.isNotBlank()
     }
 }
