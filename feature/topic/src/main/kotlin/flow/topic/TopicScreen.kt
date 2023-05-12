@@ -176,7 +176,7 @@ private fun TopicAppBar(
     when (state.topicContent) {
         is TopicContent.Initial -> AppBar(
             navigationIcon = { BackButton { onAction(TopicAction.BackClick) } },
-            appBarState = rememberAppBarState(true),
+            appBarState = rememberAppBarState(false),
         )
 
         is TopicContent.Topic -> TopicAppBar(
