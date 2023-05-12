@@ -1,13 +1,11 @@
 package flow.forum
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.GetForumUseCase
 import flow.logger.api.LoggerFactory
 import flow.models.forum.ForumCategory
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -37,22 +35,18 @@ internal class ForumViewModel @Inject constructor(
         }
     }
 
-    private fun loadForum() {
+    private fun loadForum() = intent {
         logger.d { "Launch load forum" }
-        intent { reduce { ForumState.Loading } }
-        viewModelScope.launch {
-            runCatching {
-                coroutineScope { getForumUseCase() }
+        reduce { ForumState.Loading }
+        runCatching { coroutineScope { getForumUseCase() } }
+            .onSuccess { forum ->
+                logger.d { "Forum loaded" }
+                reduce { ForumState.Loaded(forum.children.map(::Expandable)) }
             }
-                .onSuccess { forum ->
-                    logger.d { "Forum loaded" }
-                    intent { reduce { ForumState.Loaded(forum.children.map(::Expandable)) } }
-                }
-                .onFailure { error ->
-                    logger.e(error) { "Forum load error" }
-                    intent { reduce { ForumState.Error(error) } }
-                }
-        }
+            .onFailure { error ->
+                logger.e(error) { "Forum load error" }
+                reduce { ForumState.Error(error) }
+            }
     }
 
     private fun onCategoryClick(category: ForumCategory) = intent {
@@ -60,17 +54,19 @@ internal class ForumViewModel @Inject constructor(
     }
 
     private fun onExpandClick(value: Expandable<ForumCategory>) = intent {
-        (state as? ForumState.Loaded)?.let { state ->
-            reduce {
-                state.copy(
+        reduce {
+            when (val state = state) {
+                is ForumState.Error -> state
+                is ForumState.Loaded -> state.copy(
                     forum = state.forum.map { expandable ->
-                        if (expandable.item.name == value.item.name) {
+                        if (expandable.item == value.item) {
                             expandable.copy(expanded = !expandable.expanded)
                         } else {
                             expandable
                         }
-                    },
+                    }
                 )
+                is ForumState.Loading -> state
             }
         }
     }

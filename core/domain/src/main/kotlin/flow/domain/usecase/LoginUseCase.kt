@@ -21,15 +21,12 @@ class LoginUseCase @Inject constructor(
     ): AuthResult {
         return withContext(dispatchers.default) {
             runCatching { authService.login(username, password, captchaSid, captchaCode, captchaValue) }
-                .fold(
-                    onSuccess = { result ->
-                        if (result == AuthResult.Success) {
-                            backgroundService.loadFavorites()
-                        }
-                        result
-                    },
-                    onFailure = AuthResult::Error
-                )
+                .onSuccess { result ->
+                    if (result == AuthResult.Success) {
+                        backgroundService.loadFavorites()
+                    }
+                }
+                .getOrElse(AuthResult::Error)
         }
     }
 }

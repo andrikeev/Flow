@@ -11,8 +11,8 @@ import flow.domain.model.refresh
 import flow.domain.model.retry
 import flow.domain.usecase.AddCommentUseCase
 import flow.domain.usecase.DownloadTorrentUseCase
-import flow.domain.usecase.IsAuthorizedUseCase
 import flow.domain.usecase.GetTopicUseCase
+import flow.domain.usecase.IsAuthorizedUseCase
 import flow.domain.usecase.ObserveFavoriteStateUseCase
 import flow.domain.usecase.ObserveTopicPagingDataUseCase
 import flow.domain.usecase.ToggleFavoriteUseCase
@@ -23,7 +23,6 @@ import flow.models.topic.Author
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -78,82 +77,78 @@ internal class TopicViewModel @Inject constructor(
         }
     }
 
-    private fun loadTopic() = viewModelScope.launch {
+    private fun loadTopic() = intent {
         runCatching { coroutineScope { getTopicUseCase(id) } }
             .onSuccess { topic ->
-                intent {
-                    reduce {
-                        val torrentData = topic.torrentData
-                        state.copy(
-                            topicContent = if (torrentData != null) {
-                                TopicContent.Torrent(
-                                    title = topic.title,
-                                    data = torrentData,
-                                )
-                            } else {
-                                TopicContent.Topic(topic.title)
-                            }
-                        )
-                    }
+                reduce {
+                    val torrentData = topic.torrentData
+                    state.copy(
+                        topicContent = if (torrentData != null) {
+                            TopicContent.Torrent(
+                                title = topic.title,
+                                data = torrentData,
+                            )
+                        } else {
+                            TopicContent.Topic(topic.title)
+                        }
+                    )
                 }
             }
             .onFailure { }
     }
 
-    private fun observeFavoritesState() = viewModelScope.launch {
+    private fun observeFavoritesState() = intent {
         observeFavoriteStateUseCase(id).collectLatest { isFavorite ->
             val favoriteState = TopicFavoriteState.FavoriteState(isFavorite)
-            intent { reduce { state.copy(favoriteState = favoriteState) } }
+            reduce { state.copy(favoriteState = favoriteState) }
         }
     }
 
-    private fun observePagingData() = viewModelScope.launch {
+    private fun observePagingData() = intent {
         observeTopicPagingDataUseCase(
             id = id,
             actions = pagingActions,
             scope = viewModelScope,
         ).collectLatest { (data, loadStates, pagination) ->
-            intent {
-                reduce {
-                    state.copy(
-                        paginationState = when (val paginationState = state.paginationState) {
-                            is PaginationState.Initial,
-                            is PaginationState.NoPagination -> if (pagination.totalPages > 1) {
-                                PaginationState.Pagination(
-                                    page = pagination.loadedPages.first,
-                                    loadedPages = pagination.loadedPages,
-                                    totalPages = pagination.totalPages,
-                                )
-                            } else {
-                                PaginationState.NoPagination
-                            }
+            reduce {
+                state.copy(
+                    paginationState = when (val paginationState = state.paginationState) {
+                        is PaginationState.Initial,
+                        is PaginationState.NoPagination -> if (pagination.totalPages > 1) {
+                            PaginationState.Pagination(
+                                page = pagination.loadedPages.first,
+                                loadedPages = pagination.loadedPages,
+                                totalPages = pagination.totalPages,
+                            )
+                        } else {
+                            PaginationState.NoPagination
+                        }
 
-                            is PaginationState.Pagination -> if (pagination.totalPages > 1) {
-                                paginationState.copy(
-                                    loadedPages = pagination.loadedPages,
-                                    totalPages = pagination.totalPages,
-                                )
-                            } else {
-                                PaginationState.NoPagination
-                            }
-                        },
-                        commentsContent = when {
-                            data == null -> CommentsContent.Initial
-                            data.isEmpty() -> CommentsContent.Empty
-                            else -> CommentsContent.Posts(data)
-                        },
-                        loadStates = loadStates,
-                    )
-                }
+                        is PaginationState.Pagination -> if (pagination.totalPages > 1) {
+                            paginationState.copy(
+                                loadedPages = pagination.loadedPages,
+                                totalPages = pagination.totalPages,
+                            )
+                        } else {
+                            PaginationState.NoPagination
+                        }
+                    },
+                    commentsContent = when {
+                        data == null -> CommentsContent.Initial
+                        data.isEmpty() -> CommentsContent.Empty
+                        else -> CommentsContent.Posts(data)
+                    },
+                    loadStates = loadStates,
+                )
             }
         }
     }
 
-    private fun onAddComment(comment: String) = viewModelScope.launch {
+    private fun onAddComment(comment: String) = intent {
         if (addCommentUseCase(id, comment)) {
             pagingActions.refresh()
         } else {
-            intent { postSideEffect(TopicSideEffect.ShowAddCommentError) }
+            postSideEffect(TopicSideEffect.ShowAddCommentError)
         }
     }
 
@@ -169,7 +164,7 @@ internal class TopicViewModel @Inject constructor(
         postSideEffect(TopicSideEffect.Back)
     }
 
-    private fun onFavoriteClick() = viewModelScope.launch {
+    private fun onFavoriteClick() = intent {
         toggleFavoriteUseCase(id)
     }
 
@@ -187,15 +182,15 @@ internal class TopicViewModel @Inject constructor(
         }
     }
 
-    private fun onGoToPage(page: Int) = viewModelScope.launch {
+    private fun onGoToPage(page: Int) = intent {
         pagingActions.refresh(page)
     }
 
-    private fun onListBottomReached() = viewModelScope.launch {
+    private fun onListBottomReached() = intent {
         pagingActions.append()
     }
 
-    private fun onListTopReached() = viewModelScope.launch {
+    private fun onListTopReached() = intent {
         pagingActions.prepend()
     }
 
@@ -204,7 +199,7 @@ internal class TopicViewModel @Inject constructor(
         postSideEffect(TopicSideEffect.ShareLink(link))
     }
 
-    private fun onRetryClick() = viewModelScope.launch {
+    private fun onRetryClick() = intent {
         pagingActions.retry()
     }
 

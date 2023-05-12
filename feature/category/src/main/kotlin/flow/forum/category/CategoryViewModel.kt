@@ -20,7 +20,6 @@ import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -67,55 +66,52 @@ internal class CategoryViewModel @Inject constructor(
         }
     }
 
-    private fun observeAuthState() = viewModelScope.launch {
+    private fun observeAuthState() = intent {
         logger.d { "Start observing auth state" }
         authStateUseCase().collectLatest { authState ->
-            intent { reduce { state.copy(authState = authState) } }
+            reduce { state.copy(authState = authState) }
         }
     }
 
-    private fun observeCategoryModel() = viewModelScope.launch {
+    private fun observeCategoryModel() = intent {
         logger.d { "Start observing category model" }
         observeCategoryModelUseCase(categoryId).collectLatest { categoryModel ->
             val categoryState = CategoryState.Category(
                 name = categoryModel.category.name,
                 isBookmark = categoryModel.isBookmark,
             )
-            intent { reduce { state.copy(categoryState = categoryState) } }
+            reduce { state.copy(categoryState = categoryState) }
         }
     }
 
-    private fun observePagingData() = viewModelScope.launch {
+    private fun observePagingData() = intent {
         logger.d { "Start observing paging data" }
         observeCategoryPagingDataUseCase(
             id = categoryId,
             actionsFlow = pagingActions,
             scope = viewModelScope,
-        )
-            .collectLatest { (data, loadStates) ->
-                intent {
-                    reduce {
-                        state.copy(
-                            categoryContent = when {
-                                data == null -> CategoryContent.Initial
-                                data.isEmpty() -> CategoryContent.Empty
-                                else -> CategoryContent.Content(
-                                    categories = data.categories,
-                                    topics = data.topics,
-                                )
-                            },
-                            loadStates = loadStates,
+        ).collectLatest { (data, loadStates) ->
+            reduce {
+                state.copy(
+                    categoryContent = when {
+                        data == null -> CategoryContent.Initial
+                        data.isEmpty() -> CategoryContent.Empty
+                        else -> CategoryContent.Content(
+                            categories = data.categories,
+                            topics = data.topics,
                         )
-                    }
-                }
+                    },
+                    loadStates = loadStates,
+                )
             }
+        }
     }
 
     private fun onBackClick() = intent {
         postSideEffect(CategorySideEffect.Back)
     }
 
-    private fun onBookmarkClick() = viewModelScope.launch {
+    private fun onBookmarkClick() = intent {
         toggleBookmarkUseCase(categoryId)
     }
 
@@ -123,11 +119,11 @@ internal class CategoryViewModel @Inject constructor(
         postSideEffect(CategorySideEffect.OpenCategory(category.id))
     }
 
-    private fun appendPage() = viewModelScope.launch {
+    private fun appendPage() = intent {
         pagingActions.append()
     }
 
-    private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = viewModelScope.launch {
+    private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = intent {
         toggleFavoriteUseCase(topicModel.topic.id)
     }
 
@@ -135,7 +131,7 @@ internal class CategoryViewModel @Inject constructor(
         postSideEffect(CategorySideEffect.OpenLogin)
     }
 
-    private fun onRetryClick() = viewModelScope.launch {
+    private fun onRetryClick() = intent {
         pagingActions.retry()
     }
 
