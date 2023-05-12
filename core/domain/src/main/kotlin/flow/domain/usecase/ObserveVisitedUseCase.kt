@@ -5,6 +5,7 @@ import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
 
@@ -14,7 +15,11 @@ class ObserveVisitedUseCase @Inject constructor(
 ) {
     operator fun invoke(): Flow<List<TopicModel<out Topic>>> {
         return visitedRepository.observeTopics()
-            .catch { visitedRepository.clear() }
             .flatMapLatest(enrichTopicsUseCase::invoke)
+            .distinctUntilChanged()
+            .catch {
+                visitedRepository.clear()
+                emit(emptyList())
+            }
     }
 }

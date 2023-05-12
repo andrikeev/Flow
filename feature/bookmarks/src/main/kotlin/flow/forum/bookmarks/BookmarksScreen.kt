@@ -30,12 +30,10 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun BookmarksScreen(
     openCategory: (String) -> Unit,
-) {
-    BookmarksScreen(
-        viewModel = viewModel(),
-        openCategory = openCategory,
-    )
-}
+) = BookmarksScreen(
+    viewModel = viewModel(),
+    openCategory = openCategory,
+)
 
 @Composable
 private fun BookmarksScreen(
@@ -97,7 +95,7 @@ private fun Bookmark(
         Icon(
             icon = FlowIcons.BookmarkChecked,
             tint = AppTheme.colors.primary,
-            contentDescription = null, //TODO: add contentDescription
+            contentDescription = null,
         )
         Box(
             modifier = Modifier
