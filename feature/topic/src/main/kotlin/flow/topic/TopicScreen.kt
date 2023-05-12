@@ -65,7 +65,6 @@ import flow.models.topic.Post
 import flow.models.topic.TextContent
 import flow.ui.component.Avatar
 import flow.ui.component.Post
-import flow.ui.component.RemoteImage
 import flow.ui.component.TorrentStatus
 import flow.ui.component.appendItems
 import flow.ui.component.emptyItem
@@ -571,64 +570,83 @@ private fun DownloadDialog(
     onAction: (TopicAction) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    Dialog(
-        icon = {
-            when (state) {
-                is DownloadState.Completed -> Icon(
+    when (state) {
+        is DownloadState.Completed -> Dialog(
+            icon = {
+                Icon(
                     icon = FlowIcons.FileDownloadDone,
                     contentDescription = null
                 )
+            },
+            title = {
+                Text(
+                    text = stringResource(R.string.topic_file_download_completed),
+                    textAlign = TextAlign.Center
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    text = stringResource(flow.designsystem.R.string.designsystem_action_open_file),
+                    onClick = {
+                        onDismiss()
+                        onAction(TopicAction.OpenFileClick(state.uri))
+                    },
+                )
+            },
+            dismissButton = {
+                TextButton(
+                    text = stringResource(flow.designsystem.R.string.designsystem_action_cancel),
+                    onClick = onDismiss,
+                )
+            },
+            onDismissRequest = onDismiss,
+        )
 
-                is DownloadState.Error -> Icon(
+        is DownloadState.Error -> Dialog(
+            icon = {
+                Icon(
                     icon = FlowIcons.Clear,
                     contentDescription = null
                 )
+            },
+            title = {
+                Text(
+                    text = stringResource(flow.ui.R.string.error_title),
+                    textAlign = TextAlign.Center
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    text = stringResource(flow.designsystem.R.string.designsystem_action_close),
+                    onClick = onDismiss,
+                )
+            },
+            onDismissRequest = onDismiss,
+        )
 
-                is DownloadState.Initial,
-                is DownloadState.Started -> CircularProgressIndicator(
+        is DownloadState.Initial,
+        is DownloadState.Started -> Dialog(
+            icon = {
+                CircularProgressIndicator(
                     modifier = Modifier.size(AppTheme.sizes.mediumSmall),
                     strokeWidth = 3.dp,
                 )
-            }
-        },
-        title = {
-            Text(
-                text = stringResource(
-                    when (state) {
-                        is DownloadState.Completed -> R.string.topic_file_download_completed
-                        is DownloadState.Error -> flow.ui.R.string.error_title
-                        is DownloadState.Initial,
-                        is DownloadState.Started -> R.string.topic_file_download_in_progress
-                    }
-                ),
-                textAlign = TextAlign.Center
-            )
-        },
-        confirmButton = {
-            when (state) {
-                is DownloadState.Completed -> {
-                    TextButton(
-                        text = stringResource(flow.designsystem.R.string.designsystem_action_open_file),
-                        onClick = {
-                            onDismiss()
-                            onAction(TopicAction.OpenFileClick(state.uri))
-                        },
-                    )
-                }
-
-                DownloadState.Error -> Unit
-                DownloadState.Initial -> Unit
-                DownloadState.Started -> Unit
-            }
-        },
-        dismissButton = {
-            TextButton(
-                text = stringResource(flow.designsystem.R.string.designsystem_action_cancel),
-                onClick = onDismiss,
-            )
-        },
-        onDismissRequest = onDismiss,
-    )
+            },
+            title = {
+                Text(
+                    text = stringResource(R.string.topic_file_download_in_progress),
+                    textAlign = TextAlign.Center
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    text = stringResource(flow.designsystem.R.string.designsystem_action_close),
+                    onClick = onDismiss,
+                )
+            },
+            onDismissRequest = onDismiss,
+        )
+    }
 }
 
 @Stable
@@ -666,6 +684,14 @@ private fun MagnetDialogPreview() {
         ) {
             MagnetDialog(link = "magnet://test", {}, {}, {})
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun DownloadDialogPreview() {
+    FlowTheme {
+        DownloadDialog(DownloadState.Completed(""), {}, {})
     }
 }
 
