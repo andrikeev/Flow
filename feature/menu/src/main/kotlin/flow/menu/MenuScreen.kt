@@ -246,6 +246,7 @@ private fun LazyListScope.menuSectionLabel(
         modifier = Modifier.padding(
             start = AppTheme.spaces.large,
             top = AppTheme.spaces.large,
+            end = AppTheme.spaces.large,
             bottom = AppTheme.spaces.small,
         ),
     ) {
