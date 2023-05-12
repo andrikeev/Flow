@@ -1,26 +1,52 @@
 package me.rutrackersearch.app.platform
 
-import androidx.compose.ui.platform.UriHandler
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import flow.logger.api.LoggerFactory
 import flow.ui.platform.OpenLinkHandler
 
 class OpenLinkHandlerImpl(
-    private val uriHandler: UriHandler,
+    private val context: Context,
     loggerFactory: LoggerFactory,
 ) : OpenLinkHandler {
     private val logger = loggerFactory.get("OpenLinkHandlerImpl")
 
     override fun openLink(link: String) {
         runCatching {
-            val url = if (link.startsWith("viewtopic") || link.startsWith("viewforum") || link.startsWith("tracker")) {
-                "https://rutracker.org/forum/$link"
-            } else {
-                link
+            logger.d { "Open link=$link" }
+            val uri = parseUri(link)
+            logger.d { "Open uri=$uri" }
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            if (isSupportedLink(uri)) {
+                intent.setPackage(context.packageName)
             }
-            logger.d { "Open link=$link; url=$url" }
-            uriHandler.openUri(url)
+            context.startActivity(intent)
         }.onFailure { error ->
             logger.e(error) { "Error open link=$link" }
         }
+    }
+
+    private fun parseUri(link: String): Uri {
+        val uri = Uri.parse(link)
+        return uri.buildUpon().apply {
+            if (uri.scheme.isNullOrBlank()) {
+                scheme("https")
+            }
+            if (uri.host.isNullOrBlank()) {
+                authority("rutracker.org")
+            }
+            if (uri.path?.startsWith("forum") == false) {
+                path("/forum/${uri.path}")
+            }
+        }.build()
+    }
+
+    private fun isSupportedLink(uri: Uri): Boolean {
+        return (uri.scheme == "http" || uri.scheme == "https") &&
+                (uri.host == "rutracker.org") &&
+                (uri.path == "/forum/viewtopic.php" ||
+                        uri.path == "/forum/viewforum.php" ||
+                        uri.path == "/forum/tracker.php")
     }
 }
