@@ -215,7 +215,7 @@ private object TextFieldDefaults {
         unfocusedLabelColor: Color = UnfocusedColor,
         disabledLabelColor: Color = DisabledColor,
         errorLabelColor: Color = ErrorColor,
-        focusedPlaceholderColor: Color = FocusedColor,
+        focusedPlaceholderColor: Color = UnfocusedColor,
         unfocusedPlaceholderColor: Color = UnfocusedColor,
         disabledPlaceholderColor: Color = DisabledColor,
         errorPlaceholderColor: Color = ErrorColor,
