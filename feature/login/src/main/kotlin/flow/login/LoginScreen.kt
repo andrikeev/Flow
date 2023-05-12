@@ -68,10 +68,15 @@ internal fun LoginScreen(
 
     fun submit() = onAction(SubmitClick)
 
-    Scaffold { paddingValues ->
+    Scaffold { padding ->
         Column(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(
+                    start = AppTheme.spaces.large,
+                    top = padding.calculateTopPadding(),
+                    end = AppTheme.spaces.large,
+                    bottom = padding.calculateBottomPadding(),
+                )
                 .imePadding()
                 .fillMaxSize()
                 .verticalScroll(scrollState)
@@ -93,7 +98,6 @@ internal fun LoginScreen(
                 state = state,
                 onChanged = { onAction(LoginAction.PasswordChanged(it)) },
                 onSelectNext = { focusManager.moveFocus(FocusDirection.Next) },
-                onSelectPrevious = { focusManager.moveFocus(FocusDirection.Previous) },
                 onSubmit = { submit() },
             )
             if (state.captcha != null) {
