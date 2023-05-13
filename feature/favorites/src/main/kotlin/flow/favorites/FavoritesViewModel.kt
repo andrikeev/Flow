@@ -1,6 +1,7 @@
 package flow.favorites
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.ObserveFavoritesUseCase
 import flow.logger.api.LoggerFactory
@@ -36,7 +37,7 @@ class FavoritesViewModel @Inject constructor(
 
     private fun observeFavorites() = intent {
         logger.d { "Start observing favorites" }
-        observeFavoritesUseCase().collectLatest { items ->
+        observeFavoritesUseCase(viewModelScope).collectLatest { items ->
             logger.d { "On new favorites list: $items" }
             reduce {
                 if (items.isEmpty()) {
