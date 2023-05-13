@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -19,20 +20,29 @@ import androidx.compose.material3.SnackbarHostState as MaterialSnackbarHostState
 @NonRestartableComposable
 fun Scaffold(
     modifier: Modifier = Modifier,
-    topBar: @Composable () -> Unit = {},
+    topBar: @Composable (AppBarState) -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = { Divider() },
     content: @Composable (PaddingValues) -> Unit,
-) = MaterialDesignScaffold(
-    modifier = modifier.consumeWindowInsets(WindowInsets.navigationBars),
-    topBar = topBar,
-    bottomBar = bottomBar,
-    floatingActionButton = floatingActionButton,
-    containerColor = AppTheme.colors.background,
-    contentColor = AppTheme.colors.onBackground,
-    contentWindowInsets = DefaultWindowInset,
-    content = content,
-)
+) {
+    val scrollState = rememberScrollState()
+    val appBarState = rememberPinnedAppBarState()
+    LaunchedEffect(scrollState.canScrollUp) {
+        appBarState.elevated = scrollState.canScrollUp
+    }
+    CompositionLocalProvider(LocalScrollState provides scrollState) {
+        MaterialDesignScaffold(
+            modifier = modifier.consumeWindowInsets(WindowInsets.navigationBars),
+            topBar = { topBar(appBarState) },
+            bottomBar = bottomBar,
+            floatingActionButton = floatingActionButton,
+            containerColor = AppTheme.colors.background,
+            contentColor = AppTheme.colors.onBackground,
+            contentWindowInsets = DefaultWindowInset,
+            content = content,
+        )
+    }
+}
 
 @Composable
 fun Scaffold(

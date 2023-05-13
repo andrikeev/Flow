@@ -9,12 +9,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import flow.designsystem.component.Divider
+import flow.designsystem.component.LazyList
 import flow.designsystem.theme.AppTheme
 import flow.forum.ForumAction.CategoryClick
 import flow.forum.ForumAction.ExpandClick
@@ -57,7 +57,7 @@ private fun ForumScreen(
 private fun ForumScreen(
     state: ForumState,
     onAction: (ForumAction) -> Unit,
-) = LazyColumn(
+) = LazyList(
     modifier = Modifier.fillMaxSize(),
     contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
 ) {
@@ -106,7 +106,7 @@ private fun RootCategory(
                     ),
                 )
                 if (index < rootCategory.children.lastIndex) {
-                    Divider(startIndent = AppTheme.spaces.extraLarge,)
+                    Divider(startIndent = AppTheme.spaces.extraLarge)
                 }
             }
         }

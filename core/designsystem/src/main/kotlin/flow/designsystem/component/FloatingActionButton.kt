@@ -5,33 +5,23 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
-import kotlinx.coroutines.launch
 
 @Composable
-fun ScrollBackFloatingActionButton(
-    scrollState: LazyListState,
-    modifier: Modifier = Modifier,
-) {
-    val coroutineScope = rememberCoroutineScope()
-    val showButton by remember { derivedStateOf { scrollState.firstVisibleItemIndex > 1 } }
+fun ScrollBackFloatingActionButton(modifier: Modifier = Modifier) {
+    val scrollState = LocalScrollState.current
     AnimatedVisibility(
-        visible = showButton,
+        visible = scrollState.canScrollUp,
         enter = fadeIn(),
         exit = fadeOut(),
     ) {
         Surface(
             modifier = modifier.size(AppTheme.sizes.default),
-            onClick = { coroutineScope.launch { scrollState.scrollToItem(0) } },
+            onClick = scrollState::scrollUp,
             color = AppTheme.colors.primaryContainer,
             shape = AppTheme.shapes.large,
             shadowElevation = AppTheme.elevations.medium,

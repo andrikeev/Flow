@@ -9,22 +9,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import flow.designsystem.component.AppBar
-import flow.designsystem.component.AppBarDefaults
-import flow.designsystem.component.PinnedAppBarState
+import flow.designsystem.component.AppBarState
 import flow.designsystem.component.Body
 import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.Button
 import flow.designsystem.component.CollectionPreviewParameterProvider
 import flow.designsystem.component.Empty
+import flow.designsystem.component.LazyList
 import flow.designsystem.component.Placeholder
 import flow.designsystem.component.Scaffold
 import flow.designsystem.component.SearchButton
@@ -69,46 +67,42 @@ internal fun SearchScreen(
 private fun SearchScreen(
     state: SearchState,
     onAction: (SearchAction) -> Unit,
-) {
-    val scrollBehavior = AppBarDefaults.appBarScrollBehavior()
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            SearchScreenAppBar(
-                state = state,
-                appBarState = scrollBehavior.appBarState,
-                onAction = onAction,
-            )
-        }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier.padding(padding),
-            contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
-        ) {
-            when (state) {
-                is SearchState.Unauthorised -> item {
-                    Unauthorized(
-                        modifier = Modifier.fillParentMaxSize(),
-                        onLoginClick = { onAction(SearchAction.LoginClick) }
+) = Scaffold(
+    topBar = { appBarState ->
+        SearchScreenAppBar(
+            state = state,
+            appBarState = appBarState,
+            onAction = onAction,
+        )
+    }
+) { padding ->
+    LazyList(
+        modifier = Modifier.padding(padding),
+        contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
+    ) {
+        when (state) {
+            is SearchState.Unauthorised -> item {
+                Unauthorized(
+                    modifier = Modifier.fillParentMaxSize(),
+                    onLoginClick = { onAction(SearchAction.LoginClick) }
+                )
+            }
+
+            is SearchState.Initial -> loadingItem()
+            is SearchState.Empty -> item {
+                Empty(modifier = Modifier.fillParentMaxSize())
+            }
+
+            is SearchState.SearchList -> {
+                dividedItems(
+                    items = state.items,
+                    key = Search::id,
+                    contentType = { it::class }
+                ) { search ->
+                    Search(
+                        search = search,
+                        onClick = { onAction(SearchAction.SearchItemClick(search)) },
                     )
-                }
-
-                is SearchState.Initial -> loadingItem()
-                is SearchState.Empty -> item {
-                    Empty(modifier = Modifier.fillParentMaxSize())
-                }
-
-                is SearchState.SearchList -> {
-                    dividedItems(
-                        items = state.items,
-                        key = Search::id,
-                        contentType = { it::class }
-                    ) { search ->
-                        Search(
-                            search = search,
-                            onClick = { onAction(SearchAction.SearchItemClick(search)) },
-                        )
-                    }
                 }
             }
         }
@@ -118,7 +112,7 @@ private fun SearchScreen(
 @Composable
 private fun SearchScreenAppBar(
     state: SearchState,
-    appBarState: PinnedAppBarState,
+    appBarState: AppBarState,
     onAction: (SearchAction) -> Unit,
 ) = AppBar(
     title = { Text(stringResource(R.string.search_screen_title)) },
@@ -193,8 +187,8 @@ private fun Search(
 @Composable
 private fun Filter.queryOrPeriod(): String {
     return query?.takeIf(String::isNotBlank)
-               ?.let { query -> stringResource(R.string.search_screen_history_item_query, query) }
-           ?: stringResource(R.string.search_screen_history_item_period, stringResource(period.resId))
+        ?.let { query -> stringResource(R.string.search_screen_history_item_query, query) }
+        ?: stringResource(R.string.search_screen_history_item_period, stringResource(period.resId))
 }
 
 @Composable
@@ -253,14 +247,25 @@ private class SearchStateProvider : CollectionPreviewParameterProvider<SearchSta
             Search(4, Filter(query = "The Witcher 3", order = Order.DESCENDING)),
             Search(5, Filter(period = Period.LAST_THREE_DAYS, sort = Sort.TITLE)),
             Search(6, Filter(query = "The Witcher 3", author = Author(name = "_aUtHoR_999"))),
-            Search(7, Filter(period = Period.LAST_TWO_WEEKS, author = Author(name = "_aUtHoR_999"))),
-            Search(8, Filter(period = Period.LAST_TWO_WEEKS, author = Author(id = "123123", name = ""))),
+            Search(
+                7,
+                Filter(period = Period.LAST_TWO_WEEKS, author = Author(name = "_aUtHoR_999"))
+            ),
+            Search(
+                8,
+                Filter(period = Period.LAST_TWO_WEEKS, author = Author(id = "123123", name = ""))
+            ),
             Search(
                 9,
                 Filter(
                     query = "Very very Very Very Very very long search query",
                     author = Author(name = "Very very Very Very Very very long name"),
-                    categories = listOf(Category("1", "Very very Very Very Very very long category name")),
+                    categories = listOf(
+                        Category(
+                            "1",
+                            "Very very Very Very Very very long category name"
+                        )
+                    ),
                 )
             ),
         )

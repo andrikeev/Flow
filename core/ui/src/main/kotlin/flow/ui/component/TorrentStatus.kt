@@ -24,6 +24,7 @@ import flow.models.topic.Author
 import flow.models.topic.Torrent
 import flow.models.topic.TorrentStatus
 import flow.models.topic.isValid
+import flow.ui.R
 
 @Composable
 fun TorrentStatus(
@@ -88,7 +89,7 @@ fun TorrentStatus(
                 Icon(
                     icon = status.icon,
                     tint = status.color,
-                    contentDescription = null, //TODO: add contentDescription
+                    contentDescription = status.contentDescription,
                 )
                 if (!status.isValid()) {
                     Text(
@@ -104,7 +105,7 @@ fun TorrentStatus(
                     Icon(
                         icon = FlowIcons.Seeds,
                         tint = AppTheme.colors.accentGreen,
-                        contentDescription = null, //TODO: add contentDescription
+                        contentDescription = stringResource(R.string.seeds),
                     )
                     Text(seeds.toString())
                 }
@@ -114,7 +115,7 @@ fun TorrentStatus(
                     Icon(
                         icon = FlowIcons.Leaches,
                         tint = AppTheme.colors.accentRed,
-                        contentDescription = null, //TODO: add contentDescription
+                        contentDescription = stringResource(R.string.leaches),
                     )
                     Text(leeches.toString())
                 }
@@ -124,7 +125,7 @@ fun TorrentStatus(
                     Icon(
                         icon = FlowIcons.File,
                         tint = AppTheme.colors.accentBlue,
-                        contentDescription = null, //TODO: add contentDescription
+                        contentDescription = stringResource(R.string.size),
                     )
                     Text(size)
                 }

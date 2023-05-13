@@ -4,7 +4,6 @@ import flow.auth.api.TokenProvider
 import flow.dispatchers.api.Dispatchers
 import flow.downloads.api.DownloadRequest
 import flow.downloads.api.DownloadService
-import flow.models.topic.Torrent
 import flow.network.data.NetworkApiRepository
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

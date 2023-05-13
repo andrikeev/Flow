@@ -6,24 +6,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import flow.designsystem.component.AppBar
-import flow.designsystem.component.AppBarDefaults
-import flow.designsystem.component.PinnedAppBarBehavior
+import flow.designsystem.component.AppBarState
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.Icon
 import flow.designsystem.component.IconButton
+import flow.designsystem.component.LazyList
 import flow.designsystem.component.Scaffold
 import flow.designsystem.component.SearchInputField
 import flow.designsystem.component.Surface
@@ -60,40 +58,36 @@ internal fun SearchInputScreen(
 private fun SearchInputScreen(
     state: SearchInputState,
     onAction: (SearchInputAction) -> Unit,
-) {
-    val scrollBehavior = AppBarDefaults.appBarScrollBehavior()
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            SearchInputAppBar(
-                inputValue = state.searchInput,
-                onInputValueChange = { onAction(SearchInputAction.InputChanged(it)) },
-                showClearButton = state.showClearButton,
-                onClearButtonClick = { onAction(SearchInputAction.ClearInputClick) },
-                onSubmitClick = { onAction(SearchInputAction.SubmitClick) },
-                onBackClick = { onAction(SearchInputAction.BackClick) },
-                scrollBehavior = scrollBehavior,
-            )
-        },
-        content = { padding ->
-            LazyColumn(
-                modifier = Modifier.padding(padding),
-                contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
-            ) {
-                items(
-                    items = state.suggests,
-                    key = { item -> item.value }
-                ) { item ->
-                    SuggestItem(
-                        suggest = item,
-                        onClick = { onAction(SearchInputAction.SuggestClick(item)) },
-                        onSubmit = { onAction(SearchInputAction.SuggestEditClick(item)) },
-                    )
-                }
+) = Scaffold(
+    topBar = { appBarState ->
+        SearchInputAppBar(
+            inputValue = state.searchInput,
+            onInputValueChange = { onAction(SearchInputAction.InputChanged(it)) },
+            showClearButton = state.showClearButton,
+            onClearButtonClick = { onAction(SearchInputAction.ClearInputClick) },
+            onSubmitClick = { onAction(SearchInputAction.SubmitClick) },
+            onBackClick = { onAction(SearchInputAction.BackClick) },
+            appBarState = appBarState,
+        )
+    },
+    content = { padding ->
+        LazyList(
+            modifier = Modifier.padding(padding),
+            contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
+        ) {
+            items(
+                items = state.suggests,
+                key = { item -> item.value }
+            ) { item ->
+                SuggestItem(
+                    suggest = item,
+                    onClick = { onAction(SearchInputAction.SuggestClick(item)) },
+                    onSubmit = { onAction(SearchInputAction.SuggestEditClick(item)) },
+                )
             }
-        },
-    )
-}
+        }
+    },
+)
 
 @Composable
 private fun SearchInputAppBar(
@@ -104,7 +98,7 @@ private fun SearchInputAppBar(
     onClearButtonClick: () -> Unit,
     onSubmitClick: () -> Unit,
     onBackClick: () -> Unit,
-    scrollBehavior: PinnedAppBarBehavior,
+    appBarState: AppBarState,
 ) = AppBar(
     modifier = modifier,
     navigationIcon = { BackButton(onBackClick) },
@@ -118,7 +112,7 @@ private fun SearchInputAppBar(
             onSubmitClick = onSubmitClick,
         )
     },
-    appBarState = scrollBehavior.appBarState,
+    appBarState = appBarState,
 )
 
 @Composable

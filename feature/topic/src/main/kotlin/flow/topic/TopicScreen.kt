@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import flow.designsystem.component.AppBar
+import flow.designsystem.component.AppBarState
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.Body
 import flow.designsystem.component.BodySmall
@@ -48,15 +49,14 @@ import flow.designsystem.component.Icon
 import flow.designsystem.component.IconButton
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.LocalSnackbarHostState
-import flow.designsystem.component.PinnedAppBarState
 import flow.designsystem.component.ProvideTextStyle
 import flow.designsystem.component.Scaffold
+import flow.designsystem.component.ScrollBackFloatingActionButton
 import flow.designsystem.component.SnackbarHostState
 import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
-import flow.designsystem.component.rememberAppBarState
 import flow.designsystem.component.rememberDialogState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
@@ -149,9 +149,10 @@ private fun TopicScreen(
     state: TopicState,
     onAction: (TopicAction) -> Unit,
 ) = Scaffold(
-    topBar = {
+    topBar = { appBarState ->
         TopicAppBar(
             state = state,
+            appBarState = appBarState,
             onAction = onAction,
         )
     },
@@ -162,37 +163,39 @@ private fun TopicScreen(
             onAction = onAction
         )
     },
+    floatingActionButton = { ScrollBackFloatingActionButton() },
     bottomBar = {
         Surface(
             tonalElevation = AppTheme.elevations.medium,
             shadowElevation = AppTheme.elevations.medium,
             content = { Pagination(state.paginationState, onAction) }
         )
-    }
+    },
 )
 
 @Composable
 private fun TopicAppBar(
     state: TopicState,
+    appBarState: AppBarState,
     onAction: (TopicAction) -> Unit,
 ) {
     when (state.topicContent) {
         is TopicContent.Initial -> AppBar(
             navigationIcon = { BackButton { onAction(TopicAction.BackClick) } },
-            appBarState = rememberAppBarState(false),
+            appBarState = appBarState,
         )
 
         is TopicContent.Topic -> TopicAppBar(
             topicContent = state.topicContent,
             favoriteState = state.favoriteState,
-            appBarState = rememberAppBarState(true),
+            appBarState = appBarState,
             onAction = onAction,
         )
 
         is TopicContent.Torrent -> TorrentAppBar(
             topicContent = state.topicContent,
             favoriteState = state.favoriteState,
-            appBarState = rememberAppBarState(true),
+            appBarState = appBarState,
             onAction = onAction,
         )
     }
@@ -202,7 +205,7 @@ private fun TopicAppBar(
 private fun TopicAppBar(
     topicContent: TopicContent.Topic,
     favoriteState: TopicFavoriteState,
-    appBarState: PinnedAppBarState,
+    appBarState: AppBarState,
     onAction: (TopicAction) -> Unit,
 ) = AppBar(
     navigationIcon = { BackButton { onAction(TopicAction.BackClick) } },
@@ -227,7 +230,7 @@ private fun TopicAppBar(
 private fun TorrentAppBar(
     topicContent: TopicContent.Torrent,
     favoriteState: TopicFavoriteState,
-    appBarState: PinnedAppBarState,
+    appBarState: AppBarState,
     onAction: (TopicAction) -> Unit,
 ) = ExpandableAppBar(
     navigationIcon = { BackButton { onAction(TopicAction.BackClick) } },
@@ -402,8 +405,8 @@ private fun Pagination(
 
 @Composable
 private fun TopicContent(
-    modifier: Modifier = Modifier,
     state: TopicState,
+    modifier: Modifier = Modifier,
     onAction: (TopicAction) -> Unit,
 ) = LazyList(
     modifier = modifier,

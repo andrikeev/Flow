@@ -7,7 +7,6 @@ import flow.models.search.Sort
 import flow.models.topic.Author
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
-import flow.models.topic.Torrent
 
 internal sealed interface SearchResultAction {
     data class FavoriteClick(val topicModel: TopicModel<out Topic>) : SearchResultAction

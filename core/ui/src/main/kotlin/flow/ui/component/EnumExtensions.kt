@@ -2,6 +2,7 @@ package flow.ui.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.drawables.Icon
 import flow.designsystem.theme.AppTheme
@@ -61,13 +62,25 @@ val TorrentStatus.color: Color
         TorrentStatus.CONSUMED -> AppTheme.colors.accentBlue
     }
 
+val TorrentStatus.contentDescription: String
+    @Composable get() = when (this) {
+        TorrentStatus.DUPLICATE -> stringResource(R.string.torrent_status_duplicate)
+        TorrentStatus.NOT_APPROVED -> stringResource(R.string.torrent_status_not_approved)
+        TorrentStatus.CHECKING -> stringResource(R.string.torrent_status_checking)
+        TorrentStatus.APPROVED -> stringResource(R.string.torrent_status_approved)
+        TorrentStatus.NEEDS_EDIT -> stringResource(R.string.torrent_status_needs_edit)
+        TorrentStatus.CLOSED -> stringResource(R.string.torrent_status_closed)
+        TorrentStatus.NO_DESCRIPTION -> stringResource(R.string.torrent_status_no_description)
+        TorrentStatus.CONSUMED -> stringResource(R.string.torrent_status_consumed)
+    }
+
 val TorrentStatus.resId: Int
     get() = when (this) {
         TorrentStatus.DUPLICATE -> R.string.torrent_status_duplicate
         TorrentStatus.NOT_APPROVED -> R.string.torrent_status_not_approved
         TorrentStatus.CHECKING -> R.string.torrent_status_checking
         TorrentStatus.APPROVED -> R.string.torrent_status_approved
-        TorrentStatus.NEEDS_EDIT -> R.string.torrent_status_need_edit
+        TorrentStatus.NEEDS_EDIT -> R.string.torrent_status_needs_edit
         TorrentStatus.CLOSED -> R.string.torrent_status_closed
         TorrentStatus.NO_DESCRIPTION -> R.string.torrent_status_no_description
         TorrentStatus.CONSUMED -> R.string.torrent_status_consumed

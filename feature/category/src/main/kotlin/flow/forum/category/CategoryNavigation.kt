@@ -1,8 +1,6 @@
 package flow.forum.category
 
 import androidx.lifecycle.SavedStateHandle
-import flow.models.topic.Topic
-import flow.models.topic.Torrent
 import flow.navigation.NavigationController
 import flow.navigation.model.NavigationArgument
 import flow.navigation.model.NavigationDeepLink

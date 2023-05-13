@@ -11,7 +11,7 @@ interface SnackbarHostState {
     )
 
     companion object {
-        object Stub: SnackbarHostState {
+        object Stub : SnackbarHostState {
             override suspend fun clear() = Unit
             override suspend fun showSnackbar(message: String, actionLabel: String?) = Unit
         }

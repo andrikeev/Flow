@@ -20,7 +20,15 @@ class LoginUseCase @Inject constructor(
         captchaValue: String?,
     ): AuthResult {
         return withContext(dispatchers.default) {
-            runCatching { authService.login(username, password, captchaSid, captchaCode, captchaValue) }
+            runCatching {
+                authService.login(
+                    username,
+                    password,
+                    captchaSid,
+                    captchaCode,
+                    captchaValue,
+                )
+            }
                 .onSuccess { result ->
                     if (result == AuthResult.Success) {
                         backgroundService.loadFavorites()

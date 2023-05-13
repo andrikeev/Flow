@@ -13,10 +13,10 @@ import flow.models.topic.Torrent
 import flow.models.topic.TorrentData
 import flow.models.topic.TorrentStatus
 import flow.network.dto.topic.AuthorDto
-import flow.network.dto.topic.TopicPageDto
 import flow.network.dto.topic.CommentsPageDto
 import flow.network.dto.topic.ForumTopicDto
 import flow.network.dto.topic.TopicDto
+import flow.network.dto.topic.TopicPageDto
 import flow.network.dto.topic.TorrentDataDto
 import flow.network.dto.topic.TorrentDto
 import flow.network.dto.topic.TorrentStatusDto

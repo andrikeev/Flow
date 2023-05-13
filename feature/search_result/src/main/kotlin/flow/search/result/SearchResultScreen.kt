@@ -7,19 +7,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import flow.designsystem.component.AppBarDefaults
-import flow.designsystem.component.PinnedAppBarState
+import flow.designsystem.component.AppBarState
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.BadgeBox
 import flow.designsystem.component.BodyLarge
@@ -68,67 +64,59 @@ internal fun SearchResultScreen(
 private fun SearchResultScreen(
     state: SearchPageState,
     onAction: (SearchResultAction) -> Unit,
-) {
-    val scrollState = rememberLazyListState()
-    val scrollBehavior = AppBarDefaults.appBarScrollBehavior()
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            SearchAppBar(
-                state = state,
-                onAction = onAction,
-                appBarState = scrollBehavior.appBarState,
-            )
-        },
-        content = { padding ->
-            SearchResultList(
-                modifier = Modifier.padding(padding),
-                state = state,
-                scrollState = scrollState,
-                onAction = onAction,
-            )
-        },
-        floatingActionButton = { ScrollBackFloatingActionButton(scrollState) },
-    )
-}
+) = Scaffold(
+    topBar = { appBarState ->
+        SearchAppBar(
+            state = state,
+            onAction = onAction,
+            appBarState = appBarState,
+        )
+    },
+    content = { padding ->
+        SearchResultList(
+            modifier = Modifier.padding(padding),
+            state = state,
+            onAction = onAction,
+        )
+    },
+    floatingActionButton = { ScrollBackFloatingActionButton() },
+)
 
 @Composable
 private fun SearchAppBar(
     state: SearchPageState,
     onAction: (SearchResultAction) -> Unit,
-    appBarState: PinnedAppBarState,
-) {
-    ExpandableAppBar(
-        navigationIcon = { BackButton { onAction(SearchResultAction.BackClick) } },
-        title = {
-            SearchTextItem(
-                modifier = Modifier.fillMaxWidth(),
-                filter = state.filter,
-                onClick = { onAction(SearchResultAction.SearchClick) },
-            )
-        },
-        actions = {
-            FilterButton(
-                expanded = state.appBarExpanded,
-                showBadge = state.showFilterBadge,
-                onClick = { onAction(SearchResultAction.ExpandAppBarClick) }
-            )
-        },
-        expanded = state.appBarExpanded,
-        expandableContent = {
-            FilterBar(
-                filter = state.filter,
-                categories = state.categories,
-                onSelectSort = { onAction(SearchResultAction.SetSort(it)) },
-                onSelectOrder = { onAction(SearchResultAction.SetOrder(it)) },
-                onSelectPeriod = { onAction(SearchResultAction.SetPeriod(it)) },
-                onSelectAuthor = { onAction(SearchResultAction.SetAuthor(it)) },
-                onSelectCategories = { onAction(SearchResultAction.SetCategories(it)) },
-            )
-        },
-        appBarState = appBarState,
-    )
-}
+    appBarState: AppBarState,
+) = ExpandableAppBar(
+    navigationIcon = { BackButton { onAction(SearchResultAction.BackClick) } },
+    title = {
+        SearchTextItem(
+            modifier = Modifier.fillMaxWidth(),
+            filter = state.filter,
+            onClick = { onAction(SearchResultAction.SearchClick) },
+        )
+    },
+    actions = {
+        FilterButton(
+            expanded = state.appBarExpanded,
+            showBadge = state.showFilterBadge,
+            onClick = { onAction(SearchResultAction.ExpandAppBarClick) }
+        )
+    },
+    expanded = state.appBarExpanded,
+    expandableContent = {
+        FilterBar(
+            filter = state.filter,
+            categories = state.categories,
+            onSelectSort = { onAction(SearchResultAction.SetSort(it)) },
+            onSelectOrder = { onAction(SearchResultAction.SetOrder(it)) },
+            onSelectPeriod = { onAction(SearchResultAction.SetPeriod(it)) },
+            onSelectAuthor = { onAction(SearchResultAction.SetAuthor(it)) },
+            onSelectCategories = { onAction(SearchResultAction.SetCategories(it)) },
+        )
+    },
+    appBarState = appBarState,
+)
 
 @Composable
 private fun FilterButton(
@@ -191,44 +179,42 @@ private fun SearchTextItem(
 private fun SearchResultList(
     modifier: Modifier,
     state: SearchPageState,
-    scrollState: LazyListState,
     onAction: (SearchResultAction) -> Unit,
+) = LazyList(
+    modifier = modifier,
+    contentPadding = PaddingValues(
+        top = AppTheme.spaces.medium,
+        bottom = AppTheme.spaces.extraLargeBottom,
+    ),
+    onLastItemVisible = { onAction(SearchResultAction.ListBottomReached) },
 ) {
-    LazyList(
-        modifier = modifier,
-        state = scrollState,
-        contentPadding = PaddingValues(
-            top = AppTheme.spaces.medium,
-            bottom = AppTheme.spaces.extraLargeBottom,
-        ),
-        onLastItemVisible = { onAction(SearchResultAction.ListBottomReached) },
-    ) {
-        when (state.loadStates.refresh) {
-            is LoadState.Error -> errorItem(onRetryClick = { onAction(SearchResultAction.RetryClick) })
-            is LoadState.Loading -> loadingItem()
-            is LoadState.NotLoading -> when (state.searchContent) {
-                is SearchResultContent.Content -> {
-                    dividedItems(items = state.searchContent.torrents,
-                        key = { it.topic.id },
-                        contentType = { it.topic::class }) { item ->
-                        TopicListItem(
-                            topicModel = item,
-                            onClick = { onAction(SearchResultAction.TopicClick(item)) },
-                            onFavoriteClick = { onAction(SearchResultAction.FavoriteClick(item)) },
-                        )
-                    }
-                    appendItems(
-                        state = state.loadStates.append,
-                        onRetryClick = { onAction(SearchResultAction.RetryClick) },
+    when (state.loadStates.refresh) {
+        is LoadState.Error -> errorItem(onRetryClick = { onAction(SearchResultAction.RetryClick) })
+        is LoadState.Loading -> loadingItem()
+        is LoadState.NotLoading -> when (state.searchContent) {
+            is SearchResultContent.Content -> {
+                dividedItems(items = state.searchContent.torrents,
+                    key = { it.topic.id },
+                    contentType = { it.topic::class }) { item ->
+                    TopicListItem(
+                        topicModel = item,
+                        onClick = { onAction(SearchResultAction.TopicClick(item)) },
+                        onFavoriteClick = { onAction(SearchResultAction.FavoriteClick(item)) },
                     )
                 }
-                is SearchResultContent.Empty -> emptyItem(
-                    titleRes = R.string.search_screen_result_empty_title,
-                    subtitleRes = R.string.search_screen_result_empty_subtitle,
-                    imageRes = flow.ui.R.drawable.ill_empty,
+                appendItems(
+                    state = state.loadStates.append,
+                    onRetryClick = { onAction(SearchResultAction.RetryClick) },
                 )
-                is SearchResultContent.Initial -> loadingItem()
             }
+
+            is SearchResultContent.Empty -> emptyItem(
+                titleRes = R.string.search_screen_result_empty_title,
+                subtitleRes = R.string.search_screen_result_empty_subtitle,
+                imageRes = flow.ui.R.drawable.ill_empty,
+            )
+
+            is SearchResultContent.Initial -> loadingItem()
         }
     }
 }

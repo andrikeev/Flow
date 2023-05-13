@@ -5,11 +5,11 @@ import flow.network.domain.AddCommentUseCase
 import flow.network.domain.AddFavoriteUseCase
 import flow.network.domain.CheckAuthorisedUseCase
 import flow.network.domain.GetCategoryPageUseCase
-import flow.network.domain.GetTopicPageUseCase
 import flow.network.domain.GetCommentsPageUseCase
 import flow.network.domain.GetFavoritesUseCase
 import flow.network.domain.GetForumUseCase
 import flow.network.domain.GetSearchPageUseCase
+import flow.network.domain.GetTopicPageUseCase
 import flow.network.domain.GetTopicUseCase
 import flow.network.domain.GetTorrentFileUseCase
 import flow.network.domain.GetTorrentUseCase
@@ -65,7 +65,17 @@ internal class RuTrackerNetworkApi(
         sortOrder: SearchSortOrderDto?,
         period: SearchPeriodDto?,
         page: Int?,
-    ) = getSearchPageUseCase.invoke(token, searchQuery, categories, author, authorId, sortType, sortOrder, period, page)
+    ) = getSearchPageUseCase.invoke(
+        token,
+        searchQuery,
+        categories,
+        author,
+        authorId,
+        sortType,
+        sortOrder,
+        period,
+        page,
+    )
 
     override suspend fun getTopic(
         token: String,
@@ -93,5 +103,6 @@ internal class RuTrackerNetworkApi(
 
     override suspend fun getTorrent(token: String, id: String) = getTorrentUseCase.invoke(token, id)
 
-    override suspend fun download(token: String, id: String) = getTorrentFileUseCase.invoke(token, id)
+    override suspend fun download(token: String, id: String) =
+        getTorrentFileUseCase.invoke(token, id)
 }

@@ -8,9 +8,9 @@ import flow.network.dto.search.SearchPageDto
 import flow.network.dto.search.SearchPeriodDto
 import flow.network.dto.search.SearchSortOrderDto
 import flow.network.dto.search.SearchSortTypeDto
-import flow.network.dto.topic.TopicPageDto
 import flow.network.dto.topic.CommentsPageDto
 import flow.network.dto.topic.ForumTopicDto
+import flow.network.dto.topic.TopicPageDto
 import flow.network.dto.topic.TorrentDto
 import flow.network.dto.user.FavoritesDto
 

@@ -8,5 +8,7 @@ import javax.inject.Inject
 class ObserveFavoriteStateUseCase @Inject constructor(
     private val favoritesRepository: FavoritesRepository,
 ) {
-    operator fun invoke(id: String): Flow<Boolean> = favoritesRepository.observeIds().map { it.contains(id) }
+    operator fun invoke(id: String): Flow<Boolean> {
+        return favoritesRepository.observeIds().map { it.contains(id) }
+    }
 }

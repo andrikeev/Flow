@@ -1,7 +1,6 @@
 package flow.search.result
 
 import flow.models.search.Filter
-import flow.models.topic.Torrent
 
 internal sealed interface SearchResultSideEffect {
     object Back : SearchResultSideEffect
