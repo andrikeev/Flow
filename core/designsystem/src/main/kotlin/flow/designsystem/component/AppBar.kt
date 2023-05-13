@@ -82,7 +82,7 @@ fun ExpandableAppBar(
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
-            exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
+            exit =  shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
             content = { expandableContent() },
         )
     }
