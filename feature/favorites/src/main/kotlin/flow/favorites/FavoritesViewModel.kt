@@ -4,12 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.ObserveFavoritesUseCase
-import flow.domain.usecase.RefreshFavoritesUseCase
 import flow.logger.api.LoggerFactory
-import kotlinx.coroutines.flow.catch
+import flow.models.topic.Topic
+import flow.models.topic.TopicModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -20,7 +18,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val refreshFavoritesUseCase: RefreshFavoritesUseCase,
     private val observeFavoritesUseCase: ObserveFavoritesUseCase,
     loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<FavoritesState, FavoritesSideEffect> {
@@ -32,30 +29,27 @@ class FavoritesViewModel @Inject constructor(
     )
 
     fun perform(action: FavoritesAction) {
+        logger.d { "Perform $action" }
         when (action) {
-            is FavoritesAction.TopicClick -> intent {
-                postSideEffect(FavoritesSideEffect.OpenTopic(action.topicModel.topic.id))
+            is FavoritesAction.TopicClick -> onTopicClick(action.topicModel)
+        }
+    }
+
+    private fun observeFavorites() = intent {
+        logger.d { "Start observing favorites" }
+        observeFavoritesUseCase(viewModelScope).collectLatest { items ->
+            logger.d { "On new favorites list: $items" }
+            reduce {
+                if (items.isEmpty()) {
+                    FavoritesState.Empty
+                } else {
+                    FavoritesState.FavoritesList(items)
+                }
             }
         }
     }
 
-    private fun observeFavorites() {
-        viewModelScope.launch {
-            logger.d { "Launch refresh favorites" }
-            refreshFavoritesUseCase()
-        }
-        viewModelScope.launch {
-            logger.d { "Start observing favorites" }
-            observeFavoritesUseCase()
-                .catch { emit(emptyList()) }
-                .map { items ->
-                    if (items.isEmpty()) {
-                        FavoritesState.Empty
-                    } else {
-                        FavoritesState.FavoritesList(items)
-                    }
-                }
-                .collectLatest { state -> intent { reduce { state } } }
-        }
+    private fun onTopicClick(topicModel: TopicModel<out Topic>) = intent {
+        postSideEffect(FavoritesSideEffect.OpenTopic(topicModel.topic.id))
     }
 }

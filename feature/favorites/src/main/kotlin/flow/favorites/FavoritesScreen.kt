@@ -1,6 +1,5 @@
 package flow.favorites
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -46,28 +45,26 @@ private fun FavoritesScreen(
 private fun FavoritesScreen(
     state: FavoritesState,
     onAction: (FavoritesAction) -> Unit,
-) = Crossfade(targetState = state) { targetState ->
-    when (targetState) {
-        is FavoritesState.Initial -> Loading()
-        is FavoritesState.Empty -> Empty(
-            titleRes = R.string.favorites_empty_title,
-            subtitleRes = R.string.favorites_empty_subtitle,
-            imageRes = R.drawable.ill_favorites,
-        )
-        is FavoritesState.FavoritesList -> LazyList(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
+) = when (state) {
+    is FavoritesState.Initial -> Loading()
+    is FavoritesState.Empty -> Empty(
+        titleRes = R.string.favorites_empty_title,
+        subtitleRes = R.string.favorites_empty_subtitle,
+        imageRes = R.drawable.ill_favorites,
+    )
+    is FavoritesState.FavoritesList -> LazyList(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
+    ) {
+        dividedItems(
+            items = state.items,
+            key = { it.topic.id },
+            contentType = { it.topic::class },
         ) {
-            dividedItems(
-                items = targetState.items,
-                key = { it.topic.id },
-                contentType = { it.topic::class },
-            ) {
-                FavoriteTopic(
-                    topicModel = it,
-                    onClick = { onAction(FavoritesAction.TopicClick(it)) },
-                )
-            }
+            FavoriteTopic(
+                topicModel = it,
+                onClick = { onAction(FavoritesAction.TopicClick(it)) },
+            )
         }
     }
 }
@@ -84,7 +81,7 @@ private fun FavoriteTopic(
             Icon(
                 icon = FlowIcons.NewBadge,
                 tint = AppTheme.colors.primary,
-                contentDescription = null, //TODO: add contentDescription
+                contentDescription = null,
             )
         }
     },

@@ -13,7 +13,6 @@ import flow.domain.usecase.ObserveSearchPagingDataUseCase
 import flow.domain.usecase.ToggleFavoriteUseCase
 import flow.logger.api.LoggerFactory
 import flow.models.forum.Category
-import flow.models.search.Filter
 import flow.models.search.Order
 import flow.models.search.Period
 import flow.models.search.Sort
@@ -23,8 +22,7 @@ import flow.models.topic.TopicModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -72,45 +70,37 @@ internal class SearchResultViewModel @Inject constructor(
         }
     }
 
-    private fun observeFilter() = viewModelScope.launch {
+    private fun observeFilter() = intent {
+        mutableFilter.emit(enrichFilterUseCase(state.filter))
         mutableFilter
-            .onStart {
-                intent {
-                    val filter = enrichFilterUseCase(state.filter)
-                    addSearchHistoryUseCase(filter)
-                    reduce { state.copy(filter = filter) }
-                }
-            }
+            .onEach(addSearchHistoryUseCase::invoke)
             .collectLatest { filter ->
-                intent { reduce { state.copy(filter = filter) } }
+                reduce { state.copy(filter = filter) }
             }
     }
 
-    private fun observePagingData() = viewModelScope.launch {
+    private fun observePagingData() = intent {
         logger.d { "Start observing paging data" }
         observeSearchPagingDataUseCase(
             filterFlow = mutableFilter,
             actionsFlow = pagingActions,
             scope = viewModelScope,
-        )
-            .collectLatest { (data, loadingState) ->
-                intent {
-                    reduce {
-                        state.copy(
-                            searchContent = when {
-                                data == null -> SearchResultContent.Initial
-                                data.isEmpty() -> SearchResultContent.Empty
-                                else -> SearchResultContent.Content(
-                                    torrents = data,
-                                    categories = data.mapNotNull { it.topic.category }.distinct(),
-                                )
-
-                            },
-                            loadStates = loadingState,
+        ).collectLatest { (data, loadingState) ->
+            reduce {
+                state.copy(
+                    searchContent = when {
+                        data == null -> SearchResultContent.Initial
+                        data.isEmpty() -> SearchResultContent.Empty
+                        else -> SearchResultContent.Content(
+                            torrents = data,
+                            categories = data.mapNotNull { it.topic.category }.distinct(),
                         )
-                    }
-                }
+
+                    },
+                    loadStates = loadingState,
+                )
             }
+        }
     }
 
     private fun onBackClick() = intent {
@@ -121,15 +111,15 @@ internal class SearchResultViewModel @Inject constructor(
         reduce { state.copy(appBarExpanded = !state.appBarExpanded) }
     }
 
-    private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = viewModelScope.launch {
+    private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = intent {
         toggleFavoriteUseCase(topicModel.topic.id)
     }
 
-    private fun onListBottomReached() = viewModelScope.launch {
+    private fun onListBottomReached() = intent {
         pagingActions.append()
     }
 
-    private fun onRetryClick() = viewModelScope.launch {
+    private fun onRetryClick() = intent {
         pagingActions.retry()
     }
 
@@ -137,20 +127,22 @@ internal class SearchResultViewModel @Inject constructor(
         postSideEffect(SearchResultSideEffect.OpenSearchInput(state.filter))
     }
 
-    private fun onSetAuthor(author: Author?) = onFilterChanged { filter ->
-        filter.copy(author = author)
+    private fun onSetAuthor(author: Author?) = intent {
+        mutableFilter.emit(mutableFilter.value.copy(author = author))
+        reduce { state.copy(appBarExpanded = false) }
     }
 
-    private fun onSetCategories(categories: List<Category>?) = onFilterChanged { filter ->
-        filter.copy(categories = categories)
+    private fun onSetCategories(categories: List<Category>?) = intent {
+        mutableFilter.emit(mutableFilter.value.copy(categories = categories))
+        reduce { state.copy(appBarExpanded = false) }
     }
 
-    private fun onSetSort(sort: Sort) = onSortChanged { filter ->
-        filter.copy(sort = sort)
+    private fun onSetSort(sort: Sort) = intent {
+        mutableFilter.emit(mutableFilter.value.copy(sort = sort))
     }
 
-    private fun onSetOrder(order: Order) = onSortChanged { filter ->
-        filter.copy(order = order)
+    private fun onSetOrder(order: Order) = intent {
+        mutableFilter.emit(mutableFilter.value.copy(order = order))
     }
 
     private fun onSetPeriod(period: Period) = intent {
@@ -160,14 +152,5 @@ internal class SearchResultViewModel @Inject constructor(
 
     private fun onTopicClick(topicModel: TopicModel<out Topic>) = intent {
         postSideEffect(SearchResultSideEffect.OpenTopic(topicModel.topic.id))
-    }
-
-    private inline fun onSortChanged(crossinline transformer: (Filter) -> Filter) {
-        viewModelScope.launch { mutableFilter.emit(transformer(mutableFilter.value)) }
-    }
-
-    private inline fun onFilterChanged(crossinline transformer: (Filter) -> Filter) {
-        viewModelScope.launch { mutableFilter.emit(transformer(mutableFilter.value)) }
-        intent { reduce { state.copy(appBarExpanded = false) } }
     }
 }

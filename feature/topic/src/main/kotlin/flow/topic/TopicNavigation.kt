@@ -6,6 +6,7 @@ import flow.navigation.NavigationController
 import flow.navigation.model.NavigationArgument
 import flow.navigation.model.NavigationDeepLink
 import flow.navigation.model.NavigationGraphBuilder
+import flow.navigation.model.appendOptionalArgs
 import flow.navigation.model.appendRequiredArgs
 import flow.navigation.model.appendRequiredParams
 import flow.navigation.model.buildDeepLink
@@ -32,7 +33,7 @@ fun addTopic(
     ),
     arguments = listOf(NavigationArgument(TopicIdKey)),
     deepLinks = deepLinkUrls.map { url ->
-        NavigationDeepLink(buildDeepLink(url) { appendRequiredArgs(TopicIdKey) })
+        NavigationDeepLink(buildDeepLink(url) { appendOptionalArgs(TopicIdKey) })
     },
     animations = animations,
 ) {

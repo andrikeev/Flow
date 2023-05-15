@@ -1,18 +1,11 @@
 package flow.navigation
 
 import android.content.Intent
-import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.core.net.toUri
-import androidx.navigation.NavController
-import androidx.navigation.NavDeepLinkRequest
-import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptionsBuilder
-import androidx.navigation.navOptions
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import flow.logger.api.LoggerFactory
 import flow.ui.platform.LocalLoggerFactory
@@ -21,7 +14,7 @@ import kotlinx.coroutines.flow.map
 
 interface NavigationController {
     val navHostController: NavHostController
-    fun navigate(route: String, args: Bundle.() -> Unit = {})
+    fun navigate(route: String)
     fun popBackStack(): Boolean
 }
 
@@ -47,9 +40,12 @@ private open class NavigationControllerImpl(
     protected val currentGraph: String?
         get() = navHostController.currentDestination?.parent?.route
 
-    override fun navigate(route: String, args: Bundle.() -> Unit) {
+    protected val currentGraphStartRoute: String?
+        get() = navHostController.currentDestination?.parent?.startDestinationRoute
+
+    override fun navigate(route: String) {
         logger.d { "navigate: route=$route" }
-        navHostController.navigate(route = route, args = args)
+        navHostController.navigate(route = route)
     }
 
     override fun popBackStack(): Boolean {
@@ -73,11 +69,23 @@ private class NestedNavigationControllerImpl(
     loggerFactory: LoggerFactory,
 ) : NavigationControllerImpl(navHostController, loggerFactory), NestedNavigationController {
     override fun navigateTopLevel(route: String) {
-        logger.d { "navigateTopLevel: destination route=$route; current route=$currentRoute; current graph=$currentGraph" }
-        navHostController.navigate(route = route) {
-            popUpTo(navHostController.graph.id) { saveState = true }
-            launchSingleTop = true
-            restoreState = true
+        logger.d { "navigateTopLevel: destination route=$route; " +
+                "current route=$currentRoute; " +
+                "current graph=$currentGraph; " +
+                "current graph start route = $currentGraphStartRoute"}
+        if (route == currentGraph) {
+            if (currentRoute != currentGraphStartRoute) {
+                navHostController.navigate(route = route) {
+                    popUpTo(navHostController.graph.id) { saveState = true }
+                    launchSingleTop = true
+                }
+            }
+        } else if (route != currentRoute) {
+            navHostController.navigate(route = route) {
+                popUpTo(navHostController.graph.id) { saveState = true }
+                launchSingleTop = true
+                restoreState = true
+            }
         }
     }
 
@@ -105,28 +113,4 @@ fun rememberNestedNavigationController(): NestedNavigationController {
 @Composable
 internal fun NestedNavigationController.currentTopLevelRouteAsState(): State<String?> {
     return currentTopLevelRouteFlow.collectAsState(null)
-}
-
-private fun NavController.navigate(
-    route: String,
-    args: Bundle.() -> Unit = {},
-    options: NavOptionsBuilder.() -> Unit = {},
-) {
-    val routeLink = NavDeepLinkRequest.Builder
-        .fromUri(NavDestination.createRoute(route).toUri())
-        .build()
-
-    val graphs = listOfNotNull(currentBackStackEntry?.destination?.parent, graph)
-    val deepLinkMatch = graphs.firstNotNullOfOrNull { it.matchDeepLink(routeLink) }
-    if (deepLinkMatch != null) {
-        if (deepLinkMatch.destination.arguments.isNotEmpty()) {
-            navigate(route, navOptions(options))
-        } else {
-            val destination = deepLinkMatch.destination
-            val id = destination.id
-            navigate(id, Bundle().apply(args), navOptions(options))
-        }
-    } else {
-        navigate(route, navOptions(options))
-    }
 }

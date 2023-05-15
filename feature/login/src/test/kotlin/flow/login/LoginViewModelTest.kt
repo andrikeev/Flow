@@ -1,10 +1,11 @@
 package flow.login
 
+import androidx.compose.ui.text.input.TextFieldValue
 import flow.domain.usecase.LoginUseCase
 import flow.domain.usecase.ValidateInputUseCase
-import flow.models.InputState
 import flow.models.auth.AuthResult
 import flow.models.auth.Captcha
+import flow.testing.TestDispatchers
 import flow.testing.logger.TestLoggerFactory
 import flow.testing.rule.MainDispatcherRule
 import flow.testing.service.TestAuthService
@@ -21,13 +22,14 @@ class LoginViewModelTest {
 
     private val authService = TestAuthService()
     private val backgroundService = TestBackgroundService()
+    private val dispatchers = TestDispatchers()
 
     private lateinit var viewModel: LoginViewModel
 
     @Before
     fun setUp() {
         viewModel = LoginViewModel(
-            loginUseCase = LoginUseCase(authService, backgroundService),
+            loginUseCase = LoginUseCase(authService, backgroundService, dispatchers),
             validateInputUseCase = ValidateInputUseCase(),
             loggerFactory = TestLoggerFactory(),
         )
@@ -46,15 +48,15 @@ class LoginViewModelTest {
         // set
         val containerTest = viewModel.test()
         // do
-        containerTest.testIntent { perform(LoginAction.UsernameChanged("Username")) }
-        containerTest.testIntent { perform(LoginAction.PasswordChanged("Password")) }
-        containerTest.testIntent { perform(LoginAction.CaptchaChanged("Captcha")) }
+        containerTest.testIntent { perform(LoginAction.UsernameChanged(TextFieldValue("Username"))) }
+        containerTest.testIntent { perform(LoginAction.PasswordChanged(TextFieldValue("Password"))) }
+        containerTest.testIntent { perform(LoginAction.CaptchaChanged(TextFieldValue("Captcha"))) }
         // check
         containerTest.assert(LoginState()) {
             states(
-                { copy(usernameInput = InputState.Valid("Username")) },
-                { copy(passwordInput = InputState.Valid("Password")) },
-                { copy(captchaInput = InputState.Valid("Captcha")) },
+                { copy(usernameInput = InputState.Valid(TextFieldValue("Username"))) },
+                { copy(passwordInput = InputState.Valid(TextFieldValue("Password"))) },
+                { copy(captchaInput = InputState.Valid(TextFieldValue("Captcha"))) },
             )
         }
     }
@@ -64,9 +66,9 @@ class LoginViewModelTest {
         // set
         val containerTest = viewModel.test()
         // do
-        containerTest.testIntent { perform(LoginAction.UsernameChanged("")) }
-        containerTest.testIntent { perform(LoginAction.PasswordChanged("")) }
-        containerTest.testIntent { perform(LoginAction.CaptchaChanged("")) }
+        containerTest.testIntent { perform(LoginAction.UsernameChanged(TextFieldValue(""))) }
+        containerTest.testIntent { perform(LoginAction.PasswordChanged(TextFieldValue(""))) }
+        containerTest.testIntent { perform(LoginAction.CaptchaChanged(TextFieldValue(""))) }
         // check
         containerTest.assert(LoginState()) {
             states(

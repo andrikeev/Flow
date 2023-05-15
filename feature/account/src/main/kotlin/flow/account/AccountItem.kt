@@ -32,13 +32,11 @@ import flow.designsystem.R as dsR
 fun AccountItem(
     modifier: Modifier = Modifier,
     onLoginClick: () -> Unit,
-) {
-    AccountItem(
-        modifier = modifier,
-        viewModel = viewModel(),
-        onLoginClick = onLoginClick,
-    )
-}
+) = AccountItem(
+    modifier = modifier,
+    viewModel = viewModel(),
+    onLoginClick = onLoginClick,
+)
 
 @Composable
 internal fun AccountItem(

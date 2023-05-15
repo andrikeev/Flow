@@ -14,7 +14,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat.setDecorFitsSystemWindows
@@ -118,8 +117,8 @@ open class MainActivity : ComponentActivity() {
 
     @Composable
     private fun rememberOpenLinkHandler(): OpenLinkHandler {
-        val uriHandler = LocalUriHandler.current
-        return remember { OpenLinkHandlerImpl(uriHandler, loggerFactory) }
+        val context = LocalContext.current
+        return remember { OpenLinkHandlerImpl(context, loggerFactory) }
     }
 
     @Composable

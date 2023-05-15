@@ -1,14 +1,12 @@
 package flow.account
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.LogoutUseCase
 import flow.domain.usecase.ObserveAuthStateUseCase
 import flow.logger.api.LoggerFactory
 import flow.models.auth.AuthState
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -33,16 +31,29 @@ internal class AccountViewModel @Inject constructor(
     fun perform(action: AccountAction) {
         logger.d { "Perform $action" }
         when (action) {
-            AccountAction.ConfirmLogoutClick -> viewModelScope.launch { logoutUseCase() }
-            AccountAction.LoginClick -> intent { postSideEffect(AccountSideEffect.OpenLogin) }
-            AccountAction.LogoutClick -> intent { postSideEffect(AccountSideEffect.ShowLogoutConfirmation) }
+            AccountAction.ConfirmLogoutClick -> onConfirmLogoutClick()
+            AccountAction.LoginClick -> onLoginClick()
+            AccountAction.LogoutClick -> onLogoutClick()
         }
     }
 
-    private fun observeAuthState() = viewModelScope.launch {
+    private fun observeAuthState() = intent {
         logger.d { "Start observing auth state" }
         observeAuthStateUseCase().collectLatest { authState ->
-            intent { reduce { authState } }
+            logger.d { "On new auth state: $authState" }
+            reduce { authState }
         }
+    }
+
+    private fun onConfirmLogoutClick() = intent {
+        logoutUseCase()
+    }
+
+    private fun onLoginClick() = intent {
+        postSideEffect(AccountSideEffect.OpenLogin)
+    }
+
+    private fun onLogoutClick() = intent {
+        postSideEffect(AccountSideEffect.ShowLogoutConfirmation)
     }
 }

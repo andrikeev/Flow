@@ -40,7 +40,7 @@ fun CategoryListItem(
             ) {
                 Icon(
                     icon = FlowIcons.ChevronRight,
-                    contentDescription = null, //TODO: add contentDescription
+                    contentDescription = null,
                 )
             }
         },

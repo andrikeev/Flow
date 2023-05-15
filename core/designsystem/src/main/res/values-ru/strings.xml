@@ -4,6 +4,7 @@
     <string name="designsystem_action_back">Назад</string>
     <string name="designsystem_action_cancel">Отмена</string>
     <string name="designsystem_action_clear">Очистить текст</string>
+    <string name="designsystem_action_close">Закрыть</string>
     <string name="designsystem_action_collapse">Свернуть</string>
     <string name="designsystem_action_confirmation">Вы уверены?</string>
     <string name="designsystem_action_expand">Развернуть</string>

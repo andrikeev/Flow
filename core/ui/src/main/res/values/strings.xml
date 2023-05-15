@@ -32,7 +32,11 @@
     <string name="torrent_status_closed">Closed</string>
     <string name="torrent_status_consumed">Consumed</string>
     <string name="torrent_status_duplicate">Duplicate</string>
-    <string name="torrent_status_need_edit">Need edit</string>
+    <string name="torrent_status_needs_edit">Need edit</string>
     <string name="torrent_status_no_description">No description</string>
     <string name="torrent_status_not_approved">Not approved</string>
+
+    <string name="seeds">Number of seeds</string>
+    <string name="leaches">Number of leaches</string>
+    <string name="size">Size</string>
 </resources>

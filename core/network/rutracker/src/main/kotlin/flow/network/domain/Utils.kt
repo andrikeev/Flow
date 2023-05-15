@@ -78,13 +78,18 @@ internal fun isTopicModerated(html: String): Boolean {
 }
 
 internal fun getTitle(titleWithTags: String): String {
-    return titleWithTags.replace("\\[[^]]*]".toRegex(), "").replace("  ", " ").trim()
+    return titleWithTags
+        .replace("\\[[^]]*]".toRegex(), "")
+        .replace("  ", " ")
+        .replace("[", "")
+        .replace("]", "")
+        .trim()
 }
 
 internal fun getTags(titleWithTags: String): String {
     val stringBuilder = StringBuilder()
     val matcher = Pattern.compile("(\\[[^]]*])").matcher(titleWithTags)
-    while (matcher.find()) stringBuilder.append(matcher.group(1))
+    while (matcher.find()) stringBuilder.append(matcher.group(1), ' ')
     return stringBuilder.toString()
 }
 

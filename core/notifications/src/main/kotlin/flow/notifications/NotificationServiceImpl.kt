@@ -93,12 +93,18 @@ internal class NotificationServiceImpl @Inject constructor(
 
     private fun createPendingIntent(topic: Topic): PendingIntent? {
         val uri = Uri.parse("https://rutracker.org/forum/viewtopic.php?t=${topic.id}")
-        return createPendingIntent(Intent(Intent.ACTION_VIEW, uri))
+        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+            setPackage(context.packageName)
+        }
+        return createPendingIntent(intent)
     }
 
     private fun createPendingIntent(category: Category): PendingIntent? {
         val uri = Uri.parse("https://rutracker.org/forum/viewforum.php?f=${category.id}")
-        return createPendingIntent(Intent(Intent.ACTION_VIEW, uri))
+        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+            setPackage(context.packageName)
+        }
+        return createPendingIntent(intent)
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")

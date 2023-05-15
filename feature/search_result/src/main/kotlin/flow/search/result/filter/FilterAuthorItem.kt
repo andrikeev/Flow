@@ -47,11 +47,12 @@ internal fun FilterAuthorItem(
     ) {
         BodyLarge(
             modifier = Modifier.weight(1f),
-            text = selected?.name?.takeIf(String::isNotBlank) ?: stringResource(R.string.search_screen_filter_any),
+            text = selected?.name?.takeIf(String::isNotBlank)
+                ?: stringResource(R.string.search_screen_filter_any),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        Icon(icon = FlowIcons.Author, contentDescription = null /* TODO: add contentDescription */)
+        Icon(icon = FlowIcons.Author, contentDescription = null)
     }
 }
 
@@ -73,12 +74,7 @@ private fun AuthorDialog(
             onDismissRequest()
         }
         Dialog(
-            icon = {
-                Icon(
-                    icon = FlowIcons.Author,
-                    contentDescription = null, //TODO: add contentDescription
-                )
-            },
+            icon = { Icon(icon = FlowIcons.Author, contentDescription = null) },
             title = { Text(stringResource(R.string.search_screen_filter_author_label)) },
             text = {
                 val focusRequester = rememberFocusRequester()

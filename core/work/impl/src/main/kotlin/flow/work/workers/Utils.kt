@@ -46,12 +46,3 @@ internal suspend fun ListenableWorker.runCatching(
             }
         )
 }
-
-internal inline fun ListenableWorker.retryOrFailure(
-    onFailure: () -> Unit = {},
-): ListenableWorker.Result = if (runAttemptCount < RetryAttemptsMaxCount) {
-    retry()
-} else {
-    onFailure()
-    failure()
-}

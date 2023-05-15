@@ -77,8 +77,7 @@ fun DropDownExpandCollapseIcon(
 
 @Composable
 @NonRestartableComposable
-fun SearchIcon() = Icon(icon = FlowIcons.Search, contentDescription = null /* TODO: add contentDescription */)
-
-@Composable
-@NonRestartableComposable
-fun RightChevronIcon() = Icon(icon = FlowIcons.ChevronRight, contentDescription = null /* TODO: add contentDescription */)
+fun SearchIcon() = Icon(
+    icon = FlowIcons.Search,
+    contentDescription = stringResource(R.string.designsystem_action_search),
+)

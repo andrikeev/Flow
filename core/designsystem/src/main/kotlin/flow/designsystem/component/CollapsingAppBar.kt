@@ -154,7 +154,7 @@ internal fun CollapsingAppBar(
             slotId = CollapsingAppBarContent.CollapsedShrunkTitleSize,
             constraints = looseConstraints.copy(
                 maxWidth = width - maxOf(navigationIconPlaceable.width, horizontalOffset) -
-                    maxOf(actionsPlaceable.width, horizontalOffset),
+                        maxOf(actionsPlaceable.width, horizontalOffset),
                 maxHeight = Int.MAX_VALUE,
             ),
             content = { titleContent() },
@@ -291,7 +291,10 @@ private object CollapsingAppBarDefaults {
 class CollapsingAppBarState(
     defaultMinHeight: Int,
     defaultMaxHeight: Int,
-): AppBarState {
+) : AppBarState {
+    override val elevated: Boolean
+        get() = true
+
     private var isDefaultMinHeight = true
     private var isDefaultMaxHeight = true
 
@@ -322,7 +325,7 @@ class CollapsingAppBarState(
 @Stable
 class CollapsingAppBarBehavior(
     override val appBarState: CollapsingAppBarState,
-): AppBarBehavior {
+) : AppBarBehavior {
     private val minHeight get() = appBarState.minHeight.value
     private val maxHeight get() = appBarState.maxHeight.value
     private val height get() = appBarState.height.value
@@ -370,7 +373,7 @@ fun rememberCollapsingAppBarBehavior(
     rememberCollapsingAppBarState(
         minHeight = minHeight,
         maxHeight = maxHeight,
-    )
+    ),
 )
 
 @Composable

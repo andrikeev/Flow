@@ -13,10 +13,10 @@ import flow.models.topic.Torrent
 import flow.models.topic.TorrentData
 import flow.models.topic.TorrentStatus
 import flow.network.dto.topic.AuthorDto
-import flow.network.dto.topic.TopicPageDto
 import flow.network.dto.topic.CommentsPageDto
 import flow.network.dto.topic.ForumTopicDto
 import flow.network.dto.topic.TopicDto
+import flow.network.dto.topic.TopicPageDto
 import flow.network.dto.topic.TorrentDataDto
 import flow.network.dto.topic.TorrentDto
 import flow.network.dto.topic.TorrentStatusDto
@@ -72,6 +72,7 @@ internal fun TorrentDto.toTorrent(): Torrent = Torrent(
 )
 
 internal fun TorrentDataDto.toTorrentData() = TorrentData(
+    tags = tags,
     posterUrl = posterUrl,
     status = status?.toStatus(),
     date = date,
@@ -184,6 +185,7 @@ internal fun TopicPage.toVisitedEntity(): VisitedTopicEntity {
         title = title,
         author = author,
         category = category,
+        tags = torrentData?.tags,
         status = torrentData?.status,
         size = torrentData?.size,
         seeds = torrentData?.seeds,

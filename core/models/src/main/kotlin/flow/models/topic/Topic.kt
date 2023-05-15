@@ -41,6 +41,7 @@ data class TopicPage(
 )
 
 data class TorrentData(
+    val tags: String?,
     val posterUrl: String?,
     val status: TorrentStatus?,
     val date: String?,

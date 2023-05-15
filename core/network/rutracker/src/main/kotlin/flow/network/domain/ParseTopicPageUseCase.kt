@@ -26,6 +26,8 @@ internal object ParseTopicPageUseCase {
 
     private fun Document.parseTitle() = getTitle(select("#topic-title").toStr())
 
+    private fun Document.parseTags() = getTags(select("#topic-title").toStr())
+
     private fun Document.parseAuthor() = selectFirstPost()?.parseAuthor()
 
     private fun Document.parseCategory() =
@@ -55,6 +57,7 @@ internal object ParseTopicPageUseCase {
 
         return if (seeds != null || leeches != null || status != null || !size.isNullOrBlank()) {
             TorrentDataDto(
+                tags = parseTags(),
                 posterUrl = posterUrl,
                 status = status,
                 date = date,

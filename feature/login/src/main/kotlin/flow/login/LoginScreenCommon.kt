@@ -15,18 +15,17 @@ import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.composed
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalAutofill
 import androidx.compose.ui.platform.LocalAutofillTree
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import flow.designsystem.component.Button
 import flow.designsystem.component.CircularProgressIndicator
 import flow.designsystem.component.Icon
@@ -35,7 +34,6 @@ import flow.designsystem.component.Text
 import flow.designsystem.component.TextField
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
-import flow.models.InputState
 import flow.models.auth.Captcha
 import flow.ui.component.RemoteImage
 
@@ -50,23 +48,11 @@ internal fun LoginScreenHeader() = Placeholder(
 internal fun UsernameInputField(
     modifier: Modifier = Modifier,
     state: LoginState,
-    onChanged: (String) -> Unit,
+    onChanged: (TextFieldValue) -> Unit,
     onSelectNext: () -> Unit,
 ) = TextField(
     modifier = modifier
         .padding(AppTheme.spaces.small)
-        .onKeyEvent { event ->
-            when (event.key.keyCode) {
-                Key.DirectionDown.keyCode -> {
-                    onSelectNext()
-                    true
-                }
-
-                else -> {
-                    false
-                }
-            }
-        }
         .autofill(
             autofillTypes = listOf(
                 AutofillType.Username,
@@ -110,30 +96,12 @@ internal fun UsernameInputField(
 internal fun PasswordInputField(
     modifier: Modifier = Modifier,
     state: LoginState,
-    onChanged: (String) -> Unit,
+    onChanged: (TextFieldValue) -> Unit,
     onSelectNext: () -> Unit,
-    onSelectPrevious: () -> Unit = {},
     onSubmit: () -> Unit,
 ) = TextField(
     modifier = modifier
         .padding(AppTheme.spaces.small)
-        .onKeyEvent { event ->
-            when (event.key.keyCode) {
-                Key.DirectionUp.keyCode -> {
-                    onSelectPrevious()
-                    true
-                }
-
-                Key.DirectionDown.keyCode -> {
-                    onSelectNext()
-                    true
-                }
-
-                else -> {
-                    false
-                }
-            }
-        }
         .autofill(
             autofillTypes = listOf(AutofillType.Password),
             onFill = onChanged,
@@ -180,24 +148,10 @@ internal fun PasswordInputField(
 internal fun CaptchaInputField(
     modifier: Modifier = Modifier,
     state: LoginState,
-    onChanged: (String) -> Unit,
-    onSelectPrevious: () -> Unit = {},
+    onChanged: (TextFieldValue) -> Unit,
     onSubmit: () -> Unit,
 ) = TextField(
-    modifier = modifier
-        .padding(AppTheme.spaces.small)
-        .onKeyEvent { event ->
-            when (event.key.keyCode) {
-                Key.DirectionUp.keyCode -> {
-                    onSelectPrevious()
-                    true
-                }
-
-                else -> {
-                    false
-                }
-            }
-        },
+    modifier = modifier.padding(AppTheme.spaces.small),
     value = state.captchaInput.value,
     onValueChange = onChanged,
     singleLine = true,
@@ -284,10 +238,13 @@ internal fun LoginButton(
 
 private fun Modifier.autofill(
     autofillTypes: List<AutofillType>,
-    onFill: ((String) -> Unit),
+    onFill: (TextFieldValue) -> Unit,
 ) = composed {
     val autofill = LocalAutofill.current
-    val autofillNode = AutofillNode(onFill = onFill, autofillTypes = autofillTypes)
+    val autofillNode = AutofillNode(
+        autofillTypes = autofillTypes,
+        onFill = { value -> onFill(TextFieldValue(value, TextRange(value.length))) },
+    )
     LocalAutofillTree.current += autofillNode
     onGloballyPositioned { coordinates ->
         autofillNode.boundingBox = coordinates.boundsInWindow()

@@ -7,7 +7,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import flow.designsystem.drawables.Icon
 import kotlinx.coroutines.launch
 
@@ -19,10 +18,9 @@ fun PagesScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
-    val scrollBehavior = AppBarDefaults.appBarScrollBehavior()
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
+        modifier = modifier,
+        topBar = { appBarState ->
             TabAppBar(
                 pages = pages,
                 selectedPage = pagerState.currentPage,
@@ -31,7 +29,7 @@ fun PagesScreen(
                         pagerState.animateScrollToPage(page = page)
                     }
                 },
-                appBarState = scrollBehavior.appBarState,
+                appBarState = appBarState,
             )
         },
         bottomBar = bottomBar,
@@ -39,7 +37,7 @@ fun PagesScreen(
         HorizontalPager(
             modifier = Modifier.padding(padding),
             pageCount = pages.size,
-            state = pagerState
+            state = pagerState,
         ) { page ->
             pages[page].content()
         }

@@ -12,8 +12,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import flow.designsystem.component.AppBar
+import flow.designsystem.component.AppBarState
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.Body
 import flow.designsystem.component.BodySmall
@@ -45,15 +49,14 @@ import flow.designsystem.component.Icon
 import flow.designsystem.component.IconButton
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.LocalSnackbarHostState
-import flow.designsystem.component.PinnedAppBarState
 import flow.designsystem.component.ProvideTextStyle
 import flow.designsystem.component.Scaffold
+import flow.designsystem.component.ScrollBackFloatingActionButton
 import flow.designsystem.component.SnackbarHostState
 import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
-import flow.designsystem.component.rememberAppBarState
 import flow.designsystem.component.rememberDialogState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
@@ -65,7 +68,6 @@ import flow.models.topic.Post
 import flow.models.topic.TextContent
 import flow.ui.component.Avatar
 import flow.ui.component.Post
-import flow.ui.component.RemoteImage
 import flow.ui.component.TorrentStatus
 import flow.ui.component.appendItems
 import flow.ui.component.emptyItem
@@ -147,9 +149,10 @@ private fun TopicScreen(
     state: TopicState,
     onAction: (TopicAction) -> Unit,
 ) = Scaffold(
-    topBar = {
+    topBar = { appBarState ->
         TopicAppBar(
             state = state,
+            appBarState = appBarState,
             onAction = onAction,
         )
     },
@@ -160,37 +163,39 @@ private fun TopicScreen(
             onAction = onAction
         )
     },
+    floatingActionButton = { ScrollBackFloatingActionButton() },
     bottomBar = {
         Surface(
             tonalElevation = AppTheme.elevations.medium,
             shadowElevation = AppTheme.elevations.medium,
             content = { Pagination(state.paginationState, onAction) }
         )
-    }
+    },
 )
 
 @Composable
 private fun TopicAppBar(
     state: TopicState,
+    appBarState: AppBarState,
     onAction: (TopicAction) -> Unit,
 ) {
     when (state.topicContent) {
         is TopicContent.Initial -> AppBar(
             navigationIcon = { BackButton { onAction(TopicAction.BackClick) } },
-            appBarState = rememberAppBarState(true),
+            appBarState = appBarState,
         )
 
         is TopicContent.Topic -> TopicAppBar(
             topicContent = state.topicContent,
             favoriteState = state.favoriteState,
-            appBarState = rememberAppBarState(true),
+            appBarState = appBarState,
             onAction = onAction,
         )
 
         is TopicContent.Torrent -> TorrentAppBar(
             topicContent = state.topicContent,
             favoriteState = state.favoriteState,
-            appBarState = rememberAppBarState(true),
+            appBarState = appBarState,
             onAction = onAction,
         )
     }
@@ -200,7 +205,7 @@ private fun TopicAppBar(
 private fun TopicAppBar(
     topicContent: TopicContent.Topic,
     favoriteState: TopicFavoriteState,
-    appBarState: PinnedAppBarState,
+    appBarState: AppBarState,
     onAction: (TopicAction) -> Unit,
 ) = AppBar(
     navigationIcon = { BackButton { onAction(TopicAction.BackClick) } },
@@ -225,7 +230,7 @@ private fun TopicAppBar(
 private fun TorrentAppBar(
     topicContent: TopicContent.Torrent,
     favoriteState: TopicFavoriteState,
-    appBarState: PinnedAppBarState,
+    appBarState: AppBarState,
     onAction: (TopicAction) -> Unit,
 ) = ExpandableAppBar(
     navigationIcon = { BackButton { onAction(TopicAction.BackClick) } },
@@ -349,6 +354,7 @@ private fun Pagination(
         is PaginationState.NoPagination -> Unit
         is PaginationState.Pagination -> Row(
             modifier = Modifier
+                .padding(WindowInsets.Companion.navigationBars.asPaddingValues())
                 .fillMaxWidth()
                 .height(AppTheme.sizes.default),
             horizontalArrangement = Arrangement.SpaceAround,
@@ -399,8 +405,8 @@ private fun Pagination(
 
 @Composable
 private fun TopicContent(
-    modifier: Modifier = Modifier,
     state: TopicState,
+    modifier: Modifier = Modifier,
     onAction: (TopicAction) -> Unit,
 ) = LazyList(
     modifier = modifier,
@@ -571,64 +577,83 @@ private fun DownloadDialog(
     onAction: (TopicAction) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    Dialog(
-        icon = {
-            when (state) {
-                is DownloadState.Completed -> Icon(
+    when (state) {
+        is DownloadState.Completed -> Dialog(
+            icon = {
+                Icon(
                     icon = FlowIcons.FileDownloadDone,
                     contentDescription = null
                 )
+            },
+            title = {
+                Text(
+                    text = stringResource(R.string.topic_file_download_completed),
+                    textAlign = TextAlign.Center
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    text = stringResource(flow.designsystem.R.string.designsystem_action_open_file),
+                    onClick = {
+                        onDismiss()
+                        onAction(TopicAction.OpenFileClick(state.uri))
+                    },
+                )
+            },
+            dismissButton = {
+                TextButton(
+                    text = stringResource(flow.designsystem.R.string.designsystem_action_cancel),
+                    onClick = onDismiss,
+                )
+            },
+            onDismissRequest = onDismiss,
+        )
 
-                is DownloadState.Error -> Icon(
+        is DownloadState.Error -> Dialog(
+            icon = {
+                Icon(
                     icon = FlowIcons.Clear,
                     contentDescription = null
                 )
+            },
+            title = {
+                Text(
+                    text = stringResource(flow.ui.R.string.error_title),
+                    textAlign = TextAlign.Center
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    text = stringResource(flow.designsystem.R.string.designsystem_action_close),
+                    onClick = onDismiss,
+                )
+            },
+            onDismissRequest = onDismiss,
+        )
 
-                is DownloadState.Initial,
-                is DownloadState.Started -> CircularProgressIndicator(
+        is DownloadState.Initial,
+        is DownloadState.Started -> Dialog(
+            icon = {
+                CircularProgressIndicator(
                     modifier = Modifier.size(AppTheme.sizes.mediumSmall),
                     strokeWidth = 3.dp,
                 )
-            }
-        },
-        title = {
-            Text(
-                text = stringResource(
-                    when (state) {
-                        is DownloadState.Completed -> R.string.topic_file_download_completed
-                        is DownloadState.Error -> flow.ui.R.string.error_title
-                        is DownloadState.Initial,
-                        is DownloadState.Started -> R.string.topic_file_download_in_progress
-                    }
-                ),
-                textAlign = TextAlign.Center
-            )
-        },
-        confirmButton = {
-            when (state) {
-                is DownloadState.Completed -> {
-                    TextButton(
-                        text = stringResource(flow.designsystem.R.string.designsystem_action_open_file),
-                        onClick = {
-                            onDismiss()
-                            onAction(TopicAction.OpenFileClick(state.uri))
-                        },
-                    )
-                }
-
-                DownloadState.Error -> Unit
-                DownloadState.Initial -> Unit
-                DownloadState.Started -> Unit
-            }
-        },
-        dismissButton = {
-            TextButton(
-                text = stringResource(flow.designsystem.R.string.designsystem_action_cancel),
-                onClick = onDismiss,
-            )
-        },
-        onDismissRequest = onDismiss,
-    )
+            },
+            title = {
+                Text(
+                    text = stringResource(R.string.topic_file_download_in_progress),
+                    textAlign = TextAlign.Center
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    text = stringResource(flow.designsystem.R.string.designsystem_action_close),
+                    onClick = onDismiss,
+                )
+            },
+            onDismissRequest = onDismiss,
+        )
+    }
 }
 
 @Stable
@@ -666,6 +691,14 @@ private fun MagnetDialogPreview() {
         ) {
             MagnetDialog(link = "magnet://test", {}, {}, {})
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun DownloadDialogPreview() {
+    FlowTheme {
+        DownloadDialog(DownloadState.Completed(""), {}, {})
     }
 }
 

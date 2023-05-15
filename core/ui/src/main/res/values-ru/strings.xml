@@ -33,7 +33,11 @@
     <string name="torrent_status_closed">Закрыта</string>
     <string name="torrent_status_consumed">Поглощена</string>
     <string name="torrent_status_duplicate">Дупликат</string>
-    <string name="torrent_status_need_edit">Требуется исправить описание</string>
+    <string name="torrent_status_needs_edit">Требуется исправить описание</string>
     <string name="torrent_status_no_description">Нет описания</string>
     <string name="torrent_status_not_approved">Не проверена</string>
+
+    <string name="seeds">Количество раздающих</string>
+    <string name="leaches">Количество качающих</string>
+    <string name="size">Размер</string>
 </resources>

@@ -18,14 +18,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import flow.account.AccountItem
 import flow.designsystem.component.AppBar
-import flow.designsystem.component.AppBarDefaults
 import flow.designsystem.component.Body
 import flow.designsystem.component.ConfirmationDialog
 import flow.designsystem.component.Dialog
@@ -110,107 +108,103 @@ private fun MenuScreen(
 internal fun MenuScreen(
     state: MenuState,
     onAction: (MenuAction) -> Unit,
-) {
-    val scrollBehavior = AppBarDefaults.appBarScrollBehavior()
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            AppBar(
-                title = { Text(stringResource(R.string.menu_title)) },
-                appBarState = scrollBehavior.appBarState,
-            )
-        },
-    ) { padding ->
-        val (theme, endpoint, favoritesSyncPeriod, bookmarksSyncPeriod) = state
-        LazyList(
-            modifier = Modifier.padding(padding),
-            contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
-        ) {
-            menuAccountItem { onAction(LoginClick) }
-            menuSectionLabel { Text(stringResource(R.string.menu_label_settings)) }
-            menuSelectionItem(
-                title = { Text(stringResource(R.string.menu_settings_theme)) },
-                items = Theme.availableValues(),
-                selected = theme,
-                labelMapper = { theme -> stringResource(theme.resId) },
-                onSelect = { theme -> onAction(SetTheme(theme)) },
-            )
-            menuSelectionItem(
-                title = { Text(stringResource(R.string.menu_settings_endpoint)) },
-                items = Endpoint.values(),
-                selected = endpoint,
-                labelMapper = { endpoint -> endpoint.host },
-                onSelect = { endpoint -> onAction(SetEndpoint(endpoint)) },
-            )
-            menuSyncSelectionItem(
-                title = { Text(stringResource(R.string.menu_settings_favorites_sync)) },
-                items = SyncPeriod.values(),
-                selected = favoritesSyncPeriod,
-                labelMapper = { syncPeriod -> stringResource(syncPeriod.resId) },
-                onSelect = { syncPeriod -> onAction(SetFavoritesSyncPeriod(syncPeriod)) },
-            )
-            menuSyncSelectionItem(
-                title = { Text(stringResource(R.string.menu_settings_bookmarks_sync)) },
-                items = SyncPeriod.values(),
-                selected = bookmarksSyncPeriod,
-                labelMapper = { syncPeriod -> stringResource(syncPeriod.resId) },
-                onSelect = { syncPeriod -> onAction(SetBookmarksSyncPeriod(syncPeriod)) },
-            )
-            menuSectionLabel { Text(stringResource(R.string.menu_label_data)) }
-            menuItem(
-                text = { Text(stringResource(R.string.menu_data_clear_history)) },
-                onClick = {
-                    onAction(
-                        ConfirmableAction(
-                            title = R.string.menu_data_clear_history_title,
-                            confirmationMessage = R.string.menu_data_clear_history_confirmation,
-                            onConfirmAction = { onAction(ClearHistoryConfirmation) },
-                        )
+) = Scaffold(
+    topBar = { appBarState ->
+        AppBar(
+            title = { Text(stringResource(R.string.menu_title)) },
+            appBarState = appBarState,
+        )
+    },
+) { padding ->
+    val (theme, endpoint, favoritesSyncPeriod, bookmarksSyncPeriod) = state
+    LazyList(
+        modifier = Modifier.padding(padding),
+        contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
+    ) {
+        menuAccountItem { onAction(LoginClick) }
+        menuSectionLabel { Text(stringResource(R.string.menu_label_settings)) }
+        menuSelectionItem(
+            title = { Text(stringResource(R.string.menu_settings_theme)) },
+            items = Theme.availableValues(),
+            selected = theme,
+            labelMapper = { theme -> stringResource(theme.resId) },
+            onSelect = { theme -> onAction(SetTheme(theme)) },
+        )
+        menuSelectionItem(
+            title = { Text(stringResource(R.string.menu_settings_endpoint)) },
+            items = Endpoint.values(),
+            selected = endpoint,
+            labelMapper = { endpoint -> endpoint.host },
+            onSelect = { endpoint -> onAction(SetEndpoint(endpoint)) },
+        )
+        menuSyncSelectionItem(
+            title = { Text(stringResource(R.string.menu_settings_favorites_sync)) },
+            items = SyncPeriod.values(),
+            selected = favoritesSyncPeriod,
+            labelMapper = { syncPeriod -> stringResource(syncPeriod.resId) },
+            onSelect = { syncPeriod -> onAction(SetFavoritesSyncPeriod(syncPeriod)) },
+        )
+        menuSyncSelectionItem(
+            title = { Text(stringResource(R.string.menu_settings_bookmarks_sync)) },
+            items = SyncPeriod.values(),
+            selected = bookmarksSyncPeriod,
+            labelMapper = { syncPeriod -> stringResource(syncPeriod.resId) },
+            onSelect = { syncPeriod -> onAction(SetBookmarksSyncPeriod(syncPeriod)) },
+        )
+        menuSectionLabel { Text(stringResource(R.string.menu_label_data)) }
+        menuItem(
+            text = { Text(stringResource(R.string.menu_data_clear_history)) },
+            onClick = {
+                onAction(
+                    ConfirmableAction(
+                        title = R.string.menu_data_clear_history_title,
+                        confirmationMessage = R.string.menu_data_clear_history_confirmation,
+                        onConfirmAction = { onAction(ClearHistoryConfirmation) },
                     )
-                },
-            )
-            menuItem(
-                text = { Text(stringResource(R.string.menu_data_clear_bookmarks)) },
-                onClick = {
-                    onAction(
-                        ConfirmableAction(
-                            title = R.string.menu_data_clear_bookmarks_title,
-                            confirmationMessage = R.string.menu_data_clear_bookmarks_confirmation,
-                            onConfirmAction = { onAction(ClearBookmarksConfirmation) },
-                        )
+                )
+            },
+        )
+        menuItem(
+            text = { Text(stringResource(R.string.menu_data_clear_bookmarks)) },
+            onClick = {
+                onAction(
+                    ConfirmableAction(
+                        title = R.string.menu_data_clear_bookmarks_title,
+                        confirmationMessage = R.string.menu_data_clear_bookmarks_confirmation,
+                        onConfirmAction = { onAction(ClearBookmarksConfirmation) },
                     )
-                },
-            )
-            menuItem(
-                text = { Text(stringResource(R.string.menu_data_clear_favorites)) },
-                onClick = {
-                    onAction(
-                        ConfirmableAction(
-                            title = R.string.menu_data_clear_favorites_title,
-                            confirmationMessage = R.string.menu_data_clear_favorites_confirmation,
-                            onConfirmAction = { onAction(ClearFavoritesConfirmation) },
-                        )
+                )
+            },
+        )
+        menuItem(
+            text = { Text(stringResource(R.string.menu_data_clear_favorites)) },
+            onClick = {
+                onAction(
+                    ConfirmableAction(
+                        title = R.string.menu_data_clear_favorites_title,
+                        confirmationMessage = R.string.menu_data_clear_favorites_confirmation,
+                        onConfirmAction = { onAction(ClearFavoritesConfirmation) },
                     )
-                },
-            )
-            menuSectionLabel { Text(stringResource(R.string.menu_label_misc)) }
-            menuItem(
-                text = { Text(stringResource(R.string.menu_misc_rights)) },
-                onClick = { onAction(MenuAction.RightsClick) },
-            )
-            menuItem(
-                text = { Text(stringResource(R.string.menu_misc_privacy)) },
-                onClick = { onAction(MenuAction.PrivacyPolicyClick) },
-            )
-            menuItem(
-                text = { Text(stringResource(R.string.menu_misc_contacts)) },
-                onClick = { onAction(SendFeedbackClick) },
-            )
-            menuItem(
-                text = { Text(stringResource(R.string.menu_misc_about)) },
-                onClick = { onAction(AboutClick) },
-            )
-        }
+                )
+            },
+        )
+        menuSectionLabel { Text(stringResource(R.string.menu_label_misc)) }
+        menuItem(
+            text = { Text(stringResource(R.string.menu_misc_rights)) },
+            onClick = { onAction(MenuAction.RightsClick) },
+        )
+        menuItem(
+            text = { Text(stringResource(R.string.menu_misc_privacy)) },
+            onClick = { onAction(MenuAction.PrivacyPolicyClick) },
+        )
+        menuItem(
+            text = { Text(stringResource(R.string.menu_misc_contacts)) },
+            onClick = { onAction(SendFeedbackClick) },
+        )
+        menuItem(
+            text = { Text(stringResource(R.string.menu_misc_about)) },
+            onClick = { onAction(AboutClick) },
+        )
     }
 }
 
@@ -246,6 +240,7 @@ private fun LazyListScope.menuSectionLabel(
         modifier = Modifier.padding(
             start = AppTheme.spaces.large,
             top = AppTheme.spaces.large,
+            end = AppTheme.spaces.large,
             bottom = AppTheme.spaces.small,
         ),
     ) {
@@ -358,7 +353,7 @@ private fun AboutAppDialog(state: DialogState) {
             icon = {
                 Icon(
                     icon = FlowIcons.AppIcon,
-                    contentDescription = null, //TODO: add contentDescription
+                    contentDescription = null,
                 )
             },
             iconContentColor = AppTheme.colors.primary,

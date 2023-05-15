@@ -46,7 +46,7 @@ private fun AvatarPlaceholder() {
                 R.drawable.ic_avatar_light
             }
         ),
-        contentDescription = null, //TODO: add contentDescription
+        contentDescription = null,
         colorFilter = ColorFilter.tint(color = AppTheme.colors.onPrimaryContainer),
     )
 }

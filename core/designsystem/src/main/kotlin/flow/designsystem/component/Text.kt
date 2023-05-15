@@ -26,7 +26,7 @@ import flow.designsystem.theme.AppTheme
 fun Text(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = LocalContentColor.current,
+    color: Color = Color.Unspecified,
     fontSize: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle? = null,
     fontWeight: FontWeight? = null,
@@ -156,19 +156,6 @@ fun Label(
     text = text,
     modifier = modifier,
     style = AppTheme.typography.labelMedium,
-    color = color,
-)
-
-@Composable
-@NonRestartableComposable
-fun LabelLarge(
-    text: String,
-    modifier: Modifier = Modifier,
-    color: Color = Color.Unspecified,
-) = Text(
-    text = text,
-    modifier = modifier,
-    style = AppTheme.typography.labelLarge,
     color = color,
 )
 

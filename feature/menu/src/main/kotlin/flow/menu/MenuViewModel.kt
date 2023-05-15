@@ -1,7 +1,6 @@
 package flow.menu
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.ClearBookmarksUseCase
 import flow.domain.usecase.ClearHistoryUseCase
@@ -12,8 +11,10 @@ import flow.domain.usecase.SetEndpointUseCase
 import flow.domain.usecase.SetFavoritesSyncPeriodUseCase
 import flow.domain.usecase.SetThemeUseCase
 import flow.logger.api.LoggerFactory
+import flow.models.settings.Endpoint
+import flow.models.settings.SyncPeriod
+import flow.models.settings.Theme
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -44,38 +45,87 @@ internal class MenuViewModel @Inject constructor(
     fun perform(action: MenuAction) {
         logger.d { "Perform $action" }
         when (action) {
-            is MenuAction.AboutClick -> intent { postSideEffect(MenuSideEffect.ShowAbout) }
-            is MenuAction.ConfirmableAction -> intent { postSideEffect(action.toConfirmation()) }
-            is MenuAction.ClearBookmarksConfirmation -> viewModelScope.launch { clearBookmarksUseCase() }
-            is MenuAction.ClearFavoritesConfirmation -> viewModelScope.launch { clearLocalFavoritesUseCase() }
-            is MenuAction.ClearHistoryConfirmation -> viewModelScope.launch { clearHistoryUseCase() }
-            is MenuAction.LoginClick -> intent { postSideEffect(MenuSideEffect.OpenLogin) }
-            is MenuAction.PrivacyPolicyClick -> intent { postSideEffect(MenuSideEffect.OpenLink(PrivacyPolicy)) }
-            is MenuAction.RightsClick -> intent { postSideEffect(MenuSideEffect.OpenLink(Copyrights)) }
-            is MenuAction.SendFeedbackClick -> intent { postSideEffect(MenuSideEffect.OpenLink(DeveloperEmail)) }
-            is MenuAction.SetBookmarksSyncPeriod -> viewModelScope.launch { setBookmarksSyncPeriodUseCase(action.syncPeriod) }
-            is MenuAction.SetEndpoint -> viewModelScope.launch { setEndpointUseCase(action.endpoint) }
-            is MenuAction.SetFavoritesSyncPeriod -> viewModelScope.launch { setFavoritesSyncPeriodUseCase(action.syncPeriod) }
-            is MenuAction.SetTheme -> viewModelScope.launch { setThemeUseCase(action.theme) }
+            is MenuAction.AboutClick -> onAboutClick()
+            is MenuAction.ConfirmableAction -> onConfirmableAction(action)
+            is MenuAction.ClearBookmarksConfirmation -> onClearBookmarksConfirmation()
+            is MenuAction.ClearFavoritesConfirmation -> onClearFavoritesConfirmation()
+            is MenuAction.ClearHistoryConfirmation -> onClearHistoryConfirmation()
+            is MenuAction.LoginClick -> onLoginClick()
+            is MenuAction.PrivacyPolicyClick -> onPrivacyPolicyClick()
+            is MenuAction.RightsClick -> onRightsClick()
+            is MenuAction.SendFeedbackClick -> onSendFeedbackClick()
+            is MenuAction.SetBookmarksSyncPeriod -> onSetBookmarksSyncPeriod(action.syncPeriod)
+            is MenuAction.SetEndpoint -> onSetEndpoint(action.endpoint)
+            is MenuAction.SetFavoritesSyncPeriod -> onSetFavoritesSyncPeriod(action.syncPeriod)
+            is MenuAction.SetTheme -> onSetTheme(action.theme)
         }
     }
 
-    private fun observeSettings() {
+    private fun observeSettings() = intent {
         logger.d { "Start observing settings" }
-        viewModelScope.launch {
-            observeSettingsUseCase().collectLatest { settings ->
-                intent {
-                    reduce {
-                        MenuState(
-                            theme = settings.theme,
-                            endpoint = settings.endpoint,
-                            favoritesSyncPeriod = settings.favoritesSyncPeriod,
-                            bookmarksSyncPeriod = settings.bookmarksSyncPeriod,
-                        )
-                    }
-                }
+        observeSettingsUseCase().collectLatest { settings ->
+            reduce {
+                logger.d { "On new settings: $settings" }
+                MenuState(
+                    theme = settings.theme,
+                    endpoint = settings.endpoint,
+                    favoritesSyncPeriod = settings.favoritesSyncPeriod,
+                    bookmarksSyncPeriod = settings.bookmarksSyncPeriod,
+                )
             }
         }
+    }
+
+    private fun onAboutClick() = intent {
+        postSideEffect(MenuSideEffect.ShowAbout)
+    }
+
+    private fun onConfirmableAction(action: MenuAction.ConfirmableAction) = intent {
+        postSideEffect(action.toConfirmation())
+    }
+
+    private fun onClearBookmarksConfirmation() = intent {
+        clearBookmarksUseCase()
+    }
+
+    private fun onClearFavoritesConfirmation() = intent {
+        clearLocalFavoritesUseCase()
+    }
+
+    private fun onClearHistoryConfirmation() = intent {
+        clearHistoryUseCase()
+    }
+
+    private fun onLoginClick() = intent {
+        postSideEffect(MenuSideEffect.OpenLogin)
+    }
+
+    private fun onPrivacyPolicyClick() = intent {
+        postSideEffect(MenuSideEffect.OpenLink(PrivacyPolicy))
+    }
+
+    private fun onRightsClick() = intent {
+        postSideEffect(MenuSideEffect.OpenLink(Copyrights))
+    }
+
+    private fun onSendFeedbackClick() = intent {
+        postSideEffect(MenuSideEffect.OpenLink(DeveloperEmail))
+    }
+
+    private fun onSetBookmarksSyncPeriod(period: SyncPeriod) = intent {
+        setBookmarksSyncPeriodUseCase(period)
+    }
+
+    private fun onSetEndpoint(endpoint: Endpoint) = intent {
+        setEndpointUseCase(endpoint)
+    }
+
+    private fun onSetFavoritesSyncPeriod(period: SyncPeriod) = intent {
+        setFavoritesSyncPeriodUseCase(period)
+    }
+
+    private fun onSetTheme(theme: Theme) = intent {
+        setThemeUseCase(theme)
     }
 
     private fun MenuAction.ConfirmableAction.toConfirmation() =
@@ -84,6 +134,7 @@ internal class MenuViewModel @Inject constructor(
     companion object {
         private const val DeveloperEmail = "mailto:rutracker.search@gmail.com"
         private const val Copyrights = "https://flow-proxy-m7o3b.ondigitalocean.app/copyrights.html"
-        private const val PrivacyPolicy = "https://flow-proxy-m7o3b.ondigitalocean.app/privacy-policy.html"
+        private const val PrivacyPolicy =
+            "https://flow-proxy-m7o3b.ondigitalocean.app/privacy-policy.html"
     }
 }
