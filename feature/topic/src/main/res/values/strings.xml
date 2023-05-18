@@ -23,6 +23,8 @@
 
     <string name="topic_new_comment">New message</string>
 
+    <string name="topic_poster_image">Poster</string>
+
     <string name="permission_write_storage_rationale_title">Grant access to storage?</string>
     <string name="permission_write_storage_rationale">To download the torrent file you must grant permission to access the download folder</string>
 </resources>
