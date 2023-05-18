@@ -118,8 +118,8 @@ private fun TextButton(
 @NonRestartableComposable
 fun IconButton(
     onClick: () -> Unit,
-    enabled: Boolean = true,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: @Composable () -> Unit,
 ) = androidx.compose.material3.IconButton(

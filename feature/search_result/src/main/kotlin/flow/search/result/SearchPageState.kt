@@ -24,9 +24,10 @@ internal sealed interface SearchResultContent {
 }
 
 internal val SearchPageState.showFilterBadge: Boolean
-    get() = filter.period != Period.ALL_TIME ||
-            filter.author != null ||
-            !filter.categories.isNullOrEmpty()
+    get() = !appBarExpanded &&
+            (filter.period != Period.ALL_TIME ||
+                    filter.author != null ||
+                    !filter.categories.isNullOrEmpty())
 
 internal val SearchPageState.categories
     get() = when (searchContent) {

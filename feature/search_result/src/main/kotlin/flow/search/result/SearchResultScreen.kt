@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import flow.designsystem.component.AppBarState
 import flow.designsystem.component.BackButton
-import flow.designsystem.component.BadgeBox
 import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.ExpandableAppBar
 import flow.designsystem.component.Icon
@@ -27,9 +26,11 @@ import flow.designsystem.component.LazyList
 import flow.designsystem.component.Scaffold
 import flow.designsystem.component.ScrollBackFloatingActionButton
 import flow.designsystem.drawables.FlowIcons
+import flow.designsystem.drawables.Icon
 import flow.designsystem.theme.AppTheme
 import flow.models.LoadState
 import flow.models.search.Filter
+import flow.models.search.Period
 import flow.search.result.filter.FilterBar
 import flow.ui.component.TopicListItem
 import flow.ui.component.appendItems
@@ -99,7 +100,7 @@ private fun SearchAppBar(
     actions = {
         FilterButton(
             expanded = state.appBarExpanded,
-            showBadge = state.showFilterBadge,
+            icon = state.filter.icon,
             onClick = { onAction(SearchResultAction.ExpandAppBarClick) }
         )
     },
@@ -121,7 +122,7 @@ private fun SearchAppBar(
 @Composable
 private fun FilterButton(
     expanded: Boolean,
-    showBadge: Boolean,
+    icon: Icon,
     onClick: () -> Unit,
 ) {
     val rotation by animateFloatAsState(
@@ -129,19 +130,14 @@ private fun FilterButton(
         label = "FilterButton_Rotation"
     )
     IconButton(onClick = onClick) {
-        BadgeBox(
-            showBadge = !expanded && showBadge,
-            content = {
-                Icon(
-                    modifier = Modifier.rotate(rotation),
-                    icon = if (expanded) {
-                        FlowIcons.Expand
-                    } else {
-                        FlowIcons.Filters
-                    },
-                    contentDescription = stringResource(R.string.search_screen_content_description_filter),
-                )
-            }
+        Icon(
+            modifier = Modifier.rotate(rotation),
+            icon = if (expanded) {
+                FlowIcons.Expand
+            } else {
+                icon
+            },
+            contentDescription = stringResource(R.string.search_screen_content_description_filter),
         )
     }
 }
@@ -218,3 +214,28 @@ private fun SearchResultList(
         }
     }
 }
+
+private val Filter.icon: Icon
+    get() {
+        var counter = 0
+        if (period != Period.ALL_TIME) {
+            counter++
+        }
+        if (author != null) {
+            counter++
+        }
+        counter += categories.orEmpty().size
+        return when (counter) {
+            0 -> FlowIcons.Filters.NoFilters
+            1 -> FlowIcons.Filters.Filters1
+            2 -> FlowIcons.Filters.Filters2
+            3 -> FlowIcons.Filters.Filters3
+            4 -> FlowIcons.Filters.Filters4
+            5 -> FlowIcons.Filters.Filters5
+            6 -> FlowIcons.Filters.Filters6
+            7 -> FlowIcons.Filters.Filters7
+            8 -> FlowIcons.Filters.Filters8
+            9 -> FlowIcons.Filters.Filters9
+            else -> FlowIcons.Filters.Filters9Plus
+        }
+    }

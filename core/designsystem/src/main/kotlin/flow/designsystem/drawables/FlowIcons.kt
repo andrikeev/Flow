@@ -24,6 +24,17 @@ import androidx.compose.material.icons.outlined.FiberNew
 import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.FileDownloadDone
 import androidx.compose.material.icons.outlined.FileUpload
+import androidx.compose.material.icons.outlined.Filter1
+import androidx.compose.material.icons.outlined.Filter2
+import androidx.compose.material.icons.outlined.Filter3
+import androidx.compose.material.icons.outlined.Filter4
+import androidx.compose.material.icons.outlined.Filter5
+import androidx.compose.material.icons.outlined.Filter6
+import androidx.compose.material.icons.outlined.Filter7
+import androidx.compose.material.icons.outlined.Filter8
+import androidx.compose.material.icons.outlined.Filter9
+import androidx.compose.material.icons.outlined.Filter9Plus
+import androidx.compose.material.icons.outlined.FilterNone
 import androidx.compose.material.icons.outlined.FirstPage
 import androidx.compose.material.icons.outlined.FontDownload
 import androidx.compose.material.icons.outlined.Forum
@@ -37,13 +48,11 @@ import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.PersonSearch
-import androidx.compose.material.icons.outlined.Pin
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material.icons.outlined.SdStorage
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.SwitchAccount
-import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.VpnKey
 import androidx.compose.ui.graphics.vector.ImageVector
 import flow.designsystem.R
@@ -66,7 +75,6 @@ object FlowIcons {
     val Captcha: Icon = Icon.ImageVectorIcon(MaterialIcons.FontDownload)
     val ChevronRight: Icon = Icon.ImageVectorIcon(MaterialIcons.ChevronRight)
     val Clear: Icon = Icon.ImageVectorIcon(MaterialIcons.Clear)
-    val Collapse: Icon = Icon.ImageVectorIcon(MaterialIcons.ExpandLess)
     val Comment: Icon = Icon.ImageVectorIcon(MaterialIcons.Edit)
     val DropDownExpand: Icon = Icon.ImageVectorIcon(MaterialIcons.ArrowDropDown)
     val Expand: Icon = Icon.ImageVectorIcon(MaterialIcons.ExpandMore)
@@ -75,7 +83,6 @@ object FlowIcons {
     val FavoriteUnchecked: Icon = Icon.ImageVectorIcon(MaterialIcons.FavoriteBorder)
     val File: Icon = Icon.ImageVectorIcon(MaterialIcons.FileDownload)
     val FileDownloadDone: Icon = Icon.ImageVectorIcon(MaterialIcons.FileDownloadDone)
-    val Filters: Icon = Icon.ImageVectorIcon(MaterialIcons.Tune)
     val FirstPage: Icon = Icon.ImageVectorIcon(MaterialIcons.FirstPage)
     val Forum: Icon = Icon.ImageVectorIcon(MaterialIcons.ListAlt)
     val History: Icon = Icon.ImageVectorIcon(MaterialIcons.History)
@@ -88,7 +95,6 @@ object FlowIcons {
     val NewBadge: Icon = Icon.ImageVectorIcon(MaterialIcons.FiberNew)
     val NextPage: Icon = Icon.ImageVectorIcon(MaterialIcons.ChevronRight)
     val Notifications: Icon = Icon.ImageVectorIcon(MaterialIcons.NotificationsActive)
-    val Pages: Icon = Icon.ImageVectorIcon(MaterialIcons.Pin)
     val Password: Icon = Icon.ImageVectorIcon(MaterialIcons.VpnKey)
     val PrevPage: Icon = Icon.ImageVectorIcon(MaterialIcons.ChevronLeft)
     val ScrollToTop: Icon = Icon.ImageVectorIcon(MaterialIcons.ExpandLess)
@@ -107,5 +113,19 @@ object FlowIcons {
         val Duplicate: Icon = Icon.ImageVectorIcon(MaterialIcons.ContentCopy)
         val NeedsEdit: Icon = Icon.ImageVectorIcon(MaterialIcons.HelpOutline)
         val NoDescription: Icon = Icon.ImageVectorIcon(MaterialIcons.ErrorOutline)
+    }
+
+    object Filters {
+        val NoFilters: Icon = Icon.ImageVectorIcon(MaterialIcons.FilterNone)
+        val Filters1: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter1)
+        val Filters2: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter2)
+        val Filters3: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter3)
+        val Filters4: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter4)
+        val Filters5: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter5)
+        val Filters6: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter6)
+        val Filters7: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter7)
+        val Filters8: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter8)
+        val Filters9: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter9)
+        val Filters9Plus: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter9Plus)
     }
 }

@@ -1,5 +1,6 @@
 package flow.ui.component
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,10 +38,11 @@ fun RemoteImage(
     when (val state = painter.state) {
         is AsyncImagePainter.State.Empty,
         is AsyncImagePainter.State.Loading -> {
-            CircularProgressIndicator(
+            Box(
                 modifier = modifier
                     .padding(AppTheme.spaces.medium)
                     .size(AppTheme.sizes.medium),
+                content = { CircularProgressIndicator() },
             )
         }
 
