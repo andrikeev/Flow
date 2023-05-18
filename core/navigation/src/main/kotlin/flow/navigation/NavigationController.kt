@@ -1,6 +1,5 @@
 package flow.navigation
 
-import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -11,6 +10,8 @@ import flow.logger.api.LoggerFactory
 import flow.ui.platform.LocalLoggerFactory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import java.util.Stack
 
 interface NavigationController {
     val navHostController: NavHostController
@@ -18,13 +19,10 @@ interface NavigationController {
     fun popBackStack(): Boolean
 }
 
-interface DeeplinkNavigationController : NavigationController {
-    fun handleDeepLink(intent: Intent?): Boolean
-}
-
 interface NestedNavigationController : NavigationController {
     fun navigateTopLevel(route: String)
     val currentTopLevelRouteFlow: Flow<String>
+    val canPopBackFlow: Flow<Boolean>
 }
 
 private open class NavigationControllerImpl(
@@ -32,7 +30,7 @@ private open class NavigationControllerImpl(
     loggerFactory: LoggerFactory,
 ) : NavigationController {
 
-    protected val logger = loggerFactory.get("NavigationController")
+    private val logger = loggerFactory.get("NavigationController")
 
     protected val currentRoute: String?
         get() = navHostController.currentDestination?.route
@@ -49,18 +47,9 @@ private open class NavigationControllerImpl(
     }
 
     override fun popBackStack(): Boolean {
-        logger.d { "popBackStack" }
-        return navHostController.popBackStack()
-    }
-}
-
-private class DeeplinkNavigationControllerImpl(
-    navHostController: NavHostController,
-    loggerFactory: LoggerFactory,
-) : NavigationControllerImpl(navHostController, loggerFactory), DeeplinkNavigationController {
-    override fun handleDeepLink(intent: Intent?): Boolean {
-        logger.d { "handleDeepLink: data=${intent?.dataString}" }
-        return navHostController.handleDeepLink(intent)
+        return navHostController.popBackStack().also {
+            logger.d { "popBackStack: handled=$it" }
+        }
     }
 }
 
@@ -68,24 +57,29 @@ private class NestedNavigationControllerImpl(
     navHostController: NavHostController,
     loggerFactory: LoggerFactory,
 ) : NavigationControllerImpl(navHostController, loggerFactory), NestedNavigationController {
+
+    private val logger = loggerFactory.get("NestedNavigationController")
+
+    private val startTopLevelRoute: String by lazy {
+        requireNotNull(navHostController.graph.startDestinationRoute)
+    }
+    private val topLevelBackStack = Stack<String>()
+    private var topLevelRoute: String = ""
+
     override fun navigateTopLevel(route: String) {
-        logger.d { "navigateTopLevel: destination route=$route; " +
-                "current route=$currentRoute; " +
-                "current graph=$currentGraph; " +
-                "current graph start route = $currentGraphStartRoute"}
-        if (route == currentGraph) {
-            if (currentRoute != currentGraphStartRoute) {
-                navHostController.navigate(route = route) {
-                    popUpTo(navHostController.graph.id) { saveState = true }
-                    launchSingleTop = true
-                }
-            }
+        logger.d { "navigateTopLevel: route=$route" }
+        if (route == currentGraph && currentRoute != currentGraphStartRoute) {
+            navigate(
+                route = route,
+                addBackStack = true,
+                retain = false,
+            )
         } else if (route != currentRoute) {
-            navHostController.navigate(route = route) {
-                popUpTo(navHostController.graph.id) { saveState = true }
-                launchSingleTop = true
-                restoreState = true
-            }
+            navigate(
+                route = route,
+                addBackStack = true,
+                retain = true,
+            )
         }
     }
 
@@ -93,14 +87,70 @@ private class NestedNavigationControllerImpl(
         navHostController
             .currentBackStackEntryFlow
             .map { it.destination.run { parent?.route ?: route.orEmpty() } }
+            .onEach { logger.d { "currentTopLevelRoute: $it" } }
+    }
+
+    override val canPopBackFlow: Flow<Boolean> by lazy {
+        navHostController
+            .currentBackStackEntryFlow
+            .map { topLevelBackStack.isNotEmpty() || !isGraphRoot() }
+            .onEach { logger.d { "canPopBack: $it" } }
+    }
+
+    override fun popBackStack(): Boolean {
+        return when {
+            navHostController.popBackStack() -> true
+            topLevelBackStack.isNotEmpty() -> {
+                navigate(
+                    route = topLevelBackStack.pop(),
+                    addBackStack = false,
+                    retain = true,
+                )
+                true
+            }
+
+            else -> {
+                if (isGraphRoot()) {
+                    false
+                } else {
+                    navigate(
+                        route = startTopLevelRoute,
+                        addBackStack = false,
+                        retain = true,
+                    )
+                    true
+                }
+            }
+        }.also { logger.d { "popBackStack: handled=$it" } }
+    }
+
+    private fun isGraphRoot() = topLevelRoute == startTopLevelRoute
+
+    private fun navigate(
+        route: String,
+        addBackStack: Boolean,
+        retain: Boolean,
+    ) {
+        logger.d { "navigate: route=$route; addHistory=$addBackStack; retain=$retain" }
+        navHostController.navigate(route = route) {
+            popUpTo(navHostController.graph.id) { saveState = retain }
+            launchSingleTop = true
+            restoreState = retain
+        }
+        if (addBackStack && topLevelRoute.isNotBlank()) {
+            topLevelBackStack.remove(topLevelRoute)
+            topLevelBackStack.push(topLevelRoute)
+        }
+        topLevelBackStack.remove(route)
+        topLevelRoute = route
     }
 }
 
 @Composable
-fun rememberNavigationController(): DeeplinkNavigationController {
+fun rememberNavigationController(): NavigationController {
     val navHostController = rememberAnimatedNavController()
     val loggerFactory = LocalLoggerFactory.current
-    return remember { DeeplinkNavigationControllerImpl(navHostController, loggerFactory) }
+    return remember { NavigationControllerImpl(navHostController, loggerFactory) }
 }
 
 @Composable
@@ -113,4 +163,9 @@ fun rememberNestedNavigationController(): NestedNavigationController {
 @Composable
 internal fun NestedNavigationController.currentTopLevelRouteAsState(): State<String?> {
     return currentTopLevelRouteFlow.collectAsState(null)
+}
+
+@Composable
+internal fun NestedNavigationController.canPopBackAsState(): State<Boolean> {
+    return canPopBackFlow.collectAsState(false)
 }
