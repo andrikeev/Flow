@@ -2,13 +2,10 @@ package flow.topic
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +14,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
@@ -35,7 +31,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,7 +43,6 @@ import flow.designsystem.component.BodySmall
 import flow.designsystem.component.Button
 import flow.designsystem.component.CircularProgressIndicator
 import flow.designsystem.component.Dialog
-import flow.designsystem.component.ExpandCollapseIcon
 import flow.designsystem.component.ExpandableAppBar
 import flow.designsystem.component.FavoriteButton
 import flow.designsystem.component.Icon
@@ -64,7 +58,6 @@ import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
 import flow.designsystem.component.rememberDialogState
-import flow.designsystem.component.rememberExpandState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
@@ -284,10 +277,27 @@ private fun TorrentAppBar(
                     .fillMaxWidth()
                     .padding(vertical = AppTheme.spaces.large),
             ) {
+                val posterDialogState = rememberDialogState()
+                if (posterDialogState.visible) {
+                    TorrentPosterDialog(
+                        src = topicContent.data.posterUrl,
+                        onDismiss = posterDialogState::hide,
+                    )
+                }
+                Surface(
+                    modifier = Modifier.size(AppTheme.sizes.default),
+                    shape = AppTheme.shapes.small,
+                    onClick = posterDialogState::show,
+                ) {
+                    RemoteImage(
+                        src = topicContent.data.posterUrl,
+                        contentDescription = stringResource(R.string.topic_poster_image),
+                    )
+                }
                 topicContent.data.magnetLink.takeIf { !it.isNullOrBlank() }?.let { link ->
+                    Spacer(modifier = Modifier.width(AppTheme.spaces.large))
                     Button(
-                        modifier = Modifier
-                            .weight(1f),
+                        modifier = Modifier.weight(1f),
                         text = stringResource(R.string.topic_action_magnet),
                         onClick = { onAction(TopicAction.MagnetClick(link)) },
                         color = AppTheme.colors.accentRed,
@@ -443,11 +453,6 @@ private fun TopicContent(
                         state = state.loadStates.prepend,
                         onRetryClick = { onAction(TopicAction.RetryClick) },
                     )
-                    when (val topicContent = state.topicContent) {
-                        is TopicContent.Initial -> Unit
-                        is TopicContent.Topic -> Unit
-                        is TopicContent.Torrent -> item { PosterImage(topicContent.data.posterUrl) }
-                    }
                     items(
                         items = commentsContent.posts,
                         key = Post::id,
@@ -465,50 +470,23 @@ private fun TopicContent(
 }
 
 @Composable
-private fun PosterImage(
+private fun TorrentPosterDialog(
     src: String?,
-    modifier: Modifier = Modifier,
-) = Surface(
-    modifier = modifier.padding(
-        horizontal = AppTheme.spaces.mediumLarge,
-        vertical = AppTheme.spaces.small,
-    ),
-    shape = AppTheme.shapes.small,
-    tonalElevation = AppTheme.elevations.small,
+    onDismiss: () -> Unit,
+) = androidx.compose.ui.window.Dialog(
+    onDismissRequest = onDismiss,
 ) {
-    Column {
-        val expandState = rememberExpandState()
-        Row(
-            modifier = Modifier
-                .clickable(onClick = expandState::toggle)
-                .clip(AppTheme.shapes.small)
-                .padding(
-                    start = AppTheme.spaces.large,
-                    top = AppTheme.spaces.medium,
-                    end = AppTheme.spaces.medium,
-                    bottom = AppTheme.spaces.medium,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                modifier = Modifier.weight(1f),
-                style = AppTheme.typography.labelLarge,
-                text = stringResource(R.string.topic_poster_image),
+    Surface(
+        tonalElevation = AppTheme.elevations.large,
+        shadowElevation = AppTheme.elevations.large,
+        shape = AppTheme.shapes.large,
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            RemoteImage(
+                src = src,
+                contentDescription = stringResource(R.string.topic_poster_image),
             )
-            ExpandCollapseIcon(expanded = expandState.expanded)
         }
-        AnimatedVisibility(
-            visible = expandState.expanded,
-            enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
-            exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
-            content = {
-                RemoteImage(
-                    modifier = Modifier.fillMaxSize(),
-                    src = src,
-                    contentDescription = stringResource(R.string.topic_poster_image),
-                )
-            },
-        )
     }
 }
 
