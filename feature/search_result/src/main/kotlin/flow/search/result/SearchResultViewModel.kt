@@ -124,7 +124,8 @@ internal class SearchResultViewModel @Inject constructor(
     }
 
     private fun onSearchClick() = intent {
-        postSideEffect(SearchResultSideEffect.OpenSearchInput(state.filter))
+        val filter = state.filter.copy(period = Period.ALL_TIME)
+        postSideEffect(SearchResultSideEffect.OpenSearchInput(filter))
     }
 
     private fun onSetAuthor(author: Author?) = intent {
