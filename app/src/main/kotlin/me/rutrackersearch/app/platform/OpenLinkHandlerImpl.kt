@@ -15,13 +15,16 @@ class OpenLinkHandlerImpl(
     override fun openLink(link: String) {
         runCatching {
             logger.d { "Open link=$link" }
-            val uri = parseUri(link)
-            logger.d { "Open uri=$uri" }
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            if (isSupportedLink(uri)) {
-                intent.setPackage(context.packageName)
+            if (isSupportedLink(link)) {
+                val uri = parseUri(link)
+                val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                    setPackage(context.packageName)
+                }
+                context.startActivity(intent)
+            } else {
+                val intent = Intent.createChooser(Intent(Intent.ACTION_VIEW, Uri.parse(link)), null)
+                context.startActivity(intent)
             }
-            context.startActivity(intent)
         }.onFailure { error ->
             logger.e(error) { "Error open link=$link" }
         }
@@ -42,11 +45,9 @@ class OpenLinkHandlerImpl(
         }.build()
     }
 
-    private fun isSupportedLink(uri: Uri): Boolean {
-        return (uri.scheme == "http" || uri.scheme == "https") &&
-                (uri.host == "rutracker.org") &&
-                (uri.path == "/forum/viewtopic.php" ||
-                        uri.path == "/forum/viewforum.php" ||
-                        uri.path == "/forum/tracker.php")
+    private fun isSupportedLink(link: String): Boolean {
+        return link.contains("viewtopic.php") ||
+                link.contains("viewforum.php") ||
+                link.contains("tracker.php")
     }
 }
