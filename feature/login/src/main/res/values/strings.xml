@@ -5,6 +5,8 @@
     <string name="login_screen_header_subtitle">Use your rutracker.org account</string>
     <string name="login_screen_header_title">Sign in</string>
     <string name="login_screen_password_hint">Password</string>
+    <string name="login_screen_password_hide">Hide password</string>
+    <string name="login_screen_password_show">Show password</string>
     <string name="login_screen_password_empty_label">Password required</string>
     <string name="login_screen_username_hint">Username</string>
     <string name="login_screen_username_empty_label">User name required</string>

@@ -18,14 +18,14 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.window.Dialog
 import flow.designsystem.component.BodyLarge
-import flow.designsystem.component.DialogState
+import flow.designsystem.component.VisibilityState
 import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.Page
 import flow.designsystem.component.PagesScreen
 import flow.designsystem.component.Surface
 import flow.designsystem.component.TextButton
-import flow.designsystem.component.rememberDialogState
+import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.models.forum.Category
@@ -40,7 +40,7 @@ internal fun FilterCategoryItem(
     selected: List<Category>?,
     onSelect: (List<Category>?) -> Unit,
 ) {
-    val dialogState = rememberDialogState()
+    val dialogState = rememberVisibilityState()
     CategoriesSelectDialog(
         state = dialogState,
         available = available,
@@ -75,7 +75,7 @@ internal fun FilterCategoryItem(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CategoriesSelectDialog(
-    state: DialogState,
+    state: VisibilityState,
     available: List<Category>,
     selected: List<Category>?,
     onSubmit: (List<Category>?) -> Unit,

@@ -56,7 +56,7 @@ import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
-import flow.designsystem.component.rememberDialogState
+import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
@@ -97,8 +97,8 @@ internal fun TopicScreen(
     val shareLinkHandler = LocalShareLinkHandler.current
     val openFileHandler = LocalOpenFileHandler.current
     val magnetDialogState = rememberMagnetDialogState()
-    val loginRequestDialogState = rememberDialogState()
-    val downloadDialogState = rememberDialogState()
+    val loginRequestDialogState = rememberVisibilityState()
+    val downloadDialogState = rememberVisibilityState()
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is TopicSideEffect.Back -> back()
@@ -275,7 +275,7 @@ private fun TorrentAppBar(
                     .fillMaxWidth()
                     .padding(vertical = AppTheme.spaces.large),
             ) {
-                val posterDialogState = rememberDialogState()
+                val posterDialogState = rememberVisibilityState()
                 if (posterDialogState.visible) {
                     TorrentPosterDialog(
                         src = topicContent.data.posterUrl,
@@ -303,7 +303,7 @@ private fun TorrentAppBar(
                     Spacer(modifier = Modifier.width(AppTheme.spaces.large))
                 }
                 val permission = rememberPermissionState(Permission.WriteExternalStorage)
-                val permissionRationaleDialogState = rememberDialogState()
+                val permissionRationaleDialogState = rememberVisibilityState()
                 if (permissionRationaleDialogState.visible) {
                     WriteStoragePermissionRationaleDialog(
                         onOk = permission::requestPermission,

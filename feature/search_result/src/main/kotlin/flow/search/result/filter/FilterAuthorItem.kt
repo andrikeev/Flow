@@ -16,12 +16,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.Dialog
-import flow.designsystem.component.DialogState
+import flow.designsystem.component.VisibilityState
 import flow.designsystem.component.Icon
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.TextField
-import flow.designsystem.component.rememberDialogState
+import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.component.rememberFocusRequester
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.FlowTheme
@@ -34,7 +34,7 @@ internal fun FilterAuthorItem(
     selected: Author?,
     onSubmit: (Author?) -> Unit,
 ) {
-    val dialogState = rememberDialogState()
+    val dialogState = rememberVisibilityState()
     AuthorDialog(
         state = dialogState,
         author = selected,
@@ -58,7 +58,7 @@ internal fun FilterAuthorItem(
 
 @Composable
 private fun AuthorDialog(
-    state: DialogState,
+    state: VisibilityState,
     author: Author?,
     onDismissRequest: () -> Unit,
     onSubmit: (Author?) -> Unit,
@@ -114,6 +114,6 @@ private fun AuthorDialog(
 @Composable
 private fun AuthorDialogPreview() {
     FlowTheme {
-        AuthorDialog(DialogState(true), author = null, {}) {}
+        AuthorDialog(VisibilityState(true), author = null, {}) {}
     }
 }

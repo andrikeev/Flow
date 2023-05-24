@@ -14,7 +14,7 @@ import flow.designsystem.component.AppBarState
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.BookmarkButton
 import flow.designsystem.component.Dialog
-import flow.designsystem.component.DialogState
+import flow.designsystem.component.VisibilityState
 import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.Scaffold
@@ -22,7 +22,7 @@ import flow.designsystem.component.ScrollBackFloatingActionButton
 import flow.designsystem.component.SearchButton
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
-import flow.designsystem.component.rememberDialogState
+import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.models.LoadState
@@ -63,7 +63,7 @@ private fun CategoryScreen(
     openSearchInput: (categoryId: String) -> Unit,
     openTopic: (id: String) -> Unit,
 ) {
-    val loginDialogState = rememberDialogState()
+    val loginDialogState = rememberVisibilityState()
     LoginDialog(loginDialogState, viewModel::perform)
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -189,7 +189,7 @@ private fun CategoryAppBar(
 
 @Composable
 private fun LoginDialog(
-    state: DialogState,
+    state: VisibilityState,
     onAction: (CategoryAction) -> Unit,
 ) = AnimatedVisibility(
     visible = state.visible,

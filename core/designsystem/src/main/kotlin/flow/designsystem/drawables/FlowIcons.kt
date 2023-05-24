@@ -47,13 +47,15 @@ import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.NotificationsActive
+import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.PersonSearch
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material.icons.outlined.SdStorage
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.SwitchAccount
-import androidx.compose.material.icons.outlined.VpnKey
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.ui.graphics.vector.ImageVector
 import flow.designsystem.R
 
@@ -95,7 +97,9 @@ object FlowIcons {
     val NewBadge: Icon = Icon.ImageVectorIcon(MaterialIcons.FiberNew)
     val NextPage: Icon = Icon.ImageVectorIcon(MaterialIcons.ChevronRight)
     val Notifications: Icon = Icon.ImageVectorIcon(MaterialIcons.NotificationsActive)
-    val Password: Icon = Icon.ImageVectorIcon(MaterialIcons.VpnKey)
+    val Password: Icon = Icon.ImageVectorIcon(MaterialIcons.Password)
+    val PasswordHidden: Icon = Icon.ImageVectorIcon(MaterialIcons.VisibilityOff)
+    val PasswordVisible: Icon = Icon.ImageVectorIcon(MaterialIcons.Visibility)
     val PrevPage: Icon = Icon.ImageVectorIcon(MaterialIcons.ChevronLeft)
     val ScrollToTop: Icon = Icon.ImageVectorIcon(MaterialIcons.ExpandLess)
     val Search: Icon = Icon.ImageVectorIcon(MaterialIcons.Search)

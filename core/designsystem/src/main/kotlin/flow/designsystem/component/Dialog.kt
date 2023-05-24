@@ -105,23 +105,6 @@ private fun ConfirmationDialog(
 )
 
 @Stable
-class DialogState(initialState: Boolean) {
-    var visible: Boolean by mutableStateOf(initialState)
-        private set
-
-    fun show() {
-        visible = true
-    }
-
-    fun hide() {
-        visible = false
-    }
-}
-
-@Composable
-fun rememberDialogState(initialState: Boolean = false) = remember { DialogState(initialState) }
-
-@Stable
 class ConfirmationDialogState internal constructor(initialState: DialogConfirmationState) {
     internal var dialogState: DialogConfirmationState by mutableStateOf(initialState)
 
