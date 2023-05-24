@@ -27,7 +27,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,7 +82,6 @@ import flow.ui.platform.LocalOpenLinkHandler
 import flow.ui.platform.LocalShareLinkHandler
 import flow.ui.platform.OpenLinkHandler
 import flow.ui.platform.ShareLinkHandler
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -312,10 +310,6 @@ private fun TorrentAppBar(
                         dismiss = permissionRationaleDialogState::hide,
                     )
                 }
-                val snackbarHostState = LocalSnackbarHostState.current
-                val coroutineScope = rememberCoroutineScope()
-                val permissionRequiredMessage =
-                    stringResource(id = R.string.permission_write_storage_rationale)
                 Button(
                     modifier = Modifier.weight(1f),
                     text = stringResource(R.string.topic_action_torrent),
@@ -325,10 +319,7 @@ private fun TorrentAppBar(
                         } else if (permission.status.shouldShowRationale) {
                             permissionRationaleDialogState.show()
                         } else {
-                            coroutineScope.launch {
-                                snackbarHostState.clear()
-                                snackbarHostState.showSnackbar(permissionRequiredMessage)
-                            }
+                            permission.requestPermission()
                         }
                     },
                     color = AppTheme.colors.accentBlue,

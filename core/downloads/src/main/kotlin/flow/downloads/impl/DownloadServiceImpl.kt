@@ -33,7 +33,7 @@ class DownloadServiceImpl @Inject constructor(
     private val cache = mutableMapOf<String, String>()
 
     override suspend fun downloadTorrentFile(downloadRequest: DownloadRequest): String? {
-        val cachedUri = cache.getOrDefault(downloadRequest.id, null)
+        val cachedUri = cache[downloadRequest.id]
         if (cachedUri != null && File(URI.create(cachedUri)).exists()) {
             return cachedUri
         } else {

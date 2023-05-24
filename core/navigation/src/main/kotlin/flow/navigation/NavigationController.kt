@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import flow.logger.api.LoggerFactory
@@ -11,7 +13,6 @@ import flow.ui.platform.LocalLoggerFactory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import java.util.Stack
 
 interface NavigationController {
     val navHostController: NavHostController
@@ -56,6 +57,7 @@ private open class NavigationControllerImpl(
 private class NestedNavigationControllerImpl(
     navHostController: NavHostController,
     loggerFactory: LoggerFactory,
+    initialBackState: List<String>,
 ) : NavigationControllerImpl(navHostController, loggerFactory), NestedNavigationController {
 
     private val logger = loggerFactory.get("NestedNavigationController")
@@ -63,7 +65,7 @@ private class NestedNavigationControllerImpl(
     private val startTopLevelRoute: String by lazy {
         requireNotNull(navHostController.graph.startDestinationRoute)
     }
-    private val topLevelBackStack = Stack<String>()
+    val topLevelBackStack: MutableList<String> = initialBackState.toMutableList()
     private var topLevelRoute: String = ""
 
     override fun navigateTopLevel(route: String) {
@@ -91,10 +93,12 @@ private class NestedNavigationControllerImpl(
     }
 
     override val canPopBackFlow: Flow<Boolean> by lazy {
-        navHostController
-            .currentBackStackEntryFlow
-            .map { topLevelBackStack.isNotEmpty() || !isGraphRoot() }
-            .onEach { logger.d { "canPopBack: $it" } }
+        currentTopLevelRouteFlow
+            .map {
+                val canPopBack = topLevelBackStack.isNotEmpty() || it != startTopLevelRoute
+                "canPopBack: ($canPopBack) topLevelBackStack=$topLevelBackStack; currentTopLevelRoute=$it;"
+                canPopBack
+            }
     }
 
     override fun popBackStack(): Boolean {
@@ -102,7 +106,7 @@ private class NestedNavigationControllerImpl(
             navHostController.popBackStack() -> true
             topLevelBackStack.isNotEmpty() -> {
                 navigate(
-                    route = topLevelBackStack.pop(),
+                    route = topLevelBackStack.removeLast(),
                     addBackStack = false,
                     retain = true,
                 )
@@ -139,7 +143,7 @@ private class NestedNavigationControllerImpl(
         }
         if (addBackStack && topLevelRoute.isNotBlank()) {
             topLevelBackStack.remove(topLevelRoute)
-            topLevelBackStack.push(topLevelRoute)
+            topLevelBackStack.add(topLevelRoute)
         }
         topLevelBackStack.remove(route)
         topLevelRoute = route
@@ -157,7 +161,14 @@ fun rememberNavigationController(): NavigationController {
 fun rememberNestedNavigationController(): NestedNavigationController {
     val navHostController = rememberAnimatedNavController()
     val loggerFactory = LocalLoggerFactory.current
-    return remember { NestedNavigationControllerImpl(navHostController, loggerFactory) }
+    return rememberSaveable(
+        inputs = arrayOf(navHostController),
+        saver = listSaver(
+            save = { it.topLevelBackStack },
+            restore = { NestedNavigationControllerImpl(navHostController, loggerFactory, it) },
+        ),
+        init = { NestedNavigationControllerImpl(navHostController, loggerFactory, emptyList()) },
+    )
 }
 
 @Composable
