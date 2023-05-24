@@ -27,7 +27,7 @@ import flow.designsystem.component.AppBar
 import flow.designsystem.component.Body
 import flow.designsystem.component.ConfirmationDialog
 import flow.designsystem.component.Dialog
-import flow.designsystem.component.DialogState
+import flow.designsystem.component.VisibilityState
 import flow.designsystem.component.DropdownMenu
 import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
@@ -38,7 +38,7 @@ import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
 import flow.designsystem.component.rememberConfirmationDialogState
-import flow.designsystem.component.rememberDialogState
+import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
@@ -83,7 +83,7 @@ private fun MenuScreen(
     val openLinkHandler = LocalOpenLinkHandler.current
     val confirmationDialogState = rememberConfirmationDialogState()
     ConfirmationDialog(confirmationDialogState)
-    val aboutDialogState = rememberDialogState()
+    val aboutDialogState = rememberVisibilityState()
     AboutAppDialog(aboutDialogState)
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -346,7 +346,7 @@ private fun <T> MenuSelectionItem(
 }
 
 @Composable
-private fun AboutAppDialog(state: DialogState) {
+private fun AboutAppDialog(state: VisibilityState) {
     if (state.visible) {
         val packageInfo = getPackageInfo()
         Dialog(
@@ -445,7 +445,7 @@ private fun MenuScreen_Preview() {
 @Composable
 private fun AboutDialog_Preview() {
     FlowTheme(isDynamic = false) {
-        val dialogState = rememberDialogState(true)
+        val dialogState = rememberVisibilityState(true)
         AboutAppDialog(dialogState)
     }
 }

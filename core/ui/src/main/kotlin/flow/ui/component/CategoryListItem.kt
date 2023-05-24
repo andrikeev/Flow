@@ -28,7 +28,11 @@ fun CategoryListItem(
     modifier: Modifier = Modifier,
     text: String,
     contentPadding: PaddingValues = PaddingValues(horizontal = AppTheme.spaces.large),
+    contentElevation: Dp = AppTheme.elevations.zero,
     onClick: () -> Unit,
+) = Surface(
+    onClick = onClick,
+    tonalElevation = contentElevation,
 ) {
     CategoryListItem(
         modifier = modifier,
@@ -45,7 +49,6 @@ fun CategoryListItem(
             }
         },
         contentPadding = contentPadding,
-        onClick = onClick,
     )
 }
 
@@ -62,16 +65,20 @@ fun ExpandableCategoryListItem(
             AppTheme.elevations.small
         } else {
             AppTheme.elevations.zero
-        }
+        },
+        label = "ExpandableCategoryListItem_Elevation",
     )
-    CategoryListItem(
-        modifier = modifier,
-        text = text,
-        icons = { ExpandCollapseIcon(expanded = expanded) },
-        contentPadding = contentPadding,
-        contentElevation = elevation,
+    Surface(
         onClick = onExpand,
-    )
+        tonalElevation = elevation,
+    ) {
+        CategoryListItem(
+            modifier = modifier,
+            text = text,
+            icons = { ExpandCollapseIcon(expanded = expanded) },
+            contentPadding = contentPadding,
+        )
+    }
 }
 
 @Composable
@@ -84,13 +91,14 @@ fun SelectableCategoryListItem(
     ),
     selected: ToggleableState,
     onSelect: () -> Unit,
+) = Surface(
+    onClick = onSelect,
 ) {
     CategoryListItem(
         modifier = modifier,
         text = text,
         icons = { CheckBox(selectState = selected) },
         contentPadding = contentPadding,
-        onClick = onSelect,
     )
 }
 
@@ -112,19 +120,23 @@ fun ExpandableSelectableCategoryListItem(
             AppTheme.elevations.small
         } else {
             AppTheme.elevations.zero
-        }
-    )
-    CategoryListItem(
-        modifier = modifier,
-        text = text,
-        icons = {
-            ExpandCollapseIcon(expanded = expanded)
-            CheckBox(selectState = selected, onClick = onSelect)
         },
-        contentPadding = contentPadding,
-        contentElevation = elevation,
-        onClick = onExpand,
+        label = "ExpandableSelectableCategoryListItem_Elevation"
     )
+    Surface(
+        onClick = onExpand,
+        tonalElevation = elevation,
+    ) {
+        CategoryListItem(
+            modifier = modifier,
+            text = text,
+            icons = {
+                ExpandCollapseIcon(expanded = expanded)
+                CheckBox(selectState = selected, onClick = onSelect)
+            },
+            contentPadding = contentPadding,
+        )
+    }
 }
 
 @Composable
@@ -133,29 +145,21 @@ private fun CategoryListItem(
     text: String,
     icons: @Composable RowScope.() -> Unit,
     contentPadding: PaddingValues,
-    contentElevation: Dp = AppTheme.elevations.zero,
-    onClick: () -> Unit,
-) = Surface(
+) = Row(
     modifier = modifier
         .fillMaxWidth()
+        .padding(contentPadding)
         .defaultMinSize(minHeight = AppTheme.sizes.default),
-    tonalElevation = contentElevation,
-    shadowElevation = contentElevation,
-    onClick = onClick,
+    verticalAlignment = Alignment.CenterVertically,
 ) {
-    Row(
-        modifier = Modifier.padding(contentPadding),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Body(
-            modifier = Modifier
-                .weight(1f)
-                .padding(
-                    horizontal = AppTheme.spaces.medium,
-                    vertical = AppTheme.spaces.large,
-                ),
-            text = text,
-        )
-        icons()
-    }
+    Body(
+        modifier = Modifier
+            .weight(1f)
+            .padding(
+                horizontal = AppTheme.spaces.medium,
+                vertical = AppTheme.spaces.large,
+            ),
+        text = text,
+    )
+    icons()
 }

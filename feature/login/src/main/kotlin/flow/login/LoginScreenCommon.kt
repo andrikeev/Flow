@@ -1,6 +1,7 @@
 package flow.login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -26,12 +27,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import flow.designsystem.component.Button
 import flow.designsystem.component.CircularProgressIndicator
 import flow.designsystem.component.Icon
 import flow.designsystem.component.Placeholder
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextField
+import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.models.auth.Captcha
@@ -99,50 +102,72 @@ internal fun PasswordInputField(
     onChanged: (TextFieldValue) -> Unit,
     onSelectNext: () -> Unit,
     onSubmit: () -> Unit,
-) = TextField(
-    modifier = modifier
-        .padding(AppTheme.spaces.small)
-        .autofill(
-            autofillTypes = listOf(AutofillType.Password),
-            onFill = onChanged,
-        ),
-    value = state.passwordInput.value,
-    onValueChange = onChanged,
-    singleLine = true,
-    enabled = !state.isLoading,
-    isError = state.passwordInput.isError(),
-    visualTransformation = PasswordVisualTransformation(),
-    label = {
-        Text(
-            stringResource(
-                when (state.passwordInput) {
-                    is InputState.Empty -> R.string.login_screen_password_empty_label
-                    is InputState.Invalid -> R.string.login_screen_wrong_credits_label
-                    else -> R.string.login_screen_password_hint
-                }
-            )
-        )
-    },
-    leadingIcon = {
-        Icon(
-            icon = FlowIcons.Password,
-            contentDescription = stringResource(R.string.login_screen_password_hint),
-        )
-    },
-    keyboardOptions = KeyboardOptions(
-        keyboardType = KeyboardType.Password,
-        imeAction = if (state.hasCaptcha) {
-            ImeAction.Next
+) {
+    val passwordVisibility = rememberVisibilityState()
+    TextField(
+        modifier = modifier
+            .padding(AppTheme.spaces.small)
+            .autofill(
+                autofillTypes = listOf(AutofillType.Password),
+                onFill = onChanged,
+            ),
+        value = state.passwordInput.value,
+        onValueChange = onChanged,
+        singleLine = true,
+        enabled = !state.isLoading,
+        isError = state.passwordInput.isError(),
+        visualTransformation = if (passwordVisibility.visible) {
+            VisualTransformation.None
         } else {
-            ImeAction.Done
+            PasswordVisualTransformation()
         },
-        autoCorrect = false,
-    ),
-    keyboardActions = KeyboardActions(
-        onNext = { onSelectNext() },
-        onDone = { onSubmit() },
-    ),
-)
+        label = {
+            Text(
+                stringResource(
+                    when (state.passwordInput) {
+                        is InputState.Empty -> R.string.login_screen_password_empty_label
+                        is InputState.Invalid -> R.string.login_screen_wrong_credits_label
+                        else -> R.string.login_screen_password_hint
+                    }
+                )
+            )
+        },
+        leadingIcon = {
+            Icon(
+                icon = FlowIcons.Password,
+                contentDescription = stringResource(R.string.login_screen_password_hint),
+            )
+        },
+        trailingIcon = {
+            Box(modifier = Modifier.clickable(onClick = passwordVisibility::toggle)) {
+                if (passwordVisibility.visible) {
+                    Icon(
+                        icon = FlowIcons.PasswordVisible,
+                        contentDescription = stringResource(R.string.login_screen_password_hide),
+                    )
+                } else {
+                    Icon(
+                        icon = FlowIcons.PasswordHidden,
+                        contentDescription = stringResource(R.string.login_screen_password_show),
+                    )
+                }
+            }
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = if (state.hasCaptcha) {
+                ImeAction.Next
+            } else {
+                ImeAction.Done
+            },
+            autoCorrect = false,
+        ),
+        keyboardActions = KeyboardActions(
+            onNext = { onSelectNext() },
+            onDone = { onSubmit() },
+        ),
+    )
+}
 
 @Composable
 internal fun CaptchaInputField(

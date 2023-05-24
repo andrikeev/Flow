@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import flow.designsystem.platform.PlatformType
 import flow.designsystem.theme.FlowTheme
@@ -23,7 +24,7 @@ fun MainScreen(
             color = Color.Transparent,
             darkIcons = !isDark,
             isNavigationBarContrastEnforced = false,
-            transformColorForLightContent = { Color.Transparent },
+            transformColorForLightContent = { original -> Color.Black.compositeOver(original) },
         )
     }
     FlowTheme(

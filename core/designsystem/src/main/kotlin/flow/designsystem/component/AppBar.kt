@@ -24,7 +24,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -199,11 +198,9 @@ class PinnedAppBarState internal constructor(initialElevation: Boolean) : AppBar
         internal set
 
     companion object {
-        val Saver: Saver<PinnedAppBarState, *> = listSaver(
-            save = { listOf(it.elevated) },
-            restore = {
-                PinnedAppBarState(initialElevation = it[0])
-            },
+        val Saver: Saver<PinnedAppBarState, Boolean> = Saver(
+            save = { it.elevated },
+            restore = ::PinnedAppBarState,
         )
     }
 }

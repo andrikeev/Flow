@@ -27,7 +27,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +56,7 @@ import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
-import flow.designsystem.component.rememberDialogState
+import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
@@ -83,7 +82,6 @@ import flow.ui.platform.LocalOpenLinkHandler
 import flow.ui.platform.LocalShareLinkHandler
 import flow.ui.platform.OpenLinkHandler
 import flow.ui.platform.ShareLinkHandler
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -99,8 +97,8 @@ internal fun TopicScreen(
     val shareLinkHandler = LocalShareLinkHandler.current
     val openFileHandler = LocalOpenFileHandler.current
     val magnetDialogState = rememberMagnetDialogState()
-    val loginRequestDialogState = rememberDialogState()
-    val downloadDialogState = rememberDialogState()
+    val loginRequestDialogState = rememberVisibilityState()
+    val downloadDialogState = rememberVisibilityState()
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is TopicSideEffect.Back -> back()
@@ -277,7 +275,7 @@ private fun TorrentAppBar(
                     .fillMaxWidth()
                     .padding(vertical = AppTheme.spaces.large),
             ) {
-                val posterDialogState = rememberDialogState()
+                val posterDialogState = rememberVisibilityState()
                 if (posterDialogState.visible) {
                     TorrentPosterDialog(
                         src = topicContent.data.posterUrl,
@@ -305,17 +303,13 @@ private fun TorrentAppBar(
                     Spacer(modifier = Modifier.width(AppTheme.spaces.large))
                 }
                 val permission = rememberPermissionState(Permission.WriteExternalStorage)
-                val permissionRationaleDialogState = rememberDialogState()
+                val permissionRationaleDialogState = rememberVisibilityState()
                 if (permissionRationaleDialogState.visible) {
                     WriteStoragePermissionRationaleDialog(
                         onOk = permission::requestPermission,
                         dismiss = permissionRationaleDialogState::hide,
                     )
                 }
-                val snackbarHostState = LocalSnackbarHostState.current
-                val coroutineScope = rememberCoroutineScope()
-                val permissionRequiredMessage =
-                    stringResource(id = R.string.permission_write_storage_rationale)
                 Button(
                     modifier = Modifier.weight(1f),
                     text = stringResource(R.string.topic_action_torrent),
@@ -325,10 +319,7 @@ private fun TorrentAppBar(
                         } else if (permission.status.shouldShowRationale) {
                             permissionRationaleDialogState.show()
                         } else {
-                            coroutineScope.launch {
-                                snackbarHostState.clear()
-                                snackbarHostState.showSnackbar(permissionRequiredMessage)
-                            }
+                            permission.requestPermission()
                         }
                     },
                     color = AppTheme.colors.accentBlue,

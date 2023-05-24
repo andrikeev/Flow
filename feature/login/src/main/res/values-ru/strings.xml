@@ -6,6 +6,8 @@
     <string name="login_screen_header_subtitle">Используйте для входа свой аккаунт rutracker.org</string>
     <string name="login_screen_header_title">Вход</string>
     <string name="login_screen_password_hint">Пароль</string>
+    <string name="login_screen_password_hide">Показать пароль</string>
+    <string name="login_screen_password_show">Скрыть пароль</string>
     <string name="login_screen_password_empty_label">Не может быть пустым</string>
     <string name="login_screen_username_hint">Имя пользователя</string>
     <string name="login_screen_username_empty_label">Не может быть пустым</string>

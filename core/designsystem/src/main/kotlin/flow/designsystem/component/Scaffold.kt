@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -22,7 +23,7 @@ fun Scaffold(
     modifier: Modifier = Modifier,
     topBar: @Composable (AppBarState) -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
-    bottomBar: @Composable () -> Unit = { Divider() },
+    bottomBar: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val scrollState = rememberScrollState()
@@ -30,11 +31,22 @@ fun Scaffold(
     LaunchedEffect(scrollState.canScrollUp) {
         appBarState.elevated = scrollState.canScrollUp
     }
-    CompositionLocalProvider(LocalScrollState provides scrollState) {
+    val snackbarState = remember { MaterialSnackbarHostState() }
+    val delegateSnackbarState = remember { DelegateSnackbarHostState(snackbarState) }
+    CompositionLocalProvider(
+        LocalScrollState provides scrollState,
+        LocalSnackbarHostState provides delegateSnackbarState,
+    ) {
         MaterialDesignScaffold(
             modifier = modifier.consumeWindowInsets(WindowInsets.navigationBars),
             topBar = { topBar(appBarState) },
             bottomBar = bottomBar,
+            snackbarHost = {
+                SnackbarHost(
+                    modifier = Modifier.navigationBarsPadding(),
+                    hostState = snackbarState,
+                )
+            },
             floatingActionButton = floatingActionButton,
             containerColor = AppTheme.colors.background,
             contentColor = AppTheme.colors.onBackground,
@@ -71,7 +83,12 @@ fun Scaffold(content: @Composable (PaddingValues) -> Unit) {
     CompositionLocalProvider(LocalSnackbarHostState provides delegateSnackbarState) {
         MaterialDesignScaffold(
             content = content,
-            snackbarHost = { SnackbarHost(snackbarState) },
+            snackbarHost = {
+                SnackbarHost(
+                    modifier = Modifier.navigationBarsPadding(),
+                    hostState = snackbarState,
+                )
+            },
             containerColor = AppTheme.colors.background,
             contentColor = AppTheme.colors.onBackground,
             contentWindowInsets = DefaultWindowInset,

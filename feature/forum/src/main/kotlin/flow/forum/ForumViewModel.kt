@@ -62,10 +62,11 @@ internal class ForumViewModel @Inject constructor(
                         if (expandable.item == value.item) {
                             expandable.copy(expanded = !expandable.expanded)
                         } else {
-                            expandable
+                            expandable.copy(expanded = false)
                         }
                     }
                 )
+
                 is ForumState.Loading -> state
             }
         }
