@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import flow.designsystem.component.Divider
 import flow.designsystem.component.LazyList
+import flow.designsystem.component.Surface
 import flow.designsystem.theme.AppTheme
 import flow.forum.ForumAction.CategoryClick
 import flow.forum.ForumAction.ExpandClick
@@ -93,20 +94,23 @@ private fun RootCategory(
     AnimatedVisibility(
         visible = isExpanded,
         enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
-        exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
+        exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
     ) {
-        Column(modifier = Modifier.padding(vertical = AppTheme.spaces.medium)) {
-            rootCategory.children.forEachIndexed { index, category ->
-                CategoryListItem(
-                    text = category.name,
-                    onClick = { onCategoryClick(category) },
-                    contentPadding = PaddingValues(
-                        start = AppTheme.spaces.extraLarge,
-                        end = AppTheme.spaces.large,
-                    ),
-                )
-                if (index < rootCategory.children.lastIndex) {
-                    Divider(startIndent = AppTheme.spaces.extraLarge)
+        Surface(tonalElevation = AppTheme.elevations.small) {
+            Column(modifier = Modifier.padding(vertical = AppTheme.spaces.medium)) {
+                rootCategory.children.forEachIndexed { index, category ->
+                    CategoryListItem(
+                        text = category.name,
+                        onClick = { onCategoryClick(category) },
+                        contentPadding = PaddingValues(
+                            start = AppTheme.spaces.extraLarge,
+                            end = AppTheme.spaces.large,
+                        ),
+                        contentElevation = AppTheme.elevations.small,
+                    )
+                    if (index < rootCategory.children.lastIndex) {
+                        Divider(startIndent = AppTheme.spaces.extraLarge)
+                    }
                 }
             }
         }
