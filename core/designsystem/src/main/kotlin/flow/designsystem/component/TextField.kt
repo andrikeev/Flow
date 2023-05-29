@@ -1,5 +1,6 @@
 package flow.designsystem.component
 
+import android.view.KeyEvent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
@@ -23,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -135,7 +137,9 @@ fun SearchInputField(
     val focusRequester = rememberFocusRequester()
     RunOnFirstComposition { focusRequester.requestFocus() }
     androidx.compose.material3.TextField(
-        modifier = modifier.focusRequester(focusRequester),
+        modifier = modifier
+            .focusRequester(focusRequester)
+            .onEnter(onSubmitClick),
         value = inputValue,
         placeholder = { Text(stringResource(R.string.designsystem_hint_search)) },
         onValueChange = onInputValueChange,
@@ -277,6 +281,16 @@ private object TextFieldDefaults {
         errorSuffixColor = errorSuffixColor,
     )
 }
+
+fun Modifier.onEnter(block: () -> Unit): Modifier =
+    this then onKeyEvent { keyEvent ->
+        if (keyEvent.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
+            block()
+            true
+        } else {
+            false
+        }
+    }
 
 @ThemePreviews
 @Composable
