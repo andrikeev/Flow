@@ -11,7 +11,9 @@ import flow.work.api.BackgroundService
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class LogoutUseCase @Inject constructor(
+interface LogoutUseCase: suspend () -> Unit
+
+internal class LogoutUseCaseImpl @Inject constructor(
     private val authService: AuthService,
     private val backgroundService: BackgroundService,
     private val bookmarksRepository: BookmarksRepository,
@@ -20,8 +22,8 @@ class LogoutUseCase @Inject constructor(
     private val suggestsRepository: SuggestsRepository,
     private val visitedRepository: VisitedRepository,
     private val dispatchers: Dispatchers,
-) {
-    suspend operator fun invoke() {
+): LogoutUseCase {
+    override suspend operator fun invoke() {
         withContext(dispatchers.default) {
             backgroundService.stopBackgroundWorks()
             authService.logout()
