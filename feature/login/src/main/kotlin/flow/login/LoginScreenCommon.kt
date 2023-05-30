@@ -34,6 +34,7 @@ import flow.designsystem.component.Icon
 import flow.designsystem.component.Placeholder
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextField
+import flow.designsystem.component.onEnter
 import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
@@ -62,7 +63,8 @@ internal fun UsernameInputField(
                 AutofillType.EmailAddress,
             ),
             onFill = onChanged,
-        ),
+        )
+        .onEnter(onSelectNext),
     value = state.usernameInput.value,
     onValueChange = onChanged,
     singleLine = true,
@@ -110,7 +112,8 @@ internal fun PasswordInputField(
             .autofill(
                 autofillTypes = listOf(AutofillType.Password),
                 onFill = onChanged,
-            ),
+            )
+            .onEnter(onSelectNext),
         value = state.passwordInput.value,
         onValueChange = onChanged,
         singleLine = true,
@@ -176,7 +179,9 @@ internal fun CaptchaInputField(
     onChanged: (TextFieldValue) -> Unit,
     onSubmit: () -> Unit,
 ) = TextField(
-    modifier = modifier.padding(AppTheme.spaces.small),
+    modifier = modifier
+        .padding(AppTheme.spaces.small)
+        .onEnter(onSubmit),
     value = state.captchaInput.value,
     onValueChange = onChanged,
     singleLine = true,

@@ -5,6 +5,7 @@ import flow.network.dto.auth.AuthResponseDto
 import flow.network.dto.auth.CaptchaDto
 import flow.network.dto.auth.UserDto
 import flow.network.model.NoData
+import flow.network.model.Unknown
 import java.util.regex.Pattern
 
 internal class LoginUseCase(
@@ -33,8 +34,10 @@ internal class LoginUseCase(
             val captcha = ParseCaptchaUseCase(html)
             if (html.contains(WrongCreditsMessage)) {
                 AuthResponseDto.WrongCredits(captcha)
-            } else {
+            } else if (captcha != null) {
                 AuthResponseDto.CaptchaRequired(captcha)
+            } else {
+                throw Unknown
             }
         } else {
             throw NoData
@@ -48,10 +51,8 @@ internal class LoginUseCase(
     }
 
     private object ParseCaptchaUseCase {
-        private val codeRegex =
-            Pattern.compile("<input[^>]*name=\"(cap_code_[^\"]+)\"[^>]*value=\"[^\"]*\"[^>]*>")
-        private val sidRegex =
-            Pattern.compile("<input[^>]*name=\"cap_sid\"[^>]*value=\"([^\"]+)\"[^>]*>")
+        private val codeRegex = Pattern.compile("<input[^>]*name=\"(cap_code_[^\"]+)\"[^>]*>")
+        private val sidRegex = Pattern.compile("<input[^>]*name=\"cap_sid\"[^>]*value=\"([^\"]+)\"[^>]*>")
         private val urlRegex = Pattern.compile("<img[^>]*src=\"([^\"]+/captcha/[^\"]+)\"[^>]*>")
 
         operator fun invoke(from: String): CaptchaDto? {

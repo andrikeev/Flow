@@ -6,10 +6,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
-class ObserveAuthStateUseCase @Inject constructor(
+interface ObserveAuthStateUseCase : () -> Flow<AuthState>
+
+class ObserveAuthStateUseCaseImpl @Inject constructor(
     private val authService: AuthService
-) {
-    operator fun invoke(): Flow<AuthState> {
+) : ObserveAuthStateUseCase {
+    override operator fun invoke(): Flow<AuthState> {
         return authService.observeAuthState()
             .distinctUntilChanged()
     }

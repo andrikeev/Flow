@@ -11,7 +11,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import flow.designsystem.component.Body
+import flow.designsystem.component.CollectionPreviewParameterProvider
 import flow.designsystem.component.ConfirmationDialog
 import flow.designsystem.component.IconButton
 import flow.designsystem.component.Surface
@@ -118,19 +120,13 @@ internal fun AccountItem(
 
 @ThemePreviews
 @Composable
-private fun AccountItem_Unauthorized_Preview() {
-    FlowTheme {
-        AccountItem(state = AuthState.Unauthorized, onAction = {})
-    }
+private fun AccountItem_Preview(
+    @PreviewParameter(AccountItemParamProvider::class) authState: AuthState,
+) = FlowTheme {
+    AccountItem(state = AuthState.Unauthorized, onAction = {})
 }
 
-@ThemePreviews
-@Composable
-private fun AccountItem_Authorized_Preview() {
-    FlowTheme {
-        AccountItem(
-            state = AuthState.Authorized("Long-long user name", null),
-            onAction = {},
-        )
-    }
-}
+private class AccountItemParamProvider : CollectionPreviewParameterProvider<AuthState>(
+    AuthState.Unauthorized,
+    AuthState.Authorized("Long-long user name", null),
+)

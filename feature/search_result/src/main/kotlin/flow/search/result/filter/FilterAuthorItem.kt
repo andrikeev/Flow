@@ -24,6 +24,7 @@ import flow.designsystem.component.TextButton
 import flow.designsystem.component.TextField
 import flow.designsystem.component.ThemePreviews
 import flow.designsystem.component.VisibilityState
+import flow.designsystem.component.onEnter
 import flow.designsystem.component.rememberFocusRequester
 import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
@@ -95,7 +96,9 @@ private fun AuthorDialog(
                 val focusRequester = rememberFocusRequester()
                 RunOnFirstComposition { focusRequester.requestFocus() }
                 TextField(
-                    modifier = Modifier.focusRequester(focusRequester),
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
+                        .onEnter(::onSubmit),
                     singleLine = true,
                     value = textValue.value,
                     onValueChange = { textValue.value = it },

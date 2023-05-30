@@ -3,15 +3,10 @@ package flow.account
 import flow.domain.usecase.LogoutUseCase
 import flow.domain.usecase.ObserveAuthStateUseCase
 import flow.models.auth.AuthState
-import flow.testing.repository.TestBookmarksRepository
-import flow.testing.repository.TestFavoritesRepository
-import flow.testing.repository.TestSearchHistoryRepository
-import flow.testing.repository.TestSuggestsRepository
-import flow.testing.repository.TestVisitedRepository
+import flow.testing.logger.TestLoggerFactory
 import flow.testing.rule.MainDispatcherRule
 import flow.testing.service.TestAuthService
 import flow.testing.service.TestAuthService.Companion.TestAuthState
-import flow.testing.service.TestBackgroundService
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -19,33 +14,24 @@ import org.junit.Test
 import org.orbitmvi.orbit.liveTest
 import org.orbitmvi.orbit.test
 
-
 internal class AccountViewModelTest {
     @get:Rule
     val dispatcherRule = MainDispatcherRule()
 
     private val authService = TestAuthService()
 
-    private val logoutUseCase = LogoutUseCase(
-        authService = authService,
-        backgroundService = TestBackgroundService(),
-        bookmarksRepository = TestBookmarksRepository(),
-        favoritesRepository = TestFavoritesRepository(),
-        searchHistoryRepository = TestSearchHistoryRepository(),
-        suggestsRepository = TestSuggestsRepository(),
-        visitedRepository = TestVisitedRepository(),
-    )
-    private val observeAuthStateUseCase = ObserveAuthStateUseCase(
-        authService = authService,
-    )
-
     private lateinit var viewModel: AccountViewModel
 
     @Before
     fun setUp() {
         viewModel = AccountViewModel(
-            logoutUseCase = logoutUseCase,
-            observeAuthStateUseCase = observeAuthStateUseCase,
+            logoutUseCase = object : LogoutUseCase {
+                override suspend fun invoke() = authService.logout()
+            },
+            observeAuthStateUseCase = object : ObserveAuthStateUseCase {
+                override fun invoke() = authService.authState
+            },
+            loggerFactory = TestLoggerFactory(),
         )
     }
 
@@ -60,7 +46,8 @@ internal class AccountViewModelTest {
     @Test
     fun `Authorized when created`() = runTest {
         //set
-        val containerTest = viewModel.test()
+        val containerTest = viewModel.liveTest()
+        authService.authState.value = TestAuthState
         //do
         containerTest.runOnCreate()
         //check
