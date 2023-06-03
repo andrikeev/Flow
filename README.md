@@ -31,6 +31,14 @@ report liberally. If you're not sure if something is a bug or not, feel free to
 file a bug anyway.
 
 **Issue tracker:** <https://github.com/andrikeev/Flow/issues>
+**Forum 4PDA:** <https://4pda.to/forum/index.php?showtopic=729411>
+
+## Support Development
+
+You can support project if you want:
+
+**PayPal**: <https://www.paypal.com/donate/?hosted_button_id=LHVXE7WPCY846>
+**NetMonet**: <https://netmonet.ru/s/andrikeev>
 
 ## Sources
 
