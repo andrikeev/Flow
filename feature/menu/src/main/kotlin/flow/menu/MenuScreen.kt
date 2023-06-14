@@ -359,7 +359,7 @@ private fun <T> MenuSelectionItem(
 
 @Composable
 private fun MenuDonateItem(onAction: (MenuAction) -> Unit) {
-    val donateDialogState = rememberVisibilityState(true)
+    val donateDialogState = rememberVisibilityState()
     if (donateDialogState.visible) {
         Dialog(
             iconContentColor = AppTheme.colors.primary,
