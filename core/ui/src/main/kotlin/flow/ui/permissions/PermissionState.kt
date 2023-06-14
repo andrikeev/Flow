@@ -5,7 +5,10 @@ import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.PermissionState as AccompanistPermissionState
 import com.google.accompanist.permissions.PermissionStatus as AccompanistPermissionStatus
@@ -38,17 +41,30 @@ private object AlwaysGrantedPermissions : PermissionState {
 }
 
 @Composable
-private fun rememberAlwaysGrantedPermissions(): PermissionState = remember { AlwaysGrantedPermissions }
+private fun rememberAlwaysGrantedPermissions(): PermissionState =
+    remember { AlwaysGrantedPermissions }
 
 @Composable
 private fun rememberDelegatePermissionState(permission: String): PermissionState {
     val permissionState = rememberPermissionState(permission)
-    val delegateState = object : PermissionState {
-        override var status = permissionState.status()
-        override fun requestPermission() = permissionState.launchPermissionRequest()
+    val delegateState = remember {
+        PermissionStateImpl(
+            initial = permissionState.status(),
+            request = permissionState::launchPermissionRequest,
+        )
     }
     LaunchedEffect(permissionState.status) { delegateState.status = permissionState.status() }
     return delegateState
+}
+
+private class PermissionStateImpl(
+    initial: PermissionStatus,
+    private val request: () -> Unit,
+) : PermissionState {
+    override var status: PermissionStatus by mutableStateOf(initial)
+        internal set
+
+    override fun requestPermission() = request()
 }
 
 private fun AccompanistPermissionState.status(): PermissionStatus {

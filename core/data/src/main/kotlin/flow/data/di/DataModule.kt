@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import flow.data.api.repository.BookmarksRepository
 import flow.data.api.repository.FavoritesRepository
 import flow.data.api.repository.ForumRepository
+import flow.data.api.repository.RatingRepository
 import flow.data.api.repository.SearchHistoryRepository
 import flow.data.api.repository.SettingsRepository
 import flow.data.api.repository.SuggestsRepository
@@ -14,11 +15,13 @@ import flow.data.api.repository.VisitedRepository
 import flow.data.api.service.FavoritesService
 import flow.data.api.service.ForumService
 import flow.data.api.service.SearchService
+import flow.data.api.service.StoreService
 import flow.data.api.service.TopicService
 import flow.data.api.service.TorrentService
 import flow.data.impl.repository.BookmarksRepositoryImpl
 import flow.data.impl.repository.FavoritesRepositoryImpl
 import flow.data.impl.repository.ForumRepositoryImpl
+import flow.data.impl.repository.RatingRepositoryImpl
 import flow.data.impl.repository.SearchHistoryRepositoryImpl
 import flow.data.impl.repository.SettingsRepositoryImpl
 import flow.data.impl.repository.SuggestsRepositoryImpl
@@ -26,6 +29,7 @@ import flow.data.impl.repository.VisitedRepositoryImpl
 import flow.data.impl.service.FavoritesServiceImpl
 import flow.data.impl.service.ForumServiceImpl
 import flow.data.impl.service.SearchServiceImpl
+import flow.data.impl.service.StoreServiceImpl
 import flow.data.impl.service.TopicServiceImpl
 import flow.data.impl.service.TorrentServiceImpl
 import javax.inject.Singleton
@@ -55,6 +59,10 @@ internal interface DataModule {
 
     @Binds
     @Singleton
+    fun ratingRepository(impl: RatingRepositoryImpl): RatingRepository
+
+    @Binds
+    @Singleton
     fun searchHistoryRepository(impl: SearchHistoryRepositoryImpl): SearchHistoryRepository
 
     @Binds
@@ -68,6 +76,10 @@ internal interface DataModule {
     @Binds
     @Singleton
     fun suggestsRepository(impl: SuggestsRepositoryImpl): SuggestsRepository
+
+    @Binds
+    @Singleton
+    fun storeService(impl: StoreServiceImpl): StoreService
 
     @Binds
     @Singleton

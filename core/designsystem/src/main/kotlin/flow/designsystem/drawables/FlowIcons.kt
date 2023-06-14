@@ -34,7 +34,6 @@ import androidx.compose.material.icons.outlined.Filter7
 import androidx.compose.material.icons.outlined.Filter8
 import androidx.compose.material.icons.outlined.Filter9
 import androidx.compose.material.icons.outlined.Filter9Plus
-import androidx.compose.material.icons.outlined.FilterNone
 import androidx.compose.material.icons.outlined.FirstPage
 import androidx.compose.material.icons.outlined.FontDownload
 import androidx.compose.material.icons.outlined.Forum
@@ -53,7 +52,11 @@ import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material.icons.outlined.SdStorage
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material.icons.outlined.StarHalf
 import androidx.compose.material.icons.outlined.SwitchAccount
+import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -105,6 +108,9 @@ object FlowIcons {
     val Search: Icon = Icon.ImageVectorIcon(MaterialIcons.Search)
     val Seeds: Icon = Icon.ImageVectorIcon(MaterialIcons.FileUpload)
     val Share: Icon = Icon.ImageVectorIcon(MaterialIcons.Share)
+    val StarEmpty: Icon = Icon.ImageVectorIcon(MaterialIcons.StarBorder)
+    val StarHalf: Icon = Icon.ImageVectorIcon(MaterialIcons.StarHalf)
+    val StarFull: Icon = Icon.ImageVectorIcon(MaterialIcons.Star)
     val Storage: Icon = Icon.ImageVectorIcon(MaterialIcons.SdStorage)
     val Topics: Icon = Icon.ImageVectorIcon(MaterialIcons.Forum)
     val Username: Icon = Icon.ImageVectorIcon(MaterialIcons.AccountCircle)
@@ -120,7 +126,7 @@ object FlowIcons {
     }
 
     object Filters {
-        val NoFilters: Icon = Icon.ImageVectorIcon(MaterialIcons.FilterNone)
+        val NoFilters: Icon = Icon.ImageVectorIcon(MaterialIcons.Tune)
         val Filters1: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter1)
         val Filters2: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter2)
         val Filters3: Icon = Icon.ImageVectorIcon(MaterialIcons.Filter3)

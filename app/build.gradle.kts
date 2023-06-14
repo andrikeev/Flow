@@ -8,8 +8,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "me.rutrackersearch.app"
-        versionCode = 32
-        versionName = "4.3.4"
+        versionCode = 33
+        versionName = "4.3.5"
     }
 
     buildTypes {
@@ -60,6 +60,7 @@ dependencies {
     implementation(project(":feature:login"))
     implementation(project(":feature:main"))
     implementation(project(":feature:menu"))
+    implementation(project(":feature:rating"))
     implementation(project(":feature:search"))
     implementation(project(":feature:search_input"))
     implementation(project(":feature:search_result"))
