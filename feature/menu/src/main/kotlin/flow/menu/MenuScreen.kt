@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +29,6 @@ import flow.designsystem.component.AppBar
 import flow.designsystem.component.Body
 import flow.designsystem.component.ConfirmationDialog
 import flow.designsystem.component.Dialog
-import flow.designsystem.component.VisibilityState
 import flow.designsystem.component.DropdownMenu
 import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
@@ -37,6 +38,7 @@ import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
+import flow.designsystem.component.VisibilityState
 import flow.designsystem.component.rememberConfirmationDialogState
 import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
@@ -48,6 +50,7 @@ import flow.menu.MenuAction.ClearBookmarksConfirmation
 import flow.menu.MenuAction.ClearFavoritesConfirmation
 import flow.menu.MenuAction.ClearHistoryConfirmation
 import flow.menu.MenuAction.ConfirmableAction
+import flow.menu.MenuAction.DonateClick
 import flow.menu.MenuAction.LoginClick
 import flow.menu.MenuAction.SendFeedbackClick
 import flow.menu.MenuAction.SetBookmarksSyncPeriod
@@ -64,7 +67,7 @@ import flow.ui.permissions.shouldShowRationale
 import flow.ui.platform.LocalOpenLinkHandler
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-import java.util.*
+import java.util.Calendar
 import flow.designsystem.R as dsR
 
 @Composable
@@ -105,7 +108,7 @@ private fun MenuScreen(
 }
 
 @Composable
-internal fun MenuScreen(
+private fun MenuScreen(
     state: MenuState,
     onAction: (MenuAction) -> Unit,
 ) = Scaffold(
@@ -122,6 +125,7 @@ internal fun MenuScreen(
         contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
     ) {
         menuAccountItem { onAction(LoginClick) }
+        menuDonateItem { onAction(DonateClick) }
         menuSectionLabel { Text(stringResource(R.string.menu_label_settings)) }
         menuSelectionItem(
             title = { Text(stringResource(R.string.menu_settings_theme)) },
@@ -211,6 +215,10 @@ internal fun MenuScreen(
 private fun LazyListScope.menuAccountItem(
     onLoginClick: () -> Unit,
 ) = item { AccountItem(onLoginClick = onLoginClick) }
+
+private fun LazyListScope.menuDonateItem(
+    onSupportClick: () -> Unit,
+) = item { MenuDonateItem(onSupportClick) }
 
 private fun LazyListScope.menuItem(
     text: @Composable () -> Unit,
@@ -346,6 +354,36 @@ private fun <T> MenuSelectionItem(
 }
 
 @Composable
+private fun MenuDonateItem(onDonateClick: () -> Unit) {
+    Surface(
+        modifier = Modifier.padding(AppTheme.spaces.large),
+        onClick = onDonateClick,
+        shape = AppTheme.shapes.large,
+        tonalElevation = AppTheme.elevations.small,
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(AppTheme.spaces.large)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                modifier = Modifier
+                    .padding(AppTheme.spaces.medium)
+                    .size(AppTheme.sizes.medium),
+                icon = FlowIcons.StarFull,
+                contentDescription = null,
+            )
+            Text(
+                modifier = Modifier.padding(AppTheme.spaces.medium),
+                text = "Поддержать разработку",
+                style = AppTheme.typography.titleMedium,
+            )
+        }
+    }
+}
+
+@Composable
 private fun AboutAppDialog(state: VisibilityState) {
     if (state.visible) {
         val packageInfo = getPackageInfo()
@@ -435,17 +473,18 @@ private fun Theme.Companion.availableValues(): Array<Theme> {
 
 @ThemePreviews
 @Composable
-private fun MenuScreen_Preview() {
-    FlowTheme(isDynamic = false) {
-        MenuScreen(state = MenuState(), onAction = {})
-    }
-}
-
-@ThemePreviews
-@Composable
 private fun AboutDialog_Preview() {
     FlowTheme(isDynamic = false) {
         val dialogState = rememberVisibilityState(true)
         AboutAppDialog(dialogState)
     }
 }
+
+@ThemePreviews
+@Composable
+private fun MenuSupportItem_Preview() {
+    FlowTheme(isDynamic = false) {
+        MenuDonateItem {}
+    }
+}
+

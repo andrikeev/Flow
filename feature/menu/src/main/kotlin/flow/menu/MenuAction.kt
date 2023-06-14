@@ -18,6 +18,7 @@ internal sealed interface MenuAction {
     object RightsClick : MenuAction
     object SendFeedbackClick : MenuAction
     object AboutClick : MenuAction
+    object DonateClick : MenuAction
     data class ConfirmableAction(
         @StringRes val title: Int,
         @StringRes val confirmationMessage: Int,

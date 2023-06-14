@@ -60,6 +60,7 @@ dependencies {
     implementation(project(":feature:login"))
     implementation(project(":feature:main"))
     implementation(project(":feature:menu"))
+    implementation(project(":feature:rating"))
     implementation(project(":feature:search"))
     implementation(project(":feature:search_input"))
     implementation(project(":feature:search_result"))

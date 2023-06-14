@@ -46,6 +46,7 @@ internal class MenuViewModel @Inject constructor(
         logger.d { "Perform $action" }
         when (action) {
             is MenuAction.AboutClick -> onAboutClick()
+            is MenuAction.DonateClick -> onDonateClick()
             is MenuAction.ConfirmableAction -> onConfirmableAction(action)
             is MenuAction.ClearBookmarksConfirmation -> onClearBookmarksConfirmation()
             is MenuAction.ClearFavoritesConfirmation -> onClearFavoritesConfirmation()
@@ -78,6 +79,10 @@ internal class MenuViewModel @Inject constructor(
 
     private fun onAboutClick() = intent {
         postSideEffect(MenuSideEffect.ShowAbout)
+    }
+
+    private fun onDonateClick() = intent {
+        postSideEffect(MenuSideEffect.OpenLink(Donations))
     }
 
     private fun onConfirmableAction(action: MenuAction.ConfirmableAction) = intent {
@@ -134,7 +139,7 @@ internal class MenuViewModel @Inject constructor(
     companion object {
         private const val DeveloperEmail = "mailto:rutracker.search@gmail.com"
         private const val Copyrights = "https://flow-proxy-m7o3b.ondigitalocean.app/copyrights.html"
-        private const val PrivacyPolicy =
-            "https://flow-proxy-m7o3b.ondigitalocean.app/privacy-policy.html"
+        private const val PrivacyPolicy = "https://flow-proxy-m7o3b.ondigitalocean.app/privacy-policy.html"
+        private const val Donations = "https://github.com/andrikeev/Flow#support-development"
     }
 }

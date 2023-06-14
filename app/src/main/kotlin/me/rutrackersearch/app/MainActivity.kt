@@ -28,6 +28,7 @@ import flow.main.MainScreen
 import flow.main.MainViewModel
 import flow.models.settings.Theme
 import flow.navigation.rememberNavigationController
+import flow.rating.RatingDialog
 import flow.ui.platform.LocalLoggerFactory
 import flow.ui.platform.LocalOpenFileHandler
 import flow.ui.platform.LocalOpenLinkHandler
@@ -105,6 +106,7 @@ open class MainActivity : ComponentActivity() {
                     LocalLoggerFactory provides loggerFactory,
                 ) {
                     val navigationController = rememberNavigationController()
+                    RatingDialog()
                     MainScreen(
                         theme = theme,
                         platformType = deviceType,

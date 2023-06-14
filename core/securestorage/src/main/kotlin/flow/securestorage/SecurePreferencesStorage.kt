@@ -18,6 +18,8 @@ internal class SecurePreferencesStorage @Inject constructor(
         allowDiskReads { securePreferencesFactory.getSharedPreferences("account") }
     private val settingsPreferences =
         allowDiskReads { securePreferencesFactory.getSharedPreferences("settings") }
+    private val ratingPreferences =
+        allowDiskReads { securePreferencesFactory.getSharedPreferences("rating") }
 
     override fun saveAccount(account: Account) {
         accountPreferences.edit {
@@ -83,6 +85,30 @@ internal class SecurePreferencesStorage @Inject constructor(
         )
     }
 
+    override fun getRatingLaunchCount(): Int {
+        return ratingPreferences.getInt(ratingLaunchCountKey, 0)
+    }
+
+    override fun setRatingLaunchCount(count: Int) {
+        ratingPreferences.edit { putInt(ratingLaunchCountKey, count) }
+    }
+
+    override fun getRatingDisabled(): Boolean {
+        return ratingPreferences.getBoolean(ratingDisabledKey, false)
+    }
+
+    override fun setRatingDisabled(value: Boolean) {
+        ratingPreferences.edit { putBoolean(ratingDisabledKey, value) }
+    }
+
+    override fun getRatingPostponed(): Boolean {
+        return ratingPreferences.getBoolean(ratingPostponedKey, false)
+    }
+
+    override fun setRatingPostponed(value: Boolean) {
+        ratingPreferences.edit { putBoolean(ratingPostponedKey, value) }
+    }
+
     private companion object {
         const val accountIdKey = "account_id"
         const val accountUsernameKey = "account_username"
@@ -94,6 +120,10 @@ internal class SecurePreferencesStorage @Inject constructor(
         const val themeKey = "theme"
         const val favoritesSyncPeriodKey = "favorites_sync_period"
         const val bookmarksSyncPeriodKey = "bookmarks_sync_period"
+
+        const val ratingLaunchCountKey = "rating_launch_count"
+        const val ratingDisabledKey = "rating_disabled"
+        const val ratingPostponedKey = "rating_postponed"
 
         private fun <T> allowDiskReads(block: () -> T): T {
             val oldPolicy = StrictMode.allowThreadDiskReads()

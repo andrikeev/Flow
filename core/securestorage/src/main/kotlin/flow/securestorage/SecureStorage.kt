@@ -31,4 +31,16 @@ interface SecureStorage {
      * Load user setting or null.
      */
     fun getSettings(): Settings
+
+    fun getRatingLaunchCount(): Int
+
+    fun setRatingLaunchCount(count: Int)
+
+    fun getRatingDisabled(): Boolean
+
+    fun setRatingDisabled(value: Boolean)
+
+    fun getRatingPostponed(): Boolean
+
+    fun setRatingPostponed(value: Boolean)
 }
