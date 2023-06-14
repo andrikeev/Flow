@@ -3,11 +3,13 @@ package flow.menu
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import flow.account.AccountItem
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.Body
+import flow.designsystem.component.Button
 import flow.designsystem.component.ConfirmationDialog
 import flow.designsystem.component.Dialog
 import flow.designsystem.component.DropdownMenu
@@ -50,8 +53,9 @@ import flow.menu.MenuAction.ClearBookmarksConfirmation
 import flow.menu.MenuAction.ClearFavoritesConfirmation
 import flow.menu.MenuAction.ClearHistoryConfirmation
 import flow.menu.MenuAction.ConfirmableAction
-import flow.menu.MenuAction.DonateClick
 import flow.menu.MenuAction.LoginClick
+import flow.menu.MenuAction.NetMonetClick
+import flow.menu.MenuAction.PayPalClick
 import flow.menu.MenuAction.SendFeedbackClick
 import flow.menu.MenuAction.SetBookmarksSyncPeriod
 import flow.menu.MenuAction.SetEndpoint
@@ -68,7 +72,7 @@ import flow.ui.platform.LocalOpenLinkHandler
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.util.Calendar
-import flow.designsystem.R as dsR
+import flow.designsystem.R as DsR
 
 @Composable
 fun MenuScreen(openLogin: () -> Unit) {
@@ -125,7 +129,7 @@ private fun MenuScreen(
         contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
     ) {
         menuAccountItem { onAction(LoginClick) }
-        menuDonateItem { onAction(DonateClick) }
+        menuDonateItem(onAction)
         menuSectionLabel { Text(stringResource(R.string.menu_label_settings)) }
         menuSelectionItem(
             title = { Text(stringResource(R.string.menu_settings_theme)) },
@@ -217,8 +221,8 @@ private fun LazyListScope.menuAccountItem(
 ) = item { AccountItem(onLoginClick = onLoginClick) }
 
 private fun LazyListScope.menuDonateItem(
-    onSupportClick: () -> Unit,
-) = item { MenuDonateItem(onSupportClick) }
+    onAction: (MenuAction) -> Unit,
+) = item { MenuDonateItem(onAction = onAction) }
 
 private fun LazyListScope.menuItem(
     text: @Composable () -> Unit,
@@ -354,31 +358,87 @@ private fun <T> MenuSelectionItem(
 }
 
 @Composable
-private fun MenuDonateItem(onDonateClick: () -> Unit) {
-    Surface(
-        modifier = Modifier.padding(AppTheme.spaces.large),
-        onClick = onDonateClick,
-        shape = AppTheme.shapes.large,
-        tonalElevation = AppTheme.elevations.small,
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(AppTheme.spaces.large)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+private fun MenuDonateItem(onAction: (MenuAction) -> Unit) {
+    val donateDialogState = rememberVisibilityState(true)
+    if (donateDialogState.visible) {
+        Dialog(
+            iconContentColor = AppTheme.colors.primary,
+            title = { Text(text = "Поддержать разработку") },
+            text = {
+                Column {
+                    Text(text = "Приложения разрабатывается и распространяется бесплатно и не содержит рекламы.")
+                    Spacer(modifier = Modifier.height(AppTheme.spaces.medium))
+                    Text(text = "Для помощи в развитии и поддержке стабильной работы приложения, вы можете воспользоваться одним из вариантов.")
+                    Row(modifier = Modifier.padding(top = AppTheme.spaces.medium)) {
+                        Button(
+                            modifier = Modifier.padding(AppTheme.spaces.medium),
+                            onClick = { onAction(PayPalClick) },
+                            color = AppTheme.colors.accentBlue,
+                        ) {
+                            Text(text = "PayPal")
+                        }
+                        Button(
+                            modifier = Modifier.padding(AppTheme.spaces.medium),
+                            onClick = { onAction(NetMonetClick) },
+                            color = AppTheme.colors.accentOrange,
+                        ) {
+                            Text(text = "НетМонет")
+                        }
+                    }
+                }
+            },
+            onDismissRequest = donateDialogState::hide,
+            confirmButton = {
+                TextButton(
+                    text = stringResource(DsR.string.designsystem_action_close),
+                    onClick = donateDialogState::hide,
+                )
+            },
+        )
+    }
+    val itemState = rememberVisibilityState(true)
+    if (itemState.visible) {
+        Surface(
+            modifier = Modifier.padding(AppTheme.spaces.large),
+            onClick = { donateDialogState.show() },
+            shape = AppTheme.shapes.large,
+            tonalElevation = AppTheme.elevations.small,
         ) {
-            Icon(
+            Box(
                 modifier = Modifier
-                    .padding(AppTheme.spaces.medium)
-                    .size(AppTheme.sizes.medium),
-                icon = FlowIcons.StarFull,
-                contentDescription = null,
-            )
-            Text(
-                modifier = Modifier.padding(AppTheme.spaces.medium),
-                text = "Поддержать разработку",
-                style = AppTheme.typography.titleMedium,
-            )
+                    .fillMaxWidth()
+                    .padding(AppTheme.spaces.large),
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd,
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(AppTheme.sizes.small)
+                            .clickable(onClick = itemState::hide),
+                        icon = FlowIcons.Clear,
+                        contentDescription = null,
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .padding(AppTheme.spaces.medium)
+                            .size(AppTheme.sizes.medium),
+                        icon = FlowIcons.StarFull,
+                        contentDescription = null,
+                    )
+                    Text(
+                        modifier = Modifier.padding(AppTheme.spaces.medium),
+                        text = "Поддержать разработку",
+                        style = AppTheme.typography.titleMedium,
+                    )
+                }
+            }
         }
     }
 }
@@ -412,7 +472,7 @@ private fun AboutAppDialog(state: VisibilityState) {
             },
             confirmButton = {
                 TextButton(
-                    text = stringResource(dsR.string.designsystem_action_ok),
+                    text = stringResource(DsR.string.designsystem_action_ok),
                     onClick = state::hide,
                 )
             },
@@ -482,7 +542,7 @@ private fun AboutDialog_Preview() {
 
 @ThemePreviews
 @Composable
-private fun MenuSupportItem_Preview() {
+private fun MenuDonateItem_Preview() {
     FlowTheme(isDynamic = false) {
         MenuDonateItem {}
     }
