@@ -16,12 +16,34 @@ The app is provided for personal, non-commercial use only, and users are
 responsible for complying with all applicable laws and regulations regarding
 copyright and file sharing.
 
-[**For copyright owners**][1] 
+[**For copyright owners**][1]
 
 ## Mobile app
 
 [<img src="badges/google-play-badge.png" alt="Get it on Google Play" height="60">][2]
 [<img src="badges/rustore-badge.png" alt="Get it on RuStore" height="60">][3]
+
+## Screenshots
+
+<details>
+    <summary>Light</summary>
+
+<img src="screenshots/search_history_light.png" alt="Search" width="250">
+<img src="screenshots/search_result_screen_light.png" alt="Search" width="250">
+<img src="screenshots/forum_light.png" alt="Forum" width="250">
+<img src="screenshots/topic_light.png" alt="Topic" width="250">
+
+</details>
+
+<details>
+    <summary>Dark</summary>
+
+<img src="screenshots/search_history.png" alt="Search" width="250">
+<img src="screenshots/search_result_screen.png" alt="Search" width="250">
+<img src="screenshots/forum.png" alt="Forum" width="250">
+<img src="screenshots/topic.png" alt="Topic" width="250">
+
+</details>
 
 ## Contact
 
@@ -55,7 +77,11 @@ All the code and the content is available on github: <https://github.com/andrike
 This software is open source, licensed under the [MIT License][5].
 
 [1]: https://flow-proxy-m7o3b.ondigitalocean.app/copyrights.html
+
 [2]: https://play.google.com/store/apps/details?id=me.rutrackersearch.app
+
 [3]: https://apps.rustore.ru/app/me.rutrackersearch.app
+
 [4]: https://flow-proxy-m7o3b.ondigitalocean.app/privacy-policy.html
+
 [5]: https://opensource.org/licenses/MIT 
