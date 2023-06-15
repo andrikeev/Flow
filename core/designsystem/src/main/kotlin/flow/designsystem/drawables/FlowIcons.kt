@@ -2,6 +2,7 @@ package flow.designsystem.drawables
 
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Abc
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowDropDown
@@ -35,7 +36,6 @@ import androidx.compose.material.icons.outlined.Filter8
 import androidx.compose.material.icons.outlined.Filter9
 import androidx.compose.material.icons.outlined.Filter9Plus
 import androidx.compose.material.icons.outlined.FirstPage
-import androidx.compose.material.icons.outlined.FontDownload
 import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Functions
 import androidx.compose.material.icons.outlined.HelpOutline
@@ -77,7 +77,7 @@ object FlowIcons {
     val BookmarkChecked: Icon = Icon.ImageVectorIcon(MaterialIcons.Bookmark)
     val Bookmarks: Icon = Icon.ImageVectorIcon(MaterialIcons.Bookmarks)
     val BookmarkUnchecked: Icon = Icon.ImageVectorIcon(MaterialIcons.BookmarkBorder)
-    val Captcha: Icon = Icon.ImageVectorIcon(MaterialIcons.FontDownload)
+    val Captcha: Icon = Icon.ImageVectorIcon(MaterialIcons.Abc)
     val ChevronRight: Icon = Icon.ImageVectorIcon(MaterialIcons.ChevronRight)
     val Clear: Icon = Icon.ImageVectorIcon(MaterialIcons.Clear)
     val Comment: Icon = Icon.ImageVectorIcon(MaterialIcons.Edit)

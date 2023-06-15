@@ -31,6 +31,7 @@ import flow.models.topic.TorrentStatus
 @Composable
 fun TopicListItem(
     topicModel: TopicModel<out Topic>,
+    modifier: Modifier = Modifier,
     showCategory: Boolean = true,
     dimVisited: Boolean = true,
     onClick: () -> Unit,
@@ -39,7 +40,7 @@ fun TopicListItem(
     val (topic, isVisited, isFavorite) = topicModel
     val alpha = if (dimVisited && isVisited) 0.5f else 1f
     TopicListItem(
-        modifier = Modifier.alpha(alpha),
+        modifier = modifier.alpha(alpha),
         topic = topic,
         showCategory = showCategory,
         action = {
@@ -49,23 +50,6 @@ fun TopicListItem(
                 onClick = onFavoriteClick,
             )
         },
-        onClick = onClick,
-    )
-}
-
-@Composable
-fun TopicListItem(
-    topicModel: TopicModel<out Topic>,
-    showCategory: Boolean = true,
-    dimVisited: Boolean = true,
-    onClick: () -> Unit,
-) {
-    val (topic, isVisited) = topicModel
-    val alpha = if (dimVisited && isVisited) 0.5f else 1f
-    TopicListItem(
-        modifier = Modifier.alpha(alpha),
-        topic = topic,
-        showCategory = showCategory,
         onClick = onClick,
     )
 }
@@ -112,7 +96,9 @@ private fun Topic(
 ) = Surface(
     modifier = modifier,
     onClick = onClick,
+    shape = AppTheme.shapes.large,
     contentColor = contentColor,
+    tonalElevation = AppTheme.elevations.small,
 ) {
     Row(
         modifier = Modifier.padding(
@@ -155,7 +141,9 @@ private fun Torrent(
     Surface(
         modifier = modifier,
         onClick = onClick,
+        shape = AppTheme.shapes.large,
         contentColor = contentColor,
+        tonalElevation = AppTheme.elevations.small,
     ) {
         Column(
             modifier = Modifier.padding(

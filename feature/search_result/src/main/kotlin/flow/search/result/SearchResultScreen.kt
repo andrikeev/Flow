@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -34,7 +35,6 @@ import flow.models.search.Period
 import flow.search.result.filter.FilterBar
 import flow.ui.component.TopicListItem
 import flow.ui.component.appendItems
-import flow.ui.component.dividedItems
 import flow.ui.component.emptyItem
 import flow.ui.component.errorItem
 import flow.ui.component.loadingItem
@@ -189,10 +189,14 @@ private fun SearchResultList(
         is LoadState.Loading -> loadingItem()
         is LoadState.NotLoading -> when (state.searchContent) {
             is SearchResultContent.Content -> {
-                dividedItems(items = state.searchContent.torrents,
+                items(items = state.searchContent.torrents,
                     key = { it.topic.id },
                     contentType = { it.topic::class }) { item ->
                     TopicListItem(
+                        modifier = Modifier.padding(
+                            horizontal = AppTheme.spaces.mediumLarge,
+                            vertical = AppTheme.spaces.mediumSmall,
+                        ),
                         topicModel = item,
                         onClick = { onAction(SearchResultAction.TopicClick(item)) },
                         onFavoriteClick = { onAction(SearchResultAction.FavoriteClick(item)) },

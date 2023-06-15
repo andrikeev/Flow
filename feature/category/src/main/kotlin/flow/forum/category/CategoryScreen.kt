@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -14,7 +15,7 @@ import flow.designsystem.component.AppBarState
 import flow.designsystem.component.BackButton
 import flow.designsystem.component.BookmarkButton
 import flow.designsystem.component.Dialog
-import flow.designsystem.component.VisibilityState
+import flow.designsystem.component.Divider
 import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.Scaffold
@@ -22,6 +23,7 @@ import flow.designsystem.component.ScrollBackFloatingActionButton
 import flow.designsystem.component.SearchButton
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
+import flow.designsystem.component.VisibilityState
 import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
@@ -129,11 +131,15 @@ private fun CategoryScreenList(
                             onClick = { onAction(CategoryAction.CategoryClick(category)) }
                         )
                     }
-                    dividedItems(
+                    items(
                         items = state.categoryContent.topics,
                         key = { it.topic.id },
                     ) { topicModel ->
                         TopicListItem(
+                            modifier = Modifier.padding(
+                                horizontal = AppTheme.spaces.mediumLarge,
+                                vertical = AppTheme.spaces.mediumSmall,
+                            ),
                             topicModel = topicModel,
                             showCategory = false,
                             onClick = { onAction(CategoryAction.TopicClick(topicModel)) },

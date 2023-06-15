@@ -1,7 +1,13 @@
 package flow.ui.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -59,24 +65,28 @@ fun ExpandableCategoryListItem(
     expanded: Boolean,
     contentPadding: PaddingValues = PaddingValues(horizontal = AppTheme.spaces.large),
     onExpand: () -> Unit,
+    expandedContent: @Composable () -> Unit,
+) = Surface(
+    modifier = Modifier.padding(
+        horizontal = AppTheme.spaces.large,
+        vertical = AppTheme.spaces.medium,
+    ),
+    onClick = onExpand,
+    shape = AppTheme.shapes.large,
+    tonalElevation = AppTheme.elevations.small,
 ) {
-    val elevation by animateDpAsState(
-        targetValue = if (expanded) {
-            AppTheme.elevations.small
-        } else {
-            AppTheme.elevations.zero
-        },
-        label = "ExpandableCategoryListItem_Elevation",
-    )
-    Surface(
-        onClick = onExpand,
-        tonalElevation = elevation,
-    ) {
+    Column {
         CategoryListItem(
             modifier = modifier,
             text = text,
             icons = { ExpandCollapseIcon(expanded = expanded) },
             contentPadding = contentPadding,
+        )
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
+            exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
+            content = { expandedContent() },
         )
     }
 }
