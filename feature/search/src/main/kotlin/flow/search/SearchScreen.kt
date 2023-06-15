@@ -6,9 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -39,7 +38,6 @@ import flow.models.search.Period
 import flow.models.search.Search
 import flow.models.search.Sort
 import flow.models.topic.Author
-import flow.ui.component.dividedItems
 import flow.ui.component.loadingItem
 import flow.ui.component.resId
 import org.orbitmvi.orbit.compose.collectAsState
@@ -94,7 +92,7 @@ private fun SearchScreen(
             }
 
             is SearchState.SearchList -> {
-                dividedItems(
+                items(
                     items = state.items,
                     key = Search::id,
                     contentType = { it::class }
@@ -155,10 +153,13 @@ private fun Search(
     search: Search,
     onClick: () -> Unit,
 ) = Surface(
-    modifier = Modifier
-        .fillMaxWidth()
-        .heightIn(min = AppTheme.sizes.default),
+    modifier = Modifier.padding(
+        horizontal = AppTheme.spaces.mediumLarge,
+        vertical = AppTheme.spaces.mediumSmall,
+    ),
     onClick = onClick,
+    shape = AppTheme.shapes.large,
+    tonalElevation = AppTheme.elevations.small,
 ) {
     Row(
         modifier = Modifier.padding(

@@ -76,7 +76,7 @@ fun Surface(
         Box(
             modifier = modifier
                 .surface(
-                    color = color.atElevation(tonalElevation),
+                    color = color.atElevation(totalElevation),
                     shape = shape,
                     border = border,
                     shadowElevation = shadowElevation,

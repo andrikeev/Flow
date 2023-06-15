@@ -2,6 +2,8 @@ package flow.visited
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -11,7 +13,6 @@ import flow.designsystem.component.Loading
 import flow.designsystem.theme.AppTheme
 import flow.navigation.viewModel
 import flow.ui.component.TopicListItem
-import flow.ui.component.dividedItems
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -52,12 +53,16 @@ private fun VisitedScreen(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
     ) {
-        dividedItems(
+        items(
             items = state.items,
             key = { it.topic.id },
             contentType = { it.topic::class },
         ) { item ->
             TopicListItem(
+                modifier = Modifier.padding(
+                    horizontal = AppTheme.spaces.mediumLarge,
+                    vertical = AppTheme.spaces.mediumSmall,
+                ),
                 topicModel = item,
                 dimVisited = false,
                 onClick = { onAction(VisitedAction.TopicClick(item)) },

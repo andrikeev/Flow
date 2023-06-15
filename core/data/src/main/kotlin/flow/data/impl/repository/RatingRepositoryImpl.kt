@@ -2,11 +2,16 @@ package flow.data.impl.repository
 
 import flow.data.api.repository.RatingRepository
 import flow.securestorage.SecureStorage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 internal class RatingRepositoryImpl @Inject constructor(
     private val secureStorage: SecureStorage,
 ) : RatingRepository {
+    private val mutableRatingDisabledFlow = MutableSharedFlow<Boolean>()
+
     override suspend fun getLaunchCount(): Int {
         return secureStorage.getRatingLaunchCount()
     }
@@ -15,11 +20,14 @@ internal class RatingRepositoryImpl @Inject constructor(
         secureStorage.setRatingLaunchCount(value)
     }
 
-    override suspend fun isRatingRequestDisabled(): Boolean {
-        return secureStorage.getRatingDisabled()
+    override fun observeRatingRequestDisabled(): Flow<Boolean> {
+        return mutableRatingDisabledFlow.onStart {
+            emit(secureStorage.getRatingDisabled())
+        }
     }
 
     override suspend fun disableRatingRequest() {
+        mutableRatingDisabledFlow.emit(true)
         secureStorage.setRatingDisabled(true)
     }
 

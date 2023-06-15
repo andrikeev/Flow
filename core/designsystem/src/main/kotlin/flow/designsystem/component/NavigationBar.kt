@@ -22,12 +22,13 @@ fun NavigationBar(
     modifier: Modifier = Modifier,
     containerColor: Color = AppTheme.colors.surface,
     contentColor: Color = AppTheme.colors.contentColorFor(containerColor),
-    tonalElevation: Dp = AppTheme.elevations.small,
+    tonalElevation: Dp = AppTheme.elevations.large,
     content: @Composable RowScope.() -> Unit,
 ) = Surface(
     modifier = modifier,
     color = AppTheme.colors.surface,
     tonalElevation = tonalElevation,
+    shadowElevation = tonalElevation,
 ) {
     androidx.compose.material3.NavigationBar(
         modifier = Modifier.padding(WindowInsets.Companion.navigationBars.asPaddingValues()),

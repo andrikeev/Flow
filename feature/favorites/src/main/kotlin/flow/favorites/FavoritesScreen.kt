@@ -2,6 +2,8 @@ package flow.favorites
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -15,7 +17,6 @@ import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import flow.navigation.viewModel
 import flow.ui.component.TopicListItem
-import flow.ui.component.dividedItems
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -56,7 +57,7 @@ private fun FavoritesScreen(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
     ) {
-        dividedItems(
+        items(
             items = state.items,
             key = { it.topic.id },
             contentType = { it.topic::class },
@@ -74,6 +75,10 @@ private fun FavoriteTopic(
     topicModel: TopicModel<out Topic>,
     onClick: () -> Unit,
 ) = TopicListItem(
+    modifier = Modifier.padding(
+        horizontal = AppTheme.spaces.mediumLarge,
+        vertical = AppTheme.spaces.mediumSmall,
+    ),
     topic = topicModel.topic,
     onClick = onClick,
     action = {
