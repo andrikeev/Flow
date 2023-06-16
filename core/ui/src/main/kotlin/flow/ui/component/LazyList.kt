@@ -104,11 +104,11 @@ fun LazyListScope.loadingItem(
 fun LazyListScope.errorItem(
     error: Throwable,
     fillParentMaxSize: Boolean = true,
-    onRetryClick: () -> Unit,
+    onRetryClick: (() -> Unit)? = null,
 ) = item {
     Error(
         modifier = if (fillParentMaxSize) Modifier.fillParentMaxSize() else Modifier,
-        titleRes = error.getStringRes(),
+        titleRes = error.getErrorTitleRes(),
         subtitleRes = error.getStringRes(),
         imageRes = error.getIllRes(),
         onRetryClick = onRetryClick,
@@ -120,7 +120,7 @@ fun LazyListScope.errorItem(
     @StringRes subtitleRes: Int = R.string.error_something_goes_wrong,
     @DrawableRes imageRes: Int = R.drawable.ill_error,
     fillParentMaxSize: Boolean = true,
-    onRetryClick: () -> Unit,
+    onRetryClick: (() -> Unit)? = null,
 ) = item {
     Error(
         modifier = if (fillParentMaxSize) Modifier.fillParentMaxSize() else Modifier,
