@@ -14,6 +14,7 @@ import flow.data.api.repository.SuggestsRepository
 import flow.data.api.repository.VisitedRepository
 import flow.data.api.service.FavoritesService
 import flow.data.api.service.ForumService
+import flow.data.api.service.ConnectionService
 import flow.data.api.service.SearchService
 import flow.data.api.service.StoreService
 import flow.data.api.service.TopicService
@@ -28,6 +29,7 @@ import flow.data.impl.repository.SuggestsRepositoryImpl
 import flow.data.impl.repository.VisitedRepositoryImpl
 import flow.data.impl.service.FavoritesServiceImpl
 import flow.data.impl.service.ForumServiceImpl
+import flow.data.impl.service.ConnectionServiceImpl
 import flow.data.impl.service.SearchServiceImpl
 import flow.data.impl.service.StoreServiceImpl
 import flow.data.impl.service.TopicServiceImpl
@@ -56,6 +58,10 @@ internal interface DataModule {
     @Binds
     @Singleton
     fun forumService(impl: ForumServiceImpl): ForumService
+
+    @Binds
+    @Singleton
+    fun networkConnectionService(impl: ConnectionServiceImpl): ConnectionService
 
     @Binds
     @Singleton

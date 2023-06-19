@@ -42,6 +42,8 @@ import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.ImageNotSupported
 import androidx.compose.material.icons.outlined.LastPage
+import androidx.compose.material.icons.outlined.Link
+import androidx.compose.material.icons.outlined.LinkOff
 import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Menu
@@ -56,9 +58,11 @@ import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material.icons.outlined.StarHalf
 import androidx.compose.material.icons.outlined.SwitchAccount
+import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.material.icons.outlined.WifiOff
 import androidx.compose.ui.graphics.vector.ImageVector
 import flow.designsystem.R
 
@@ -74,6 +78,7 @@ object FlowIcons {
     val Account: Icon = Icon.ImageVectorIcon(MaterialIcons.SwitchAccount)
     val Author: Icon = Icon.ImageVectorIcon(MaterialIcons.PersonSearch)
     val BackArrow: Icon = Icon.ImageVectorIcon(MaterialIcons.ArrowBack)
+    val Blocked: Icon = Icon.ImageVectorIcon(MaterialIcons.LinkOff)
     val BookmarkChecked: Icon = Icon.ImageVectorIcon(MaterialIcons.Bookmark)
     val Bookmarks: Icon = Icon.ImageVectorIcon(MaterialIcons.Bookmarks)
     val BookmarkUnchecked: Icon = Icon.ImageVectorIcon(MaterialIcons.BookmarkBorder)
@@ -81,6 +86,7 @@ object FlowIcons {
     val ChevronRight: Icon = Icon.ImageVectorIcon(MaterialIcons.ChevronRight)
     val Clear: Icon = Icon.ImageVectorIcon(MaterialIcons.Clear)
     val Comment: Icon = Icon.ImageVectorIcon(MaterialIcons.Edit)
+    val Connected: Icon = Icon.ImageVectorIcon(MaterialIcons.Link)
     val DropDownExpand: Icon = Icon.ImageVectorIcon(MaterialIcons.ArrowDropDown)
     val Expand: Icon = Icon.ImageVectorIcon(MaterialIcons.ExpandMore)
     val Favorite: Icon = Icon.ImageVectorIcon(MaterialIcons.Favorite)
@@ -99,11 +105,14 @@ object FlowIcons {
     val Menu: Icon = Icon.ImageVectorIcon(MaterialIcons.Menu)
     val NewBadge: Icon = Icon.ImageVectorIcon(MaterialIcons.FiberNew)
     val NextPage: Icon = Icon.ImageVectorIcon(MaterialIcons.ChevronRight)
+    val NoInternet: Icon = Icon.ImageVectorIcon(MaterialIcons.WifiOff)
     val Notifications: Icon = Icon.ImageVectorIcon(MaterialIcons.NotificationsActive)
     val Password: Icon = Icon.ImageVectorIcon(MaterialIcons.Password)
     val PasswordHidden: Icon = Icon.ImageVectorIcon(MaterialIcons.VisibilityOff)
     val PasswordVisible: Icon = Icon.ImageVectorIcon(MaterialIcons.Visibility)
     val PrevPage: Icon = Icon.ImageVectorIcon(MaterialIcons.ChevronLeft)
+    val Selected: Icon = Icon.ImageVectorIcon(MaterialIcons.CheckCircleOutline)
+    val NotSelected: Icon = Icon.ImageVectorIcon(MaterialIcons.RadioButtonUnchecked)
     val ScrollToTop: Icon = Icon.ImageVectorIcon(MaterialIcons.ExpandLess)
     val Search: Icon = Icon.ImageVectorIcon(MaterialIcons.Search)
     val Seeds: Icon = Icon.ImageVectorIcon(MaterialIcons.FileUpload)
@@ -114,6 +123,7 @@ object FlowIcons {
     val Storage: Icon = Icon.ImageVectorIcon(MaterialIcons.SdStorage)
     val Topics: Icon = Icon.ImageVectorIcon(MaterialIcons.Forum)
     val Username: Icon = Icon.ImageVectorIcon(MaterialIcons.AccountCircle)
+    val Updating: Icon = Icon.ImageVectorIcon(MaterialIcons.Sync)
 
     object TorrentStatus {
         val Approved: Icon = Icon.ImageVectorIcon(MaterialIcons.CheckCircleOutline)

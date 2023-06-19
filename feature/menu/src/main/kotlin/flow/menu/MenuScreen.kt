@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import flow.account.AccountItem
+import flow.connection.ConnectionItem
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.Body
 import flow.designsystem.component.Button
@@ -58,10 +59,8 @@ import flow.menu.MenuAction.NetMonetClick
 import flow.menu.MenuAction.PayPalClick
 import flow.menu.MenuAction.SendFeedbackClick
 import flow.menu.MenuAction.SetBookmarksSyncPeriod
-import flow.menu.MenuAction.SetEndpoint
 import flow.menu.MenuAction.SetFavoritesSyncPeriod
 import flow.menu.MenuAction.SetTheme
-import flow.models.settings.Endpoint
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
 import flow.navigation.viewModel
@@ -123,7 +122,7 @@ private fun MenuScreen(
         )
     },
 ) { padding ->
-    val (theme, endpoint, favoritesSyncPeriod, bookmarksSyncPeriod) = state
+    val (theme, favoritesSyncPeriod, bookmarksSyncPeriod) = state
     LazyList(
         modifier = Modifier.padding(padding),
         contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
@@ -138,13 +137,7 @@ private fun MenuScreen(
             labelMapper = { theme -> stringResource(theme.resId) },
             onSelect = { theme -> onAction(SetTheme(theme)) },
         )
-        menuSelectionItem(
-            title = { Text(stringResource(R.string.menu_settings_endpoint)) },
-            items = Endpoint.values(),
-            selected = endpoint,
-            labelMapper = { endpoint -> endpoint.host },
-            onSelect = { endpoint -> onAction(SetEndpoint(endpoint)) },
-        )
+        endpointSelectionItem()
         menuSyncSelectionItem(
             title = { Text(stringResource(R.string.menu_settings_favorites_sync)) },
             items = SyncPeriod.values(),
@@ -228,6 +221,8 @@ private fun LazyListScope.menuItem(
     text: @Composable () -> Unit,
     onClick: () -> Unit,
 ) = item { MenuItem(text, onClick) }
+
+private fun LazyListScope.endpointSelectionItem() = item { ConnectionItem() }
 
 private fun <T> LazyListScope.menuSelectionItem(
     title: @Composable () -> Unit,
@@ -332,7 +327,7 @@ private fun <T> MenuSelectionItem(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(72.dp),
+            .height(AppTheme.sizes.extraLarge),
         onClick = { showDropdown = true },
     ) {
         Column(

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connection_endpoint_proxy">Прокси</string>
+    <string name="connection_endpoint_rutracker_net">Зеркало</string>
+    <string name="connection_endpoint_rutracker_org">Основной</string>
+    <string name="connection_item_title">Сервер</string>
+    <string name="content_description_connection_active">Доступен</string>
+    <string name="content_description_connection_blocked">Не доступен</string>
+    <string name="content_description_connection_updating">Обновляется</string>
+    <string name="content_description_endpoint_not_selected">Не выбрано</string>
+    <string name="content_description_endpoint_selected">Выбрано</string>
+    <string name="content_description_no_internet">Отсутствует подключение к интернету</string>
+</resources>

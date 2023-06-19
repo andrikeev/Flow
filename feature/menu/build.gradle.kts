@@ -9,4 +9,5 @@ android {
 
 dependencies {
     implementation(project(":feature:account"))
+    implementation(project(":feature:connection"))
 }

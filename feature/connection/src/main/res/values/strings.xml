@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connection_endpoint_proxy">Proxy</string>
+    <string name="connection_endpoint_rutracker_net">Mirror</string>
+    <string name="connection_endpoint_rutracker_org">Main</string>
+    <string name="connection_item_title">Server</string>
+    <string name="content_description_connection_active">Connected</string>
+    <string name="content_description_connection_blocked">Blocked</string>
+    <string name="content_description_connection_updating">Updating</string>
+    <string name="content_description_endpoint_not_selected">Not selected</string>
+    <string name="content_description_endpoint_selected">Selected</string>
+    <string name="content_description_no_internet">No internet</string>
+</resources>

@@ -55,6 +55,7 @@ dependencies {
     implementation(project(":feature:account"))
     implementation(project(":feature:bookmarks"))
     implementation(project(":feature:category"))
+    implementation(project(":feature:connection"))
     implementation(project(":feature:favorites"))
     implementation(project(":feature:forum"))
     implementation(project(":feature:login"))
