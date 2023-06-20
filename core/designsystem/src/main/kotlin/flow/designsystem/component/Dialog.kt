@@ -167,7 +167,7 @@ internal sealed interface DialogConfirmationState {
 
 @ThemePreviews
 @Composable
-private fun DialogPreview() {
+private fun Dialog1Preview() {
     FlowTheme {
         Dialog(
             icon = { Icon(icon = FlowIcons.AppIcon, contentDescription = null) },
@@ -177,6 +177,18 @@ private fun DialogPreview() {
             dismissButton = { TextButton(text = "Oh no", onClick = {}) },
             onDismissRequest = {},
         )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun Dialog2Preview() {
+    FlowTheme {
+        Dialog({}) {
+            Surface() {
+                Text(text = "Text")
+            }
+        }
     }
 }
 

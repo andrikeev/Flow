@@ -100,7 +100,7 @@ private fun ForumTreeItem(
                     text = item.name,
                     expanded = item.expanded,
                     onExpand = onExpandClick,
-                ) {}
+                )
             }
         }
 
