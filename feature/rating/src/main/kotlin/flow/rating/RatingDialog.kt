@@ -63,10 +63,7 @@ private fun RatingDialog(
     is RatingRequest.Show -> Dialog(
         onDismissRequest = { onAction(RatingAction.DismissClick) },
     ) {
-        Surface(
-            shape = AppTheme.shapes.large,
-            color = AppTheme.colors.surface,
-        ) {
+        Surface(shape = AppTheme.shapes.large) {
             Column(modifier = Modifier.padding(AppTheme.spaces.large)) {
                 Box(
                     modifier = Modifier

@@ -120,12 +120,12 @@ private fun AuthorDialog(
             dismissButton = {
                 TextButton(
                     text = stringResource(flow.designsystem.R.string.designsystem_action_cancel),
-                    onClick = ::onReset,
+                    onClick = onDismissRequest,
                 )
                 if (author != null) {
                     TextButton(
                         text = stringResource(flow.designsystem.R.string.designsystem_action_reset),
-                        onClick = { onDismissRequest() },
+                        onClick = ::onReset,
                     )
                 }
             },
