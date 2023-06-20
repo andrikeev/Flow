@@ -55,6 +55,7 @@ import flow.menu.MenuAction.ClearFavoritesConfirmation
 import flow.menu.MenuAction.ClearHistoryConfirmation
 import flow.menu.MenuAction.ConfirmableAction
 import flow.menu.MenuAction.LoginClick
+import flow.menu.MenuAction.MyTipsClick
 import flow.menu.MenuAction.NetMonetClick
 import flow.menu.MenuAction.PayPalClick
 import flow.menu.MenuAction.SendFeedbackClick
@@ -358,28 +359,37 @@ private fun MenuDonateItem(onAction: (MenuAction) -> Unit) {
     if (donateDialogState.visible) {
         Dialog(
             iconContentColor = AppTheme.colors.primary,
-            title = { Text(text = "Поддержать разработку") },
+            title = { Text(text = stringResource(R.string.support_development_title)) },
             text = {
                 Column {
-                    Text(text = "Приложения разрабатывается и распространяется бесплатно и не содержит рекламы.")
+                    Text(text = stringResource(R.string.support_development_line1))
                     Spacer(modifier = Modifier.height(AppTheme.spaces.medium))
-                    Text(text = "Для помощи в развитии и поддержке стабильной работы приложения, вы можете воспользоваться одним из вариантов.")
-                    Row(modifier = Modifier.padding(top = AppTheme.spaces.medium)) {
-                        Button(
-                            modifier = Modifier.padding(AppTheme.spaces.medium),
-                            onClick = { onAction(PayPalClick) },
-                            color = AppTheme.colors.accentBlue,
-                        ) {
-                            Text(text = "PayPal")
-                        }
-                        Button(
-                            modifier = Modifier.padding(AppTheme.spaces.medium),
-                            onClick = { onAction(NetMonetClick) },
-                            color = AppTheme.colors.accentOrange,
-                        ) {
-                            Text(text = "НетМонет")
-                        }
-                    }
+                    Text(text = stringResource(R.string.support_development_line2))
+                    Spacer(modifier = Modifier.height(AppTheme.spaces.large))
+                    Button(
+                        modifier = Modifier
+                            .padding(horizontal = AppTheme.spaces.large)
+                            .fillMaxWidth(),
+                        text = stringResource(R.string.support_development_paypal),
+                        onClick = { onAction(PayPalClick) },
+                        color = AppTheme.colors.accentBlue,
+                    )
+                    Button(
+                        modifier = Modifier
+                            .padding(horizontal = AppTheme.spaces.large)
+                            .fillMaxWidth(),
+                        text = stringResource(R.string.support_development_netmonet),
+                        onClick = { onAction(NetMonetClick) },
+                        color = AppTheme.colors.accentOrange,
+                    )
+                    Button(
+                        modifier = Modifier
+                            .padding(horizontal = AppTheme.spaces.large)
+                            .fillMaxWidth(),
+                        text = stringResource(R.string.support_development_mytips),
+                        onClick = { onAction(MyTipsClick) },
+                        color = AppTheme.colors.accentGreen,
+                    )
                 }
             },
             onDismissRequest = donateDialogState::hide,
@@ -429,7 +439,7 @@ private fun MenuDonateItem(onAction: (MenuAction) -> Unit) {
                     )
                     Text(
                         modifier = Modifier.padding(AppTheme.spaces.medium),
-                        text = "Поддержать разработку",
+                        text = stringResource(R.string.support_development_title),
                         style = AppTheme.typography.titleMedium,
                     )
                 }

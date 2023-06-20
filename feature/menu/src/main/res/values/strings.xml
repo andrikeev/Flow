@@ -38,4 +38,10 @@
     <string name="theme_dynamic">Dynamic (Material You)</string>
     <string name="theme_light">Light</string>
     <string name="theme_system">System</string>
+    <string name="support_development_title">Support development</string>
+    <string name="support_development_line2">To help development and maintenance of the application, you can use one of the options.</string>
+    <string name="support_development_paypal" translatable="false">PayPal</string>
+    <string name="support_development_netmonet" translatable="false">НетМонет</string>
+    <string name="support_development_mytips" translatable="false">MyTips</string>
+    <string name="support_development_line1">Applications are developed and distributed free of charge and do not contain ads.</string>
 </resources>
