@@ -9,4 +9,6 @@
     <string name="tab_title_favorites">Favorites</string>
     <string name="tab_title_forum">Forum</string>
     <string name="tab_title_recents">Recents</string>
+
+    <string name="leak_canary_test_class_name" translatable="false">flow.testing.TestDispatchers</string>
 </resources>
