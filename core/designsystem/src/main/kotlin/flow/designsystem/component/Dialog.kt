@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.window.DialogProperties
 import flow.designsystem.R
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.drawables.Icon
@@ -54,6 +55,20 @@ fun Dialog(
 )
 
 @Composable
+@NonRestartableComposable
+fun Dialog(
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    properties: DialogProperties = DialogProperties(),
+    content: @Composable () -> Unit,
+) = AlertDialog(
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+    properties = properties,
+    content = content,
+)
+
+@Composable
 fun ConfirmationDialog(state: ConfirmationDialogState) {
     return when (val dialogState = state.dialogState) {
         is DialogConfirmationState.Hide -> Unit
@@ -81,7 +96,7 @@ private fun ConfirmationDialog(
     onConfirm: () -> Unit,
 ) = Dialog(
     onDismissRequest = onDismiss,
-    icon = icon?.let { { Icon(icon = icon, contentDescription = null) } } ,
+    icon = icon?.let { { Icon(icon = icon, contentDescription = null) } },
     title = { Text(title) },
     text = { Text(message) },
     confirmButton = {
@@ -134,7 +149,8 @@ class ConfirmationDialogState internal constructor(initialState: DialogConfirmat
 }
 
 @Composable
-fun rememberConfirmationDialogState() = remember { ConfirmationDialogState(DialogConfirmationState.Hide) }
+fun rememberConfirmationDialogState() =
+    remember { ConfirmationDialogState(DialogConfirmationState.Hide) }
 
 internal sealed interface DialogConfirmationState {
     object Hide : DialogConfirmationState

@@ -23,8 +23,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
+import flow.designsystem.component.Dialog
 import flow.designsystem.component.Icon
 import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
@@ -63,9 +62,11 @@ private fun RatingDialog(
     is RatingRequest.Hide -> Unit
     is RatingRequest.Show -> Dialog(
         onDismissRequest = { onAction(RatingAction.DismissClick) },
-        properties = DialogProperties(),
     ) {
-        Surface(shape = AppTheme.shapes.large) {
+        Surface(
+            shape = AppTheme.shapes.large,
+            color = AppTheme.colors.surface,
+        ) {
             Column(modifier = Modifier.padding(AppTheme.spaces.large)) {
                 Box(
                     modifier = Modifier
