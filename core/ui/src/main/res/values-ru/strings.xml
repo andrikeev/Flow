@@ -38,6 +38,6 @@
     <string name="torrent_status_not_approved">Не проверена</string>
 
     <string name="seeds">Количество раздающих</string>
-    <string name="leaches">Количество качающих</string>
+    <string name="leeches">Количество качающих</string>
     <string name="size">Размер</string>
 </resources>

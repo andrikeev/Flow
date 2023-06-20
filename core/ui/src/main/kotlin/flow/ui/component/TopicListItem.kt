@@ -2,8 +2,6 @@ package flow.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -182,11 +180,8 @@ private fun Torrent(
             }
             ProvideTextStyle(value = AppTheme.typography.labelMedium) {
                 TorrentStatus(
-                    modifier = Modifier
-                        .padding(top = AppTheme.spaces.small)
-                        .fillMaxWidth()
-                        .height(AppTheme.sizes.small),
-                    torrent = torrent
+                    modifier = Modifier.padding(top = AppTheme.spaces.small),
+                    torrent = torrent,
                 )
             }
         }

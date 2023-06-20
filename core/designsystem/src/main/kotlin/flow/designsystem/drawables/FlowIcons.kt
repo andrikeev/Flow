@@ -62,7 +62,6 @@ import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material.icons.outlined.WifiOff
 import androidx.compose.ui.graphics.vector.ImageVector
 import flow.designsystem.R
 
@@ -92,7 +91,7 @@ object FlowIcons {
     val Favorite: Icon = Icon.ImageVectorIcon(MaterialIcons.Favorite)
     val FavoriteChecked: Icon = Icon.ImageVectorIcon(MaterialIcons.Favorite)
     val FavoriteUnchecked: Icon = Icon.ImageVectorIcon(MaterialIcons.FavoriteBorder)
-    val File: Icon = Icon.ImageVectorIcon(MaterialIcons.FileDownload)
+    val FolderDownload: Icon = Icon.DrawableResourceIcon(R.drawable.ic_folder_download)
     val FileDownloadDone: Icon = Icon.ImageVectorIcon(MaterialIcons.FileDownloadDone)
     val FirstPage: Icon = Icon.ImageVectorIcon(MaterialIcons.FirstPage)
     val Forum: Icon = Icon.ImageVectorIcon(MaterialIcons.ListAlt)
@@ -100,12 +99,12 @@ object FlowIcons {
     val ImagePlaceholder: Icon = Icon.ImageVectorIcon(MaterialIcons.ImageNotSupported)
     val InsertSuggest: Icon = Icon.ImageVectorIcon(MaterialIcons.Edit)
     val LastPage: Icon = Icon.ImageVectorIcon(MaterialIcons.LastPage)
-    val Leaches: Icon = Icon.ImageVectorIcon(MaterialIcons.FileDownload)
+    val Leeches: Icon = Icon.ImageVectorIcon(MaterialIcons.FileDownload)
     val Logout: Icon = Icon.ImageVectorIcon(MaterialIcons.Logout)
     val Menu: Icon = Icon.ImageVectorIcon(MaterialIcons.Menu)
     val NewBadge: Icon = Icon.ImageVectorIcon(MaterialIcons.FiberNew)
     val NextPage: Icon = Icon.ImageVectorIcon(MaterialIcons.ChevronRight)
-    val NoInternet: Icon = Icon.ImageVectorIcon(MaterialIcons.WifiOff)
+    val NoInternet: Icon = Icon.DrawableResourceIcon(R.drawable.ic_no_internet)
     val Notifications: Icon = Icon.ImageVectorIcon(MaterialIcons.NotificationsActive)
     val Password: Icon = Icon.ImageVectorIcon(MaterialIcons.Password)
     val PasswordHidden: Icon = Icon.ImageVectorIcon(MaterialIcons.VisibilityOff)

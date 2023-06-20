@@ -260,10 +260,7 @@ private fun TorrentAppBar(
         ) {
             ProvideTextStyle(value = AppTheme.typography.labelMedium) {
                 TorrentStatus(
-                    modifier = Modifier
-                        .padding(top = AppTheme.spaces.small)
-                        .fillMaxWidth()
-                        .height(AppTheme.sizes.small),
+                    modifier = Modifier.padding(top = AppTheme.spaces.small),
                     status = topicContent.data.status,
                     size = topicContent.data.size,
                     seeds = topicContent.data.seeds,
