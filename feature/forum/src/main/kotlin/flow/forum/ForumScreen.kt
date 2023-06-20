@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -82,37 +81,39 @@ private fun ForumScreen(
 private fun ForumScreen(
     state: ForumState,
     onAction: (ForumAction) -> Unit,
-) = Crossfade(
-    targetState = state,
-    label = "ForumScreen_Crossfade",
-) { targetState ->
-    when (targetState) {
-
-        is ForumState.Error -> Error(
-            titleRes = targetState.error.getErrorTitleRes(),
-            subtitleRes = targetState.error.getStringRes(),
-            imageRes = targetState.error.getIllRes(),
-            onRetryClick = { onAction(RetryClick) },
-        )
-
-        is ForumState.ForumLoadingState -> LazyList(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(vertical = AppTheme.spaces.large),
-        ) {
-            when (targetState) {
-                is ForumState.Loading -> loadingItem()
-                is ForumState.Loaded -> items(
-                    items = targetState.forum,
-                    key = { it.item.id },
-                ) { item ->
-                    RootCategory(
-                        rootCategory = item.item,
-                        isExpanded = item.expanded,
-                        onCategoryClick = { category -> onAction(CategoryClick(category)) },
-                        onExpandClick = { onAction(ExpandClick(item)) }
+) = LazyList(
+    modifier = Modifier.fillMaxSize(),
+    contentPadding = PaddingValues(vertical = AppTheme.spaces.large),
+) {
+    when (state) {
+        is ForumState.ForumLoadingState -> item {
+            Crossfade(
+                targetState = state,
+                label = "ForumScreen_Crossfade",
+            ) { targetState ->
+                when (targetState) {
+                    is ForumState.Error -> Error(
+                        titleRes = targetState.error.getErrorTitleRes(),
+                        subtitleRes = targetState.error.getStringRes(),
+                        imageRes = targetState.error.getIllRes(),
+                        onRetryClick = { onAction(RetryClick) },
                     )
+
+                    is ForumState.Loading -> LoadingItem()
                 }
             }
+        }
+
+        is ForumState.Loaded -> items(
+            items = state.forum,
+            key = { it.item.id },
+        ) { item ->
+            RootCategory(
+                rootCategory = item.item,
+                isExpanded = item.expanded,
+                onCategoryClick = { category -> onAction(CategoryClick(category)) },
+                onExpandClick = { onAction(ExpandClick(item)) }
+            )
         }
     }
 }
@@ -200,7 +201,8 @@ private fun RootCategory(
     }
 }
 
-private fun LazyListScope.loadingItem() = item {
+@Composable
+private fun LoadingItem() {
     Column(modifier = Modifier.fillMaxSize()) {
         val transition = rememberInfiniteTransition(label = "RootCategoryStub_Shimmer")
         repeat(10) { index ->
