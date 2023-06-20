@@ -18,6 +18,7 @@ import flow.designsystem.component.Text
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.domain.model.endpoint.EndpointState
+import flow.domain.model.endpoint.EndpointStatus
 import flow.models.settings.Endpoint
 import flow.navigation.viewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -53,13 +54,23 @@ private fun ConnectionsDialog(
         Surface(
             modifier = Modifier.defaultMinSize(minHeight = AppTheme.sizes.default),
             onClick = { onAction(ConnectionsAction.SelectEndpoint(endpoint)) },
+            enabled = status.isActive,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     modifier = Modifier
                         .padding(AppTheme.spaces.large)
                         .size(AppTheme.sizes.mediumSmall),
-                    icon = if (selected) FlowIcons.Selected else FlowIcons.NotSelected,
+                    icon = if (selected) {
+                        FlowIcons.Selected
+                    } else {
+                        FlowIcons.NotSelected
+                    },
+                    tint = if (status.isActive) {
+                        AppTheme.colors.onSurface
+                    } else {
+                        AppTheme.colors.onSurface.copy(alpha = 0.37f)
+                    },
                     contentDescription = stringResource(
                         if (selected) {
                             R.string.content_description_endpoint_selected
@@ -93,3 +104,6 @@ private fun ConnectionsDialog(
         }
     }
 }
+
+private val EndpointStatus.isActive: Boolean
+    get() = this == EndpointStatus.Active
