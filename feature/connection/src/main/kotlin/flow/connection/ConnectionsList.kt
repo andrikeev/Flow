@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.Icon
-import flow.designsystem.component.ModalBottomSheet
 import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.drawables.FlowIcons
@@ -24,32 +23,24 @@ import flow.navigation.viewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-fun ConnectionsDialog(
-    onDismissRequest: () -> Unit,
-) = ConnectionsDialog(
-    viewModel = viewModel(),
-    onDismissRequest = onDismissRequest,
-)
+fun ConnectionsList() = ConnectionsList(viewModel = viewModel())
 
 @Composable
-private fun ConnectionsDialog(
+private fun ConnectionsList(
     viewModel: ConnectionsViewModel,
-    onDismissRequest: () -> Unit,
 ) {
     val state by viewModel.collectAsState()
-    ConnectionsDialog(
+    ConnectionsList(
         state = state,
         onAction = viewModel::perform,
-        onDismissRequest = onDismissRequest,
     )
 }
 
 @Composable
-private fun ConnectionsDialog(
+private fun ConnectionsList(
     state: Collection<EndpointState>,
     onAction: (ConnectionsAction) -> Unit,
-    onDismissRequest: () -> Unit,
-) = ModalBottomSheet(onDismissRequest = onDismissRequest) {
+) = Column {
     state.forEach { (endpoint, selected, status) ->
         Surface(
             modifier = Modifier.defaultMinSize(minHeight = AppTheme.sizes.default),

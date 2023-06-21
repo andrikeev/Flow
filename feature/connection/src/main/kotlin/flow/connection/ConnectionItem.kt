@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import flow.designsystem.component.Body
 import flow.designsystem.component.BodyLarge
+import flow.designsystem.component.ModalBottomSheet
 import flow.designsystem.component.Surface
 import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.theme.AppTheme
@@ -31,7 +32,11 @@ fun ConnectionItem() = ConnectionItem(
 private fun ConnectionItem(viewModel: ConnectionsViewModel) {
     val dialogState = rememberVisibilityState()
     if (dialogState.visible) {
-        ConnectionsDialog(onDismissRequest = dialogState::hide)
+        ModalBottomSheet(
+            visible = dialogState.visible,
+            onDismissRequest = dialogState::hide,
+            content = { ConnectionsList() },
+        )
     }
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
