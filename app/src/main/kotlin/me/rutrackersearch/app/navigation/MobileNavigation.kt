@@ -22,6 +22,7 @@ import flow.navigation.model.buildRoute
 import flow.navigation.rememberNestedNavigationController
 import flow.navigation.ui.MobileNavigation
 import flow.navigation.ui.NavigationAnimations
+import flow.navigation.ui.NavigationAnimations.Companion.slideInLeft
 import flow.navigation.ui.NavigationAnimations.Companion.slideInRight
 import flow.navigation.ui.NavigationAnimations.Companion.slideOutLeft
 import flow.navigation.ui.NavigationAnimations.Companion.slideOutRight
@@ -258,6 +259,7 @@ private enum class BottomRoute(val navigationBarItem: NavigationBarItem) {
             when {
                 route == null -> fadeIn()
                 route.ordinal > ordinal -> slideInRight()
+                route.ordinal < ordinal -> slideInLeft()
                 else -> fadeIn()
             }
         },
