@@ -15,7 +15,6 @@ import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.readBytes
 import io.ktor.http.Parameters
-import java.net.URLEncoder
 
 internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTrackerInnerApi {
 
@@ -32,8 +31,8 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
     ): Pair<String?, String> = httpClient.submitForm(
         url = Login,
         formParameters = Parameters.build {
-            append("login_username", username.toCp1251())
-            append("login_password", password.toCp1251())
+            append("login_username", username)
+            append("login_password", password)
             append("login", "Вход")
             if (captchaSid != null && captchaCode != null && captchaValue != null) {
                 append("cap_sid", captchaSid)
@@ -115,7 +114,7 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
             append("submit_mode", "submit")
             append("t", topicId)
             append("form_token", formToken)
-            append("message", message.toCp1251())
+            append("message", message)
         }
     }.bodyAsText()
 
@@ -197,6 +196,4 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
 
         const val CookieHeader: String = "Cookie"
     }
-
-    private fun String.toCp1251(): String = URLEncoder.encode(this, "Windows-1251")
 }
