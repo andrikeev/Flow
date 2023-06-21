@@ -1,9 +1,13 @@
 package flow.ui.component
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -17,10 +21,13 @@ import flow.designsystem.component.Label
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.ProvideTextStyle
 import flow.designsystem.component.Surface
+import flow.designsystem.component.ThemePreviews
 import flow.designsystem.theme.AppTheme
+import flow.designsystem.theme.FlowTheme
 import flow.designsystem.theme.contentColorFor
 import flow.models.forum.Category
 import flow.models.topic.Author
+import flow.models.topic.BaseTopic
 import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import flow.models.topic.Torrent
@@ -100,8 +107,8 @@ private fun Topic(
 ) {
     Row(
         modifier = Modifier.padding(
-            horizontal = AppTheme.spaces.large,
-            vertical = AppTheme.spaces.mediumLarge,
+            start = AppTheme.spaces.large,
+            bottom = AppTheme.spaces.mediumLarge,
         ),
     ) {
         Column(
@@ -109,6 +116,7 @@ private fun Topic(
                 .weight(1f)
                 .align(CenterVertically)
         ) {
+            Spacer(modifier = Modifier.height(AppTheme.spaces.mediumLarge))
             topic.category?.takeIf { showCategory }?.let { category ->
                 Label(
                     text = category.name,
@@ -123,7 +131,14 @@ private fun Topic(
                 )
             }
         }
-        action?.invoke()
+        if (action != null) {
+            Box(
+                modifier = Modifier.padding(AppTheme.spaces.medium),
+                content = { action() }
+            )
+        } else {
+            Spacer(modifier = Modifier.width(AppTheme.spaces.large))
+        }
     }
 }
 
@@ -145,8 +160,8 @@ private fun Torrent(
     ) {
         Column(
             modifier = Modifier.padding(
-                horizontal = AppTheme.spaces.large,
-                vertical = AppTheme.spaces.mediumLarge,
+                start = AppTheme.spaces.large,
+                bottom = AppTheme.spaces.mediumLarge,
             ),
         ) {
             Row {
@@ -155,6 +170,7 @@ private fun Torrent(
                         .weight(1f)
                         .align(CenterVertically)
                 ) {
+                    Spacer(modifier = Modifier.height(AppTheme.spaces.mediumLarge))
                     torrent.category?.takeIf { showCategory }?.let { category ->
                         Label(
                             modifier = Modifier.padding(bottom = AppTheme.spaces.small),
@@ -164,27 +180,50 @@ private fun Torrent(
                     }
                     Body(torrent.title)
                 }
-                action?.invoke()
+                if (action != null) {
+                    Box(
+                        modifier = Modifier.padding(AppTheme.spaces.medium),
+                        content = { action() }
+                    )
+                } else {
+                    Spacer(modifier = Modifier.width(AppTheme.spaces.large))
+                }
             }
-            torrent.tags?.takeIf(String::isNotBlank)?.let { tags ->
-                BodySmall(
-                    text = tags,
-                    color = AppTheme.colors.outline,
-                )
-            }
-            torrent.author?.let { author ->
-                BodySmall(
-                    text = author.name,
-                    color = AppTheme.colors.primary,
-                )
-            }
-            ProvideTextStyle(value = AppTheme.typography.labelMedium) {
-                TorrentStatus(
-                    modifier = Modifier.padding(top = AppTheme.spaces.small),
-                    torrent = torrent,
-                )
+            Column(modifier = Modifier.padding(end = AppTheme.spaces.large)) {
+                torrent.tags?.takeIf(String::isNotBlank)?.let { tags ->
+                    BodySmall(
+                        text = tags,
+                        color = AppTheme.colors.outline,
+                    )
+                }
+                torrent.author?.let { author ->
+                    BodySmall(
+                        text = author.name,
+                        color = AppTheme.colors.primary,
+                    )
+                }
+                ProvideTextStyle(value = AppTheme.typography.labelMedium) {
+                    TorrentStatus(
+                        modifier = Modifier.padding(top = AppTheme.spaces.small),
+                        torrent = torrent,
+                    )
+                }
             }
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun TopicListItem_Preview() {
+    FlowTheme {
+        TopicListItem(
+            topicModel = TopicModel(
+                BaseTopic("", "Список профессиональных и любительских закадровых переводов"),
+            ),
+            onFavoriteClick = {},
+            onClick = {},
+        )
     }
 }
 

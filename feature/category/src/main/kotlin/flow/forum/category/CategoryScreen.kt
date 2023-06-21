@@ -3,24 +3,29 @@ package flow.forum.category
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.AppBarState
 import flow.designsystem.component.BackButton
+import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.BookmarkButton
 import flow.designsystem.component.Dialog
-import flow.designsystem.component.Divider
 import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.Scaffold
 import flow.designsystem.component.ScrollBackFloatingActionButton
 import flow.designsystem.component.SearchButton
+import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.VisibilityState
@@ -30,10 +35,8 @@ import flow.designsystem.theme.AppTheme
 import flow.models.LoadState
 import flow.models.forum.Category
 import flow.navigation.viewModel
-import flow.ui.component.CategoryListItem
 import flow.ui.component.TopicListItem
 import flow.ui.component.appendItems
-import flow.ui.component.dividedItems
 import flow.ui.component.emptyItem
 import flow.ui.component.errorItem
 import flow.ui.component.loadingItem
@@ -122,12 +125,12 @@ private fun CategoryScreenList(
         is LoadState.NotLoading -> {
             when (state.categoryContent) {
                 is CategoryContent.Content -> {
-                    dividedItems(
+                    items(
                         items = state.categoryContent.categories,
                         key = Category::id,
                     ) { category ->
-                        CategoryListItem(
-                            text = category.name,
+                        Category(
+                            category = category,
                             onClick = { onAction(CategoryAction.CategoryClick(category)) }
                         )
                     }
@@ -161,6 +164,42 @@ private fun CategoryScreenList(
                 is CategoryContent.Initial -> loadingItem()
             }
         }
+    }
+}
+
+@Composable
+private fun Category(
+    category: Category,
+    onClick: () -> Unit,
+) = Surface(
+    modifier = Modifier.padding(
+        horizontal = AppTheme.spaces.mediumLarge,
+        vertical = AppTheme.spaces.mediumSmall,
+    ),
+    onClick = onClick,
+    shape = AppTheme.shapes.large,
+    tonalElevation = AppTheme.elevations.small,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = AppTheme.spaces.large)
+            .defaultMinSize(minHeight = AppTheme.sizes.default),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        BodyLarge(
+            modifier = Modifier
+                .weight(1f)
+                .padding(
+                    horizontal = AppTheme.spaces.medium,
+                    vertical = AppTheme.spaces.large,
+                ),
+            text = category.name,
+        )
+        Icon(
+            icon = FlowIcons.ChevronRight,
+            contentDescription = null,
+        )
     }
 }
 

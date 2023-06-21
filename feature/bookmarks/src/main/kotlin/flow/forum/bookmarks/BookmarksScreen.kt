@@ -105,7 +105,10 @@ private fun Bookmark(
         BodyLarge(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = AppTheme.spaces.large),
+                .padding(
+                    horizontal = AppTheme.spaces.medium,
+                    vertical = AppTheme.spaces.large,
+                ),
             text = bookmark.category.name,
         )
         if (bookmark.newTopicsCount > 0) {
@@ -115,7 +118,10 @@ private fun Bookmark(
                         color = AppTheme.colors.primary,
                         shape = AppTheme.shapes.circle,
                     )
-                    .padding(AppTheme.spaces.medium),
+                    .padding(
+                        horizontal = AppTheme.spaces.large,
+                        vertical = AppTheme.spaces.mediumLarge,
+                    ),
                 text = "+${bookmark.newTopicsCount}",
                 color = AppTheme.colors.onPrimaryContainer,
             )
