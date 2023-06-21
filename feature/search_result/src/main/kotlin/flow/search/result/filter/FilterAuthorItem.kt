@@ -1,5 +1,6 @@
 package flow.search.result.filter
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import flow.designsystem.component.onEnter
 import flow.designsystem.component.rememberFocusRequester
 import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
+import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
 import flow.designsystem.utils.RunOnFirstComposition
 import flow.models.topic.Author
@@ -45,18 +47,23 @@ internal fun FilterAuthorItem(
         onDismissRequest = dialogState::hide,
         onSubmit = onSubmit,
     )
-    FilterBarItem(
-        label = stringResource(R.string.search_screen_filter_author_label),
-        onClick = dialogState::show,
-    ) {
-        BodyLarge(
-            modifier = Modifier.weight(1f),
-            text = selected?.name?.takeIf(String::isNotBlank)
-                ?: stringResource(R.string.search_screen_filter_any),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Icon(icon = FlowIcons.Author, contentDescription = null)
+    FilterBarItem(label = stringResource(R.string.search_screen_filter_author_label)) {
+        FilterBarItemContent(onClick = dialogState::show) {
+            BodyLarge(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = AppTheme.spaces.large),
+                text = selected?.name?.takeIf(String::isNotBlank)
+                    ?: stringResource(R.string.search_screen_filter_any),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Icon(
+                modifier = Modifier.padding(AppTheme.spaces.medium),
+                icon = FlowIcons.Author,
+                contentDescription = null,
+            )
+        }
     }
 }
 

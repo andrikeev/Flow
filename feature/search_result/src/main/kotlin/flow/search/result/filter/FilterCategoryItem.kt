@@ -18,13 +18,13 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.window.Dialog
 import flow.designsystem.component.BodyLarge
-import flow.designsystem.component.VisibilityState
 import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.Page
 import flow.designsystem.component.PagesScreen
 import flow.designsystem.component.Surface
 import flow.designsystem.component.TextButton
+import flow.designsystem.component.VisibilityState
 import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
@@ -51,24 +51,29 @@ internal fun FilterCategoryItem(
         },
         onDismiss = dialogState::hide,
     )
-    FilterBarItem(
-        label = stringResource(R.string.search_screen_filter_category_label),
-        onClick = dialogState::show,
-    ) {
-        BodyLarge(
-            modifier = Modifier.weight(1f),
-            text = when {
-                selected.isNullOrEmpty() -> stringResource(R.string.search_screen_filter_any)
-                selected.size == 1 -> selected.first().name
-                else -> stringResource(
-                    R.string.search_screen_filter_category_counter,
-                    selected.size
-                )
-            },
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Icon(icon = FlowIcons.Forum, contentDescription = null)
+    FilterBarItem(label = stringResource(R.string.search_screen_filter_category_label)) {
+        FilterBarItemContent(onClick = dialogState::show) {
+            BodyLarge(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = AppTheme.spaces.large),
+                text = when {
+                    selected.isNullOrEmpty() -> stringResource(R.string.search_screen_filter_any)
+                    selected.size == 1 -> selected.first().name
+                    else -> stringResource(
+                        R.string.search_screen_filter_category_counter,
+                        selected.size
+                    )
+                },
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Icon(
+                modifier = Modifier.padding(AppTheme.spaces.medium),
+                icon = FlowIcons.Forum,
+                contentDescription = null,
+            )
+        }
     }
 }
 
