@@ -15,6 +15,7 @@ import androidx.compose.ui.autofill.AutofillNode
 import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.composed
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -57,11 +58,13 @@ internal fun UsernameInputField(
 ) = TextField(
     modifier = modifier
         .padding(AppTheme.spaces.small)
+        .onFocusEvent {
+            if (it.isFocused) {
+                onChanged(state.usernameInput.value)
+            }
+        }
         .autofill(
-            autofillTypes = listOf(
-                AutofillType.Username,
-                AutofillType.EmailAddress,
-            ),
+            autofillTypes = listOf(AutofillType.Username),
             onFill = onChanged,
         )
         .onEnter(onSelectNext),
@@ -88,12 +91,12 @@ internal fun UsernameInputField(
         )
     },
     keyboardOptions = KeyboardOptions(
-        keyboardType = KeyboardType.Ascii,
+        keyboardType = KeyboardType.Text,
         imeAction = ImeAction.Next,
         autoCorrect = false,
     ),
     keyboardActions = KeyboardActions(
-        onNext = { onSelectNext() }
+        onNext = { onSelectNext() },
     ),
 )
 
@@ -109,6 +112,11 @@ internal fun PasswordInputField(
     TextField(
         modifier = modifier
             .padding(AppTheme.spaces.small)
+            .onFocusEvent {
+                if (it.isFocused) {
+                    onChanged(state.passwordInput.value)
+                }
+            }
             .autofill(
                 autofillTypes = listOf(AutofillType.Password),
                 onFill = onChanged,
