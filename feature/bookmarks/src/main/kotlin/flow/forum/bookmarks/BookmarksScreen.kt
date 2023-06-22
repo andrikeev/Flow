@@ -12,13 +12,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import flow.designsystem.component.Body
+import androidx.compose.ui.text.font.FontWeight
 import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.Surface
+import flow.designsystem.component.Text
+import flow.designsystem.component.ThemePreviews
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
+import flow.designsystem.theme.FlowTheme
+import flow.models.forum.Category
 import flow.models.forum.CategoryModel
 import flow.navigation.viewModel
 import flow.ui.component.emptyItem
@@ -112,19 +116,35 @@ private fun Bookmark(
             text = bookmark.category.name,
         )
         if (bookmark.newTopicsCount > 0) {
-            Body(
+            Text(
                 modifier = Modifier
                     .background(
                         color = AppTheme.colors.primary,
                         shape = AppTheme.shapes.circle,
                     )
                     .padding(
-                        horizontal = AppTheme.spaces.large,
-                        vertical = AppTheme.spaces.mediumLarge,
+                        horizontal = AppTheme.spaces.mediumLarge,
+                        vertical = AppTheme.spaces.medium,
                     ),
-                text = "+${bookmark.newTopicsCount}",
-                color = AppTheme.colors.onPrimaryContainer,
+                text = bookmark.newTopicsCount.toString(),
+                color = AppTheme.colors.onPrimary,
+                style = AppTheme.typography.labelMedium,
+                fontWeight = FontWeight.SemiBold,
             )
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+fun Bookmark_Preview() {
+    FlowTheme {
+        Bookmark(
+            bookmark = CategoryModel(
+                category = Category("id", "Category name"),
+                newTopicsCount = 3,
+            ),
+            onClick = {},
+        )
     }
 }
