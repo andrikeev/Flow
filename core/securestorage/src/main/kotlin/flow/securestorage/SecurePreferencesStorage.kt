@@ -6,6 +6,7 @@ import flow.models.settings.Settings
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
 import flow.securestorage.model.Account
+import flow.securestorage.model.EndpointConverter
 import flow.securestorage.preferences.SecurePreferencesFactory
 import flow.securestorage.utils.clear
 import flow.securestorage.utils.edit
@@ -57,7 +58,7 @@ internal class SecurePreferencesStorage @Inject constructor(
 
     override fun saveSettings(settings: Settings) {
         settingsPreferences.edit {
-            putString(endpointKey, settings.endpoint.name)
+            putString(endpointKey, with(EndpointConverter) { settings.endpoint.toJson() })
             putString(themeKey, settings.theme.name)
             putString(favoritesSyncPeriodKey, settings.favoritesSyncPeriod.name)
             putString(bookmarksSyncPeriodKey, settings.bookmarksSyncPeriod.name)
@@ -66,7 +67,7 @@ internal class SecurePreferencesStorage @Inject constructor(
 
     override fun getSettings(): Settings {
         val endpoint = settingsPreferences.getString(endpointKey, null)?.let {
-            enumValueOf(it)
+            with(EndpointConverter) { fromJson(it) }
         } ?: Endpoint.Proxy
         val theme = settingsPreferences.getString(themeKey, null)?.let {
             enumValueOf(it)

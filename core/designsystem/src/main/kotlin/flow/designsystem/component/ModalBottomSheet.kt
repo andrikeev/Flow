@@ -11,8 +11,11 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ShapeDefaults
@@ -37,8 +40,14 @@ fun ModalBottomSheet(
     transitionState.targetState = visible
 
     if (transitionState.currentState || transitionState.targetState) {
+        val navigationBarsPadding = WindowInsets.navigationBars.asPaddingValues()
+
         Popup(onDismissRequest = onDismissRequest) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .padding(navigationBarsPadding)
+                    .fillMaxSize(),
+            ) {
                 val transition = updateTransition(
                     transitionState = transitionState,
                     label = "DropdownMenu_Transition",

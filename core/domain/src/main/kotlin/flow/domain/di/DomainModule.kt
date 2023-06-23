@@ -22,6 +22,8 @@ import flow.domain.usecase.ObserveRatingRequestUseCase
 import flow.domain.usecase.ObserveRatingRequestUseCaseImpl
 import flow.domain.usecase.PostponeRatingRequestUseCase
 import flow.domain.usecase.PostponeRatingRequestUseCaseImpl
+import flow.domain.usecase.SetEndpointUseCase
+import flow.domain.usecase.SetEndpointUseCaseImpl
 import javax.inject.Singleton
 
 @Module
@@ -62,4 +64,8 @@ internal interface DomainModule {
     @Binds
     @Singleton
     fun postponeRatingRequestUseCase(impl: PostponeRatingRequestUseCaseImpl): PostponeRatingRequestUseCase
+
+    @Binds
+    @Singleton
+    fun setEndpointUseCase(impl: SetEndpointUseCaseImpl): SetEndpointUseCase
 }

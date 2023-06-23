@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="connection_endpoint_proxy">Прокси</string>
-    <string name="connection_endpoint_rutracker_net">Зеркало</string>
-    <string name="connection_endpoint_rutracker_org">Основной</string>
+    <string name="connection_endpoint_mirror">Зеркало</string>
+    <string name="connection_endpoint_rutracker">Основной</string>
     <string name="connection_item_title">Сервер</string>
     <string name="content_description_connection_active">Доступен</string>
     <string name="content_description_connection_blocked">Не доступен</string>

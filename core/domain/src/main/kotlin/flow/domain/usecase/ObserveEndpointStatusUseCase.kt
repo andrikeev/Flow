@@ -16,7 +16,6 @@ interface ObserveEndpointStatusUseCase : (Endpoint) -> Flow<EndpointState>
 
 internal class ObserveEndpointStatusUseCaseImpl @Inject constructor(
     private val connectionService: ConnectionService,
-    private val observeSettingsUseCase: ObserveSettingsUseCase,
     private val settingsRepository: SettingsRepository,
 ) : ObserveEndpointStatusUseCase {
     override fun invoke(endpoint: Endpoint): Flow<EndpointState> {
@@ -35,7 +34,7 @@ internal class ObserveEndpointStatusUseCaseImpl @Inject constructor(
                     .collectLatest { selected ->
                         emit(
                             state.copy(
-                                selected = state.endpoint == selected,
+                                selected = endpoint == selected,
                                 status = status,
                             )
                         )
@@ -54,5 +53,5 @@ internal class ObserveEndpointStatusUseCaseImpl @Inject constructor(
         status = EndpointStatus.Updating,
     )
 
-    private fun observeSelectedEndpoint() = observeSettingsUseCase().map { it.endpoint }
+    private fun observeSelectedEndpoint() = settingsRepository.observeSettings().map { it.endpoint }
 }

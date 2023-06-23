@@ -21,6 +21,8 @@ dependencies {
 
     implementation(libs.javax.inject)
     implementation(libs.kotlinx.coroutines.core)
+
+    testImplementation(project(":core:testing"))
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

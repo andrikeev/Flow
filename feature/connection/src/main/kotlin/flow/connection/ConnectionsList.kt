@@ -78,9 +78,9 @@ private fun ConnectionsList(
                     BodyLarge(
                         text = stringResource(
                             when (endpoint) {
-                                Endpoint.Proxy -> R.string.connection_endpoint_proxy
-                                Endpoint.RutrackerOrg -> R.string.connection_endpoint_rutracker_org
-                                Endpoint.RutrackerNet -> R.string.connection_endpoint_rutracker_net
+                                is Endpoint.Proxy -> R.string.connection_endpoint_proxy
+                                is Endpoint.Rutracker -> R.string.connection_endpoint_rutracker
+                                is Endpoint.Mirror -> R.string.connection_endpoint_mirror
                             }
                         ),
                     )

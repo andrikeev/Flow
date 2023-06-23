@@ -31,13 +31,11 @@ fun ConnectionItem() = ConnectionItem(
 @Composable
 private fun ConnectionItem(viewModel: ConnectionsViewModel) {
     val dialogState = rememberVisibilityState()
-    if (dialogState.visible) {
-        ModalBottomSheet(
-            visible = dialogState.visible,
-            onDismissRequest = dialogState::hide,
-            content = { ConnectionsList() },
-        )
-    }
+    ModalBottomSheet(
+        visible = dialogState.visible,
+        onDismissRequest = dialogState::hide,
+        content = { ConnectionsList() },
+    )
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is ConnectionsSideEffect.ShowConnectionDialog -> dialogState.show()

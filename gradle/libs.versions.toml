@@ -2,7 +2,7 @@
 accompanist = "0.30.1"
 androidGradlePlugin = "8.0.2"
 androidxActivity = "1.7.2"
-androidxComposeBom = "2023.06.00"
+androidxComposeBom = "2023.06.01"
 androidxComposeCompiler = "1.4.4"
 androidxCore = "1.10.1"
 androidxCoreSplashscreen = "1.0.1"
@@ -30,8 +30,9 @@ ktor = "2.2.4"
 leakcanary = "2.10"
 logback = "1.2.11"
 material = "1.9.0"
+mockk = "1.13.5"
 orbit = "4.4.0"
-room = "2.5.1"
+room = "2.5.2"
 
 [libraries]
 accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "accompanist" }
@@ -98,6 +99,7 @@ ktor-server-netty-jvm = { group = "io.ktor", name = "ktor-server-netty-jvm", ver
 leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
 logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
 material3 = { group = "com.google.android.material", name = "material", version.ref = "material" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 orbit-compose = { group = "org.orbit-mvi", name = "orbit-compose", version.ref = "orbit" }
 orbit-core = { group = "org.orbit-mvi", name = "orbit-core", version.ref = "orbit" }
 orbit-viewmodel = { group = "org.orbit-mvi", name = "orbit-viewmodel", version.ref = "orbit" }
