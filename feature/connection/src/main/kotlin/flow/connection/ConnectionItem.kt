@@ -14,9 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import flow.designsystem.component.Body
 import flow.designsystem.component.BodyLarge
-import flow.designsystem.component.ModalBottomSheet
+import flow.designsystem.component.LocalPopupHostState
 import flow.designsystem.component.Surface
-import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.theme.AppTheme
 import flow.domain.model.endpoint.EndpointState
 import flow.navigation.viewModel
@@ -30,15 +29,12 @@ fun ConnectionItem() = ConnectionItem(
 
 @Composable
 private fun ConnectionItem(viewModel: ConnectionsViewModel) {
-    val dialogState = rememberVisibilityState()
-    ModalBottomSheet(
-        visible = dialogState.visible,
-        onDismissRequest = dialogState::hide,
-        content = { ConnectionsList() },
-    )
+    val popupHostState = LocalPopupHostState.current
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is ConnectionsSideEffect.ShowConnectionDialog -> dialogState.show()
+            is ConnectionsSideEffect.ShowConnectionDialog -> {
+                popupHostState.show { ConnectionsList() }
+            }
         }
     }
     val state by viewModel.collectAsState()
