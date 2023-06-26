@@ -72,7 +72,7 @@ internal class NetworkApiRepositoryImpl @Inject constructor(
                 defaultRequest { url("https://$host/forum/") }
                 install(Logging) {
                     logger = networkLogger
-                    level = LogLevel.INFO
+                    level = LogLevel.ALL
                 }
             }
         )
