@@ -12,12 +12,12 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.runtime.Composable
@@ -52,7 +52,6 @@ fun ModalBottomSheet(
     }
 
     if (transitionState.currentState || transitionState.targetState) {
-        val navigationBarsPadding = WindowInsets.navigationBars.asPaddingValues()
         val transition = updateTransition(
             transitionState = transitionState,
             label = "DropdownMenu_Transition",
@@ -78,22 +77,30 @@ fun ModalBottomSheet(
                 enter = expandVertically(expandFrom = Alignment.Top),
                 exit = shrinkVertically(shrinkTowards = Alignment.Top),
             ) {
-                Surface(
-                    shape = ShapeDefaults.ExtraLarge.copy(
-                        bottomStart = CornerSize(0.0.dp),
-                        bottomEnd = CornerSize(0.0.dp),
-                    ),
-                    tonalElevation = AppTheme.elevations.large,
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                top = 28.0.dp, // ShapeDefaults.ExtraLarge
-                                bottom = navigationBarsPadding.calculateBottomPadding() + AppTheme.spaces.large,
+                LazyColumn {
+                    item {
+                        Surface(
+                            shape = ShapeDefaults.ExtraLarge.copy(
+                                bottomStart = CornerSize(0.0.dp),
+                                bottomEnd = CornerSize(0.0.dp),
                             ),
-                        content = content,
-                    )
+                            tonalElevation = AppTheme.elevations.large,
+                            shadowElevation = AppTheme.elevations.large,
+
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .imePadding()
+                                    .navigationBarsPadding()
+                                    .padding(
+                                        top = AppTheme.spaces.extraLarge,
+                                        bottom = AppTheme.spaces.large,
+                                    ),
+                                content = content,
+                            )
+                        }
+                    }
                 }
             }
         }

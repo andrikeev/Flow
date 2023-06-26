@@ -22,7 +22,7 @@ import flow.designsystem.component.Icon
 import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
-import flow.designsystem.component.TextField
+import flow.designsystem.component.OutlinedTextField
 import flow.designsystem.component.ThemePreviews
 import flow.designsystem.component.VisibilityState
 import flow.designsystem.component.onEnter
@@ -102,7 +102,7 @@ private fun AuthorDialog(
             text = {
                 val focusRequester = rememberFocusRequester()
                 RunOnFirstComposition { focusRequester.requestFocus() }
-                TextField(
+                OutlinedTextField(
                     modifier = Modifier
                         .focusRequester(focusRequester)
                         .onEnter(::onSubmit),

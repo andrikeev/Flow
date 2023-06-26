@@ -34,7 +34,7 @@ import flow.designsystem.component.CircularProgressIndicator
 import flow.designsystem.component.Icon
 import flow.designsystem.component.Placeholder
 import flow.designsystem.component.Text
-import flow.designsystem.component.TextField
+import flow.designsystem.component.OutlinedTextField
 import flow.designsystem.component.onEnter
 import flow.designsystem.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
@@ -55,7 +55,7 @@ internal fun UsernameInputField(
     state: LoginState,
     onChanged: (TextFieldValue) -> Unit,
     onSelectNext: () -> Unit,
-) = TextField(
+) = OutlinedTextField(
     modifier = modifier
         .padding(AppTheme.spaces.small)
         .onFocusEvent {
@@ -109,7 +109,7 @@ internal fun PasswordInputField(
     onSubmit: () -> Unit,
 ) {
     val passwordVisibility = rememberVisibilityState()
-    TextField(
+    OutlinedTextField(
         modifier = modifier
             .padding(AppTheme.spaces.small)
             .onFocusEvent {
@@ -186,7 +186,7 @@ internal fun CaptchaInputField(
     state: LoginState,
     onChanged: (TextFieldValue) -> Unit,
     onSubmit: () -> Unit,
-) = TextField(
+) = OutlinedTextField(
     modifier = modifier
         .padding(AppTheme.spaces.small)
         .onEnter(onSubmit),

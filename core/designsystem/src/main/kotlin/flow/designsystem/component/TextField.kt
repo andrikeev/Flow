@@ -14,8 +14,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
@@ -39,13 +39,13 @@ import flow.designsystem.utils.RunOnFirstComposition
 
 @Composable
 @NonRestartableComposable
-fun TextField(
+fun OutlinedTextField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
+    textStyle: TextStyle = AppTheme.typography.bodyMedium,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -83,13 +83,13 @@ fun TextField(
 
 @Composable
 @NonRestartableComposable
-fun TextField(
+fun OutlinedTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
+    textStyle: TextStyle = AppTheme.typography.bodyMedium,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -126,6 +126,58 @@ fun TextField(
 )
 
 @Composable
+fun TextField(
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    textStyle: TextStyle = AppTheme.typography.bodyMedium,
+    label: @Composable (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    prefix: @Composable (() -> Unit)? = null,
+    suffix: @Composable (() -> Unit)? = null,
+    supportingText: @Composable (() -> Unit)? = null,
+    isError: Boolean = false,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = false,
+    maxLines: Int = Int.MAX_VALUE,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+) = TextField(
+    modifier = modifier,
+    value = value,
+    onValueChange = onValueChange,
+    enabled = enabled,
+    readOnly = readOnly,
+    textStyle = textStyle,
+    label = label,
+    placeholder = placeholder,
+    leadingIcon = leadingIcon,
+    trailingIcon = trailingIcon,
+    prefix = prefix,
+    suffix = suffix,
+    supportingText = supportingText,
+    isError = isError,
+    visualTransformation = visualTransformation,
+    keyboardOptions = keyboardOptions,
+    keyboardActions = keyboardActions,
+    singleLine = singleLine,
+    maxLines = maxLines,
+    interactionSource = interactionSource,
+    colors = TextFieldDefaults.textFieldColors(
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        errorIndicatorColor = Color.Transparent,
+        focusedTrailingIconColor = LocalContentColor.current,
+    ),
+)
+
+@Composable
 fun SearchInputField(
     modifier: Modifier = Modifier,
     inputValue: TextFieldValue,
@@ -136,7 +188,7 @@ fun SearchInputField(
 ) {
     val focusRequester = rememberFocusRequester()
     RunOnFirstComposition { focusRequester.requestFocus() }
-    androidx.compose.material3.TextField(
+    TextField(
         modifier = modifier
             .focusRequester(focusRequester)
             .onEnter(onSubmitClick),
@@ -298,18 +350,18 @@ private fun TextFieldPreview() {
     FlowTheme(isDynamic = false) {
         Surface {
             Column {
-                TextField(
+                flow.designsystem.component.OutlinedTextField(
                     modifier = Modifier.padding(AppTheme.spaces.medium),
                     value = "Input text",
                     onValueChange = {},
                 )
-                TextField(
+                flow.designsystem.component.OutlinedTextField(
                     modifier = Modifier.padding(AppTheme.spaces.medium),
                     value = "Disabled input text",
                     onValueChange = {},
                     enabled = false,
                 )
-                TextField(
+                flow.designsystem.component.OutlinedTextField(
                     modifier = Modifier.padding(AppTheme.spaces.medium),
                     value = "Error input text",
                     onValueChange = {},

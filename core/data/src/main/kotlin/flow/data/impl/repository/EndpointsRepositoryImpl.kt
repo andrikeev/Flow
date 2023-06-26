@@ -29,6 +29,14 @@ class EndpointsRepositoryImpl @Inject constructor(
             }
     }
 
+    override suspend fun add(endpoint: Endpoint) {
+        endpointDao.insert(endpoint.toEntity())
+    }
+
+    override suspend fun remove(endpoint: Endpoint) {
+        endpointDao.remove(endpoint.toEntity())
+    }
+
     private companion object {
         val defaultEndpoints: List<EndpointEntity> by lazy {
             listOf(

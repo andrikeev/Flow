@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -17,7 +15,6 @@ import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.LocalPopupHostState
 import flow.designsystem.component.Surface
 import flow.designsystem.theme.AppTheme
-import flow.domain.model.endpoint.EndpointState
 import flow.navigation.viewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -46,18 +43,15 @@ private fun ConnectionItem(viewModel: ConnectionsViewModel) {
 
 @Composable
 private fun ConnectionItem(
-    state: Collection<EndpointState>,
+    state: ConnectionsState,
     onAction: (ConnectionsAction) -> Unit,
 ) {
-    val selectedEndpointState by remember(state) {
-        derivedStateOf { state.firstOrNull { it.selected } }
-    }
-    selectedEndpointState?.let { endpointState ->
+    state.selected?.let { endpointState ->
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(AppTheme.sizes.extraLarge),
-            onClick = { onAction(ConnectionsAction.ClickConnectionItem) },
+            onClick = { onAction(ConnectionsAction.ConnectionItemClick) },
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(

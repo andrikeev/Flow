@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Abc
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Bookmark
@@ -51,6 +52,7 @@ import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.PersonSearch
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
+import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material.icons.outlined.SdStorage
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Share
@@ -75,6 +77,7 @@ object FlowIcons {
 
     val AppIcon: Icon = Icon.DrawableResourceIcon(R.drawable.ic_notification)
     val Account: Icon = Icon.ImageVectorIcon(MaterialIcons.SwitchAccount)
+    val Add: Icon = Icon.ImageVectorIcon(MaterialIcons.Add)
     val Author: Icon = Icon.ImageVectorIcon(MaterialIcons.PersonSearch)
     val BackArrow: Icon = Icon.ImageVectorIcon(MaterialIcons.ArrowBack)
     val Blocked: Icon = Icon.ImageVectorIcon(MaterialIcons.LinkOff)
@@ -110,6 +113,7 @@ object FlowIcons {
     val PasswordHidden: Icon = Icon.ImageVectorIcon(MaterialIcons.VisibilityOff)
     val PasswordVisible: Icon = Icon.ImageVectorIcon(MaterialIcons.Visibility)
     val PrevPage: Icon = Icon.ImageVectorIcon(MaterialIcons.ChevronLeft)
+    val Remove: Icon = Icon.ImageVectorIcon(MaterialIcons.Remove)
     val Selected: Icon = Icon.ImageVectorIcon(MaterialIcons.CheckCircleOutline)
     val NotSelected: Icon = Icon.ImageVectorIcon(MaterialIcons.RadioButtonUnchecked)
     val ScrollToTop: Icon = Icon.ImageVectorIcon(MaterialIcons.ExpandLess)
