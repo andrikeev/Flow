@@ -288,7 +288,9 @@ private fun Quote(
     content: Content,
     modifier: Modifier = Modifier,
 ) = Column(
-    modifier = modifier.padding(vertical = AppTheme.spaces.mediumSmall),
+    modifier = modifier
+        .fillMaxWidth()
+        .padding(vertical = AppTheme.spaces.mediumSmall),
 ) {
     Text(
         modifier = Modifier.padding(
