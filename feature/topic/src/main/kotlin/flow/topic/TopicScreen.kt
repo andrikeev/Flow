@@ -7,17 +7,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -68,6 +63,7 @@ import flow.models.topic.Author
 import flow.models.topic.Post
 import flow.models.topic.TextContent
 import flow.ui.component.Avatar
+import flow.ui.component.Pagination
 import flow.ui.component.Post
 import flow.ui.component.RemoteImage
 import flow.ui.component.TorrentStatus
@@ -386,54 +382,11 @@ private fun Pagination(
     when (paginationState) {
         is PaginationState.Initial -> Unit
         is PaginationState.NoPagination -> Unit
-        is PaginationState.Pagination -> Row(
-            modifier = Modifier
-                .padding(WindowInsets.Companion.navigationBars.asPaddingValues())
-                .fillMaxWidth()
-                .height(AppTheme.sizes.default),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            fun goToPage(page: Int) = onAction(TopicAction.GoToPage(page))
-            IconButton(
-                icon = FlowIcons.FirstPage,
-                contentDescription = stringResource(R.string.topic_action_first_page),
-                enabled = paginationState.page > 1,
-                onClick = { goToPage(1) },
-            )
-            IconButton(
-                icon = FlowIcons.PrevPage,
-                contentDescription = stringResource(R.string.topic_action_previous_page),
-                enabled = paginationState.page > 1,
-                onClick = { goToPage(paginationState.page - 1) },
-            )
-            Box(
-                modifier = Modifier.width(AppTheme.sizes.default),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = buildString {
-                        append(paginationState.page)
-                        if (paginationState.totalPages > 0) {
-                            append('/', paginationState.totalPages)
-                        }
-                    },
-                    style = AppTheme.typography.labelLarge,
-                )
-            }
-            IconButton(
-                icon = FlowIcons.NextPage,
-                contentDescription = stringResource(R.string.topic_action_next_page),
-                enabled = paginationState.page < paginationState.totalPages,
-                onClick = { goToPage(paginationState.page + 1) },
-            )
-            IconButton(
-                icon = FlowIcons.LastPage,
-                contentDescription = stringResource(R.string.topic_action_last_page),
-                enabled = paginationState.page < paginationState.totalPages,
-                onClick = { goToPage(paginationState.totalPages) },
-            )
-        }
+        is PaginationState.Pagination -> Pagination(
+            currentPage = paginationState.page,
+            totalPages = paginationState.totalPages,
+            onPageSelected = { onAction(TopicAction.GoToPage(it)) }
+        )
     }
 }
 
