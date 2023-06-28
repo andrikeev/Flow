@@ -401,9 +401,6 @@ private fun TopicContent(
         top = AppTheme.spaces.medium,
         bottom = AppTheme.spaces.extraLargeBottom,
     ),
-    onFirstItemVisible = { onAction(TopicAction.ListTopReached) },
-    onLastItemVisible = { onAction(TopicAction.ListBottomReached) },
-    onLastVisibleIndexChanged = { index -> onAction(TopicAction.LastVisibleIndexChanged(index)) }
 ) {
     when (state.loadStates.refresh) {
         is LoadState.Error -> errorItem(onRetryClick = { onAction(TopicAction.RetryClick) })

@@ -5,8 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.model.PagingAction
-import flow.domain.model.append
-import flow.domain.model.prepend
 import flow.domain.model.refresh
 import flow.domain.model.retry
 import flow.domain.usecase.AddCommentUseCase
@@ -65,9 +63,6 @@ internal class TopicViewModel @Inject constructor(
             is TopicAction.CategoryClick -> onCategoryClick(action.category)
             is TopicAction.FavoriteClick -> onFavoriteClick()
             is TopicAction.GoToPage -> onGoToPage(action.page)
-            is TopicAction.LastVisibleIndexChanged -> onLastVisibleIndexChanged(action.index)
-            is TopicAction.ListBottomReached -> onListBottomReached()
-            is TopicAction.ListTopReached -> onListTopReached()
             is TopicAction.LoginClick -> onLoginClick()
             is TopicAction.MagnetClick -> onMagnetClick(action.link)
             is TopicAction.OpenFileClick -> onOpenFileClick(action.uri)
@@ -112,26 +107,13 @@ internal class TopicViewModel @Inject constructor(
         ).collectLatest { (data, loadStates, pagination) ->
             reduce {
                 state.copy(
-                    paginationState = when (val paginationState = state.paginationState) {
-                        is PaginationState.Initial,
-                        is PaginationState.NoPagination -> if (pagination.totalPages > 1) {
-                            PaginationState.Pagination(
-                                page = pagination.loadedPages.first,
-                                loadedPages = pagination.loadedPages,
-                                totalPages = pagination.totalPages,
-                            )
-                        } else {
-                            PaginationState.NoPagination
-                        }
-
-                        is PaginationState.Pagination -> if (pagination.totalPages > 1) {
-                            paginationState.copy(
-                                loadedPages = pagination.loadedPages,
-                                totalPages = pagination.totalPages,
-                            )
-                        } else {
-                            PaginationState.NoPagination
-                        }
+                    paginationState = if (pagination.totalPages > 1) {
+                        PaginationState.Pagination(
+                            page = pagination.loadedPages.first,
+                            totalPages = pagination.totalPages,
+                        )
+                    } else {
+                        PaginationState.NoPagination
                     },
                     commentsContent = when {
                         data == null -> CommentsContent.Initial
@@ -168,30 +150,8 @@ internal class TopicViewModel @Inject constructor(
         toggleFavoriteUseCase(id)
     }
 
-    private fun onLastVisibleIndexChanged(index: Int) = intent {
-        when (val paginationState = state.paginationState) {
-            is PaginationState.Initial -> Unit
-            is PaginationState.NoPagination -> Unit
-            is PaginationState.Pagination -> reduce {
-                state.copy(
-                    paginationState = paginationState.copy(
-                        page = paginationState.loadedPages.first + (index + 1) / PageSize,
-                    )
-                )
-            }
-        }
-    }
-
     private fun onGoToPage(page: Int) = intent {
         pagingActions.refresh(page)
-    }
-
-    private fun onListBottomReached() = intent {
-        pagingActions.append()
-    }
-
-    private fun onListTopReached() = intent {
-        pagingActions.prepend()
     }
 
     private fun onShareClick() = intent {
@@ -240,9 +200,5 @@ internal class TopicViewModel @Inject constructor(
 
     private fun createShareLink(): String {
         return "https://rutracker.org/forum/viewtopic.php?t=$id"
-    }
-
-    private companion object {
-        const val PageSize = 30
     }
 }
