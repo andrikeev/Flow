@@ -15,9 +15,8 @@ import flow.designsystem.theme.FlowTheme
 fun Divider(
     modifier: Modifier = Modifier,
     color: Color = AppTheme.colors.outlineVariant,
-    startIndent: Dp = AppTheme.spaces.zero,
 ) = androidx.compose.material3.Divider(
-    modifier = modifier.padding(start = startIndent),
+    modifier = modifier,
     color = color,
     thickness = Dp.Hairline,
 )

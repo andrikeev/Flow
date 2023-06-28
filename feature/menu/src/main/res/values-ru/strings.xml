@@ -38,4 +38,7 @@
     <string name="theme_dynamic">Динамическая (Material You)</string>
     <string name="theme_light">Светлая</string>
     <string name="theme_system">Системная</string>
+    <string name="support_development_title">Поддержать разработку</string>
+    <string name="support_development_line2">Для помощи в развитии и поддержке стабильной работы приложения, вы можете воспользоваться одним из вариантов.</string>
+    <string name="support_development_line1">Приложения разрабатывается и распространяется бесплатно и не содержит рекламы.</string>
 </resources>

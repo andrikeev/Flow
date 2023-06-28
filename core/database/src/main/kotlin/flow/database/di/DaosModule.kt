@@ -22,6 +22,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import flow.database.AppDatabase
 import flow.database.dao.BookmarkDao
+import flow.database.dao.EndpointDao
 import flow.database.dao.FavoriteTopicDao
 import flow.database.dao.ForumCategoryDao
 import flow.database.dao.ForumMetadataDao
@@ -37,6 +38,10 @@ object DaosModule {
     @Provides
     @Singleton
     fun providesBookmarkDao(appDatabase: AppDatabase): BookmarkDao = appDatabase.bookmarkDao()
+
+    @Provides
+    @Singleton
+    fun providesEndpointDao(appDatabase: AppDatabase): EndpointDao = appDatabase.endpointDao()
 
     @Provides
     @Singleton

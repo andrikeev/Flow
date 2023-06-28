@@ -16,7 +16,7 @@ data class AppSpaces(
     val large: Dp = 16.dp,
     val extraLarge: Dp = 24.dp,
     val extraExtraLarge: Dp = 32.dp,
-    val extraLargeBottom: Dp = 56.dp,
+    val extraLargeBottom: Dp = 76.dp,
 )
 
 internal val LocaleSpaces = staticCompositionLocalOf { AppSpaces() }

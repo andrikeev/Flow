@@ -74,6 +74,28 @@ fun RemoteImage(
 @Composable
 fun RemoteImage(
     src: String?,
+    onLoading: @Composable () -> Unit,
+    onError: @Composable () -> Unit,
+    onSuccess: @Composable (Painter) -> Unit,
+) {
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest
+            .Builder(LocalContext.current)
+            .data(src)
+            .size(Size.ORIGINAL)
+            .build()
+    )
+    when (val state = painter.state) {
+        is AsyncImagePainter.State.Empty,
+        is AsyncImagePainter.State.Loading -> onLoading()
+        is AsyncImagePainter.State.Error -> onError()
+        is AsyncImagePainter.State.Success -> onSuccess(state.painter)
+    }
+}
+
+@Composable
+fun RemoteImage(
+    src: String?,
     modifier: Modifier = Modifier,
     contentDescription: String?,
     onLoading: @Composable () -> Unit,

@@ -8,7 +8,6 @@ import flow.domain.usecase.SetBookmarksSyncPeriodUseCase
 import flow.domain.usecase.SetEndpointUseCase
 import flow.domain.usecase.SetFavoritesSyncPeriodUseCase
 import flow.domain.usecase.SetThemeUseCase
-import flow.models.settings.Endpoint
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
 import flow.testing.TestDispatchers
@@ -104,22 +103,6 @@ class MenuViewModelTest {
             states(
                 { this },
                 { copy(theme = Theme.DARK) },
-            )
-        }
-    }
-
-    @Test
-    fun `Set endpoint`() = runTest {
-        // set
-        val containerTest = viewModel.liveTest()
-        containerTest.runOnCreate()
-        // do
-        containerTest.testIntent { perform(MenuAction.SetEndpoint(Endpoint.RutrackerOrg)) }
-        // check
-        containerTest.assert(MenuState()) {
-            states(
-                { this },
-                { copy(endpoint = Endpoint.RutrackerOrg) },
             )
         }
     }

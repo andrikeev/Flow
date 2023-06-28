@@ -6,17 +6,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -56,7 +53,7 @@ import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
-import flow.designsystem.component.rememberVisibilityState
+import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
@@ -66,7 +63,7 @@ import flow.models.topic.Author
 import flow.models.topic.Post
 import flow.models.topic.TextContent
 import flow.ui.component.Avatar
-import flow.ui.component.Post
+import flow.designsystem.component.Pagination
 import flow.ui.component.RemoteImage
 import flow.ui.component.TorrentStatus
 import flow.ui.component.appendItems
@@ -260,10 +257,7 @@ private fun TorrentAppBar(
         ) {
             ProvideTextStyle(value = AppTheme.typography.labelMedium) {
                 TorrentStatus(
-                    modifier = Modifier
-                        .padding(top = AppTheme.spaces.small)
-                        .fillMaxWidth()
-                        .height(AppTheme.sizes.small),
+                    modifier = Modifier.padding(top = AppTheme.spaces.small),
                     status = topicContent.data.status,
                     size = topicContent.data.size,
                     seeds = topicContent.data.seeds,
@@ -282,16 +276,42 @@ private fun TorrentAppBar(
                         onDismiss = posterDialogState::hide,
                     )
                 }
-                Surface(
-                    modifier = Modifier.size(AppTheme.sizes.default),
-                    shape = AppTheme.shapes.small,
-                    onClick = posterDialogState::show,
-                ) {
-                    RemoteImage(
-                        src = topicContent.data.posterUrl,
-                        contentDescription = stringResource(R.string.topic_poster_image),
-                    )
-                }
+                RemoteImage(
+                    src = topicContent.data.posterUrl,
+                    onLoading = {
+                        Box(
+                            modifier = Modifier
+                                .size(AppTheme.sizes.default)
+                                .padding(AppTheme.spaces.medium)
+                                .size(AppTheme.sizes.medium),
+                            content = { CircularProgressIndicator() },
+                        )
+                    },
+                    onError = {
+                        Icon(
+                            modifier = Modifier
+                                .size(AppTheme.sizes.default)
+                                .padding(AppTheme.spaces.medium)
+                                .size(AppTheme.sizes.large),
+                            icon = FlowIcons.ImagePlaceholder,
+                            tint = AppTheme.colors.outline,
+                            contentDescription = stringResource(R.string.topic_poster_image),
+                        )
+                    },
+                    onSuccess = { painter ->
+                        Surface(
+                            modifier = Modifier.size(AppTheme.sizes.default),
+                            shape = AppTheme.shapes.small,
+                            onClick = posterDialogState::show,
+                        ) {
+                            Image(
+                                painter = painter,
+                                contentDescription = stringResource(R.string.topic_poster_image),
+                                contentScale = ContentScale.FillWidth,
+                            )
+                        }
+                    },
+                )
                 topicContent.data.magnetLink.takeIf { !it.isNullOrBlank() }?.let { link ->
                     Spacer(modifier = Modifier.width(AppTheme.spaces.large))
                     Button(
@@ -361,54 +381,11 @@ private fun Pagination(
     when (paginationState) {
         is PaginationState.Initial -> Unit
         is PaginationState.NoPagination -> Unit
-        is PaginationState.Pagination -> Row(
-            modifier = Modifier
-                .padding(WindowInsets.Companion.navigationBars.asPaddingValues())
-                .fillMaxWidth()
-                .height(AppTheme.sizes.default),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            fun goToPage(page: Int) = onAction(TopicAction.GoToPage(page))
-            IconButton(
-                icon = FlowIcons.FirstPage,
-                contentDescription = stringResource(R.string.topic_action_first_page),
-                enabled = paginationState.page > 1,
-                onClick = { goToPage(1) },
-            )
-            IconButton(
-                icon = FlowIcons.PrevPage,
-                contentDescription = stringResource(R.string.topic_action_previous_page),
-                enabled = paginationState.page > 1,
-                onClick = { goToPage(paginationState.page - 1) },
-            )
-            Box(
-                modifier = Modifier.width(AppTheme.sizes.default),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = buildString {
-                        append(paginationState.page)
-                        if (paginationState.totalPages > 0) {
-                            append('/', paginationState.totalPages)
-                        }
-                    },
-                    style = AppTheme.typography.labelLarge,
-                )
-            }
-            IconButton(
-                icon = FlowIcons.NextPage,
-                contentDescription = stringResource(R.string.topic_action_next_page),
-                enabled = paginationState.page < paginationState.totalPages,
-                onClick = { goToPage(paginationState.page + 1) },
-            )
-            IconButton(
-                icon = FlowIcons.LastPage,
-                contentDescription = stringResource(R.string.topic_action_last_page),
-                enabled = paginationState.page < paginationState.totalPages,
-                onClick = { goToPage(paginationState.totalPages) },
-            )
-        }
+        is PaginationState.Pagination -> Pagination(
+            currentPage = paginationState.page,
+            totalPages = paginationState.totalPages,
+            onPageSelected = { onAction(TopicAction.GoToPage(it)) }
+        )
     }
 }
 
@@ -423,9 +400,6 @@ private fun TopicContent(
         top = AppTheme.spaces.medium,
         bottom = AppTheme.spaces.extraLargeBottom,
     ),
-    onFirstItemVisible = { onAction(TopicAction.ListTopReached) },
-    onLastItemVisible = { onAction(TopicAction.ListBottomReached) },
-    onLastVisibleIndexChanged = { index -> onAction(TopicAction.LastVisibleIndexChanged(index)) }
 ) {
     when (state.loadStates.refresh) {
         is LoadState.Error -> errorItem(onRetryClick = { onAction(TopicAction.RetryClick) })

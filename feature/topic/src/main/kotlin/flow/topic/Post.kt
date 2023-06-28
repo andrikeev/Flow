@@ -1,4 +1,4 @@
-package flow.ui.component
+package flow.topic
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -55,12 +55,13 @@ import flow.models.topic.PostContent
 import flow.models.topic.TextAlignment
 import flow.models.topic.TextContent
 import flow.ui.R
+import flow.ui.component.RemoteImage
 import flow.ui.platform.LocalOpenLinkHandler
 import flow.ui.platform.OpenLinkHandler
 import kotlinx.coroutines.launch
 
 @Composable
-fun Post(
+internal fun Post(
     modifier: Modifier = Modifier,
     content: Content,
 ) = ProvideTextStyle(AppTheme.typography.bodyMedium) {
@@ -288,7 +289,9 @@ private fun Quote(
     content: Content,
     modifier: Modifier = Modifier,
 ) = Column(
-    modifier = modifier.padding(vertical = AppTheme.spaces.mediumSmall),
+    modifier = modifier
+        .fillMaxWidth()
+        .padding(vertical = AppTheme.spaces.mediumSmall),
 ) {
     Text(
         modifier = Modifier.padding(

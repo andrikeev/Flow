@@ -1,5 +1,6 @@
 package flow.search.result.filter
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -21,13 +22,14 @@ import flow.designsystem.component.Icon
 import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
-import flow.designsystem.component.TextField
+import flow.designsystem.component.OutlinedTextField
 import flow.designsystem.component.ThemePreviews
-import flow.designsystem.component.VisibilityState
+import flow.ui.component.VisibilityState
 import flow.designsystem.component.onEnter
 import flow.designsystem.component.rememberFocusRequester
-import flow.designsystem.component.rememberVisibilityState
+import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
+import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
 import flow.designsystem.utils.RunOnFirstComposition
 import flow.models.topic.Author
@@ -45,18 +47,23 @@ internal fun FilterAuthorItem(
         onDismissRequest = dialogState::hide,
         onSubmit = onSubmit,
     )
-    FilterBarItem(
-        label = stringResource(R.string.search_screen_filter_author_label),
-        onClick = dialogState::show,
-    ) {
-        BodyLarge(
-            modifier = Modifier.weight(1f),
-            text = selected?.name?.takeIf(String::isNotBlank)
-                ?: stringResource(R.string.search_screen_filter_any),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Icon(icon = FlowIcons.Author, contentDescription = null)
+    FilterBarItem(label = stringResource(R.string.search_screen_filter_author_label)) {
+        FilterBarItemContent(onClick = dialogState::show) {
+            BodyLarge(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = AppTheme.spaces.large),
+                text = selected?.name?.takeIf(String::isNotBlank)
+                    ?: stringResource(R.string.search_screen_filter_any),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Icon(
+                modifier = Modifier.padding(AppTheme.spaces.medium),
+                icon = FlowIcons.Author,
+                contentDescription = null,
+            )
+        }
     }
 }
 
@@ -95,7 +102,7 @@ private fun AuthorDialog(
             text = {
                 val focusRequester = rememberFocusRequester()
                 RunOnFirstComposition { focusRequester.requestFocus() }
-                TextField(
+                OutlinedTextField(
                     modifier = Modifier
                         .focusRequester(focusRequester)
                         .onEnter(::onSubmit),
@@ -120,12 +127,12 @@ private fun AuthorDialog(
             dismissButton = {
                 TextButton(
                     text = stringResource(flow.designsystem.R.string.designsystem_action_cancel),
-                    onClick = ::onReset,
+                    onClick = onDismissRequest,
                 )
                 if (author != null) {
                     TextButton(
                         text = stringResource(flow.designsystem.R.string.designsystem_action_reset),
-                        onClick = { onDismissRequest() },
+                        onClick = ::onReset,
                     )
                 }
             },

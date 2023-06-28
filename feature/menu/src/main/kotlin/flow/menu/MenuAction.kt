@@ -16,6 +16,7 @@ internal sealed interface MenuAction {
         val onConfirmAction: () -> Unit,
     ) : MenuAction
     object LoginClick : MenuAction
+    object MyTipsClick : MenuAction
     object NetMonetClick : MenuAction
     object PayPalClick : MenuAction
     object PrivacyPolicyClick : MenuAction

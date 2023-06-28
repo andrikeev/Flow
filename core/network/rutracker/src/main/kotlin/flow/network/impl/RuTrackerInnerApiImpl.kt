@@ -6,15 +6,24 @@ import flow.network.dto.search.SearchPeriodDto
 import flow.network.dto.search.SearchSortOrderDto
 import flow.network.dto.search.SearchSortTypeDto
 import io.ktor.client.HttpClient
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.forms.formData
-import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.request
+import io.ktor.client.request.setBody
+import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.readBytes
+import io.ktor.http.ContentType.Application.FormUrlEncoded
+import io.ktor.http.HttpMethod
 import io.ktor.http.Parameters
+import io.ktor.http.content.OutgoingContent
+import io.ktor.http.withCharset
+import io.ktor.utils.io.core.toByteArray
 import java.net.URLEncoder
 
 internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTrackerInnerApi {
@@ -32,8 +41,8 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
     ): Pair<String?, String> = httpClient.submitForm(
         url = Login,
         formParameters = Parameters.build {
-            append("login_username", username.toCp1251())
-            append("login_password", password.toCp1251())
+            append("login_username", username)
+            append("login_password", password)
             append("login", "Вход")
             if (captchaSid != null && captchaCode != null && captchaValue != null) {
                 append("cap_sid", captchaSid)
@@ -115,7 +124,7 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
             append("submit_mode", "submit")
             append("t", topicId)
             append("form_token", formToken)
-            append("message", message.toCp1251())
+            append("message", message)
         }
     }.bodyAsText()
 
@@ -198,5 +207,36 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
         const val CookieHeader: String = "Cookie"
     }
 
-    private fun String.toCp1251(): String = URLEncoder.encode(this, "Windows-1251")
+    private suspend inline fun HttpClient.submitForm(
+        url: String,
+        formParameters: Parameters = Parameters.Empty,
+        block: HttpRequestBuilder.() -> Unit = {}
+    ): HttpResponse = request {
+        url(url)
+        method = HttpMethod.Post
+        setBody(FormDataContent(formParameters))
+        block()
+    }
+
+    private class FormDataContent(
+        parameters: Parameters,
+        private val charsetName: String = "Windows-1251",
+    ) : OutgoingContent.ByteArrayContent() {
+
+        private fun String.encodeURLParameter() = URLEncoder.encode(this, charsetName)
+
+        private val content = parameters
+            .entries()
+            .flatMap { e -> e.value.map { e.key to it } }
+            .joinToString(separator = "&") { (key, value) ->
+                "${key.encodeURLParameter()}=${value.encodeURLParameter()}"
+            }
+            .toByteArray()
+
+        override val contentLength = content.size.toLong()
+
+        override val contentType = FormUrlEncoded.withCharset(charset(charsetName))
+
+        override fun bytes() = content
+    }
 }

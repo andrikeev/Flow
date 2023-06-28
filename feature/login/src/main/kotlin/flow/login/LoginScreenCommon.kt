@@ -15,6 +15,7 @@ import androidx.compose.ui.autofill.AutofillNode
 import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.composed
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -33,9 +34,9 @@ import flow.designsystem.component.CircularProgressIndicator
 import flow.designsystem.component.Icon
 import flow.designsystem.component.Placeholder
 import flow.designsystem.component.Text
-import flow.designsystem.component.TextField
+import flow.designsystem.component.OutlinedTextField
 import flow.designsystem.component.onEnter
-import flow.designsystem.component.rememberVisibilityState
+import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.models.auth.Captcha
@@ -54,14 +55,16 @@ internal fun UsernameInputField(
     state: LoginState,
     onChanged: (TextFieldValue) -> Unit,
     onSelectNext: () -> Unit,
-) = TextField(
+) = OutlinedTextField(
     modifier = modifier
         .padding(AppTheme.spaces.small)
+        .onFocusEvent {
+            if (it.isFocused) {
+                onChanged(state.usernameInput.value)
+            }
+        }
         .autofill(
-            autofillTypes = listOf(
-                AutofillType.Username,
-                AutofillType.EmailAddress,
-            ),
+            autofillTypes = listOf(AutofillType.Username),
             onFill = onChanged,
         )
         .onEnter(onSelectNext),
@@ -88,12 +91,12 @@ internal fun UsernameInputField(
         )
     },
     keyboardOptions = KeyboardOptions(
-        keyboardType = KeyboardType.Ascii,
+        keyboardType = KeyboardType.Text,
         imeAction = ImeAction.Next,
         autoCorrect = false,
     ),
     keyboardActions = KeyboardActions(
-        onNext = { onSelectNext() }
+        onNext = { onSelectNext() },
     ),
 )
 
@@ -106,9 +109,14 @@ internal fun PasswordInputField(
     onSubmit: () -> Unit,
 ) {
     val passwordVisibility = rememberVisibilityState()
-    TextField(
+    OutlinedTextField(
         modifier = modifier
             .padding(AppTheme.spaces.small)
+            .onFocusEvent {
+                if (it.isFocused) {
+                    onChanged(state.passwordInput.value)
+                }
+            }
             .autofill(
                 autofillTypes = listOf(AutofillType.Password),
                 onFill = onChanged,
@@ -178,7 +186,7 @@ internal fun CaptchaInputField(
     state: LoginState,
     onChanged: (TextFieldValue) -> Unit,
     onSubmit: () -> Unit,
-) = TextField(
+) = OutlinedTextField(
     modifier = modifier
         .padding(AppTheme.spaces.small)
         .onEnter(onSubmit),

@@ -11,9 +11,6 @@ internal sealed interface TopicAction {
     data class CategoryClick(val category: Category) : TopicAction
     object FavoriteClick : TopicAction
     data class GoToPage(val page: Int) : TopicAction
-    data class LastVisibleIndexChanged(val index: Int) : TopicAction
-    object ListBottomReached : TopicAction
-    object ListTopReached : TopicAction
     object LoginClick : TopicAction
     data class MagnetClick(val link: String) : TopicAction
     data class OpenFileClick(val uri: String) : TopicAction

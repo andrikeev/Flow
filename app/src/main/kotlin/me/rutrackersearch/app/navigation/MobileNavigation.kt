@@ -22,6 +22,7 @@ import flow.navigation.model.buildRoute
 import flow.navigation.rememberNestedNavigationController
 import flow.navigation.ui.MobileNavigation
 import flow.navigation.ui.NavigationAnimations
+import flow.navigation.ui.NavigationAnimations.Companion.slideInLeft
 import flow.navigation.ui.NavigationAnimations.Companion.slideInRight
 import flow.navigation.ui.NavigationAnimations.Companion.slideOutLeft
 import flow.navigation.ui.NavigationAnimations.Companion.slideOutRight
@@ -258,6 +259,7 @@ private enum class BottomRoute(val navigationBarItem: NavigationBarItem) {
             when {
                 route == null -> fadeIn()
                 route.ordinal > ordinal -> slideInRight()
+                route.ordinal < ordinal -> slideInLeft()
                 else -> fadeIn()
             }
         },
@@ -282,11 +284,8 @@ private enum class BottomRoute(val navigationBarItem: NavigationBarItem) {
 }
 
 private object DeepLinks {
-    private val baseUrls = listOf(
-        "rutracker.org/forum/",
-        "rutracker.net/forum/",
-    )
-    val topicUrls = baseUrls.map { "${it}viewtopic.php" }
-    val categoryUrls = baseUrls.map { "${it}viewforum.php" }
-    val searchResultUrls = baseUrls.map { "${it}tracker.php" }
+    private const val baseUrl = "rutracker.org/forum/"
+    val topicUrls = listOf(baseUrl.let { "${it}viewtopic.php" })
+    val categoryUrls = listOf(baseUrl.let { "${it}viewforum.php" })
+    val searchResultUrls = listOf(baseUrl.let { "${it}tracker.php" })
 }

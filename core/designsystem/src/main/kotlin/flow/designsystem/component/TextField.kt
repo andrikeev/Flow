@@ -1,11 +1,6 @@
 package flow.designsystem.component
 
 import android.view.KeyEvent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -14,42 +9,123 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import flow.designsystem.R
-import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
-import flow.designsystem.utils.RunOnFirstComposition
 
 @Composable
 @NonRestartableComposable
+fun OutlinedTextField(
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    textStyle: TextStyle = AppTheme.typography.bodyMedium,
+    label: @Composable (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    supportingText: @Composable (() -> Unit)? = null,
+    isError: Boolean = false,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = false,
+    maxLines: Int = Int.MAX_VALUE,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+) = OutlinedTextField(
+    value = value,
+    onValueChange = onValueChange,
+    modifier = modifier,
+    enabled = enabled,
+    readOnly = readOnly,
+    textStyle = textStyle,
+    label = label,
+    placeholder = placeholder,
+    leadingIcon = leadingIcon,
+    trailingIcon = trailingIcon,
+    supportingText = supportingText,
+    isError = isError,
+    visualTransformation = visualTransformation,
+    keyboardOptions = keyboardOptions,
+    keyboardActions = keyboardActions,
+    singleLine = singleLine,
+    maxLines = maxLines,
+    interactionSource = interactionSource,
+    shape = AppTheme.shapes.medium,
+    colors = TextFieldDefaults.textFieldColors(),
+)
+
+@Composable
+@NonRestartableComposable
+fun OutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    textStyle: TextStyle = AppTheme.typography.bodyMedium,
+    label: @Composable (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    supportingText: @Composable (() -> Unit)? = null,
+    isError: Boolean = false,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = false,
+    maxLines: Int = Int.MAX_VALUE,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+) = OutlinedTextField(
+    value = value,
+    onValueChange = onValueChange,
+    modifier = modifier,
+    enabled = enabled,
+    readOnly = readOnly,
+    textStyle = textStyle,
+    label = label,
+    placeholder = placeholder,
+    leadingIcon = leadingIcon,
+    trailingIcon = trailingIcon,
+    supportingText = supportingText,
+    isError = isError,
+    visualTransformation = visualTransformation,
+    keyboardOptions = keyboardOptions,
+    keyboardActions = keyboardActions,
+    singleLine = singleLine,
+    maxLines = maxLines,
+    interactionSource = interactionSource,
+    shape = AppTheme.shapes.medium,
+    colors = TextFieldDefaults.textFieldColors(),
+)
+
+@Composable
 fun TextField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
+    textStyle: TextStyle = AppTheme.typography.bodyMedium,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
+    prefix: @Composable (() -> Unit)? = null,
+    suffix: @Composable (() -> Unit)? = null,
     supportingText: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -58,10 +134,10 @@ fun TextField(
     singleLine: Boolean = false,
     maxLines: Int = Int.MAX_VALUE,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-) = OutlinedTextField(
+) = TextField(
+    modifier = modifier,
     value = value,
     onValueChange = onValueChange,
-    modifier = modifier,
     enabled = enabled,
     readOnly = readOnly,
     textStyle = textStyle,
@@ -69,6 +145,8 @@ fun TextField(
     placeholder = placeholder,
     leadingIcon = leadingIcon,
     trailingIcon = trailingIcon,
+    prefix = prefix,
+    suffix = suffix,
     supportingText = supportingText,
     isError = isError,
     visualTransformation = visualTransformation,
@@ -77,103 +155,14 @@ fun TextField(
     singleLine = singleLine,
     maxLines = maxLines,
     interactionSource = interactionSource,
-    shape = AppTheme.shapes.medium,
-    colors = TextFieldDefaults.textFieldColors(),
+    colors = TextFieldDefaults.textFieldColors(
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        errorIndicatorColor = Color.Transparent,
+        focusedTrailingIconColor = LocalContentColor.current,
+    ),
 )
-
-@Composable
-@NonRestartableComposable
-fun TextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
-    label: @Composable (() -> Unit)? = null,
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    supportingText: @Composable (() -> Unit)? = null,
-    isError: Boolean = false,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    singleLine: Boolean = false,
-    maxLines: Int = Int.MAX_VALUE,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-) = OutlinedTextField(
-    value = value,
-    onValueChange = onValueChange,
-    modifier = modifier,
-    enabled = enabled,
-    readOnly = readOnly,
-    textStyle = textStyle,
-    label = label,
-    placeholder = placeholder,
-    leadingIcon = leadingIcon,
-    trailingIcon = trailingIcon,
-    supportingText = supportingText,
-    isError = isError,
-    visualTransformation = visualTransformation,
-    keyboardOptions = keyboardOptions,
-    keyboardActions = keyboardActions,
-    singleLine = singleLine,
-    maxLines = maxLines,
-    interactionSource = interactionSource,
-    shape = AppTheme.shapes.medium,
-    colors = TextFieldDefaults.textFieldColors(),
-)
-
-@Composable
-fun SearchInputField(
-    modifier: Modifier = Modifier,
-    inputValue: TextFieldValue,
-    onInputValueChange: (TextFieldValue) -> Unit,
-    showClearButton: Boolean,
-    onClearButtonClick: () -> Unit,
-    onSubmitClick: () -> Unit,
-) {
-    val focusRequester = rememberFocusRequester()
-    RunOnFirstComposition { focusRequester.requestFocus() }
-    androidx.compose.material3.TextField(
-        modifier = modifier
-            .focusRequester(focusRequester)
-            .onEnter(onSubmitClick),
-        value = inputValue,
-        placeholder = { Text(stringResource(R.string.designsystem_hint_search)) },
-        onValueChange = onInputValueChange,
-        trailingIcon = {
-            AnimatedVisibility(
-                visible = showClearButton,
-                enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-                exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center),
-            ) {
-                IconButton(
-                    icon = FlowIcons.Clear,
-                    contentDescription = stringResource(R.string.designsystem_action_clear),
-                    onClick = onClearButtonClick,
-                )
-            }
-        },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            autoCorrect = true,
-            imeAction = ImeAction.Search,
-        ),
-        keyboardActions = KeyboardActions(
-            onSearch = { onSubmitClick() }
-        ),
-        colors = TextFieldDefaults.textFieldColors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            errorIndicatorColor = Color.Transparent,
-            focusedTrailingIconColor = LocalContentColor.current,
-        ),
-    )
-}
 
 private object TextFieldDefaults {
     const val DisabledOpacity = 0.37f
@@ -298,18 +287,18 @@ private fun TextFieldPreview() {
     FlowTheme(isDynamic = false) {
         Surface {
             Column {
-                TextField(
+                flow.designsystem.component.OutlinedTextField(
                     modifier = Modifier.padding(AppTheme.spaces.medium),
                     value = "Input text",
                     onValueChange = {},
                 )
-                TextField(
+                flow.designsystem.component.OutlinedTextField(
                     modifier = Modifier.padding(AppTheme.spaces.medium),
                     value = "Disabled input text",
                     onValueChange = {},
                     enabled = false,
                 )
-                TextField(
+                flow.designsystem.component.OutlinedTextField(
                     modifier = Modifier.padding(AppTheme.spaces.medium),
                     value = "Error input text",
                     onValueChange = {},

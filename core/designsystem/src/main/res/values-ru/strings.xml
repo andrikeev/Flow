@@ -6,6 +6,7 @@
     <string name="designsystem_action_clear">Очистить текст</string>
     <string name="designsystem_action_close">Закрыть</string>
     <string name="designsystem_action_collapse">Свернуть</string>
+    <string name="designsystem_action_done">Готово</string>
     <string name="designsystem_action_confirmation">Вы уверены?</string>
     <string name="designsystem_action_expand">Развернуть</string>
     <string name="designsystem_action_favorite">Избранное</string>
@@ -28,4 +29,10 @@
     <string name="designsystem_content_description_action_expand">Раскрыть</string>
     <string name="designsystem_content_description_state_collapsed">Скрыто</string>
     <string name="designsystem_content_description_state_expanded">Раскрыто</string>
+    <string name="designsystem_content_description_state_edit">Редактировать</string>
+
+    <string name="designsystem_pagination_action_first_page">Первая страница</string>
+    <string name="designsystem_pagination_action_previous_page">Предыдущая страница</string>
+    <string name="designsystem_pagination_action_next_page">Следующая страница</string>
+    <string name="designsystem_pagination_action_last_page">Последняя страница</string>
 </resources>

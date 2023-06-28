@@ -21,33 +21,29 @@ internal class NetworkApiRepositoryImpl @Inject constructor(
     private val okHttpClient: OkHttpClient,
     private val networkLogger: NetworkLogger,
 ) : NetworkApiRepository {
-    private val apiMap = mapOf(
-        Endpoint.Proxy to proxyApi(Endpoint.Proxy.host),
-        Endpoint.RutrackerOrg to rutrackerApi(Endpoint.RutrackerOrg.host),
-        Endpoint.RutrackerNet to rutrackerApi(Endpoint.RutrackerNet.host),
-    )
-
-    override suspend fun getAvailableApiList(): Collection<NetworkApi> {
-        return apiMap.values
-    }
+    private val apiMap = mutableMapOf<Endpoint, NetworkApi>()
 
     override suspend fun getApi(): NetworkApi {
-        return apiMap.getValue(settingsRepository.getSettings().endpoint)
+        val endpoint = endpoint()
+        return apiMap.getOrPut(endpoint) {
+            when (endpoint) {
+                is Endpoint.Proxy -> proxyApi(endpoint.host)
+                is Endpoint.RutrackerEndpoint -> rutrackerApi(endpoint.host)
+            }
+        }
     }
 
     override suspend fun getDownloadUri(id: String): String {
         return when (val endpoint = endpoint()) {
-            Endpoint.Proxy -> "https://${endpoint.host}/download/$id"
-            Endpoint.RutrackerOrg -> "https://${endpoint.host}/forum/dl.php?t=$id"
-            Endpoint.RutrackerNet -> "https://${endpoint.host}/forum/dl.php?t=$id"
+            is Endpoint.Proxy -> "https://${endpoint.host}/download/$id"
+            is Endpoint.RutrackerEndpoint -> "https://${endpoint.host}/forum/dl.php?t=$id"
         }
     }
 
     override suspend fun getAuthHeader(token: String): Pair<String, String> {
         return when (endpoint()) {
-            Endpoint.Proxy -> "Auth-Token" to token
-            Endpoint.RutrackerOrg -> "Cookie" to token
-            Endpoint.RutrackerNet -> "Cookie" to token
+            is Endpoint.Proxy -> "Auth-Token" to token
+            is Endpoint.RutrackerEndpoint -> "Cookie" to token
         }
     }
 
@@ -76,7 +72,7 @@ internal class NetworkApiRepositoryImpl @Inject constructor(
                 defaultRequest { url("https://$host/forum/") }
                 install(Logging) {
                     logger = networkLogger
-                    level = LogLevel.INFO
+                    level = LogLevel.ALL
                 }
             }
         )

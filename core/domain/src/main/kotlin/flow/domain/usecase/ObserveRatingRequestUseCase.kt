@@ -4,9 +4,8 @@ import flow.data.api.repository.RatingRepository
 import flow.domain.model.rating.RatingRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import javax.inject.Inject
 
 interface ObserveRatingRequestUseCase : suspend () -> Flow<RatingRequest>
@@ -18,24 +17,27 @@ internal class ObserveRatingRequestUseCaseImpl @Inject constructor(
     private val ratingRepository: RatingRepository,
 ) : ObserveRatingRequestUseCase {
     override suspend fun invoke(): Flow<RatingRequest> {
-        return ratingRepository.observeRatingRequestDisabled()
-            .flatMapLatest { isDisabled ->
-                if (isDisabled || ratingRepository.getLaunchCount() > 0) {
-                    flowOf(RatingRequest.Hide)
-                } else {
-                    combine(
+        return combine<Boolean, Boolean>(
+            flows = listOf(
+                ratingRepository.observeRatingRequestDisabled().map(Boolean::not),
+                ratingRepository.observeLaunchCount().map { it <= 0 },
+                combine<Boolean, Boolean>(
+                    flows = listOf(
                         observeSearchHistoryUseCase().map { it.size > HistoryCounter },
                         observeVisitedUseCase().map { it.size > VisitedCounter },
                         observeBookmarksUseCase().map { it.size > BookmarksCounter },
-                    ) { historyCondition, visitedCondition, bookmarksCondition ->
-                        if (historyCondition || visitedCondition || bookmarksCondition) {
-                            RatingRequest.Show(ratingRepository.isRatingRequestPostponed())
-                        } else {
-                            RatingRequest.Hide
-                        }
-                    }
-                }
+                    ),
+                    transform = { conditions -> conditions.any { it } },
+                ),
+            ),
+            transform = { conditions -> conditions.all { it } },
+        ).mapLatest { show ->
+            if (show) {
+                RatingRequest.Show(ratingRepository.isRatingRequestPostponed())
+            } else {
+                RatingRequest.Hide
             }
+        }
     }
 
     private companion object {

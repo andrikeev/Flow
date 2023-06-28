@@ -37,6 +37,6 @@
     <string name="torrent_status_not_approved">Not approved</string>
 
     <string name="seeds">Number of seeds</string>
-    <string name="leaches">Number of leaches</string>
+    <string name="leeches">Number of leaches</string>
     <string name="size">Size</string>
 </resources>

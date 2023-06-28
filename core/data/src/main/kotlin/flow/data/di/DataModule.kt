@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import flow.data.api.repository.BookmarksRepository
+import flow.data.api.repository.EndpointsRepository
 import flow.data.api.repository.FavoritesRepository
 import flow.data.api.repository.ForumRepository
 import flow.data.api.repository.RatingRepository
@@ -14,11 +15,13 @@ import flow.data.api.repository.SuggestsRepository
 import flow.data.api.repository.VisitedRepository
 import flow.data.api.service.FavoritesService
 import flow.data.api.service.ForumService
+import flow.data.api.service.ConnectionService
 import flow.data.api.service.SearchService
 import flow.data.api.service.StoreService
 import flow.data.api.service.TopicService
 import flow.data.api.service.TorrentService
 import flow.data.impl.repository.BookmarksRepositoryImpl
+import flow.data.impl.repository.EndpointsRepositoryImpl
 import flow.data.impl.repository.FavoritesRepositoryImpl
 import flow.data.impl.repository.ForumRepositoryImpl
 import flow.data.impl.repository.RatingRepositoryImpl
@@ -28,6 +31,7 @@ import flow.data.impl.repository.SuggestsRepositoryImpl
 import flow.data.impl.repository.VisitedRepositoryImpl
 import flow.data.impl.service.FavoritesServiceImpl
 import flow.data.impl.service.ForumServiceImpl
+import flow.data.impl.service.ConnectionServiceImpl
 import flow.data.impl.service.SearchServiceImpl
 import flow.data.impl.service.StoreServiceImpl
 import flow.data.impl.service.TopicServiceImpl
@@ -40,6 +44,10 @@ internal interface DataModule {
     @Binds
     @Singleton
     fun bookmarksRepository(impl: BookmarksRepositoryImpl): BookmarksRepository
+
+    @Binds
+    @Singleton
+    fun endpointsRepository(impl: EndpointsRepositoryImpl): EndpointsRepository
 
     @Binds
     @Singleton
@@ -56,6 +64,10 @@ internal interface DataModule {
     @Binds
     @Singleton
     fun forumService(impl: ForumServiceImpl): ForumService
+
+    @Binds
+    @Singleton
+    fun networkConnectionService(impl: ConnectionServiceImpl): ConnectionService
 
     @Binds
     @Singleton

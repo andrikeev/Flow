@@ -1,27 +1,30 @@
 package flow.forum.bookmarks
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import flow.designsystem.component.Body
+import androidx.compose.ui.text.font.FontWeight
+import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
+import flow.designsystem.component.ThemePreviews
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
+import flow.designsystem.theme.FlowTheme
+import flow.models.forum.Category
 import flow.models.forum.CategoryModel
 import flow.navigation.viewModel
-import flow.ui.component.dividedItems
 import flow.ui.component.emptyItem
 import flow.ui.component.loadingItem
 import org.orbitmvi.orbit.compose.collectAsState
@@ -55,7 +58,7 @@ private fun BookmarksScreen(
     onAction: (BookmarksAction) -> Unit,
 ) = LazyList(
     modifier = Modifier.fillMaxSize(),
-    contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
+    contentPadding = PaddingValues(vertical = AppTheme.spaces.large),
 ) {
     when (state) {
         is BookmarksState.Initial -> loadingItem()
@@ -65,7 +68,7 @@ private fun BookmarksScreen(
             imageRes = R.drawable.ill_bookmarks,
         )
 
-        is BookmarksState.BookmarksList -> dividedItems(
+        is BookmarksState.BookmarksList -> items(
             items = state.items,
             key = { it.category.id },
             contentType = { it.category::class },
@@ -83,41 +86,65 @@ private fun Bookmark(
     bookmark: CategoryModel,
     onClick: () -> Unit,
 ) = Surface(
-    modifier = Modifier
-        .fillMaxWidth()
-        .height(AppTheme.sizes.default),
+    modifier = Modifier.padding(
+        horizontal = AppTheme.spaces.mediumLarge,
+        vertical = AppTheme.spaces.mediumSmall,
+    ),
     onClick = onClick,
+    shape = AppTheme.shapes.large,
+    tonalElevation = AppTheme.elevations.small,
 ) {
     Row(
-        modifier = Modifier.padding(horizontal = AppTheme.spaces.large),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = AppTheme.spaces.large)
+            .defaultMinSize(minHeight = AppTheme.sizes.default),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             icon = FlowIcons.BookmarkChecked,
             tint = AppTheme.colors.primary,
             contentDescription = null,
         )
-        Box(
+        BodyLarge(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = AppTheme.spaces.large)
-        ) {
-            Text(
-                modifier = Modifier.padding(vertical = AppTheme.spaces.medium),
-                text = bookmark.category.name,
-            )
-        }
+                .padding(
+                    horizontal = AppTheme.spaces.medium,
+                    vertical = AppTheme.spaces.large,
+                ),
+            text = bookmark.category.name,
+        )
         if (bookmark.newTopicsCount > 0) {
-            Body(
+            Text(
                 modifier = Modifier
                     .background(
                         color = AppTheme.colors.primary,
                         shape = AppTheme.shapes.circle,
                     )
-                    .padding(AppTheme.spaces.medium),
-                text = "+${bookmark.newTopicsCount}",
-                color = AppTheme.colors.onPrimaryContainer,
+                    .padding(
+                        horizontal = AppTheme.spaces.mediumLarge,
+                        vertical = AppTheme.spaces.medium,
+                    ),
+                text = bookmark.newTopicsCount.toString(),
+                color = AppTheme.colors.onPrimary,
+                style = AppTheme.typography.labelMedium,
+                fontWeight = FontWeight.SemiBold,
             )
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+fun Bookmark_Preview() {
+    FlowTheme {
+        Bookmark(
+            bookmark = CategoryModel(
+                category = Category("id", "Category name"),
+                newTopicsCount = 3,
+            ),
+            onClick = {},
+        )
     }
 }

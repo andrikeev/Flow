@@ -8,8 +8,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "me.rutrackersearch.app"
-        versionCode = 34
-        versionName = "4.3.6"
+        versionCode = 37
+        versionName = "4.4.1"
     }
 
     buildTypes {
@@ -23,6 +23,7 @@ android {
         debug {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("debug")
+            applicationIdSuffix = ".dev"
         }
     }
 
@@ -55,6 +56,7 @@ dependencies {
     implementation(project(":feature:account"))
     implementation(project(":feature:bookmarks"))
     implementation(project(":feature:category"))
+    implementation(project(":feature:connection"))
     implementation(project(":feature:favorites"))
     implementation(project(":feature:forum"))
     implementation(project(":feature:login"))

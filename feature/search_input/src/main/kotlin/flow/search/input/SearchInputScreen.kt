@@ -1,5 +1,10 @@
 package flow.search.input
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -7,13 +12,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import flow.designsystem.component.AppBar
@@ -23,15 +34,19 @@ import flow.designsystem.component.Icon
 import flow.designsystem.component.IconButton
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.Scaffold
-import flow.designsystem.component.SearchInputField
 import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
+import flow.designsystem.component.TextField
+import flow.designsystem.component.onEnter
+import flow.designsystem.component.rememberFocusRequester
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
+import flow.designsystem.utils.RunOnFirstComposition
 import flow.models.search.Filter
 import flow.models.search.Suggest
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import flow.designsystem.R as DsR
 
 @Composable
 internal fun SearchInputScreen(
@@ -116,6 +131,49 @@ private fun SearchInputAppBar(
 )
 
 @Composable
+private fun SearchInputField(
+    modifier: Modifier = Modifier,
+    inputValue: TextFieldValue,
+    onInputValueChange: (TextFieldValue) -> Unit,
+    showClearButton: Boolean,
+    onClearButtonClick: () -> Unit,
+    onSubmitClick: () -> Unit,
+) {
+    val focusRequester = rememberFocusRequester()
+    RunOnFirstComposition { focusRequester.requestFocus() }
+    TextField(
+        modifier = modifier
+            .focusRequester(focusRequester)
+            .onEnter(onSubmitClick),
+        value = inputValue,
+        placeholder = { Text(stringResource(DsR.string.designsystem_hint_search)) },
+        onValueChange = onInputValueChange,
+        trailingIcon = {
+            AnimatedVisibility(
+                visible = showClearButton,
+                enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center),
+            ) {
+                IconButton(
+                    icon = FlowIcons.Clear,
+                    contentDescription = stringResource(DsR.string.designsystem_action_clear),
+                    onClick = onClearButtonClick,
+                )
+            }
+        },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            autoCorrect = true,
+            imeAction = ImeAction.Search,
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = { onSubmitClick() }
+        ),
+    )
+}
+
+@Composable
 private fun SuggestItem(
     suggest: Suggest,
     onClick: () -> Unit,
@@ -130,7 +188,7 @@ private fun SuggestItem(
         modifier = Modifier.padding(horizontal = AppTheme.spaces.large),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon = FlowIcons.History, contentDescription = null /* TODO: add contentDescription */)
+        Icon(icon = FlowIcons.History, contentDescription = null)
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -140,7 +198,7 @@ private fun SuggestItem(
         }
         IconButton(
             icon = FlowIcons.InsertSuggest,
-            contentDescription = null, //TODO: add contentDescription
+            contentDescription = stringResource(DsR.string.designsystem_content_description_state_edit),
             onClick = onSubmit,
         )
     }

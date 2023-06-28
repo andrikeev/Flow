@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">Flow Dev</string>
+    <string name="leak_canary_test_class_name" translatable="false">flow.testing.TestDispatchers</string>
+</resources>

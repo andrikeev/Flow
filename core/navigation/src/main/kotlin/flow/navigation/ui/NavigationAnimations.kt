@@ -52,9 +52,9 @@ data class NavigationAnimations(
             popExitTransition = { fadeOut() },
         )
 
-        fun slideInLeft() = slideInHorizontally { it / 4 } + fadeIn()
+        fun slideInLeft() = slideInHorizontally { it }
         fun slideOutLeft() = fadeOut() + slideOutHorizontally { it }
-        fun slideInRight() = slideInHorizontally { -it / 4 } + fadeIn()
+        fun slideInRight() = slideInHorizontally { -it }
         fun slideOutRight() = fadeOut() + slideOutHorizontally { -it }
     }
 }

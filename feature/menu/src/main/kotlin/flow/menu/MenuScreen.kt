@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import flow.account.AccountItem
+import flow.connection.ConnectionItem
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.Body
 import flow.designsystem.component.Button
@@ -41,9 +42,9 @@ import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
-import flow.designsystem.component.VisibilityState
+import flow.ui.component.VisibilityState
 import flow.designsystem.component.rememberConfirmationDialogState
-import flow.designsystem.component.rememberVisibilityState
+import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
@@ -54,14 +55,13 @@ import flow.menu.MenuAction.ClearFavoritesConfirmation
 import flow.menu.MenuAction.ClearHistoryConfirmation
 import flow.menu.MenuAction.ConfirmableAction
 import flow.menu.MenuAction.LoginClick
+import flow.menu.MenuAction.MyTipsClick
 import flow.menu.MenuAction.NetMonetClick
 import flow.menu.MenuAction.PayPalClick
 import flow.menu.MenuAction.SendFeedbackClick
 import flow.menu.MenuAction.SetBookmarksSyncPeriod
-import flow.menu.MenuAction.SetEndpoint
 import flow.menu.MenuAction.SetFavoritesSyncPeriod
 import flow.menu.MenuAction.SetTheme
-import flow.models.settings.Endpoint
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
 import flow.navigation.viewModel
@@ -123,7 +123,7 @@ private fun MenuScreen(
         )
     },
 ) { padding ->
-    val (theme, endpoint, favoritesSyncPeriod, bookmarksSyncPeriod) = state
+    val (theme, favoritesSyncPeriod, bookmarksSyncPeriod) = state
     LazyList(
         modifier = Modifier.padding(padding),
         contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
@@ -138,13 +138,7 @@ private fun MenuScreen(
             labelMapper = { theme -> stringResource(theme.resId) },
             onSelect = { theme -> onAction(SetTheme(theme)) },
         )
-        menuSelectionItem(
-            title = { Text(stringResource(R.string.menu_settings_endpoint)) },
-            items = Endpoint.values(),
-            selected = endpoint,
-            labelMapper = { endpoint -> endpoint.host },
-            onSelect = { endpoint -> onAction(SetEndpoint(endpoint)) },
-        )
+        endpointSelectionItem()
         menuSyncSelectionItem(
             title = { Text(stringResource(R.string.menu_settings_favorites_sync)) },
             items = SyncPeriod.values(),
@@ -228,6 +222,8 @@ private fun LazyListScope.menuItem(
     text: @Composable () -> Unit,
     onClick: () -> Unit,
 ) = item { MenuItem(text, onClick) }
+
+private fun LazyListScope.endpointSelectionItem() = item { ConnectionItem() }
 
 private fun <T> LazyListScope.menuSelectionItem(
     title: @Composable () -> Unit,
@@ -332,7 +328,7 @@ private fun <T> MenuSelectionItem(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(72.dp),
+            .height(AppTheme.sizes.extraLarge),
         onClick = { showDropdown = true },
     ) {
         Column(
@@ -363,28 +359,37 @@ private fun MenuDonateItem(onAction: (MenuAction) -> Unit) {
     if (donateDialogState.visible) {
         Dialog(
             iconContentColor = AppTheme.colors.primary,
-            title = { Text(text = "Поддержать разработку") },
+            title = { Text(text = stringResource(R.string.support_development_title)) },
             text = {
                 Column {
-                    Text(text = "Приложения разрабатывается и распространяется бесплатно и не содержит рекламы.")
+                    Text(text = stringResource(R.string.support_development_line1))
                     Spacer(modifier = Modifier.height(AppTheme.spaces.medium))
-                    Text(text = "Для помощи в развитии и поддержке стабильной работы приложения, вы можете воспользоваться одним из вариантов.")
-                    Row(modifier = Modifier.padding(top = AppTheme.spaces.medium)) {
-                        Button(
-                            modifier = Modifier.padding(AppTheme.spaces.medium),
-                            onClick = { onAction(PayPalClick) },
-                            color = AppTheme.colors.accentBlue,
-                        ) {
-                            Text(text = "PayPal")
-                        }
-                        Button(
-                            modifier = Modifier.padding(AppTheme.spaces.medium),
-                            onClick = { onAction(NetMonetClick) },
-                            color = AppTheme.colors.accentOrange,
-                        ) {
-                            Text(text = "НетМонет")
-                        }
-                    }
+                    Text(text = stringResource(R.string.support_development_line2))
+                    Spacer(modifier = Modifier.height(AppTheme.spaces.large))
+                    Button(
+                        modifier = Modifier
+                            .padding(horizontal = AppTheme.spaces.large)
+                            .fillMaxWidth(),
+                        text = stringResource(R.string.support_development_paypal),
+                        onClick = { onAction(PayPalClick) },
+                        color = AppTheme.colors.accentBlue,
+                    )
+                    Button(
+                        modifier = Modifier
+                            .padding(horizontal = AppTheme.spaces.large)
+                            .fillMaxWidth(),
+                        text = stringResource(R.string.support_development_netmonet),
+                        onClick = { onAction(NetMonetClick) },
+                        color = AppTheme.colors.accentOrange,
+                    )
+                    Button(
+                        modifier = Modifier
+                            .padding(horizontal = AppTheme.spaces.large)
+                            .fillMaxWidth(),
+                        text = stringResource(R.string.support_development_mytips),
+                        onClick = { onAction(MyTipsClick) },
+                        color = AppTheme.colors.accentGreen,
+                    )
                 }
             },
             onDismissRequest = donateDialogState::hide,
@@ -434,7 +439,7 @@ private fun MenuDonateItem(onAction: (MenuAction) -> Unit) {
                     )
                     Text(
                         modifier = Modifier.padding(AppTheme.spaces.medium),
-                        text = "Поддержать разработку",
+                        text = stringResource(R.string.support_development_title),
                         style = AppTheme.typography.titleMedium,
                     )
                 }

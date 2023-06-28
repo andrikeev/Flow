@@ -23,7 +23,6 @@ internal sealed interface PaginationState {
     object NoPagination : PaginationState
     data class Pagination(
         val page: Int,
-        val loadedPages: IntRange,
         val totalPages: Int,
     ) : PaginationState
 }

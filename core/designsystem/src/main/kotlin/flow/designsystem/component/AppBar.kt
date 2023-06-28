@@ -266,7 +266,7 @@ private fun TabBarPreview(@PreviewParameter(AppBarParamsProvider::class) params:
             pages = listOf(
                 Page(
                     icon = FlowIcons.AppIcon,
-                    labelResId = R.string.designsystem_hint_search,
+                    labelResId = R.string.designsystem_action_search,
                     content = {},
                 ),
                 Page(

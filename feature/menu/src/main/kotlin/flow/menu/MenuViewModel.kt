@@ -51,6 +51,7 @@ internal class MenuViewModel @Inject constructor(
             is MenuAction.ClearHistoryConfirmation -> onClearHistoryConfirmation()
             is MenuAction.ConfirmableAction -> onConfirmableAction(action)
             is MenuAction.LoginClick -> onLoginClick()
+            is MenuAction.MyTipsClick -> onMyTipsClick()
             is MenuAction.NetMonetClick -> onNetMonetClick()
             is MenuAction.PayPalClick -> onPayPalClick()
             is MenuAction.PrivacyPolicyClick -> onPrivacyPolicyClick()
@@ -70,7 +71,6 @@ internal class MenuViewModel @Inject constructor(
                 logger.d { "On new settings: $settings" }
                 MenuState(
                     theme = settings.theme,
-                    endpoint = settings.endpoint,
                     favoritesSyncPeriod = settings.favoritesSyncPeriod,
                     bookmarksSyncPeriod = settings.bookmarksSyncPeriod,
                 )
@@ -100,6 +100,10 @@ internal class MenuViewModel @Inject constructor(
 
     private fun onLoginClick() = intent {
         postSideEffect(MenuSideEffect.OpenLogin)
+    }
+
+    private fun onMyTipsClick() = intent {
+        postSideEffect(MenuSideEffect.OpenLink(MyTips))
     }
 
     private fun onNetMonetClick() = intent {
@@ -144,8 +148,10 @@ internal class MenuViewModel @Inject constructor(
     companion object {
         private const val DeveloperEmail = "mailto:rutracker.search@gmail.com"
         private const val Copyrights = "https://flow-proxy-m7o3b.ondigitalocean.app/copyrights.html"
-        private const val PrivacyPolicy = "https://flow-proxy-m7o3b.ondigitalocean.app/privacy-policy.html"
+        private const val PrivacyPolicy =
+            "https://flow-proxy-m7o3b.ondigitalocean.app/privacy-policy.html"
         private const val PayPal = "https://www.paypal.com/donate/?hosted_button_id=LHVXE7WPCY846"
         private const val NetMonet = "https://netmonet.ru/s/andrikeev"
+        private const val MyTips = "https://pay.mysbertips.ru/50962107"
     }
 }

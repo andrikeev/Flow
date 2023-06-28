@@ -11,4 +11,7 @@ dependencies {
     implementation(project(":core:models"))
 
     implementation(libs.androidx.security.ktx)
+
+    testImplementation(libs.junit4)
+    testImplementation("org.json:json:20201115")
 }

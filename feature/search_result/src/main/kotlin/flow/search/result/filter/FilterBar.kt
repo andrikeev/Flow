@@ -74,7 +74,6 @@ internal fun FilterBar(
 @Composable
 internal fun FilterBarItem(
     label: String,
-    onClick: () -> Unit,
     content: @Composable RowScope.() -> Unit,
 ) = Row(
     modifier = Modifier.padding(
@@ -84,25 +83,25 @@ internal fun FilterBarItem(
     verticalAlignment = Alignment.CenterVertically,
 ) {
     Text(modifier = Modifier.weight(1f), text = label)
-    InvertedSurface(
-        modifier = Modifier
-            .weight(2f)
-            .height(AppTheme.sizes.default),
-        shape = AppTheme.shapes.small,
-        tonalElevation = AppTheme.elevations.medium,
-        onClick = onClick,
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = AppTheme.spaces.large,
-                    top = AppTheme.spaces.medium,
-                    bottom = AppTheme.spaces.medium,
-                    end = AppTheme.spaces.medium,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            content = content,
-        )
-    }
+    content()
+}
+
+@Composable
+internal fun RowScope.FilterBarItemContent(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    content: @Composable RowScope.() -> Unit,
+) = InvertedSurface(
+    modifier = modifier
+        .weight(2f)
+        .height(AppTheme.sizes.default),
+    shape = AppTheme.shapes.small,
+    tonalElevation = AppTheme.elevations.medium,
+    onClick = onClick,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        content = content,
+    )
 }
