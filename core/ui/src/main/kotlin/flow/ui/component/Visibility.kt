@@ -1,4 +1,4 @@
-package flow.designsystem.component
+package flow.ui.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable

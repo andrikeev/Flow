@@ -16,10 +16,6 @@ import flow.search.result.categories.CategorySelectionAction.RetryClick
 import flow.search.result.categories.CategorySelectionAction.SelectClick
 import flow.search.result.domain.models.ForumTreeItem
 import flow.search.result.domain.models.SelectState
-import flow.ui.component.ExpandableCategoryListItem
-import flow.ui.component.ExpandableSelectableCategoryListItem
-import flow.ui.component.SelectableCategoryListItem
-import flow.ui.component.dividedItems
 import flow.ui.component.errorItem
 import flow.ui.component.loadingItem
 import org.orbitmvi.orbit.compose.collectAsState

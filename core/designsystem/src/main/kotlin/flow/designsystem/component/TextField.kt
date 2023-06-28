@@ -1,11 +1,6 @@
 package flow.designsystem.component
 
 import android.view.KeyEvent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -20,22 +15,14 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import flow.designsystem.R
-import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
-import flow.designsystem.utils.RunOnFirstComposition
 
 @Composable
 @NonRestartableComposable
@@ -176,56 +163,6 @@ fun TextField(
         focusedTrailingIconColor = LocalContentColor.current,
     ),
 )
-
-@Composable
-fun SearchInputField(
-    modifier: Modifier = Modifier,
-    inputValue: TextFieldValue,
-    onInputValueChange: (TextFieldValue) -> Unit,
-    showClearButton: Boolean,
-    onClearButtonClick: () -> Unit,
-    onSubmitClick: () -> Unit,
-) {
-    val focusRequester = rememberFocusRequester()
-    RunOnFirstComposition { focusRequester.requestFocus() }
-    TextField(
-        modifier = modifier
-            .focusRequester(focusRequester)
-            .onEnter(onSubmitClick),
-        value = inputValue,
-        placeholder = { Text(stringResource(R.string.designsystem_hint_search)) },
-        onValueChange = onInputValueChange,
-        trailingIcon = {
-            AnimatedVisibility(
-                visible = showClearButton,
-                enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-                exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center),
-            ) {
-                IconButton(
-                    icon = FlowIcons.Clear,
-                    contentDescription = stringResource(R.string.designsystem_action_clear),
-                    onClick = onClearButtonClick,
-                )
-            }
-        },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            autoCorrect = true,
-            imeAction = ImeAction.Search,
-        ),
-        keyboardActions = KeyboardActions(
-            onSearch = { onSubmitClick() }
-        ),
-        colors = TextFieldDefaults.textFieldColors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            errorIndicatorColor = Color.Transparent,
-            focusedTrailingIconColor = LocalContentColor.current,
-        ),
-    )
-}
 
 private object TextFieldDefaults {
     const val DisabledOpacity = 0.37f

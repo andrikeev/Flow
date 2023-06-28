@@ -1,4 +1,4 @@
-package flow.ui.component
+package flow.designsystem.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -27,16 +27,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import flow.designsystem.component.IconButton
-import flow.designsystem.component.Surface
-import flow.designsystem.component.Text
-import flow.designsystem.component.TextButton
-import flow.designsystem.component.ThemePreviews
-import flow.designsystem.component.rememberExpandState
+import flow.designsystem.R
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
-import flow.ui.R
 
 @Composable
 fun Pagination(
@@ -95,13 +89,13 @@ fun Pagination(
     ) {
         IconButton(
             icon = FlowIcons.FirstPage,
-            contentDescription = stringResource(R.string.pagination_action_first_page),
+            contentDescription = stringResource(R.string.designsystem_pagination_action_first_page),
             enabled = currentPage > 1,
             onClick = { onPageSelected(1) },
         )
         IconButton(
             icon = FlowIcons.PrevPage,
-            contentDescription = stringResource(R.string.pagination_action_previous_page),
+            contentDescription = stringResource(R.string.designsystem_pagination_action_previous_page),
             enabled = currentPage > 1,
             onClick = { onPageSelected(currentPage - 1) },
         )
@@ -116,13 +110,13 @@ fun Pagination(
         )
         IconButton(
             icon = FlowIcons.NextPage,
-            contentDescription = stringResource(R.string.pagination_action_next_page),
+            contentDescription = stringResource(R.string.designsystem_pagination_action_next_page),
             enabled = currentPage < totalPages,
             onClick = { onPageSelected(currentPage + 1) },
         )
         IconButton(
             icon = FlowIcons.LastPage,
-            contentDescription = stringResource(R.string.pagination_action_last_page),
+            contentDescription = stringResource(R.string.designsystem_pagination_action_last_page),
             enabled = currentPage < totalPages,
             onClick = { onPageSelected(totalPages) },
         )

@@ -24,10 +24,10 @@ import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.OutlinedTextField
 import flow.designsystem.component.ThemePreviews
-import flow.designsystem.component.VisibilityState
+import flow.ui.component.VisibilityState
 import flow.designsystem.component.onEnter
 import flow.designsystem.component.rememberFocusRequester
-import flow.designsystem.component.rememberVisibilityState
+import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme

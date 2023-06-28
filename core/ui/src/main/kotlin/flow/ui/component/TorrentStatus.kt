@@ -182,7 +182,7 @@ fun TorrentStatus(
     }
 }
 
-sealed interface StatusItem {
+private sealed interface StatusItem {
     data class Icon(
         val icon: @Composable () -> Unit,
     ) : StatusItem

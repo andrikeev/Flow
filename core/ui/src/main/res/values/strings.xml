@@ -10,11 +10,6 @@
     <string name="error_something_goes_wrong">Something went wrong, please try again later</string>
     <string name="error_title">Error</string>
 
-    <string name="pagination_action_first_page">First page</string>
-    <string name="pagination_action_previous_page">Previous page</string>
-    <string name="pagination_action_next_page">Next page</string>
-    <string name="pagination_action_last_page">Last page</string>
-
     <string name="search_period_all_time">all time</string>
     <string name="search_period_last_month">last month</string>
     <string name="search_period_last_three_days">last three days</string>

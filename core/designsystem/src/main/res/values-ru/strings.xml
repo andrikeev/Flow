@@ -29,4 +29,10 @@
     <string name="designsystem_content_description_action_expand">Раскрыть</string>
     <string name="designsystem_content_description_state_collapsed">Скрыто</string>
     <string name="designsystem_content_description_state_expanded">Раскрыто</string>
+    <string name="designsystem_content_description_state_edit">Редактировать</string>
+
+    <string name="designsystem_pagination_action_first_page">Первая страница</string>
+    <string name="designsystem_pagination_action_previous_page">Предыдущая страница</string>
+    <string name="designsystem_pagination_action_next_page">Следующая страница</string>
+    <string name="designsystem_pagination_action_last_page">Последняя страница</string>
 </resources>

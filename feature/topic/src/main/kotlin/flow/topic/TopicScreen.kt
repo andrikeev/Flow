@@ -53,7 +53,7 @@ import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
-import flow.designsystem.component.rememberVisibilityState
+import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
@@ -63,8 +63,7 @@ import flow.models.topic.Author
 import flow.models.topic.Post
 import flow.models.topic.TextContent
 import flow.ui.component.Avatar
-import flow.ui.component.Pagination
-import flow.ui.component.Post
+import flow.designsystem.component.Pagination
 import flow.ui.component.RemoteImage
 import flow.ui.component.TorrentStatus
 import flow.ui.component.appendItems

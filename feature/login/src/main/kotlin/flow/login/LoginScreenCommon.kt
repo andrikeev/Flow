@@ -36,7 +36,7 @@ import flow.designsystem.component.Placeholder
 import flow.designsystem.component.Text
 import flow.designsystem.component.OutlinedTextField
 import flow.designsystem.component.onEnter
-import flow.designsystem.component.rememberVisibilityState
+import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.models.auth.Captcha

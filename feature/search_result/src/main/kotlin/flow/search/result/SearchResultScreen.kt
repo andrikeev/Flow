@@ -40,6 +40,7 @@ import flow.ui.component.errorItem
 import flow.ui.component.loadingItem
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import flow.designsystem.R as DsR
 
 @Composable
 internal fun SearchResultScreen(
@@ -164,7 +165,7 @@ private fun SearchTextItem(
                 .padding(horizontal = AppTheme.spaces.large)
                 .alpha(if (filter.query.isNullOrBlank()) 0.7f else 1f),
             text = filter.query?.takeIf(String::isNotBlank)
-                ?: stringResource(flow.designsystem.R.string.designsystem_hint_search),
+                ?: stringResource(DsR.string.designsystem_hint_search),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

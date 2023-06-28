@@ -11,11 +11,6 @@
     <string name="error_something_goes_wrong">Что-то пошло не так, попробуйте ещё раз</string>
     <string name="error_title">Ошибка</string>
 
-    <string name="pagination_action_first_page">Первая страница</string>
-    <string name="pagination_action_previous_page">Предыдущая страница</string>
-    <string name="pagination_action_next_page">Следующая страница</string>
-    <string name="pagination_action_last_page">Последняя страница</string>
-
     <string name="search_period_all_time">всё время</string>
     <string name="search_period_last_month">месяц</string>
     <string name="search_period_last_three_days">последние три дня</string>

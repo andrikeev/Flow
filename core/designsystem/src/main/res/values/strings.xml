@@ -28,4 +28,10 @@
     <string name="designsystem_content_description_action_expand">Expand</string>
     <string name="designsystem_content_description_state_collapsed">Collapsed</string>
     <string name="designsystem_content_description_state_expanded">Expanded</string>
+    <string name="designsystem_content_description_state_edit">Edit</string>
+
+    <string name="designsystem_pagination_action_first_page">First page</string>
+    <string name="designsystem_pagination_action_previous_page">Previous page</string>
+    <string name="designsystem_pagination_action_next_page">Next page</string>
+    <string name="designsystem_pagination_action_last_page">Last page</string>
 </resources>
