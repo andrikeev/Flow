@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -22,6 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import flow.connection.ConnectionsAction.DoneClick
 import flow.connection.ConnectionsAction.EditClick
@@ -35,6 +38,7 @@ import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.TextField
+import flow.designsystem.component.onEnter
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.domain.model.endpoint.EndpointState
@@ -200,6 +204,7 @@ private fun AddConnectionItem(
     TextField(
         modifier = Modifier
             .padding(end = AppTheme.spaces.large)
+            .onEnter(::onSubmit)
             .defaultMinSize(minHeight = AppTheme.sizes.default)
             .fillMaxWidth(),
         value = textFieldValue,
@@ -231,6 +236,11 @@ private fun AddConnectionItem(
                 style = AppTheme.typography.bodySmall,
             )
         },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Uri,
+            imeAction = ImeAction.Done,
+            autoCorrect = false,
+        ),
         keyboardActions = KeyboardActions(onDone = { onSubmit() }),
     )
 }
