@@ -76,5 +76,8 @@ dependencies {
 
     implementation(libs.bundles.orbit)
 
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+
     debugImplementation(libs.leakcanary)
 }
