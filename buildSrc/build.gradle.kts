@@ -10,6 +10,8 @@ repositories {
 
 dependencies {
     implementation(libs.android.gradlePlugin)
+    implementation(libs.firebase.crashlytics.gradlePlugin)
+    implementation(libs.google.services.gradlePlugin)
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.kotlin.serializationPlugin)
     implementation(libs.ktor.gradlePlugin)
