@@ -39,7 +39,7 @@ internal class MenuViewModel @Inject constructor(
 
     override val container: Container<MenuState, MenuSideEffect> = container(
         initialState = MenuState(),
-        onCreate = { observeSettings() }
+        onCreate = { observeSettings() },
     )
 
     fun perform(action: MenuAction) {

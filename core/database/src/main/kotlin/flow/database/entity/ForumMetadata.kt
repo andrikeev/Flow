@@ -6,5 +6,5 @@ import androidx.room.PrimaryKey
 @Entity
 data class ForumMetadata(
     @PrimaryKey val id: Int = 1,
-    val lastUpdatedTimestamp: Long
+    val lastUpdatedTimestamp: Long,
 )

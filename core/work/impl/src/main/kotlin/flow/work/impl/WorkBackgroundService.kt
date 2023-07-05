@@ -127,8 +127,10 @@ internal class WorkBackgroundService @Inject constructor(
             syncPeriod: SyncPeriod,
             inputData: Data = Data.EMPTY,
         ) = PeriodicWorkRequestBuilder<T>(
-            syncPeriod.repeatIntervalMillis, TimeUnit.MILLISECONDS,
-            syncPeriod.flexIntervalMillis, TimeUnit.MILLISECONDS,
+            syncPeriod.repeatIntervalMillis,
+            TimeUnit.MILLISECONDS,
+            syncPeriod.flexIntervalMillis,
+            TimeUnit.MILLISECONDS,
         ).apply {
             addTag(tag)
             setInputData(inputData)

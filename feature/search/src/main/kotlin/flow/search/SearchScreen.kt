@@ -72,7 +72,7 @@ private fun SearchScreen(
             appBarState = appBarState,
             onAction = onAction,
         )
-    }
+    },
 ) { padding ->
     LazyList(
         modifier = Modifier.padding(padding),
@@ -82,7 +82,7 @@ private fun SearchScreen(
             is SearchState.Unauthorised -> item {
                 Unauthorized(
                     modifier = Modifier.fillParentMaxSize(),
-                    onLoginClick = { onAction(SearchAction.LoginClick) }
+                    onLoginClick = { onAction(SearchAction.LoginClick) },
                 )
             }
 
@@ -95,7 +95,7 @@ private fun SearchScreen(
                 items(
                     items = state.items,
                     key = Search::id,
-                    contentType = { it::class }
+                    contentType = { it::class },
                 ) { search ->
                     Search(
                         search = search,
@@ -166,7 +166,7 @@ private fun Search(
             horizontal = AppTheme.spaces.large,
             vertical = AppTheme.spaces.mediumLarge,
         ),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         SearchIcon()
         Column(
@@ -222,7 +222,7 @@ private fun Filter.description(): String {
                             categories.size,
                         )
                     }
-                }
+                },
             )
         }
     }
@@ -250,11 +250,11 @@ private class SearchStateProvider : CollectionPreviewParameterProvider<SearchSta
             Search(6, Filter(query = "The Witcher 3", author = Author(name = "_aUtHoR_999"))),
             Search(
                 7,
-                Filter(period = Period.LAST_TWO_WEEKS, author = Author(name = "_aUtHoR_999"))
+                Filter(period = Period.LAST_TWO_WEEKS, author = Author(name = "_aUtHoR_999")),
             ),
             Search(
                 8,
-                Filter(period = Period.LAST_TWO_WEEKS, author = Author(id = "123123", name = ""))
+                Filter(period = Period.LAST_TWO_WEEKS, author = Author(id = "123123", name = "")),
             ),
             Search(
                 9,
@@ -264,11 +264,11 @@ private class SearchStateProvider : CollectionPreviewParameterProvider<SearchSta
                     categories = listOf(
                         Category(
                             "1",
-                            "Very very Very Very Very very long category name"
-                        )
+                            "Very very Very Very Very very long category name",
+                        ),
                     ),
-                )
+                ),
             ),
-        )
+        ),
     ),
 )

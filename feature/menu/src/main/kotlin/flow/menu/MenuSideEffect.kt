@@ -11,5 +11,4 @@ internal sealed interface MenuSideEffect {
         @StringRes val confirmationMessage: Int,
         val action: () -> Unit,
     ) : MenuSideEffect
-
 }

@@ -23,7 +23,7 @@ internal fun Application.configureAuthRoutes() {
                         captchaSid = get("cap_sid"),
                         captchaCode = get("cap_code"),
                         captchaValue = get("cap_val"),
-                    )
+                    ),
                 )
             }
         }

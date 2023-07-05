@@ -18,7 +18,7 @@ internal fun ForumDto.toForum() = Forum(
             name = rootCategory.name,
             children = rootCategory.children.orEmpty().map(CategoryDto::toForumCategory),
         )
-    }
+    },
 )
 
 private fun CategoryDto.toForumCategory(): ForumCategory = ForumCategory(
@@ -31,7 +31,7 @@ internal fun CategoryPageDto.toCategoryPage() = Page(
     page = page,
     pages = pages,
     items = children.orEmpty().map { ForumItem.Category(it.toCategory()) } +
-            topics.orEmpty().map { ForumItem.Topic(it.toTopic()) },
+        topics.orEmpty().map { ForumItem.Topic(it.toTopic()) },
 )
 
 internal fun CategoryDto.toCategory(): Category = Category(requireNotNull(id), name)

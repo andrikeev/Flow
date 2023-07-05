@@ -154,7 +154,7 @@ internal fun CollapsingAppBar(
             slotId = CollapsingAppBarContent.CollapsedShrunkTitleSize,
             constraints = looseConstraints.copy(
                 maxWidth = width - maxOf(navigationIconPlaceable.width, horizontalOffset) -
-                        maxOf(actionsPlaceable.width, horizontalOffset),
+                    maxOf(actionsPlaceable.width, horizontalOffset),
                 maxHeight = Int.MAX_VALUE,
             ),
             content = { titleContent() },
@@ -192,7 +192,7 @@ internal fun CollapsingAppBar(
                 } else {
                     AppTheme.elevations.medium
                 },
-                label = "CollapsingAppBar_Elevation"
+                label = "CollapsingAppBar_Elevation",
             )
             val color = lerp(
                 AppTheme.colors.surface,
@@ -238,7 +238,7 @@ internal fun CollapsingAppBar(
                 titlePlaceable.place(
                     x = maxOf(
                         horizontalOffset,
-                        (navigationIconPlaceable.width * widthCollapseFraction).roundToInt()
+                        (navigationIconPlaceable.width * widthCollapseFraction).roundToInt(),
                     ),
                     y = (titleAvailableHeight - titlePlaceable.height).coerceAtLeast(0),
                 )
@@ -336,7 +336,7 @@ class CollapsingAppBarBehavior(
             return if (offset < 0) {
                 Offset(
                     x = 0f,
-                    y = maxOf(offset, (minHeight - height).toFloat())
+                    y = maxOf(offset, (minHeight - height).toFloat()),
                 ).also { (_, consumedYOffset) ->
                     appBarState.height.value += consumedYOffset.roundToInt()
                 }
@@ -354,7 +354,7 @@ class CollapsingAppBarBehavior(
             return if (offset > 0) {
                 Offset(
                     x = 0f,
-                    y = minOf(offset, (maxHeight - height).toFloat())
+                    y = minOf(offset, (maxHeight - height).toFloat()),
                 ).also { (_, consumedYOffset) ->
                     appBarState.height.value += consumedYOffset.roundToInt()
                 }

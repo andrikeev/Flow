@@ -12,13 +12,13 @@ class AppBorders {
         @Composable
         get() = BorderStroke(
             width = Dp.Hairline,
-            color = AppTheme.colors.outline
+            color = AppTheme.colors.outline,
         )
     val outlineVariant
         @Composable
         get() = BorderStroke(
             width = Dp.Hairline,
-            color = AppTheme.colors.outlineVariant
+            color = AppTheme.colors.outlineVariant,
         )
 }
 

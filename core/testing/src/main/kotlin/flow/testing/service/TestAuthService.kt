@@ -29,7 +29,11 @@ class TestAuthService : AuthService, TokenProvider {
     }
 
     override suspend fun login(
-        username: String, password: String, captchaSid: String?, captchaCode: String?, captchaValue: String?
+        username: String,
+        password: String,
+        captchaSid: String?,
+        captchaCode: String?,
+        captchaValue: String?,
     ): AuthResult = response
 
     override suspend fun refreshToken(): Boolean = false

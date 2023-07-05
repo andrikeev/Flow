@@ -67,7 +67,7 @@ class ForumRepositoryImpl @Inject constructor(
         id = category.id,
         name = category.name,
         parentId = parentId,
-        orderIndex = orderIndex
+        orderIndex = orderIndex,
     )
 
     private fun forumEntityToCategory(
@@ -76,7 +76,7 @@ class ForumRepositoryImpl @Inject constructor(
     ) = ForumCategory(
         id = entity.id,
         name = entity.name,
-        children = children
+        children = children,
     )
 
     private fun flattenCategories(

@@ -22,7 +22,7 @@ internal fun Application.configureForumRoutes() {
                 api.getCategory(
                     id = call.parameters.getOrFail("id"),
                     page = call.request.queryParameters["page"]?.toIntOrNull(),
-                )
+                ),
             )
         }
     }

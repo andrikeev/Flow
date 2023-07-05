@@ -85,7 +85,7 @@ internal class TopicViewModel @Inject constructor(
                             )
                         } else {
                             TopicContent.Topic(topic.title)
-                        }
+                        },
                     )
                 }
             }

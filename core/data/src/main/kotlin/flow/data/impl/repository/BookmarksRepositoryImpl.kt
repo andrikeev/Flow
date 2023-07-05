@@ -71,7 +71,7 @@ class BookmarksRepositoryImpl @Inject constructor(
                 entity.copy(
                     topics = topics,
                     newTopics = newTopics,
-                )
+                ),
             )
         }
     }

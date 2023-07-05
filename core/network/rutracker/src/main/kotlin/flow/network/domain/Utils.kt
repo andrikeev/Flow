@@ -65,8 +65,8 @@ internal fun Elements?.queryParam(key: String): String {
 
 internal fun isTopicExists(html: String): Boolean {
     return !html.contains("Тема не найдена") &&
-            !html.contains("Тема находится в мусорке") &&
-            !html.contains("Ошибочный запрос: не указан topic_id")
+        !html.contains("Тема находится в мусорке") &&
+        !html.contains("Ошибочный запрос: не указан topic_id")
 }
 
 internal fun isBlockedForRegion(html: String): Boolean {

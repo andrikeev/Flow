@@ -64,7 +64,7 @@ fun Pagination(
                         AppTheme.colors.primary
                     } else {
                         AppTheme.colors.surface
-                    }
+                    },
                 ) {
                     Box(
                         modifier = Modifier.matchParentSize(),

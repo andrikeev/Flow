@@ -30,7 +30,7 @@ internal object ParseCommentsPageUseCase {
             val author = AuthorDto(
                 id = post.select(".poster_btn").select(".txtb").first().queryParamOrNull("u"),
                 name = post.select(".nick").text(),
-                avatarUrl = post.select(".avatar > img").attr("src")
+                avatarUrl = post.select(".avatar > img").attr("src"),
             )
             val date = post.select(".p-link").text()
             PostDto(postId, author, date, ParsePostUseCase(post.select(".post_body")))
@@ -42,7 +42,7 @@ internal object ParseCommentsPageUseCase {
             category = CategoryDto(categoryId, categoryName),
             page = currentPage,
             pages = totalPages,
-            posts = topicPosts
+            posts = topicPosts,
         )
     }
 }

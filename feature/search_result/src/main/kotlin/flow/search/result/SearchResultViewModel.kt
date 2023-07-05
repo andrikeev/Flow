@@ -95,7 +95,6 @@ internal class SearchResultViewModel @Inject constructor(
                             torrents = data,
                             categories = data.mapNotNull { it.topic.category }.distinct(),
                         )
-
                     },
                     loadStates = loadingState,
                 )

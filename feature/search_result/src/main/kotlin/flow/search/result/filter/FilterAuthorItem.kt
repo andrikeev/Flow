@@ -19,21 +19,21 @@ import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.CollectionPreviewParameterProvider
 import flow.designsystem.component.Dialog
 import flow.designsystem.component.Icon
+import flow.designsystem.component.OutlinedTextField
 import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
-import flow.designsystem.component.OutlinedTextField
 import flow.designsystem.component.ThemePreviews
-import flow.ui.component.VisibilityState
 import flow.designsystem.component.onEnter
 import flow.designsystem.component.rememberFocusRequester
-import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
 import flow.designsystem.utils.RunOnFirstComposition
 import flow.models.topic.Author
 import flow.search.result.R
+import flow.ui.component.VisibilityState
+import flow.ui.component.rememberVisibilityState
 
 @Composable
 internal fun FilterAuthorItem(
@@ -80,7 +80,7 @@ private fun AuthorDialog(
                 TextFieldValue(
                     text = author?.name.orEmpty(),
                     selection = TextRange(author?.name?.length ?: 0),
-                )
+                ),
             )
         }
 
@@ -165,5 +165,5 @@ private fun AuthorDialogPreview(
 
 private class FilterAuthorPreviewParamProvider : CollectionPreviewParameterProvider<Author?>(
     null,
-    Author("id", "Some author")
+    Author("id", "Some author"),
 )

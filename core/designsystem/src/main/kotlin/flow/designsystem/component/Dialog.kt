@@ -116,7 +116,7 @@ private fun ConfirmationDialog(
             text = negativeButtonText,
             onClick = onDismiss,
         )
-    }
+    },
 )
 
 @Stable
@@ -206,7 +206,7 @@ private fun ConfirmationDialogPreview() {
                     onConfirm = {},
                     onDismiss = {},
                 ),
-            )
+            ),
         )
     }
 }

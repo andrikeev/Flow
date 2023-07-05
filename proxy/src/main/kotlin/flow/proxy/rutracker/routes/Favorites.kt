@@ -23,7 +23,7 @@ internal fun Application.configureFavoritesRoutes() {
                 api.addFavorite(
                     token = call.request.authToken,
                     id = call.parameters.getOrFail("id"),
-                )
+                ),
             )
         }
 
@@ -32,7 +32,7 @@ internal fun Application.configureFavoritesRoutes() {
                 api.removeFavorite(
                     token = call.request.authToken,
                     id = call.parameters.getOrFail("id"),
-                )
+                ),
             )
         }
     }

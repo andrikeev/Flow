@@ -25,7 +25,7 @@ class SearchViewModelTest {
     fun setUp() {
         viewModel = SearchViewModel(
             observeAuthStateUseCase = ObserveAuthStateUseCase(authService),
-            observeSearchHistoryUseCase = ObserveSearchHistoryUseCase(searchHistoryRepository)
+            observeSearchHistoryUseCase = ObserveSearchHistoryUseCase(searchHistoryRepository),
         )
     }
 

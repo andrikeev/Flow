@@ -112,7 +112,7 @@ private fun ForumScreen(
                 rootCategory = item.item,
                 isExpanded = item.expanded,
                 onCategoryClick = { category -> onAction(CategoryClick(category)) },
-                onExpandClick = { onAction(ExpandClick(item)) }
+                onExpandClick = { onAction(ExpandClick(item)) },
             )
         }
     }
@@ -229,7 +229,7 @@ private fun LoadingItem() {
             RootCategoryStub(
                 modifier = Modifier
                     .scale(scale)
-                    .alpha(alpha)
+                    .alpha(alpha),
             )
         }
     }

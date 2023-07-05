@@ -121,7 +121,7 @@ fun TorrentStatus(
                         .getMediumDateFormat(LocalContext.current)
                         .format(dateSeconds * 1000)
                 }
-            } ?: date?.let { date -> StatusItem.Text { date } }
+            } ?: date?.let { date -> StatusItem.Text { date } },
         )
     }
     LazyRow(
@@ -159,7 +159,7 @@ fun TorrentStatus(
                             item.icon()
                             Text(
                                 modifier = Modifier.padding(start = AppTheme.spaces.extraSmall),
-                                text = item.text()
+                                text = item.text(),
                             )
                         }
                     }
@@ -214,7 +214,7 @@ fun TorrentStatusPreview() {
                     size = "92.73 GB",
                     seeds = 28,
                     leeches = 0,
-                )
+                ),
             )
         }
     }

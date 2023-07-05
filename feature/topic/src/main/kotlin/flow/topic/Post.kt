@@ -119,7 +119,7 @@ private fun TextContent(
                         coroutinesScope.launch { snackbarState.showSnackbar(linkErrorMessage) }
                     }
                 }
-        }
+        },
     )
 }
 
@@ -131,45 +131,57 @@ private fun AnnotatedString.Builder.TextContent(content: Content) {
 
         is TextContent.TextRow -> content.children.forEach { TextContent(it) }
 
-        is TextContent.Link -> append(buildAnnotatedString {
-            pushStyle(
-                SpanStyle(
-                    color = AppTheme.colors.primary,
-                    textDecoration = TextDecoration.Underline,
+        is TextContent.Link -> append(
+            buildAnnotatedString {
+                pushStyle(
+                    SpanStyle(
+                        color = AppTheme.colors.primary,
+                        textDecoration = TextDecoration.Underline,
+                    ),
                 )
-            )
-            pushUrlAnnotation(UrlAnnotation(content.src))
-            pushStringAnnotation(
-                tag = "URL",
-                annotation = content.src,
-            )
-            TextContent(content.content)
-        })
+                pushUrlAnnotation(UrlAnnotation(content.src))
+                pushStringAnnotation(
+                    tag = "URL",
+                    annotation = content.src,
+                )
+                TextContent(content.content)
+            },
+        )
 
-        is TextContent.Bold -> append(buildAnnotatedString {
-            pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
-            TextContent(content.content)
-        })
+        is TextContent.Bold -> append(
+            buildAnnotatedString {
+                pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
+                TextContent(content.content)
+            },
+        )
 
-        is TextContent.Crossed -> append(buildAnnotatedString {
-            pushStyle(SpanStyle(textDecoration = TextDecoration.LineThrough))
-            TextContent(content.content)
-        })
+        is TextContent.Crossed -> append(
+            buildAnnotatedString {
+                pushStyle(SpanStyle(textDecoration = TextDecoration.LineThrough))
+                TextContent(content.content)
+            },
+        )
 
-        is TextContent.Italic -> append(buildAnnotatedString {
-            pushStyle(SpanStyle(fontStyle = FontStyle.Italic))
-            TextContent(content.content)
-        })
+        is TextContent.Italic -> append(
+            buildAnnotatedString {
+                pushStyle(SpanStyle(fontStyle = FontStyle.Italic))
+                TextContent(content.content)
+            },
+        )
 
-        is TextContent.Underscore -> append(buildAnnotatedString {
-            pushStyle(SpanStyle(textDecoration = TextDecoration.Underline))
-            TextContent(content.content)
-        })
+        is TextContent.Underscore -> append(
+            buildAnnotatedString {
+                pushStyle(SpanStyle(textDecoration = TextDecoration.Underline))
+                TextContent(content.content)
+            },
+        )
 
-        is TextContent.Color -> append(buildAnnotatedString {
-            pushStyle(SpanStyle(color = AppTheme.colors.primary))
-            TextContent(content.content)
-        })
+        is TextContent.Color -> append(
+            buildAnnotatedString {
+                pushStyle(SpanStyle(color = AppTheme.colors.primary))
+                TextContent(content.content)
+            },
+        )
 
         else -> Unit
     }
@@ -203,7 +215,7 @@ private fun PostContent(content: Content) {
         )
 
         is PostContent.Divider -> Divider(
-            modifier = Modifier.padding(vertical = AppTheme.spaces.medium)
+            modifier = Modifier.padding(vertical = AppTheme.spaces.medium),
         )
 
         is PostContent.Image -> Image(content.src)
@@ -222,7 +234,7 @@ private fun PostContent(content: Content) {
         is PostContent.Size -> ProvideTextStyle(
             value = TextStyle(
                 fontSize = content.size.sp,
-                lineHeight = (content.size * 1.3).sp
+                lineHeight = (content.size * 1.3).sp,
             ),
             content = { Content(content.content) },
         )
@@ -417,11 +429,11 @@ private fun ContentPreview() {
                                                 listOf(
                                                     TextContent.Text(text = "Экзорцист Ватикана"),
                                                     TextContent.Text(text = "The Pope 's Exorcist"),
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                ),
                             ),
                             PostContent.Spacer,
                             PostContent.Divider,
@@ -434,19 +446,19 @@ private fun ContentPreview() {
                                             children = listOf(
                                                 TextContent.Bold(TextContent.Text("Страна")),
                                                 TextContent.Text(": США, Великобритания, Испания"),
-                                            )
+                                            ),
                                         ),
                                         TextContent.TextRow(
                                             children = listOf(
                                                 TextContent.Bold(TextContent.Text("Студия")),
-                                                TextContent.Text(": Screen Gems, 2.0 Entertainment, Loyola Productions")
-                                            )
+                                                TextContent.Text(": Screen Gems, 2.0 Entertainment, Loyola Productions"),
+                                            ),
                                         ),
                                         TextContent.TextRow(
                                             children = listOf(
                                                 TextContent.Bold(TextContent.Text("Жанр")),
-                                                TextContent.Text(": ужасы")
-                                            )
+                                                TextContent.Text(": ужасы"),
+                                            ),
                                         ),
                                         PostContent.Spacer,
                                         TextContent.TextRow(
@@ -460,9 +472,9 @@ private fun ContentPreview() {
                                                 TextContent.Text(" // thx. "),
                                                 TextContent.Color(
                                                     color = ColorValue.Name("gray"),
-                                                    content = TextContent.Bold(TextContent.Text("FLEX"))
-                                                )
-                                            )
+                                                    content = TextContent.Bold(TextContent.Text("FLEX")),
+                                                ),
+                                            ),
                                         ),
                                         TextContent.TextRow(
                                             children = listOf(
@@ -470,14 +482,14 @@ private fun ContentPreview() {
                                                 TextContent.Text(": Профессиональный (многоголосый закадровый) | "),
                                                 TextContent.Color(
                                                     color = ColorValue.Name("green"),
-                                                    content = TextContent.Bold(TextContent.Text("Jaskier"))
+                                                    content = TextContent.Bold(TextContent.Text("Jaskier")),
                                                 ),
                                                 TextContent.Text(" | "),
                                                 TextContent.Color(
                                                     color = ColorValue.Name("blue"),
                                                     content = TextContent.Bold(TextContent.Text("text=18+")),
-                                                )
-                                            )
+                                                ),
+                                            ),
                                         ),
                                         PostContent.Spacer,
                                         TextContent.Bold(
@@ -498,9 +510,9 @@ private fun ContentPreview() {
                                                         src = "https://yadi.sk/i/31As836dbYXFmw",
                                                         content = TextContent.Text("Скачать семпл"),
                                                     ),
-                                                    TextContent.Text(" ||")
-                                                )
-                                            )
+                                                    TextContent.Text(" ||"),
+                                                ),
+                                            ),
                                         ),
                                         PostContent.Quote(
                                             title = "Quote",
@@ -508,8 +520,8 @@ private fun ContentPreview() {
                                                 listOf(
                                                     TextContent.Text("Quote "),
                                                     TextContent.Text("text row"),
-                                                )
-                                            )
+                                                ),
+                                            ),
                                         ),
                                         PostContent.Quote(
                                             title = "Quote",
@@ -517,31 +529,31 @@ private fun ContentPreview() {
                                                 listOf(
                                                     TextContent.Text("Quote "),
                                                     TextContent.Text("content row"),
-                                                )
-                                            )
+                                                ),
+                                            ),
                                         ),
                                         PostContent.Spoiler(
                                             title = "Spoiler",
-                                            content = TextContent.Text("Spoiler content")
+                                            content = TextContent.Text("Spoiler content"),
                                         ),
                                         PostContent.Box(
-                                            content = TextContent.Text("Box content")
+                                            content = TextContent.Text("Box content"),
                                         ),
                                         PostContent.Box(
                                             content = TextContent.TextRow(
                                                 listOf(
                                                     TextContent.Text("Box "),
                                                     TextContent.Text("text row"),
-                                                )
-                                            )
+                                                ),
+                                            ),
                                         ),
                                         PostContent.Box(
                                             content = ContentRow(
                                                 listOf(
                                                     TextContent.Text("Box "),
                                                     TextContent.Text("content row"),
-                                                )
-                                            )
+                                                ),
+                                            ),
                                         ),
                                         PostContent.Code(
                                             title = "Code",
@@ -549,15 +561,15 @@ private fun ContentPreview() {
                                                 listOf(
                                                     TextContent.Text("Code "),
                                                     TextContent.Text("content row"),
-                                                )
-                                            )
+                                                ),
+                                            ),
                                         ),
-                                        PostContent.Image("")
+                                        PostContent.Image(""),
                                     ),
                                 ),
-                            )
-                        )
-                    )
+                            ),
+                        ),
+                    ),
                 )
             }
         }

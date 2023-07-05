@@ -45,6 +45,7 @@ import flow.designsystem.component.Icon
 import flow.designsystem.component.IconButton
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.LocalSnackbarHostState
+import flow.designsystem.component.Pagination
 import flow.designsystem.component.ProvideTextStyle
 import flow.designsystem.component.Scaffold
 import flow.designsystem.component.ScrollBackFloatingActionButton
@@ -53,7 +54,6 @@ import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
-import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
@@ -63,13 +63,13 @@ import flow.models.topic.Author
 import flow.models.topic.Post
 import flow.models.topic.TextContent
 import flow.ui.component.Avatar
-import flow.designsystem.component.Pagination
 import flow.ui.component.RemoteImage
 import flow.ui.component.TorrentStatus
 import flow.ui.component.appendItems
 import flow.ui.component.emptyItem
 import flow.ui.component.errorItem
 import flow.ui.component.loadingItem
+import flow.ui.component.rememberVisibilityState
 import flow.ui.permissions.Permission
 import flow.ui.permissions.isGranted
 import flow.ui.permissions.rememberPermissionState
@@ -125,7 +125,7 @@ internal fun TopicScreen(
             link = state.link,
             onOpenLink = { openLinkHandler.openLink(state.link) },
             onShareLink = { shareLinkHandler.shareLink(state.link) },
-            onDismiss = magnetDialogState::hide
+            onDismiss = magnetDialogState::hide,
         )
     }
 
@@ -156,7 +156,7 @@ private fun TopicScreen(
         TopicContent(
             modifier = Modifier.padding(padding),
             state = state,
-            onAction = onAction
+            onAction = onAction,
         )
     },
     floatingActionButton = { ScrollBackFloatingActionButton() },
@@ -164,7 +164,7 @@ private fun TopicScreen(
         Surface(
             tonalElevation = AppTheme.elevations.medium,
             shadowElevation = AppTheme.elevations.medium,
-            content = { Pagination(state.paginationState, onAction) }
+            content = { Pagination(state.paginationState, onAction) },
         )
     },
 )
@@ -384,7 +384,7 @@ private fun Pagination(
         is PaginationState.Pagination -> Pagination(
             currentPage = paginationState.page,
             totalPages = paginationState.totalPages,
-            onPageSelected = { onAction(TopicAction.GoToPage(it)) }
+            onPageSelected = { onAction(TopicAction.GoToPage(it)) },
         )
     }
 }
@@ -586,13 +586,13 @@ private fun DownloadDialog(
             icon = {
                 Icon(
                     icon = FlowIcons.FileDownloadDone,
-                    contentDescription = null
+                    contentDescription = null,
                 )
             },
             title = {
                 Text(
                     text = stringResource(R.string.topic_file_download_completed),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             },
             confirmButton = {
@@ -617,13 +617,13 @@ private fun DownloadDialog(
             icon = {
                 Icon(
                     icon = FlowIcons.Clear,
-                    contentDescription = null
+                    contentDescription = null,
                 )
             },
             title = {
                 Text(
                     text = stringResource(flow.ui.R.string.error_title),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             },
             confirmButton = {
@@ -636,7 +636,8 @@ private fun DownloadDialog(
         )
 
         is DownloadState.Initial,
-        is DownloadState.Started -> Dialog(
+        is DownloadState.Started,
+        -> Dialog(
             icon = {
                 CircularProgressIndicator(
                     modifier = Modifier.size(AppTheme.sizes.mediumSmall),
@@ -646,7 +647,7 @@ private fun DownloadDialog(
             title = {
                 Text(
                     text = stringResource(R.string.topic_file_download_in_progress),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             },
             confirmButton = {
@@ -720,7 +721,7 @@ private fun PostItemPreview() {
                     author = Author("1", "Author name"),
                     date = "Today",
                     content = TextContent.Text("Hi everyone!"),
-                )
+                ),
             )
         }
     }

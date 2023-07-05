@@ -2,7 +2,7 @@ package flow.search.input
 
 import org.junit.Before
 
-//TODO
+// TODO
 class SearchInputViewModelTest {
 
     @Before

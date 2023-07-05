@@ -9,7 +9,7 @@ import javax.inject.Inject
 interface ObserveAuthStateUseCase : () -> Flow<AuthState>
 
 class ObserveAuthStateUseCaseImpl @Inject constructor(
-    private val authService: AuthService
+    private val authService: AuthService,
 ) : ObserveAuthStateUseCase {
     override operator fun invoke(): Flow<AuthState> {
         return authService.observeAuthState()

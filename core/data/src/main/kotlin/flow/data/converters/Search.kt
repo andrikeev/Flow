@@ -57,7 +57,7 @@ internal fun SearchHistoryEntity.toSearch(): Search {
             period = period,
             author = author,
             categories = categories,
-        )
+        ),
     )
 }
 

@@ -45,12 +45,12 @@ internal class AccountViewModelTest {
 
     @Test
     fun `Authorized when created`() = runTest {
-        //set
+        // set
         val containerTest = viewModel.liveTest()
         authService.authState.value = TestAuthState
-        //do
+        // do
         containerTest.runOnCreate()
-        //check
+        // check
         containerTest.assert(AuthState.Unauthorized) {
             states(
                 { AuthState.Unauthorized },
@@ -61,13 +61,13 @@ internal class AccountViewModelTest {
 
     @Test
     fun `Unauthorised when ConfirmLogoutClick`() = runTest {
-        //set
+        // set
         val containerTest = viewModel.liveTest()
         authService.authState.value = TestAuthState
         containerTest.runOnCreate()
-        //do
+        // do
         containerTest.testIntent { perform(AccountAction.ConfirmLogoutClick) }
-        //check
+        // check
         containerTest.assert(AuthState.Unauthorized) {
             states(
                 { TestAuthState },
@@ -78,11 +78,11 @@ internal class AccountViewModelTest {
 
     @Test
     fun `ShowLogoutConfirmation when LogoutClick`() = runTest {
-        //set
+        // set
         val containerTest = viewModel.test()
-        //do
+        // do
         containerTest.testIntent { perform(AccountAction.LogoutClick) }
-        //check
+        // check
         containerTest.assert(AuthState.Unauthorized) {
             postedSideEffects(AccountSideEffect.ShowLogoutConfirmation)
         }
@@ -90,11 +90,11 @@ internal class AccountViewModelTest {
 
     @Test
     fun `OpenLogin when LoginClick`() = runTest {
-        //set
+        // set
         val containerTest = viewModel.test()
-        //do
+        // do
         containerTest.testIntent { perform(AccountAction.LoginClick) }
-        //check
+        // check
         containerTest.assert(AuthState.Unauthorized) {
             postedSideEffects(AccountSideEffect.OpenLogin)
         }

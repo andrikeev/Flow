@@ -33,11 +33,12 @@ fun RemoteImage(
             .Builder(LocalContext.current)
             .data(src)
             .size(Size.ORIGINAL)
-            .build()
+            .build(),
     )
     when (val state = painter.state) {
         is AsyncImagePainter.State.Empty,
-        is AsyncImagePainter.State.Loading -> {
+        is AsyncImagePainter.State.Loading,
+        -> {
             Box(
                 modifier = modifier
                     .padding(AppTheme.spaces.medium)
@@ -83,11 +84,12 @@ fun RemoteImage(
             .Builder(LocalContext.current)
             .data(src)
             .size(Size.ORIGINAL)
-            .build()
+            .build(),
     )
     when (val state = painter.state) {
         is AsyncImagePainter.State.Empty,
-        is AsyncImagePainter.State.Loading -> onLoading()
+        is AsyncImagePainter.State.Loading,
+        -> onLoading()
         is AsyncImagePainter.State.Error -> onError()
         is AsyncImagePainter.State.Success -> onSuccess(state.painter)
     }

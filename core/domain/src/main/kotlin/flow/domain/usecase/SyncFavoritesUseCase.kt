@@ -21,8 +21,8 @@ class SyncFavoritesUseCase @Inject constructor(
                     coroutineScope {
                         val update = torrentService.getTorrent(torrent.id)
                         val hasUpdate = torrent.magnetLink != null &&
-                                        update.magnetLink != null &&
-                                        torrent.magnetLink != update.magnetLink
+                            update.magnetLink != null &&
+                            torrent.magnetLink != update.magnetLink
                         val updated = torrent.copy(
                             title = update.title,
                             author = update.author,

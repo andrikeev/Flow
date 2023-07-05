@@ -47,7 +47,7 @@ class OpenLinkHandlerImpl(
 
     private fun isSupportedLink(link: String): Boolean {
         return link.contains("viewtopic.php") ||
-                link.contains("viewforum.php") ||
-                link.contains("tracker.php")
+            link.contains("viewforum.php") ||
+            link.contains("tracker.php")
     }
 }

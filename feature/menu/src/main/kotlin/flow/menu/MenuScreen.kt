@@ -42,9 +42,7 @@ import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
 import flow.designsystem.component.ThemePreviews
-import flow.ui.component.VisibilityState
 import flow.designsystem.component.rememberConfirmationDialogState
-import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
@@ -65,6 +63,8 @@ import flow.menu.MenuAction.SetTheme
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
 import flow.navigation.viewModel
+import flow.ui.component.VisibilityState
+import flow.ui.component.rememberVisibilityState
 import flow.ui.permissions.Permission
 import flow.ui.permissions.rememberPermissionState
 import flow.ui.permissions.shouldShowRationale
@@ -162,7 +162,7 @@ private fun MenuScreen(
                         title = R.string.menu_data_clear_history_title,
                         confirmationMessage = R.string.menu_data_clear_history_confirmation,
                         onConfirmAction = { onAction(ClearHistoryConfirmation) },
-                    )
+                    ),
                 )
             },
         )
@@ -174,7 +174,7 @@ private fun MenuScreen(
                         title = R.string.menu_data_clear_bookmarks_title,
                         confirmationMessage = R.string.menu_data_clear_bookmarks_confirmation,
                         onConfirmAction = { onAction(ClearBookmarksConfirmation) },
-                    )
+                    ),
                 )
             },
         )
@@ -186,7 +186,7 @@ private fun MenuScreen(
                         title = R.string.menu_data_clear_favorites_title,
                         confirmationMessage = R.string.menu_data_clear_favorites_confirmation,
                         onConfirmAction = { onAction(ClearFavoritesConfirmation) },
-                    )
+                    ),
                 )
             },
         )
@@ -470,8 +470,8 @@ private fun AboutAppDialog(state: VisibilityState) {
                     Text(
                         stringResource(
                             R.string.app_copyright,
-                            Calendar.getInstance().get(Calendar.YEAR)
-                        )
+                            Calendar.getInstance().get(Calendar.YEAR),
+                        ),
                     )
                 }
             },
@@ -496,7 +496,8 @@ private fun getPackageInfo(): PackageInfo? {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
             } else {
-                @Suppress("DEPRECATION") packageManager.getPackageInfo(packageName, 0)
+                @Suppress("DEPRECATION")
+                packageManager.getPackageInfo(packageName, 0)
             }
         }.getOrElse { null }
     }
@@ -552,4 +553,3 @@ private fun MenuDonateItem_Preview() {
         MenuDonateItem {}
     }
 }
-

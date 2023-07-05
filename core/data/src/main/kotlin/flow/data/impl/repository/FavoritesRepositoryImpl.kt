@@ -74,8 +74,8 @@ class FavoritesRepositoryImpl @Inject constructor(
             .mapNotNull { old ->
                 updatedTopicEntities[old.id]?.let { update ->
                     val hasUpdate = old.magnetLink != null &&
-                                    update.magnetLink != null &&
-                                    old.magnetLink != update.magnetLink
+                        update.magnetLink != null &&
+                        old.magnetLink != update.magnetLink
                     old.copy(
                         title = update.title,
                         author = update.author ?: old.author,
@@ -130,7 +130,7 @@ class FavoritesRepositoryImpl @Inject constructor(
                     leeches = torrent.leeches,
                     magnetLink = torrent.magnetLink,
                     hasUpdate = hasUpdate,
-                )
+                ),
             )
         }
     }

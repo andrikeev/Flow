@@ -48,7 +48,7 @@ class MenuViewModelTest {
         viewModel = MenuViewModel(
             clearBookmarksUseCase = ClearBookmarksUseCase(
                 bookmarksRepository = bookmarksRepository,
-                dispatchers = dispatchers
+                dispatchers = dispatchers,
             ),
             clearLocalFavoritesUseCase = ClearLocalFavoritesUseCase(
                 favoritesRepository = favoritesRepository,
@@ -150,8 +150,8 @@ class MenuViewModelTest {
                 MenuAction.ConfirmableAction(
                     TestTitleId,
                     TestMessageId,
-                    TestAction
-                )
+                    TestAction,
+                ),
             )
         }
         // check
@@ -163,8 +163,8 @@ class MenuViewModelTest {
                 MenuSideEffect.ShowConfirmation(
                     TestTitleId,
                     TestMessageId,
-                    TestAction
-                )
+                    TestAction,
+                ),
             )
         }
     }

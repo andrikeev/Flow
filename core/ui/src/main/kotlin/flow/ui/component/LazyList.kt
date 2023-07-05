@@ -33,7 +33,7 @@ fun LazyListScope.appendItems(
         Box(
             modifier = Modifier
                 .height(AppTheme.sizes.default)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         ) {
             CircularProgressIndicator(
                 modifier = Modifier

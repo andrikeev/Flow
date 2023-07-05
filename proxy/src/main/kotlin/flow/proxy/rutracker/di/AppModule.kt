@@ -13,9 +13,11 @@ internal val appModule = module {
 }
 
 internal inline fun <reified T : Any> inject(
-    qualifier: Qualifier? = null, noinline parameters: ParametersDefinition? = null
+    qualifier: Qualifier? = null,
+    noinline parameters: ParametersDefinition? = null,
 ) = lazy { get<T>(qualifier, parameters) }
 
 internal inline fun <reified T : Any> get(
-    qualifier: Qualifier? = null, noinline parameters: ParametersDefinition? = null
+    qualifier: Qualifier? = null,
+    noinline parameters: ParametersDefinition? = null,
 ) = GlobalContext.get().get<T>(qualifier, parameters)

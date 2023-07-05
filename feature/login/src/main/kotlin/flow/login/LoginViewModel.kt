@@ -42,7 +42,7 @@ internal class LoginViewModel @Inject constructor(
                     InputState.Valid(value)
                 } else {
                     InputState.Empty
-                }
+                },
             )
         }
     }
@@ -54,7 +54,7 @@ internal class LoginViewModel @Inject constructor(
                     InputState.Valid(value)
                 } else {
                     InputState.Empty
-                }
+                },
             )
         }
     }
@@ -66,7 +66,7 @@ internal class LoginViewModel @Inject constructor(
                     InputState.Valid(value)
                 } else {
                     InputState.Empty
-                }
+                },
             )
         }
     }

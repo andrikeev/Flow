@@ -29,7 +29,7 @@ private fun DividerPreview() {
             Divider(
                 modifier = Modifier
                     .padding(AppTheme.spaces.large)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
         }
     }

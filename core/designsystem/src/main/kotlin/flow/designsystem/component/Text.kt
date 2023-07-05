@@ -169,7 +169,7 @@ fun ClickableText(
     overflow: TextOverflow = TextOverflow.Clip,
     maxLines: Int = Int.MAX_VALUE,
     onTextLayout: (TextLayoutResult) -> Unit = {},
-    onClick: (Int) -> Unit
+    onClick: (Int) -> Unit,
 ) {
     val textColor = style.color.takeOrElse { LocalContentColor.current }
     val mergedStyle = style.merge(
@@ -183,7 +183,7 @@ fun ClickableText(
             textDecoration = style.textDecoration,
             fontStyle = style.fontStyle,
             letterSpacing = style.letterSpacing,
-        )
+        ),
     )
     androidx.compose.foundation.text.ClickableText(
         text = text,

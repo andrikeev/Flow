@@ -52,7 +52,7 @@ fun openTopic(id: String) {
         buildRoute(
             route = TopicRoute,
             requiredArgsBuilder = { appendRequiredParams(id) },
-        )
+        ),
     )
 }
 

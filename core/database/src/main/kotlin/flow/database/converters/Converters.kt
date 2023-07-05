@@ -87,7 +87,7 @@ internal object Converters {
                     JSONObject().apply {
                         put("id", category.id)
                         put("name", category.name)
-                    }
+                    },
                 )
             }
         }.toString()

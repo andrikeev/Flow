@@ -81,7 +81,7 @@ fun ExpandableAppBar(
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
-            exit =  shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
+            exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
             content = { expandableContent() },
         )
     }
@@ -122,7 +122,8 @@ fun TabAppBar(
                     {
                         Icon(
                             icon = page.icon,
-                            contentDescription = page.labelResId?.let { stringResource(it) })
+                            contentDescription = page.labelResId?.let { stringResource(it) },
+                        )
                     }
                 },
             )

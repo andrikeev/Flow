@@ -7,5 +7,5 @@ data class PostDto(
     val id: String,
     val author: AuthorDto,
     val date: String,
-    val children: List<PostElementDto>
+    val children: List<PostElementDto>,
 )

@@ -15,7 +15,7 @@ data class AppShapes(
     val medium: Shape = ShapeDefaults.Medium,
     val large: Shape = ShapeDefaults.Large,
     val extraLarge: Shape = ShapeDefaults.ExtraLarge,
-    val circle: Shape = CircleShape
+    val circle: Shape = CircleShape,
 )
 
 internal val LocaleShapes = staticCompositionLocalOf { AppShapes() }

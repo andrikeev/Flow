@@ -20,11 +20,13 @@ internal class GetFavoritesUseCase(
             withAuthorisedCheckUseCase(api.favorites(validToken, 1)) { html ->
                 val pagesCount = parsePagesCount(html)
                 FavoritesDto(
-                    (listOf(parseFavorites(html)) +
+                    (
+                        listOf(parseFavorites(html)) +
                             (2..pagesCount)
                                 .map { page -> api.favorites(token, page) }
-                                .map(::parseFavorites))
-                        .flatten()
+                                .map(::parseFavorites)
+                        )
+                        .flatten(),
                 )
             }
         }
@@ -75,14 +77,14 @@ internal class GetFavoritesUseCase(
                             status = status,
                             size = size,
                             seeds = seeds,
-                            leeches = leeches
+                            leeches = leeches,
                         )
                     } else {
                         TopicDto(
                             id = id,
                             title = fullTitle,
                             author = author,
-                            category = category
+                            category = category,
                         )
                     }
                 }
