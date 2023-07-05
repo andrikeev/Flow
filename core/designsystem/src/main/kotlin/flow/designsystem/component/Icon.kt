@@ -57,25 +57,6 @@ fun ExpandCollapseIcon(
 }
 
 @Composable
-fun DropDownExpandCollapseIcon(
-    expanded: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    val rotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f)
-    Icon(
-        modifier = modifier.rotate(rotation),
-        icon = FlowIcons.DropDownExpand,
-        contentDescription = stringResource(
-            if (expanded) {
-                R.string.designsystem_content_description_state_expanded
-            } else {
-                R.string.designsystem_content_description_state_collapsed
-            },
-        ),
-    )
-}
-
-@Composable
 @NonRestartableComposable
 fun SearchIcon() = Icon(
     icon = FlowIcons.Search,

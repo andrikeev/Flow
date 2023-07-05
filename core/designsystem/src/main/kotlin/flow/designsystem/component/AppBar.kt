@@ -29,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -181,12 +180,6 @@ private fun AppBar(
         actionIconContentColor = AppTheme.colors.onSurface,
     ),
 )
-
-@Stable
-interface AppBarBehavior {
-    val appBarState: AppBarState
-    val nestedScrollConnection: NestedScrollConnection
-}
 
 @Stable
 interface AppBarState {

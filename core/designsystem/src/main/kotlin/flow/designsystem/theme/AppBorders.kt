@@ -14,12 +14,6 @@ class AppBorders {
             width = Dp.Hairline,
             color = AppTheme.colors.outline,
         )
-    val outlineVariant
-        @Composable
-        get() = BorderStroke(
-            width = Dp.Hairline,
-            color = AppTheme.colors.outlineVariant,
-        )
 }
 
 internal val LocalBorders = staticCompositionLocalOf { AppBorders() }

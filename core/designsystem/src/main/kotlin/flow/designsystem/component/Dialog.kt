@@ -185,7 +185,7 @@ private fun Dialog1Preview() {
 private fun Dialog2Preview() {
     FlowTheme {
         Dialog({}) {
-            Surface() {
+            Surface {
                 Text(text = "Text")
             }
         }
