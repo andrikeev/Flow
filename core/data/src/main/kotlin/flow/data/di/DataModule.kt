@@ -13,9 +13,9 @@ import flow.data.api.repository.SearchHistoryRepository
 import flow.data.api.repository.SettingsRepository
 import flow.data.api.repository.SuggestsRepository
 import flow.data.api.repository.VisitedRepository
+import flow.data.api.service.ConnectionService
 import flow.data.api.service.FavoritesService
 import flow.data.api.service.ForumService
-import flow.data.api.service.ConnectionService
 import flow.data.api.service.SearchService
 import flow.data.api.service.StoreService
 import flow.data.api.service.TopicService
@@ -29,9 +29,9 @@ import flow.data.impl.repository.SearchHistoryRepositoryImpl
 import flow.data.impl.repository.SettingsRepositoryImpl
 import flow.data.impl.repository.SuggestsRepositoryImpl
 import flow.data.impl.repository.VisitedRepositoryImpl
+import flow.data.impl.service.ConnectionServiceImpl
 import flow.data.impl.service.FavoritesServiceImpl
 import flow.data.impl.service.ForumServiceImpl
-import flow.data.impl.service.ConnectionServiceImpl
 import flow.data.impl.service.SearchServiceImpl
 import flow.data.impl.service.StoreServiceImpl
 import flow.data.impl.service.TopicServiceImpl

@@ -40,7 +40,7 @@ internal object ParseTorrentUseCase {
             leeches = leeches,
             size = size,
             magnetLink = magnetLink,
-            description = parseTorrentDescription(html)
+            description = parseTorrentDescription(html),
         )
     }
 

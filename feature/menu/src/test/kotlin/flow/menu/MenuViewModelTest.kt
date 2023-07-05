@@ -8,6 +8,7 @@ import flow.domain.usecase.SetBookmarksSyncPeriodUseCase
 import flow.domain.usecase.SetEndpointUseCase
 import flow.domain.usecase.SetFavoritesSyncPeriodUseCase
 import flow.domain.usecase.SetThemeUseCase
+import flow.models.settings.Endpoint
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
 import flow.testing.TestDispatchers
@@ -48,7 +49,7 @@ class MenuViewModelTest {
         viewModel = MenuViewModel(
             clearBookmarksUseCase = ClearBookmarksUseCase(
                 bookmarksRepository = bookmarksRepository,
-                dispatchers = dispatchers
+                dispatchers = dispatchers,
             ),
             clearLocalFavoritesUseCase = ClearLocalFavoritesUseCase(
                 favoritesRepository = favoritesRepository,
@@ -76,9 +77,11 @@ class MenuViewModelTest {
             setThemeUseCase = SetThemeUseCase(
                 settingsRepository = settingsRepository,
             ),
-            setEndpointUseCase = SetEndpointUseCase(
-                settingsRepository = settingsRepository,
-            ),
+            setEndpointUseCase = object : SetEndpointUseCase {
+                override suspend fun invoke(endpoint: Endpoint) {
+                    settingsRepository.setEndpoint(endpoint)
+                }
+            },
             loggerFactory = loggerFactory,
         )
     }
@@ -150,8 +153,8 @@ class MenuViewModelTest {
                 MenuAction.ConfirmableAction(
                     TestTitleId,
                     TestMessageId,
-                    TestAction
-                )
+                    TestAction,
+                ),
             )
         }
         // check
@@ -163,8 +166,8 @@ class MenuViewModelTest {
                 MenuSideEffect.ShowConfirmation(
                     TestTitleId,
                     TestMessageId,
-                    TestAction
-                )
+                    TestAction,
+                ),
             )
         }
     }

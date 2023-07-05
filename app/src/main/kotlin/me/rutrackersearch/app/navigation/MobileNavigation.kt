@@ -184,7 +184,7 @@ private fun addForum(
                     icon = FlowIcons.Bookmarks,
                     content = { BookmarksScreen { openCategory(it) } },
                 ),
-            )
+            ),
         )
     }
 }
@@ -208,7 +208,7 @@ private fun addTopics(
                 icon = FlowIcons.History,
                 content = { VisitedScreen(openTopic = openTopic) },
             ),
-        )
+        ),
     )
 }
 
@@ -249,7 +249,8 @@ private enum class BottomRoute(val navigationBarItem: NavigationBarItem) {
             labelResId = R.string.label_menu,
             icon = FlowIcons.Menu,
         ),
-    );
+    ),
+    ;
 
     val route = navigationBarItem.route
 

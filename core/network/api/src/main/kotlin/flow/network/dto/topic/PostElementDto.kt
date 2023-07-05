@@ -13,10 +13,11 @@ enum class TextAlignment { Left, Right, Center, Justify; }
 sealed interface ColorValue {
     @Serializable
     @SerialName("Hex")
-    data class Hex(val hex: Long): ColorValue
+    data class Hex(val hex: Long) : ColorValue
+
     @Serializable
     @SerialName("Name")
-    data class Name(val name: String): ColorValue
+    data class Name(val name: String) : ColorValue
 }
 
 @Serializable

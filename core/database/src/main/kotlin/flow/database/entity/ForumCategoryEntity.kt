@@ -11,8 +11,8 @@ import androidx.room.PrimaryKey
             parentColumns = ["id"],
             childColumns = ["parentId"],
             onDelete = ForeignKey.CASCADE,
-        )
-    ]
+        ),
+    ],
 )
 data class ForumCategoryEntity(
     @PrimaryKey val id: String,

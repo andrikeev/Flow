@@ -2,11 +2,14 @@ package flow.search
 
 import flow.domain.usecase.ObserveAuthStateUseCase
 import flow.domain.usecase.ObserveSearchHistoryUseCase
+import flow.models.auth.AuthState
 import flow.models.search.Filter
 import flow.models.search.Search
+import flow.testing.logger.TestLoggerFactory
 import flow.testing.repository.TestSearchHistoryRepository
 import flow.testing.rule.MainDispatcherRule
 import flow.testing.service.TestAuthService
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -24,8 +27,11 @@ class SearchViewModelTest {
     @Before
     fun setUp() {
         viewModel = SearchViewModel(
-            observeAuthStateUseCase = ObserveAuthStateUseCase(authService),
-            observeSearchHistoryUseCase = ObserveSearchHistoryUseCase(searchHistoryRepository)
+            observeAuthStateUseCase = object : ObserveAuthStateUseCase {
+                override fun invoke(): Flow<AuthState> = authService.authState
+            },
+            observeSearchHistoryUseCase = ObserveSearchHistoryUseCase(searchHistoryRepository),
+            loggerFactory = TestLoggerFactory(),
         )
     }
 

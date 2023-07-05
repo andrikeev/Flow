@@ -78,7 +78,7 @@ internal class GetSearchPageUseCase(
                     date = date,
                     size = size,
                     seeds = seeds,
-                    leeches = leeches
+                    leeches = leeches,
                 )
             }
             return SearchPageDto(currentPage, totalPages, torrents)

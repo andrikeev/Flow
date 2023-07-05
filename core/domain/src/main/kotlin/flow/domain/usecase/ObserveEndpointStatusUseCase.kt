@@ -36,7 +36,7 @@ internal class ObserveEndpointStatusUseCaseImpl @Inject constructor(
                             state.copy(
                                 selected = endpoint == selected,
                                 status = status,
-                            )
+                            ),
                         )
                     }
             }

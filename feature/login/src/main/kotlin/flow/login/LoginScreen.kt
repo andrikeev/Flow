@@ -114,7 +114,7 @@ internal fun LoginScreen(
             LoginButton(
                 modifier = Modifier.padding(AppTheme.spaces.large),
                 state = state,
-                onSubmit = { submit() }
+                onSubmit = { submit() },
             )
         }
     }

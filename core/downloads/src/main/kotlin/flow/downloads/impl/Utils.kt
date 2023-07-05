@@ -22,9 +22,11 @@ internal fun buildValidFatFilename(name: String): String {
 private fun isValidFatFilenameChar(c: Char): Boolean {
     return if (c.code in 0x00..0x1f || c.code == 0x7F) {
         false
-    } else when (c) {
-        '"', '*', '/', ':', '<', '>', '?', '\\', '|' -> false
-        else -> true
+    } else {
+        when (c) {
+            '"', '*', '/', ':', '<', '>', '?', '\\', '|' -> false
+            else -> true
+        }
     }
 }
 

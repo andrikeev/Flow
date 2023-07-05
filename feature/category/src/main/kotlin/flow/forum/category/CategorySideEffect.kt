@@ -8,4 +8,3 @@ internal sealed interface CategorySideEffect {
     object ShowLoginDialog : CategorySideEffect
     object OpenLogin : CategorySideEffect
 }
-

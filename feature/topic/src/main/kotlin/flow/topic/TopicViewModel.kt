@@ -55,6 +55,7 @@ internal class TopicViewModel @Inject constructor(
     )
 
     fun perform(action: TopicAction): Any {
+        logger.d { "Perform $action" }
         return when (action) {
             is TopicAction.AddComment -> onAddComment(action.comment)
             is TopicAction.AddCommentClick -> onAddCommentClick()
@@ -85,7 +86,7 @@ internal class TopicViewModel @Inject constructor(
                             )
                         } else {
                             TopicContent.Topic(topic.title)
-                        }
+                        },
                     )
                 }
             }

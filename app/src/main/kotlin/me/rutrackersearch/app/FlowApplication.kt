@@ -14,15 +14,15 @@ class FlowApplication : Application() {
                 StrictMode.ThreadPolicy.Builder()
                     .detectAll()
                     .penaltyLog()
-                    //.penaltyDeath()
-                    .build()
+                    // .penaltyDeath()
+                    .build(),
             )
             StrictMode.setVmPolicy(
                 StrictMode.VmPolicy.Builder()
                     .detectAll()
                     .penaltyLog()
-                    //.penaltyDeath()
-                    .build()
+                    // .penaltyDeath()
+                    .build(),
             )
         }
         super.onCreate()

@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ApplicationExtension
+import flow.conventions.StaticAnalysisConventionPlugin
 import flow.conventions.configureAndroidCompose
 import flow.conventions.configureKotlinAndroid
 import org.gradle.api.Plugin
@@ -13,6 +14,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 apply("org.jetbrains.kotlin.android")
                 apply("com.google.gms.google-services")
                 apply("com.google.firebase.crashlytics")
+                apply(StaticAnalysisConventionPlugin::class.java)
             }
 
             extensions.configure<ApplicationExtension> {

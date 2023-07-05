@@ -10,16 +10,11 @@ import flow.network.api.NetworkApi
 import flow.network.data.NetworkApiRepository
 import flow.network.data.NetworkApiRepositoryImpl
 import flow.network.impl.SwitchingNetworkApi
-import io.ktor.client.*
-import io.ktor.client.engine.okhttp.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.logging.*
 import okhttp3.OkHttpClient
 import java.net.InetAddress
 import java.net.Socket
 import javax.inject.Singleton
 import javax.net.SocketFactory
-
 
 @Module
 @InstallIn(SingletonComponent::class)

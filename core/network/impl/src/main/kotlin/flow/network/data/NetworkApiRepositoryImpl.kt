@@ -61,7 +61,7 @@ internal class NetworkApiRepositoryImpl @Inject constructor(
                 install(ContentNegotiation) {
                     json(JsonFactory.create())
                 }
-            }
+            },
         )
     }
 
@@ -74,7 +74,7 @@ internal class NetworkApiRepositoryImpl @Inject constructor(
                     logger = networkLogger
                     level = LogLevel.ALL
                 }
-            }
+            },
         )
     }
 }

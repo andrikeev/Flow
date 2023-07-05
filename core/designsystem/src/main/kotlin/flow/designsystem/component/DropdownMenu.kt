@@ -59,12 +59,12 @@ fun DropdownMenu(
                     if (false isTransitioningTo true) {
                         tween(
                             durationMillis = DropdownMenuDefaults.EnterAnimationDurationMillis,
-                            easing = LinearOutSlowInEasing
+                            easing = LinearOutSlowInEasing,
                         )
                     } else {
                         tween(
                             durationMillis = DropdownMenuDefaults.ExitAnimationDurationMillis,
-                            delayMillis = DropdownMenuDefaults.ExitAnimationDelayMillis
+                            delayMillis = DropdownMenuDefaults.ExitAnimationDelayMillis,
                         )
                     }
                 },
@@ -82,7 +82,7 @@ fun DropdownMenu(
                     expandFrom = Alignment.Top,
                     animationSpec = tween(
                         durationMillis = DropdownMenuDefaults.EnterAnimationDurationMillis,
-                        easing = LinearOutSlowInEasing
+                        easing = LinearOutSlowInEasing,
                     ),
                     clip = false,
                 ),
@@ -90,7 +90,7 @@ fun DropdownMenu(
                     shrinkTowards = Alignment.Top,
                     animationSpec = tween(
                         durationMillis = DropdownMenuDefaults.ExitAnimationDurationMillis,
-                        delayMillis = DropdownMenuDefaults.ExitAnimationDelayMillis
+                        delayMillis = DropdownMenuDefaults.ExitAnimationDelayMillis,
                     ),
                     clip = false,
                 ),

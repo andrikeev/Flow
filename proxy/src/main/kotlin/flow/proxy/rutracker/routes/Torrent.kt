@@ -22,7 +22,7 @@ internal fun Application.configureTorrentRoutes() {
                 api.getTorrent(
                     token = call.request.authToken,
                     id = call.parameters.getOrFail("id"),
-                )
+                ),
             )
         }
 

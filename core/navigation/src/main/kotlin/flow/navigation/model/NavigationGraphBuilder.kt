@@ -49,7 +49,7 @@ private class NavigationGraphBuilderImpl(
                 content = content,
                 animations = animations,
                 options = options,
-            )
+            ),
         )
         if (isStartRoute) {
             startRoute = route
@@ -69,7 +69,7 @@ private class NavigationGraphBuilderImpl(
                 startRoute = startRoute,
                 destinations = destinations,
                 animations = animations,
-            )
+            ),
         )
         if (isStartRoute) {
             this.startRoute = route

@@ -21,7 +21,7 @@ internal fun Application.configureTopicRoutes() {
                     token = call.request.authToken,
                     id = call.parameters.getOrFail("id"),
                     page = call.request.queryParameters["page"]?.toIntOrNull(),
-                )
+                ),
             )
         }
 
@@ -31,7 +31,7 @@ internal fun Application.configureTopicRoutes() {
                     token = call.request.authToken,
                     id = call.parameters.getOrFail("id"),
                     page = call.request.queryParameters["page"]?.toIntOrNull(),
-                )
+                ),
             )
         }
 
@@ -41,7 +41,7 @@ internal fun Application.configureTopicRoutes() {
                     token = call.request.authToken,
                     id = call.parameters.getOrFail("id"),
                     page = call.request.queryParameters["page"]?.toIntOrNull(),
-                )
+                ),
             )
         }
 
@@ -51,7 +51,7 @@ internal fun Application.configureTopicRoutes() {
                     token = call.request.authToken,
                     topicId = call.parameters.getOrFail("id"),
                     message = call.receiveText(),
-                )
+                ),
             )
         }
     }

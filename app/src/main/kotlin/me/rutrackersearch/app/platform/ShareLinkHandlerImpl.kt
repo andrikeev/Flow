@@ -5,7 +5,7 @@ import android.content.Intent
 import flow.ui.platform.ShareLinkHandler
 
 class ShareLinkHandlerImpl(
-    private val context: Context
+    private val context: Context,
 ) : ShareLinkHandler {
     override fun shareLink(link: String) {
         val sendIntent = Intent().apply {

@@ -19,7 +19,7 @@ interface SnackbarHostState {
 }
 
 internal class DelegateSnackbarHostState(
-    private val realSnackbarHostState: androidx.compose.material3.SnackbarHostState
+    private val realSnackbarHostState: androidx.compose.material3.SnackbarHostState,
 ) : SnackbarHostState {
     override suspend fun clear() {
         realSnackbarHostState.currentSnackbarData?.dismiss()

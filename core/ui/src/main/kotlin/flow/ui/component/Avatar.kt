@@ -44,13 +44,12 @@ private fun AvatarPlaceholder() {
                 R.drawable.ic_avatar_dark
             } else {
                 R.drawable.ic_avatar_light
-            }
+            },
         ),
         contentDescription = null,
         colorFilter = ColorFilter.tint(color = AppTheme.colors.onPrimaryContainer),
     )
 }
-
 
 @ThemePreviews
 @Composable

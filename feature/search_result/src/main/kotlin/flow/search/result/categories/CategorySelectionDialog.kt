@@ -25,10 +25,10 @@ import flow.designsystem.component.Page
 import flow.designsystem.component.PagesScreen
 import flow.designsystem.component.Surface
 import flow.designsystem.component.TextButton
-import flow.ui.component.VisibilityState
 import flow.designsystem.theme.AppTheme
 import flow.models.forum.Category
 import flow.search.result.R
+import flow.ui.component.VisibilityState
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -95,10 +95,10 @@ internal fun CategorySelectionDialog(
                                     )
                                 }
                             }
-                        }
+                        },
                     )
                 }
-            }
+            },
         )
     }
 }

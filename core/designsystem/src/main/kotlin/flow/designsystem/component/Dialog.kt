@@ -116,7 +116,7 @@ private fun ConfirmationDialog(
             text = negativeButtonText,
             onClick = onDismiss,
         )
-    }
+    },
 )
 
 @Stable
@@ -185,7 +185,7 @@ private fun Dialog1Preview() {
 private fun Dialog2Preview() {
     FlowTheme {
         Dialog({}) {
-            Surface() {
+            Surface {
                 Text(text = "Text")
             }
         }
@@ -206,7 +206,7 @@ private fun ConfirmationDialogPreview() {
                     onConfirm = {},
                     onDismiss = {},
                 ),
-            )
+            ),
         )
     }
 }

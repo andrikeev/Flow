@@ -286,7 +286,7 @@ private fun ColorsPreview() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(AppTheme.spaces.large),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             mapOf(
                 "primary" to AppTheme.colors.primary,
@@ -307,7 +307,7 @@ private fun ColorsPreview() {
             ).entries.chunked(2).forEach { chunk ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
                     chunk.forEach { (name, color) ->
                         Column(
@@ -319,7 +319,7 @@ private fun ColorsPreview() {
                             Box(
                                 modifier = Modifier
                                     .size(200.dp, 65.dp)
-                                    .background(color, AppTheme.shapes.small)
+                                    .background(color, AppTheme.shapes.small),
                             )
                             Label(
                                 modifier = Modifier.padding(top = AppTheme.spaces.small),

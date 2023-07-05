@@ -131,7 +131,6 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
     override suspend fun favorites(token: String, page: Int?) = httpClient.get(Bookmarks) {
         header(CookieHeader, token)
         parameter("start", page?.let { (50 * (page - 1)).toString() })
-
     }.bodyAsText()
 
     override suspend fun addFavorite(
@@ -210,7 +209,7 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
     private suspend inline fun HttpClient.submitForm(
         url: String,
         formParameters: Parameters = Parameters.Empty,
-        block: HttpRequestBuilder.() -> Unit = {}
+        block: HttpRequestBuilder.() -> Unit = {},
     ): HttpResponse = request {
         url(url)
         method = HttpMethod.Post

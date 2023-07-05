@@ -44,7 +44,7 @@ fun addSearchInput(
                     OrderKey,
                     PeriodKey,
                 )
-            }
+            },
         ),
         arguments = listOf(
             NavigationArgument(QueryKey, true),
@@ -80,8 +80,8 @@ fun openSearchInput(filter: Filter = Filter()) {
                     OrderKey to filter.order.queryParam,
                     PeriodKey to filter.period.queryParam,
                 )
-            }
-        )
+            },
+        ),
     )
 }
 
@@ -94,8 +94,8 @@ fun openSearchInput(categoryId: String) {
                 appendOptionalParams(
                     CategoriesKey to categoryId,
                 )
-            }
-        )
+            },
+        ),
     )
 }
 
@@ -158,7 +158,6 @@ private fun Order.Companion.fromQueryParam(param: String?) = when (param) {
     "2" -> Order.DESCENDING
     else -> Order.ASCENDING
 }
-
 
 private val Period.queryParam
     get() = when (this) {

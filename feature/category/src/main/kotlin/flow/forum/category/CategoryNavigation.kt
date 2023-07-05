@@ -28,7 +28,7 @@ fun addCategory(
 ) = addDestination(
     route = buildRoute(
         route = CategoryRoute,
-        requiredArgsBuilder = { appendRequiredArgs(CategoryIdKey) }
+        requiredArgsBuilder = { appendRequiredArgs(CategoryIdKey) },
     ),
     arguments = listOf(NavigationArgument(CategoryIdKey)),
     deepLinks = deepLinkUrls.map { url ->
@@ -51,8 +51,8 @@ fun openCategory(id: String) {
     navigate(
         buildRoute(
             route = CategoryRoute,
-            requiredArgsBuilder = { appendRequiredParams(id) }
-        )
+            requiredArgsBuilder = { appendRequiredParams(id) },
+        ),
     )
 }
 

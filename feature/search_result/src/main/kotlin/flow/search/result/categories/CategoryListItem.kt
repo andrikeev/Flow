@@ -87,7 +87,7 @@ internal fun ExpandableSelectableCategoryListItem(
         } else {
             AppTheme.elevations.zero
         },
-        label = "ExpandableSelectableCategoryListItem_Elevation"
+        label = "ExpandableSelectableCategoryListItem_Elevation",
     )
     Surface(
         onClick = onExpand,

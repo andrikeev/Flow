@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class SecurePreferencesFactoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) : SecurePreferencesFactory {
 
     private val mainKey = MasterKey.Builder(context)

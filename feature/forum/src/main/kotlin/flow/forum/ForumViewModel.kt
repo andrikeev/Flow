@@ -64,7 +64,7 @@ internal class ForumViewModel @Inject constructor(
                         } else {
                             expandable.copy(expanded = false)
                         }
-                    }
+                    },
                 )
 
                 is ForumState.Loading -> state

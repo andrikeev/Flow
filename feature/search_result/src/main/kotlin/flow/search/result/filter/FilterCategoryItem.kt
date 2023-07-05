@@ -7,12 +7,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.Icon
-import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.models.forum.Category
 import flow.search.result.R
 import flow.search.result.categories.CategorySelectionDialog
+import flow.ui.component.rememberVisibilityState
 
 @Composable
 internal fun FilterCategoryItem(
@@ -42,7 +42,7 @@ internal fun FilterCategoryItem(
                     selected.size == 1 -> selected.first().name
                     else -> stringResource(
                         R.string.search_screen_filter_category_counter,
-                        selected.size
+                        selected.size,
                     )
                 },
                 maxLines = 1,

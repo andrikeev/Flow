@@ -25,13 +25,13 @@ class AccountItemTest {
 
         composeTestRule
             .onNodeWithContentDescription(
-                composeTestRule.stringResource(R.string.account_item_avatar_content_description)
+                composeTestRule.stringResource(R.string.account_item_avatar_content_description),
             )
             .assertExists()
 
         composeTestRule
             .onNodeWithText(
-                composeTestRule.stringResource(R.string.account_item_login_action)
+                composeTestRule.stringResource(R.string.account_item_login_action),
             )
             .assertExists()
             .assertHasClickAction()
@@ -52,7 +52,7 @@ class AccountItemTest {
 
         composeTestRule
             .onNodeWithContentDescription(
-                composeTestRule.stringResource(R.string.account_item_avatar_content_description)
+                composeTestRule.stringResource(R.string.account_item_avatar_content_description),
             )
             .assertExists()
 
@@ -62,7 +62,7 @@ class AccountItemTest {
 
         composeTestRule
             .onNodeWithText(
-                composeTestRule.stringResource(R.string.account_item_logout_action)
+                composeTestRule.stringResource(R.string.account_item_logout_action),
             )
             .assertExists()
             .assertHasClickAction()

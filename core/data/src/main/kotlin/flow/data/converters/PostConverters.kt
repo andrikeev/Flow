@@ -69,7 +69,7 @@ private fun List<PostElementDto>.toContent(): Content {
                     TextContent.TextRow(group.filterIsInstance<TextContent>())
                 } else {
                     ContentRow(group)
-                }
+                },
             )
         }
 
@@ -119,7 +119,7 @@ private fun List<PostElementDto>.toContent(): Content {
                 PostContent.Align(
                     postElementDto.textAlignment,
                     postElementDto.children.toContent(),
-                )
+                ),
             )
 
             is Bold -> addContent(
@@ -127,7 +127,7 @@ private fun List<PostElementDto>.toContent(): Content {
                     TextContent.Bold(postElementDto.children.toTextContent())
                 } else {
                     PostContent.Bold(postElementDto.children.toContent())
-                }
+                },
             )
 
             is Box -> addContent(PostContent.Box(postElementDto.children.toContent()))
@@ -138,7 +138,7 @@ private fun List<PostElementDto>.toContent(): Content {
                 PostContent.Code(
                     postElementDto.title,
                     postElementDto.children.toContent(),
-                )
+                ),
             )
 
             is Color -> addContent(
@@ -152,7 +152,7 @@ private fun List<PostElementDto>.toContent(): Content {
                         postElementDto.textColor,
                         postElementDto.children.toContent(),
                     )
-                }
+                },
             )
 
             is Crossed -> addContent(
@@ -160,7 +160,7 @@ private fun List<PostElementDto>.toContent(): Content {
                     TextContent.Crossed(postElementDto.children.toTextContent())
                 } else {
                     PostContent.Crossed(postElementDto.children.toContent())
-                }
+                },
             )
 
             is Hr -> addDivider()
@@ -174,7 +174,7 @@ private fun List<PostElementDto>.toContent(): Content {
                     TextContent.Italic(postElementDto.children.toTextContent())
                 } else {
                     PostContent.Italic(postElementDto.children.toContent())
-                }
+                },
             )
 
             is Link -> addContent(
@@ -182,7 +182,7 @@ private fun List<PostElementDto>.toContent(): Content {
                     TextContent.Link(postElementDto.src, postElementDto.children.toTextContent())
                 } else {
                     PostContent.Link(postElementDto.src, postElementDto.children.toContent())
-                }
+                },
             )
 
             is PostBr -> addSpacer()
@@ -191,21 +191,21 @@ private fun List<PostElementDto>.toContent(): Content {
                 PostContent.Quote(
                     postElementDto.title,
                     postElementDto.children.toContent(),
-                )
+                ),
             )
 
             is Size -> addContent(
                 PostContent.Size(
                     postElementDto.size.coerceIn(14, 20),
                     postElementDto.children.toContent(),
-                )
+                ),
             )
 
             is Spoiler -> addContent(
                 PostContent.Spoiler(
                     postElementDto.title,
                     postElementDto.children.toContent(),
-                )
+                ),
             )
 
             is Text -> addContent(TextContent.Text(postElementDto.value))
@@ -217,7 +217,7 @@ private fun List<PostElementDto>.toContent(): Content {
                     TextContent.Underscore(postElementDto.children.toTextContent())
                 } else {
                     PostContent.Underscore(postElementDto.children.toContent())
-                }
+                },
             )
         }
     }

@@ -29,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -81,7 +80,7 @@ fun ExpandableAppBar(
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
-            exit =  shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
+            exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
             content = { expandableContent() },
         )
     }
@@ -122,7 +121,8 @@ fun TabAppBar(
                     {
                         Icon(
                             icon = page.icon,
-                            contentDescription = page.labelResId?.let { stringResource(it) })
+                            contentDescription = page.labelResId?.let { stringResource(it) },
+                        )
                     }
                 },
             )
@@ -180,12 +180,6 @@ private fun AppBar(
         actionIconContentColor = AppTheme.colors.onSurface,
     ),
 )
-
-@Stable
-interface AppBarBehavior {
-    val appBarState: AppBarState
-    val nestedScrollConnection: NestedScrollConnection
-}
 
 @Stable
 interface AppBarState {

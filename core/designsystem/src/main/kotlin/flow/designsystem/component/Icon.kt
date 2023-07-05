@@ -26,14 +26,14 @@ fun Icon(
         modifier = modifier,
         painter = painterResource(id = icon.id),
         contentDescription = contentDescription,
-        tint = tint
+        tint = tint,
     )
 
     is Icon.ImageVectorIcon -> Icon(
         modifier = modifier,
         imageVector = icon.imageVector,
         contentDescription = contentDescription,
-        tint = tint
+        tint = tint,
     )
 }
 
@@ -51,26 +51,7 @@ fun ExpandCollapseIcon(
                 R.string.designsystem_content_description_state_expanded
             } else {
                 R.string.designsystem_content_description_state_collapsed
-            }
-        ),
-    )
-}
-
-@Composable
-fun DropDownExpandCollapseIcon(
-    expanded: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    val rotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f)
-    Icon(
-        modifier = modifier.rotate(rotation),
-        icon = FlowIcons.DropDownExpand,
-        contentDescription = stringResource(
-            if (expanded) {
-                R.string.designsystem_content_description_state_expanded
-            } else {
-                R.string.designsystem_content_description_state_collapsed
-            }
+            },
         ),
     )
 }

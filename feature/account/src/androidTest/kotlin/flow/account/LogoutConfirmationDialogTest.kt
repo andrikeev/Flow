@@ -25,7 +25,7 @@ class LogoutConfirmationDialogTest {
                     title = R.string.account_item_logout_title,
                     text = R.string.account_item_logout_confirmation,
                     onConfirm = {},
-                    onDismiss = {}
+                    onDismiss = {},
                 )
             }
             ConfirmationDialog(confirmationDialogState)
@@ -33,26 +33,26 @@ class LogoutConfirmationDialogTest {
 
         composeTestRule
             .onNodeWithText(
-                composeTestRule.stringResource(R.string.account_item_logout_title)
+                composeTestRule.stringResource(R.string.account_item_logout_title),
             )
             .assertExists()
 
         composeTestRule
             .onNodeWithText(
-                composeTestRule.stringResource(R.string.account_item_logout_confirmation)
+                composeTestRule.stringResource(R.string.account_item_logout_confirmation),
             )
             .assertExists()
 
         composeTestRule
             .onNodeWithText(
-                composeTestRule.stringResource(DR.string.designsystem_action_yes)
+                composeTestRule.stringResource(DR.string.designsystem_action_yes),
             )
             .assertExists()
             .assertHasClickAction()
 
         composeTestRule
             .onNodeWithText(
-                composeTestRule.stringResource(DR.string.designsystem_action_no)
+                composeTestRule.stringResource(DR.string.designsystem_action_no),
             )
             .assertExists()
             .assertHasClickAction()

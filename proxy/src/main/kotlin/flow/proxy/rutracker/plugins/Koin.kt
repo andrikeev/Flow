@@ -2,8 +2,13 @@ package flow.proxy.rutracker.plugins
 
 import flow.proxy.rutracker.di.appModule
 import io.ktor.events.EventDefinition
-import io.ktor.server.application.*
-import io.ktor.util.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationStopping
+import io.ktor.server.application.BaseApplicationPlugin
+import io.ktor.server.application.install
+import io.ktor.server.application.pluginOrNull
+import io.ktor.util.AttributeKey
+import io.ktor.util.KtorDsl
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin

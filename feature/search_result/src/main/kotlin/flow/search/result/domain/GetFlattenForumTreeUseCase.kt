@@ -54,8 +54,8 @@ internal class GetFlattenForumTreeUseCase @Inject constructor(
                                                 SelectState.Selected
                                             } else {
                                                 SelectState.Unselected
-                                            }
-                                        )
+                                            },
+                                        ),
                                     )
                                 }
                             }

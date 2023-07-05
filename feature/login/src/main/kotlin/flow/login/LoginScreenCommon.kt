@@ -32,15 +32,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import flow.designsystem.component.Button
 import flow.designsystem.component.CircularProgressIndicator
 import flow.designsystem.component.Icon
+import flow.designsystem.component.OutlinedTextField
 import flow.designsystem.component.Placeholder
 import flow.designsystem.component.Text
-import flow.designsystem.component.OutlinedTextField
 import flow.designsystem.component.onEnter
-import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.models.auth.Captcha
 import flow.ui.component.RemoteImage
+import flow.ui.component.rememberVisibilityState
 
 @Composable
 internal fun LoginScreenHeader() = Placeholder(
@@ -80,8 +80,8 @@ internal fun UsernameInputField(
                     is InputState.Empty -> R.string.login_screen_username_empty_label
                     is InputState.Invalid -> R.string.login_screen_wrong_credits_label
                     else -> R.string.login_screen_username_hint
-                }
-            )
+                },
+            ),
         )
     },
     leadingIcon = {
@@ -139,8 +139,8 @@ internal fun PasswordInputField(
                         is InputState.Empty -> R.string.login_screen_password_empty_label
                         is InputState.Invalid -> R.string.login_screen_wrong_credits_label
                         else -> R.string.login_screen_password_hint
-                    }
-                )
+                    },
+                ),
             )
         },
         leadingIcon = {
@@ -202,8 +202,8 @@ internal fun CaptchaInputField(
                     is InputState.Empty -> R.string.login_screen_captcha_empty_label
                     is InputState.Invalid -> R.string.login_screen_captcha_empty_label
                     else -> R.string.login_screen_captcha_hint
-                }
-            )
+                },
+            ),
         )
     },
     leadingIcon = {

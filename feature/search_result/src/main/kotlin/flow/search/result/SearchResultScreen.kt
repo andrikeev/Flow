@@ -102,7 +102,7 @@ private fun SearchAppBar(
         FilterButton(
             expanded = state.appBarExpanded,
             icon = state.filter.icon,
-            onClick = { onAction(SearchResultAction.ExpandAppBarClick) }
+            onClick = { onAction(SearchResultAction.ExpandAppBarClick) },
         )
     },
     expanded = state.appBarExpanded,
@@ -128,7 +128,7 @@ private fun FilterButton(
 ) {
     val rotation by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
-        label = "FilterButton_Rotation"
+        label = "FilterButton_Rotation",
     )
     IconButton(onClick = onClick) {
         Icon(
@@ -190,9 +190,11 @@ private fun SearchResultList(
         is LoadState.Loading -> loadingItem()
         is LoadState.NotLoading -> when (state.searchContent) {
             is SearchResultContent.Content -> {
-                items(items = state.searchContent.torrents,
+                items(
+                    items = state.searchContent.torrents,
                     key = { it.topic.id },
-                    contentType = { it.topic::class }) { item ->
+                    contentType = { it.topic::class },
+                ) { item ->
                     TopicListItem(
                         modifier = Modifier.padding(
                             horizontal = AppTheme.spaces.mediumLarge,

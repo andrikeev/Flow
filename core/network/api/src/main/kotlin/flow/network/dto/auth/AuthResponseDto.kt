@@ -8,9 +8,11 @@ sealed interface AuthResponseDto {
     @Serializable
     @SerialName("Success")
     data class Success(val user: UserDto) : AuthResponseDto
+
     @Serializable
     @SerialName("WrongCredits")
     data class WrongCredits(val captcha: CaptchaDto?) : AuthResponseDto
+
     @Serializable
     @SerialName("CaptchaRequired")
     data class CaptchaRequired(val captcha: CaptchaDto?) : AuthResponseDto

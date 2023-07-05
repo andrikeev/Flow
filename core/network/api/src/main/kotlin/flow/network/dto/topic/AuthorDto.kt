@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class AuthorDto(
     val id: String? = null,
     val name: String,
-    val avatarUrl: String? = null
+    val avatarUrl: String? = null,
 )

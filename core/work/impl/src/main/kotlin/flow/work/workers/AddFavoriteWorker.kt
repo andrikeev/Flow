@@ -21,7 +21,7 @@ internal class AddFavoriteWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork() = runCatching(
         block = { addRemoteFavoriteUseCase(inputData.id) },
-        onFailure = { removeLocalFavoriteUseCase(inputData.id) }
+        onFailure = { removeLocalFavoriteUseCase(inputData.id) },
     )
 
     override suspend fun getForegroundInfo() = notificationService.createForegroundInfo()

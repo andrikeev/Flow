@@ -48,7 +48,7 @@ fun addSearchResult(
                 OrderKey,
                 PeriodKey,
             )
-        }
+        },
     ),
     arguments = listOf(
         NavigationArgument(QueryKey, true),
@@ -71,7 +71,7 @@ fun addSearchResult(
                     OrderKey,
                     PeriodKey,
                 )
-            }
+            },
         )
     },
     animations = animations,
@@ -100,8 +100,8 @@ fun openSearchResult(filter: Filter) {
                     OrderKey to filter.order.queryParam,
                     PeriodKey to filter.period.queryParam,
                 )
-            }
-        )
+            },
+        ),
     )
 }
 
@@ -164,7 +164,6 @@ private fun Order.Companion.fromQueryParam(param: String?) = when (param) {
     "2" -> Order.DESCENDING
     else -> Order.ASCENDING
 }
-
 
 private val Period.queryParam
     get() = when (this) {

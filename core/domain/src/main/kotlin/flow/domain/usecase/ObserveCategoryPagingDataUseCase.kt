@@ -36,7 +36,7 @@ class ObserveCategoryPagingDataUseCase @Inject constructor(
                 enrichTopicsUseCase(forumItems.topics()).map { topicModels ->
                     CategoryPage(
                         categories = forumItems.categories(),
-                        topics = topicModels
+                        topics = topicModels,
                     )
                 }
             },

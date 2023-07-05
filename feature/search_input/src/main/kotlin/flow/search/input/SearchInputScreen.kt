@@ -92,7 +92,7 @@ private fun SearchInputScreen(
         ) {
             items(
                 items = state.suggests,
-                key = { item -> item.value }
+                key = { item -> item.value },
             ) { item ->
                 SuggestItem(
                     suggest = item,
@@ -168,7 +168,7 @@ private fun SearchInputField(
             imeAction = ImeAction.Search,
         ),
         keyboardActions = KeyboardActions(
-            onSearch = { onSubmitClick() }
+            onSearch = { onSubmitClick() },
         ),
     )
 }
@@ -186,13 +186,13 @@ private fun SuggestItem(
 ) {
     Row(
         modifier = Modifier.padding(horizontal = AppTheme.spaces.large),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(icon = FlowIcons.History, contentDescription = null)
         Box(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = AppTheme.spaces.large)
+                .padding(horizontal = AppTheme.spaces.large),
         ) {
             SuggestText(value = suggest.value, substring = suggest.substring)
         }
@@ -222,7 +222,7 @@ private fun SuggestText(value: String, substring: IntRange?) {
                 if (value.lastIndex > substringEndIndex) {
                     append(value.substring(substringEndIndex + 1))
                 }
-            }
+            },
         )
     }
 }

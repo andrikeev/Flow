@@ -8,7 +8,7 @@ import java.io.File
 import java.net.URI
 
 class OpenFileHandlerImpl(
-    private val context: Context
+    private val context: Context,
 ) : OpenFileHandler {
     override fun openFile(uri: String) {
         val fileUri = FileProvider.getUriForFile(

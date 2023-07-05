@@ -65,7 +65,7 @@ internal fun <T> FilterDropdownItem(
                         onClick = {
                             onSelect(item)
                             dropdownState.collapse()
-                        }
+                        },
                     )
                 }
             }

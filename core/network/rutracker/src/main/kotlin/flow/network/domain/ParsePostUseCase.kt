@@ -85,7 +85,6 @@ internal object ParsePostUseCase {
                     } else {
                         image(node.attr("title"))
                     }
-
                 }
 
                 node.hasClass("post-ul") -> uList { appendElement(node) }
@@ -118,11 +117,11 @@ internal object ParsePostUseCase {
     private fun ElementsList.text(value: String) {
         val textBlocks = value.split("\n").filter { it.isNotBlank() }
         textBlocks.forEachIndexed { index, text ->
-                add(Text(text))
-                if (index != textBlocks.lastIndex) {
-                    add(Br)
-                }
+            add(Text(text))
+            if (index != textBlocks.lastIndex) {
+                add(Br)
             }
+        }
     }
 
     private fun ElementsList.align(alignment: TextAlignment, block: ElementsList.() -> Unit) {
@@ -215,8 +214,8 @@ internal object ParsePostUseCase {
                                 } else {
                                     it.toString()
                                 }
-                            }
-                        )
+                            },
+                        ),
                     )
                 }
 
@@ -231,7 +230,7 @@ internal object ParsePostUseCase {
                             ColorValue.Hex(colorValue.drop(1).toLong())
                         } else {
                             ColorValue.Name(colorValue)
-                        }
+                        },
                     )
                 }
 

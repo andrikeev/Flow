@@ -16,13 +16,13 @@ internal sealed interface ForumTreeItem {
         override val name: String,
         val expandable: Boolean,
         val expanded: Boolean,
-        val selectState: SelectState
+        val selectState: SelectState,
     ) : ForumTreeItem
 
     data class Category(
         override val id: String,
         override val name: String,
-        val selectState: SelectState
+        val selectState: SelectState,
     ) : ForumTreeItem
 }
 

@@ -114,7 +114,7 @@ private fun Topic(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .align(CenterVertically)
+                .align(CenterVertically),
         ) {
             Spacer(modifier = Modifier.height(AppTheme.spaces.mediumLarge))
             topic.category?.takeIf { showCategory }?.let { category ->
@@ -134,7 +134,7 @@ private fun Topic(
         if (action != null) {
             Box(
                 modifier = Modifier.padding(AppTheme.spaces.medium),
-                content = { action() }
+                content = { action() },
             )
         } else {
             Spacer(modifier = Modifier.width(AppTheme.spaces.large))
@@ -168,7 +168,7 @@ private fun Torrent(
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .align(CenterVertically)
+                        .align(CenterVertically),
                 ) {
                     Spacer(modifier = Modifier.height(AppTheme.spaces.mediumLarge))
                     torrent.category?.takeIf { showCategory }?.let { category ->
@@ -183,7 +183,7 @@ private fun Torrent(
                 if (action != null) {
                     Box(
                         modifier = Modifier.padding(AppTheme.spaces.medium),
-                        content = { action() }
+                        content = { action() },
                     )
                 } else {
                     Spacer(modifier = Modifier.width(AppTheme.spaces.large))
@@ -245,7 +245,7 @@ private fun TopicListItem() {
                         size = "92.73 GB",
                         seeds = 28,
                         leeches = 0,
-                    )
+                    ),
                 ),
                 onClick = {},
                 onFavoriteClick = {},
@@ -316,6 +316,5 @@ private fun TopicListItem() {
                 onFavoriteClick = {},
             )
         }
-
     }
 }

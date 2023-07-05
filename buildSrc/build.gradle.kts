@@ -16,6 +16,7 @@ dependencies {
     implementation(libs.kotlin.serializationPlugin)
     implementation(libs.ktor.gradlePlugin)
     implementation(libs.hilt.gradlePlugin)
+    implementation(libs.spotless.gradlePlugin)
 }
 
 kotlin {

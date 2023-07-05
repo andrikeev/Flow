@@ -43,6 +43,6 @@ internal suspend fun ListenableWorker.runCatching(
                     runCatching { coroutineScope { onFailure() } }
                     failure()
                 }
-            }
+            },
         )
 }

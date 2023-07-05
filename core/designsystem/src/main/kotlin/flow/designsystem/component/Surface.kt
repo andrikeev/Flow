@@ -86,10 +86,10 @@ fun Surface(
                     indication = rememberRipple(),
                     enabled = enabled,
                     role = Role.Button,
-                    onClick = onClick
+                    onClick = onClick,
                 ),
             propagateMinConstraints = true,
-            content = content
+            content = content,
         )
     }
 }
@@ -130,14 +130,13 @@ fun InvertedSurface(
                     indication = rememberRipple(),
                     enabled = enabled,
                     role = Role.Button,
-                    onClick = onClick
+                    onClick = onClick,
                 ),
             propagateMinConstraints = true,
-            content = content
+            content = content,
         )
     }
 }
-
 
 @Composable
 internal fun Color.atElevation(elevation: Dp): Color {

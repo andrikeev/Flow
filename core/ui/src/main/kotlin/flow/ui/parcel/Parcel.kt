@@ -151,7 +151,7 @@ fun <K, V> Parcel.writeMap(
     map: Map<K, V>?,
     keyWriter: (K, Parcel, Int) -> Unit,
     valueWriter: (V, Parcel, Int) -> Unit,
-    flags: Int
+    flags: Int,
 ) {
     if (map == null) {
         writeInt(-1)
@@ -167,7 +167,7 @@ fun <K, V> Parcel.writeMap(
 
 fun <K, V> Parcel.readMap(
     keyReader: (Parcel) -> K,
-    valueReader: (Parcel) -> V
+    valueReader: (Parcel) -> V,
 ): Map<K, V>? {
     return when (val size = readInt()) {
         -1 -> null
@@ -185,7 +185,7 @@ fun <K, V> Parcel.readMap(
 
 fun <K, V> Parcel.requireMap(
     keyReader: (Parcel) -> K,
-    valueReader: (Parcel) -> V
+    valueReader: (Parcel) -> V,
 ): Map<K, V> {
     return checkNotNull(readMap(keyReader, valueReader)) {
         "required map value is null or missing"

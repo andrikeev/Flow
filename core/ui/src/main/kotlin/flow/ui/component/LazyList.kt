@@ -33,7 +33,7 @@ fun LazyListScope.appendItems(
         Box(
             modifier = Modifier
                 .height(AppTheme.sizes.default)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         ) {
             CircularProgressIndicator(
                 modifier = Modifier
@@ -76,20 +76,6 @@ fun LazyListScope.loadingItem(
 ) = item {
     Loading(
         modifier = if (fillParentMaxSize) Modifier.fillParentMaxSize() else Modifier,
-    )
-}
-
-fun LazyListScope.errorItem(
-    error: Throwable,
-    fillParentMaxSize: Boolean = true,
-    onRetryClick: (() -> Unit)? = null,
-) = item {
-    Error(
-        modifier = if (fillParentMaxSize) Modifier.fillParentMaxSize() else Modifier,
-        titleRes = error.getErrorTitleRes(),
-        subtitleRes = error.getStringRes(),
-        imageRes = error.getIllRes(),
-        onRetryClick = onRetryClick,
     )
 }
 

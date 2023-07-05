@@ -33,5 +33,5 @@ val LoginState.hasCaptcha: Boolean
 
 val LoginState.isValid: Boolean
     get() = usernameInput.isValid() &&
-            passwordInput.isValid() &&
-            (!hasCaptcha || captchaInput.isValid())
+        passwordInput.isValid() &&
+        (!hasCaptcha || captchaInput.isValid())

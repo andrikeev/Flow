@@ -3,7 +3,6 @@ package flow.search.result
 import flow.domain.model.LoadStates
 import flow.models.forum.Category
 import flow.models.search.Filter
-import flow.models.search.Period
 import flow.models.topic.TopicModel
 import flow.models.topic.Torrent
 
@@ -22,12 +21,6 @@ internal sealed interface SearchResultContent {
         val categories: List<Category>,
     ) : SearchResultContent
 }
-
-internal val SearchPageState.showFilterBadge: Boolean
-    get() = !appBarExpanded &&
-            (filter.period != Period.ALL_TIME ||
-                    filter.author != null ||
-                    !filter.categories.isNullOrEmpty())
 
 internal val SearchPageState.categories
     get() = when (searchContent) {

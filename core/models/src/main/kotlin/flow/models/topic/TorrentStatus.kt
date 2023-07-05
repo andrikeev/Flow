@@ -13,7 +13,8 @@ enum class TorrentStatus {
 
 fun TorrentStatus?.isValid(): Boolean = when (this) {
     TorrentStatus.CLOSED,
-    TorrentStatus.CONSUMED -> false
+    TorrentStatus.CONSUMED,
+    -> false
 
     else -> true
 }

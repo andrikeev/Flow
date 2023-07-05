@@ -26,7 +26,7 @@ internal class GetCategoryPageUseCase(private val api: RuTrackerInnerApi) {
 
         private fun isForumExists(html: String): Boolean {
             return !html.contains("Ошибочный запрос: не задан forum_id") and
-                    !html.contains("Такого форума не существует")
+                !html.contains("Такого форума не существует")
         }
 
         private fun isForumAvailableForUser(html: String): Boolean {
@@ -78,8 +78,8 @@ internal class GetCategoryPageUseCase(private val api: RuTrackerInnerApi) {
                             author = author,
                             size = size,
                             seeds = seeds,
-                            leeches = leeches
-                        )
+                            leeches = leeches,
+                        ),
                     )
                 }
             }

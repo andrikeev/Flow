@@ -23,7 +23,7 @@ class DownloadTorrentUseCase @Inject constructor(
                     title = title,
                     uri = networkApiRepository.getDownloadUri(id),
                     headers = listOf(networkApiRepository.getAuthHeader(token)),
-                )
+                ),
             )
         }
     }

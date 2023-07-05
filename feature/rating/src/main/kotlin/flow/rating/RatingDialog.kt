@@ -165,14 +165,14 @@ private fun RatingStar(state: RatingStarState) {
             .scale(scale),
         icon = state.icon,
         tint = AppTheme.colors.accentOrange,
-        contentDescription = null
+        contentDescription = null,
     )
 }
 
 private enum class RatingStarState(val icon: Icon) {
     Empty(FlowIcons.StarEmpty),
     Half(FlowIcons.StarHalf),
-    Full(FlowIcons.StarFull);
+    Full(FlowIcons.StarFull),
 }
 
 @ThemePreviews

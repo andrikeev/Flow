@@ -79,7 +79,7 @@ fun LazyList(
         contentPadding = contentPadding,
         horizontalAlignment = horizontalAlignment,
         verticalArrangement = verticalArrangement,
-        content = content
+        content = content,
     )
 }
 

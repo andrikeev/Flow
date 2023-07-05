@@ -27,7 +27,7 @@ internal fun Application.configureSearchRoutes() {
                     sortOrder = call.request.queryParameters["order"]?.toEnumOrNull<SearchSortOrderDto>(),
                     period = call.request.queryParameters["period"]?.toEnumOrNull<SearchPeriodDto>(),
                     page = call.request.queryParameters["page"]?.toIntOrNull(),
-                )
+                ),
             )
         }
     }

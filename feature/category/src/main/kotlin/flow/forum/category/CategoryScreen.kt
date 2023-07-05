@@ -28,18 +28,18 @@ import flow.designsystem.component.SearchButton
 import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.TextButton
-import flow.ui.component.VisibilityState
-import flow.ui.component.rememberVisibilityState
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.models.LoadState
 import flow.models.forum.Category
 import flow.navigation.viewModel
 import flow.ui.component.TopicListItem
+import flow.ui.component.VisibilityState
 import flow.ui.component.appendItems
 import flow.ui.component.emptyItem
 import flow.ui.component.errorItem
 import flow.ui.component.loadingItem
+import flow.ui.component.rememberVisibilityState
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -131,7 +131,7 @@ private fun CategoryScreenList(
                     ) { category ->
                         Category(
                             category = category,
-                            onClick = { onAction(CategoryAction.CategoryClick(category)) }
+                            onClick = { onAction(CategoryAction.CategoryClick(category)) },
                         )
                     }
                     items(

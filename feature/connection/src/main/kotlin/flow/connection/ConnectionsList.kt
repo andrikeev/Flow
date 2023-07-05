@@ -152,7 +152,7 @@ private fun Endpoint(
                                 R.string.content_description_endpoint_selected
                             } else {
                                 R.string.content_description_endpoint_not_selected
-                            }
+                            },
                         ),
                         onClick = { onAction(SelectEndpoint(endpoint)) },
                     )
@@ -169,7 +169,7 @@ private fun Endpoint(
                             is Endpoint.Proxy -> R.string.connection_endpoint_proxy
                             is Endpoint.Rutracker -> R.string.connection_endpoint_rutracker
                             is Endpoint.Mirror -> R.string.connection_endpoint_mirror
-                        }
+                        },
                     ),
                 )
                 Text(
@@ -186,7 +186,7 @@ private fun Endpoint(
 @Composable
 private fun AddConnectionItem(
     state: ConnectionsState,
-    onAction: (ConnectionsAction) -> Unit
+    onAction: (ConnectionsAction) -> Unit,
 ) = AnimatedVisibility(
     visible = state.edit,
     enter = fadeIn() + expandVertically { 0 },
@@ -214,7 +214,7 @@ private fun AddConnectionItem(
             Icon(
                 icon = FlowIcons.Add,
                 contentDescription = null,
-                tint = AppTheme.colors.outline
+                tint = AppTheme.colors.outline,
             )
         },
         prefix = {
