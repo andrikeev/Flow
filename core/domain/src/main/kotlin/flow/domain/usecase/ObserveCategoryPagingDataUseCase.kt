@@ -1,5 +1,6 @@
 package flow.domain.usecase
 
+import flow.common.mapInstanceOf
 import flow.data.api.service.ForumService
 import flow.domain.model.PagingAction
 import flow.domain.model.PagingData
@@ -7,6 +8,7 @@ import flow.domain.model.PagingDataLoader
 import flow.domain.model.category.CategoryPage
 import flow.domain.model.refresh
 import flow.logger.api.LoggerFactory
+import flow.models.forum.ForumItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -35,7 +37,8 @@ class ObserveCategoryPagingDataUseCase @Inject constructor(
             transform = { forumItems ->
                 enrichTopicsUseCase(forumItems.topics()).map { topicModels ->
                     CategoryPage(
-                        categories = forumItems.categories(),
+                        categories = forumItems.mapInstanceOf(ForumItem.Category::category),
+                        sections = forumItems.mapInstanceOf(ForumItem.Section::section),
                         topics = topicModels,
                     )
                 }

@@ -10,7 +10,13 @@ data class ForumCategory(
     val children: List<ForumCategory> = emptyList(),
 )
 
+data class ForumSection(
+    val name: String,
+    val topics: List<String>,
+)
+
 sealed interface ForumItem {
     data class Category(val category: flow.models.forum.Category) : ForumItem
+    data class Section(val section: ForumSection) : ForumItem
     data class Topic(val topic: flow.models.topic.Topic) : ForumItem
 }
