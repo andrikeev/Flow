@@ -7,10 +7,10 @@ import org.gradle.api.JavaVersion
  * Configure base Kotlin with Android options
  */
 internal fun configureKotlinAndroid(
-    commonExtension: CommonExtension<*, *, *, *>,
+    commonExtension: CommonExtension<*, *, *, *, *>,
 ) {
     commonExtension.apply {
-        compileSdk = 33
+        compileSdk = 34
 
         defaultConfig {
             minSdk = 21
