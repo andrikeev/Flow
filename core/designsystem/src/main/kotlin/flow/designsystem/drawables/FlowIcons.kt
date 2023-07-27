@@ -94,7 +94,7 @@ object FlowIcons {
     val Favorite: Icon = Icon.ImageVectorIcon(MaterialIcons.Favorite)
     val FavoriteChecked: Icon = Icon.ImageVectorIcon(MaterialIcons.Favorite)
     val FavoriteUnchecked: Icon = Icon.ImageVectorIcon(MaterialIcons.FavoriteBorder)
-    val FolderDownload: Icon = Icon.DrawableResourceIcon(R.drawable.ic_folder_download)
+    val FileSize: Icon = Icon.DrawableResourceIcon(R.drawable.ic_folder_download)
     val FileDownloadDone: Icon = Icon.ImageVectorIcon(MaterialIcons.FileDownloadDone)
     val FirstPage: Icon = Icon.ImageVectorIcon(MaterialIcons.FirstPage)
     val Forum: Icon = Icon.ImageVectorIcon(MaterialIcons.ListAlt)

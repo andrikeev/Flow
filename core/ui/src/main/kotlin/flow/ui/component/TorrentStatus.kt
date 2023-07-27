@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +24,7 @@ import flow.designsystem.component.Icon
 import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.drawables.FlowIcons
+import flow.designsystem.drawables.Icon
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
 import flow.models.forum.Category
@@ -55,73 +57,16 @@ fun TorrentStatus(
     seeds: Int? = null,
     leeches: Int? = null,
 ) {
+    val dateFormat = DateFormat.getMediumDateFormat(LocalContext.current)
     val statusItems = remember(status, dateSeconds, date, size, seeds, leeches) {
         listOfNotNull(
-            status?.let { status ->
-                if (status.isValid()) {
-                    StatusItem.Icon {
-                        Icon(
-                            icon = status.icon,
-                            tint = status.color,
-                            contentDescription = status.contentDescription,
-                        )
-                    }
-                } else {
-                    StatusItem.IconWithText(
-                        icon = {
-                            Icon(
-                                icon = status.icon,
-                                tint = status.color,
-                                contentDescription = status.contentDescription,
-                            )
-                        },
-                        text = { stringResource(status.resId) },
-                    )
-                }
-            },
-            seeds?.let { seeds ->
-                StatusItem.IconWithText(
-                    icon = {
-                        Icon(
-                            icon = FlowIcons.Seeds,
-                            tint = AppTheme.colors.accentGreen,
-                            contentDescription = stringResource(R.string.seeds),
-                        )
-                    },
-                    text = { seeds.toString() },
-                )
-            },
-            leeches?.let { leeches ->
-                StatusItem.IconWithText(
-                    icon = {
-                        Icon(
-                            icon = FlowIcons.Leeches,
-                            tint = AppTheme.colors.accentRed,
-                            contentDescription = stringResource(R.string.leeches),
-                        )
-                    },
-                    text = { leeches.toString() },
-                )
-            },
-            size?.takeIf(String::isNotBlank)?.let { size ->
-                StatusItem.IconWithText(
-                    icon = {
-                        Icon(
-                            icon = FlowIcons.FolderDownload,
-                            tint = AppTheme.colors.accentBlue,
-                            contentDescription = stringResource(R.string.size),
-                        )
-                    },
-                    text = { size },
-                )
-            },
+            status?.let(StatusItem::Status),
+            seeds?.let { StatusItem.Seeds(it.toString()) },
+            leeches?.let { StatusItem.Leaches(it.toString()) },
+            size?.takeIf(String::isNotBlank)?.let(StatusItem::Size),
             dateSeconds?.let { dateSeconds ->
-                StatusItem.Text {
-                    DateFormat
-                        .getMediumDateFormat(LocalContext.current)
-                        .format(dateSeconds * 1000)
-                }
-            } ?: date?.let { date -> StatusItem.Text { date } },
+                StatusItem.Date(dateFormat.format(dateSeconds * 1000))
+            } ?: date?.let(StatusItem::Date),
         )
     }
     LazyRow(
@@ -131,50 +76,10 @@ fun TorrentStatus(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         itemsIndexed(statusItems) { index, item ->
-            Box(
-                modifier = Modifier
-                    .fillParentMaxHeight()
-                    .border(
-                        width = Dp.Hairline,
-                        color = AppTheme.colors.outlineVariant,
-                        shape = AppTheme.shapes.small,
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                when (item) {
-                    is StatusItem.Icon -> {
-                        Box(modifier = Modifier.padding(AppTheme.spaces.small)) {
-                            item.icon()
-                        }
-                    }
-
-                    is StatusItem.IconWithText -> {
-                        Row(
-                            modifier = Modifier.padding(
-                                horizontal = AppTheme.spaces.mediumSmall,
-                                vertical = AppTheme.spaces.small,
-                            ),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            item.icon()
-                            Text(
-                                modifier = Modifier.padding(start = AppTheme.spaces.extraSmall),
-                                text = item.text(),
-                            )
-                        }
-                    }
-
-                    is StatusItem.Text -> {
-                        Text(
-                            modifier = Modifier.padding(
-                                horizontal = AppTheme.spaces.mediumSmall,
-                                vertical = AppTheme.spaces.small,
-                            ),
-                            text = item.text(),
-                        )
-                    }
-                }
-            }
+            StatusItem(
+                modifier = Modifier.fillParentMaxHeight(),
+                item = item,
+            )
             if (index < statusItems.lastIndex) {
                 Spacer(modifier = Modifier.width(AppTheme.spaces.small))
             }
@@ -182,19 +87,99 @@ fun TorrentStatus(
     }
 }
 
+@Composable
+private fun StatusItem(
+    modifier: Modifier = Modifier,
+    item: StatusItem,
+) = Box(
+    modifier = modifier
+        .border(
+            width = Dp.Hairline,
+            color = AppTheme.colors.outlineVariant,
+            shape = AppTheme.shapes.small,
+        ),
+    contentAlignment = Alignment.Center,
+) {
+    when (item) {
+        is StatusItem.Date -> Text(
+            modifier = Modifier.padding(
+                horizontal = AppTheme.spaces.mediumSmall,
+                vertical = AppTheme.spaces.small,
+            ),
+            text = item.date,
+        )
+
+        is StatusItem.Leaches -> StatusItemWithIcon(
+            icon = FlowIcons.Leeches,
+            contentDescription = stringResource(R.string.leeches),
+            text = item.leeches,
+            tint = AppTheme.colors.accentRed,
+        )
+
+        is StatusItem.Seeds -> StatusItemWithIcon(
+            icon = FlowIcons.Seeds,
+            contentDescription = stringResource(R.string.seeds),
+            text = item.seeds,
+            tint = AppTheme.colors.accentGreen,
+        )
+
+        is StatusItem.Size -> StatusItemWithIcon(
+            icon = FlowIcons.FileSize,
+            contentDescription = stringResource(R.string.size),
+            text = item.size,
+            tint = AppTheme.colors.accentBlue,
+        )
+
+        is StatusItem.Status -> if (item.status.isValid()) {
+            Box(modifier = Modifier.padding(AppTheme.spaces.small)) {
+                Icon(
+                    icon = item.status.icon,
+                    contentDescription = stringResource(item.status.resId),
+                    tint = item.status.color,
+                )
+            }
+        } else {
+            StatusItemWithIcon(
+                icon = item.status.icon,
+                contentDescription = stringResource(item.status.resId),
+                text = stringResource(item.status.resId),
+                tint = item.status.color,
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatusItemWithIcon(
+    icon: Icon,
+    contentDescription: String,
+    text: String,
+    tint: Color,
+) = Row(
+    modifier = Modifier.padding(
+        horizontal = AppTheme.spaces.mediumSmall,
+        vertical = AppTheme.spaces.small,
+    ),
+    verticalAlignment = Alignment.CenterVertically,
+) {
+    Icon(
+        icon = icon,
+        tint = tint,
+        contentDescription = contentDescription,
+    )
+    Text(
+        modifier = Modifier.padding(start = AppTheme.spaces.extraSmall),
+        text = text,
+        color = tint,
+    )
+}
+
 private sealed interface StatusItem {
-    data class Icon(
-        val icon: @Composable () -> Unit,
-    ) : StatusItem
-
-    data class IconWithText(
-        val icon: @Composable () -> Unit,
-        val text: @Composable () -> String,
-    ) : StatusItem
-
-    data class Text(
-        val text: @Composable () -> String,
-    ) : StatusItem
+    data class Date(val date: String) : StatusItem
+    data class Leaches(val leeches: String) : StatusItem
+    data class Seeds(val seeds: String) : StatusItem
+    data class Size(val size: String) : StatusItem
+    data class Status(val status: TorrentStatus) : StatusItem
 }
 
 @Preview
