@@ -8,8 +8,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "me.rutrackersearch.app"
-        versionCode = 37
-        versionName = "4.4.1"
+        versionCode = 38
+        versionName = "4.5.0"
     }
 
     buildTypes {
@@ -27,11 +27,6 @@ android {
         }
     }
 
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
     namespace = "me.rutrackersearch.app"
 }
 
