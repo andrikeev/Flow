@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.model.PagingAction
 import flow.domain.model.append
+import flow.domain.model.category.CategoryPage
 import flow.domain.model.category.isEmpty
 import flow.domain.model.retry
 import flow.domain.usecase.ObserveAuthStateUseCase
@@ -96,10 +97,7 @@ internal class CategoryViewModel @Inject constructor(
                     categoryContent = when {
                         data == null -> CategoryContent.Initial
                         data.isEmpty() -> CategoryContent.Empty
-                        else -> CategoryContent.Content(
-                            categories = data.categories,
-                            topics = data.topics,
-                        )
+                        else -> data.toContent()
                     },
                     loadStates = loadStates,
                 )
@@ -144,5 +142,23 @@ internal class CategoryViewModel @Inject constructor(
 
     private fun onTopicClick(topicModel: TopicModel<out Topic>) = intent {
         postSideEffect(CategorySideEffect.OpenTopic(topicModel.topic.id))
+    }
+
+    private fun CategoryPage.toContent(): CategoryContent.Content {
+        return CategoryContent.Content(
+            items = buildList {
+                categories.forEach { add(CategoryItem.Category(it)) }
+                topics
+                    .groupBy { model ->
+                        sections.firstOrNull { it.topics.contains(model.topic.id) }
+                    }
+                    .forEach { (section, topics) ->
+                        if (section != null) {
+                            add(CategoryItem.SectionHeader(section.name))
+                        }
+                        topics.forEach { add(CategoryItem.Topic(it)) }
+                    }
+            },
+        )
     }
 }

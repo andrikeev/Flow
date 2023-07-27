@@ -8,6 +8,7 @@ data class CategoryPageDto(
     val category: CategoryDto,
     val page: Int,
     val pages: Int,
-    val children: List<CategoryDto>?,
-    val topics: List<ForumTopicDto>?,
+    val sections: List<SectionDto>? = null,
+    val children: List<CategoryDto>? = null,
+    val topics: List<ForumTopicDto>? = null,
 )

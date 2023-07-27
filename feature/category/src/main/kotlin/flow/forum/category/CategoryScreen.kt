@@ -126,28 +126,37 @@ private fun CategoryScreenList(
             when (state.categoryContent) {
                 is CategoryContent.Content -> {
                     items(
-                        items = state.categoryContent.categories,
-                        key = Category::id,
-                    ) { category ->
-                        Category(
-                            category = category,
-                            onClick = { onAction(CategoryAction.CategoryClick(category)) },
-                        )
-                    }
-                    items(
-                        items = state.categoryContent.topics,
-                        key = { it.topic.id },
-                    ) { topicModel ->
-                        TopicListItem(
-                            modifier = Modifier.padding(
-                                horizontal = AppTheme.spaces.mediumLarge,
-                                vertical = AppTheme.spaces.mediumSmall,
-                            ),
-                            topicModel = topicModel,
-                            showCategory = false,
-                            onClick = { onAction(CategoryAction.TopicClick(topicModel)) },
-                            onFavoriteClick = { onAction(CategoryAction.FavoriteClick(topicModel)) },
-                        )
+                        items = state.categoryContent.items,
+                    ) { item ->
+                        when (item) {
+                            is CategoryItem.Category -> {
+                                Category(
+                                    category = item.category,
+                                    onClick = { onAction(CategoryAction.CategoryClick(item.category)) },
+                                )
+                            }
+
+                            is CategoryItem.SectionHeader -> {
+                                Text(
+                                    modifier = Modifier.padding(AppTheme.spaces.large),
+                                    text = item.name,
+                                    style = AppTheme.typography.titleMedium,
+                                )
+                            }
+
+                            is CategoryItem.Topic -> {
+                                TopicListItem(
+                                    modifier = Modifier.padding(
+                                        horizontal = AppTheme.spaces.mediumLarge,
+                                        vertical = AppTheme.spaces.mediumSmall,
+                                    ),
+                                    topicModel = item.topic,
+                                    showCategory = false,
+                                    onClick = { onAction(CategoryAction.TopicClick(item.topic)) },
+                                    onFavoriteClick = { onAction(CategoryAction.FavoriteClick(item.topic)) },
+                                )
+                            }
+                        }
                     }
                     appendItems(
                         state = state.loadStates.append,
