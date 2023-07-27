@@ -34,8 +34,8 @@ internal fun CategoryPageDto.toCategoryPage() = Page(
     page = page,
     pages = pages,
     items = children.orEmpty().map(CategoryDto::toForumItem) +
-            topics.orEmpty().map(ForumTopicDto::toForumItem) +
-            sections.orEmpty().map(SectionDto::toForumItem),
+        topics.orEmpty().map(ForumTopicDto::toForumItem) +
+        sections.orEmpty().map(SectionDto::toForumItem),
 )
 
 internal fun CategoryDto.toCategory(): Category = Category(requireNotNull(id), name)
