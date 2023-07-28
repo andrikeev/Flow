@@ -95,7 +95,13 @@ private fun StatusItem(
     modifier = modifier
         .border(
             width = Dp.Hairline,
-            color = AppTheme.colors.outlineVariant,
+            color = when (item) {
+                is StatusItem.Date -> AppTheme.colors.onSurface
+                is StatusItem.Leaches -> AppTheme.colors.accentRed
+                is StatusItem.Seeds -> AppTheme.colors.accentGreen
+                is StatusItem.Size -> AppTheme.colors.accentBlue
+                is StatusItem.Status -> item.status.color
+            }.copy(alpha = 0.37f),
             shape = AppTheme.shapes.small,
         ),
     contentAlignment = Alignment.Center,
