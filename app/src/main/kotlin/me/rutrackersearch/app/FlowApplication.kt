@@ -3,28 +3,30 @@ package me.rutrackersearch.app
 import android.app.Application
 import android.os.StrictMode
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.DelicateCoroutinesApi
+import flow.network.api.ImageLoader
+import javax.inject.Inject
 
-@DelicateCoroutinesApi
 @HiltAndroidApp
 class FlowApplication : Application() {
+    @Inject
+    lateinit var imageLoader: ImageLoader
+
     override fun onCreate() {
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(
                 StrictMode.ThreadPolicy.Builder()
                     .detectAll()
                     .penaltyLog()
-                    // .penaltyDeath()
                     .build(),
             )
             StrictMode.setVmPolicy(
                 StrictMode.VmPolicy.Builder()
                     .detectAll()
                     .penaltyLog()
-                    // .penaltyDeath()
                     .build(),
             )
         }
         super.onCreate()
+        imageLoader.setup()
     }
 }

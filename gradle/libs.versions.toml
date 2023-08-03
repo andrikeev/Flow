@@ -17,6 +17,7 @@ androidxTestRunner = "1.5.2"
 androidxTestRules = "1.5.0"
 androidxWork = "2.8.1"
 coil = "2.3.0"
+chucker = "4.0.0"
 firebaseBom = "32.2.0"
 firebaseCrashlyticsGradlePlugin = "2.9.7"
 googleServicesGradlePlugin = "4.3.15"
@@ -74,6 +75,7 @@ androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", versio
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-kt-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
+chucker = { group = "com.github.chuckerteam.chucker", name = "library", version.ref = "chucker" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
