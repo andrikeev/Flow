@@ -1,5 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
+
 plugins {
     id("flow.android.application")
     id("flow.android.hilt")
@@ -19,11 +21,17 @@ android {
                 getDefaultProguardFile("proguard-android.txt"),
                 "proguard-rules.pro",
             )
+            configure<CrashlyticsExtension> {
+                mappingFileUploadEnabled = true
+            }
         }
         debug {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("debug")
             applicationIdSuffix = ".dev"
+            configure<CrashlyticsExtension> {
+                mappingFileUploadEnabled = false
+            }
         }
     }
 
