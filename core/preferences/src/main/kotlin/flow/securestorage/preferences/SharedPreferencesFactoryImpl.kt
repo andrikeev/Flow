@@ -1,6 +1,7 @@
 package flow.securestorage.preferences
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV
@@ -11,15 +12,19 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class SecurePreferencesFactoryImpl @Inject constructor(
+internal class SharedPreferencesFactoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-) : SecurePreferencesFactory {
+) : SharedPreferencesFactory {
 
     private val mainKey = MasterKey.Builder(context)
         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
         .build()
 
     override fun getSharedPreferences(name: String): SharedPreferences {
-        return EncryptedSharedPreferences.create(context, name, mainKey, AES256_SIV, AES256_GCM)
+        return runCatching {
+            EncryptedSharedPreferences.create(context, name, mainKey, AES256_SIV, AES256_GCM)
+        }.getOrElse {
+            context.getSharedPreferences(name, MODE_PRIVATE)
+        }
     }
 }

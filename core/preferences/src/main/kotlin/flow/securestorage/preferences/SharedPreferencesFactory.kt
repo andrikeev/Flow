@@ -2,6 +2,6 @@ package flow.securestorage.preferences
 
 import android.content.SharedPreferences
 
-internal interface SecurePreferencesFactory {
+internal interface SharedPreferencesFactory {
     fun getSharedPreferences(name: String): SharedPreferences
 }

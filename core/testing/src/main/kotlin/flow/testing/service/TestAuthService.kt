@@ -11,9 +11,9 @@ class TestAuthService : AuthService, TokenProvider {
     var response: AuthResult = AuthResult.Error(Throwable())
     val authState = MutableStateFlow<AuthState>(AuthState.Unauthorized)
 
-    override fun getToken(): String = ""
+    override suspend fun getToken(): String = ""
 
-    override fun isAuthorized(): Boolean = authState.value is AuthState.Authorized
+    override suspend fun isAuthorized(): Boolean = authState.value is AuthState.Authorized
 
     override fun observeAuthState(): Flow<AuthState> = authState
 

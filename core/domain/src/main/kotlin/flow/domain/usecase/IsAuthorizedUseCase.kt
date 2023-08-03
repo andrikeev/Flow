@@ -6,5 +6,5 @@ import javax.inject.Inject
 class IsAuthorizedUseCase @Inject constructor(
     private val authService: AuthService,
 ) {
-    operator fun invoke(): Boolean = authService.isAuthorized()
+    suspend operator fun invoke(): Boolean = authService.isAuthorized()
 }

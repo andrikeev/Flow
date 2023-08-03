@@ -44,7 +44,7 @@ dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":core:network:impl"))
     implementation(project(":core:notifications"))
-    implementation(project(":core:securestorage"))
+    implementation(project(":core:preferences"))
     implementation(project(":core:ui"))
     implementation(project(":core:work:impl"))
 

@@ -1,49 +1,43 @@
 package flow.data.impl.repository
 
+import flow.common.SingleItemMutableSharedFlow
 import flow.data.api.repository.RatingRepository
-import flow.securestorage.SecureStorage
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import flow.securestorage.PreferencesStorage
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 internal class RatingRepositoryImpl @Inject constructor(
-    private val secureStorage: SecureStorage,
+    private val preferencesStorage: PreferencesStorage,
 ) : RatingRepository {
-    private val mutableRatingDisabledFlow: MutableStateFlow<Boolean> by lazy {
-        MutableStateFlow(secureStorage.getRatingDisabled())
-    }
-    private val mutableLaunchCountFlow: MutableStateFlow<Int> by lazy {
-        MutableStateFlow(secureStorage.getRatingLaunchCount())
-    }
+    private val mutableRatingDisabledFlow = SingleItemMutableSharedFlow<Boolean>()
+    private val mutableLaunchCountFlow = SingleItemMutableSharedFlow<Int>()
 
-    override suspend fun getLaunchCount(): Int {
-        return mutableLaunchCountFlow.value
-    }
+    override suspend fun getLaunchCount() = preferencesStorage.getRatingLaunchCount()
 
-    override fun observeLaunchCount(): Flow<Int> {
-        return mutableLaunchCountFlow.asSharedFlow()
-    }
+    override fun observeLaunchCount() = mutableLaunchCountFlow
+        .asSharedFlow()
+        .onStart { emit(getLaunchCount()) }
 
     override suspend fun setLaunchCount(value: Int) {
         mutableLaunchCountFlow.emit(value)
-        secureStorage.setRatingLaunchCount(value)
+        preferencesStorage.setRatingLaunchCount(value)
     }
 
-    override fun observeRatingRequestDisabled(): Flow<Boolean> {
-        return mutableRatingDisabledFlow.asSharedFlow()
-    }
+    override fun observeRatingRequestDisabled() = mutableRatingDisabledFlow
+        .asSharedFlow()
+        .onStart { emit(preferencesStorage.getRatingDisabled()) }
 
     override suspend fun disableRatingRequest() {
         mutableRatingDisabledFlow.emit(true)
-        secureStorage.setRatingDisabled(true)
+        preferencesStorage.setRatingDisabled(true)
     }
 
     override suspend fun isRatingRequestPostponed(): Boolean {
-        return secureStorage.getRatingPostponed()
+        return preferencesStorage.getRatingPostponed()
     }
 
     override suspend fun postponeRatingRequest() {
-        secureStorage.setRatingPostponed(true)
+        preferencesStorage.setRatingPostponed(true)
     }
 }
