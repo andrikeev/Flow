@@ -113,6 +113,7 @@ object FlowIcons {
     val PasswordHidden: Icon = Icon.ImageVectorIcon(MaterialIcons.VisibilityOff)
     val PasswordVisible: Icon = Icon.ImageVectorIcon(MaterialIcons.Visibility)
     val PrevPage: Icon = Icon.ImageVectorIcon(MaterialIcons.ChevronLeft)
+    val Reload: Icon = Icon.ImageVectorIcon(MaterialIcons.Sync)
     val Remove: Icon = Icon.ImageVectorIcon(MaterialIcons.Remove)
     val Selected: Icon = Icon.ImageVectorIcon(MaterialIcons.CheckCircleOutline)
     val NotSelected: Icon = Icon.ImageVectorIcon(MaterialIcons.RadioButtonUnchecked)

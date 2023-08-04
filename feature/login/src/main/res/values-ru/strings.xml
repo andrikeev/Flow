@@ -2,6 +2,7 @@
 <resources>
     <string name="login_screen_action_sign_in">Войти</string>
     <string name="login_screen_captcha_hint">Проверочный код</string>
+    <string name="login_screen_captcha_reload">Обновить изображение</string>
     <string name="login_screen_captcha_empty_label">Введите проверочный код</string>
     <string name="login_screen_header_subtitle">Используйте для входа свой аккаунт rutracker.org</string>
     <string name="login_screen_header_title">Вход</string>

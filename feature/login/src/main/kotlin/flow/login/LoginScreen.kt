@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -20,7 +19,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.dp
 import flow.designsystem.component.LocalSnackbarHostState
 import flow.designsystem.component.Scaffold
 import flow.designsystem.component.ThemePreviews
@@ -102,8 +100,8 @@ internal fun LoginScreen(
             )
             if (state.captcha != null) {
                 CaptchaImage(
-                    modifier = Modifier.size(100.dp),
                     captcha = state.captcha,
+                    onRetry = { onAction(LoginAction.ReloadCaptchaClick) },
                 )
                 CaptchaInputField(
                     state = state,
