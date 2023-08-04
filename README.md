@@ -20,8 +20,9 @@ copyright and file sharing.
 
 ## Mobile app
 
-[<img src="badges/google-play-badge.png" alt="Get it on Google Play" height="60">][2]
-[<img src="badges/rustore-badge.png" alt="Get it on RuStore" height="60">][3]
+[<img src="badges/google-play-badge.png" alt="Get it on Google Play" height="90">][2]
+[<img src="badges/github-badge.png" alt="Get it on GitHub" height="90">][3]
+[<img src="badges/rustore-badge.png" alt="Get it on RuStore" height="90">][4]
 
 ## Screenshots
 
@@ -56,32 +57,36 @@ file a bug anyway.
 
 **Forum 4PDA:** <https://4pda.to/forum/index.php?showtopic=729411>
 
-## Support Development
-
-You can support project if you want:
-
-**PayPal**: <https://www.paypal.com/donate/?hosted_button_id=LHVXE7WPCY846>
-
-**NetMonet**: <https://netmonet.ru/s/andrikeev>
-
 ## Sources
 
 All the code and the content is available on github: <https://github.com/andrikeev/Flow>
 
 ## Privacy Policy
 
-[Privacy Policy][4]
+[Privacy Policy][5]
 
 ## License
 
-This software is open source, licensed under the [MIT License][5].
+This software is open source, licensed under the [MIT License][6].
+
+## Support Development
+
+You can support project if you want:
+
+**PayPal**: <https://www.paypal.com/donate/?hosted_button_id=LHVXE7WPCY846>
+
+**Tips #1**: <https://netmonet.ru/s/andrikeev>
+
+**Tips #2**: <https://pay.mysbertips.ru/50962107>
 
 [1]: https://flow-proxy-m7o3b.ondigitalocean.app/copyrights.html
 
 [2]: https://play.google.com/store/apps/details?id=me.rutrackersearch.app
 
-[3]: https://apps.rustore.ru/app/me.rutrackersearch.app
+[3]: https://github.com/andrikeev/Flow/releases
 
-[4]: https://flow-proxy-m7o3b.ondigitalocean.app/privacy-policy.html
+[4]: https://apps.rustore.ru/app/me.rutrackersearch.app
 
-[5]: https://opensource.org/licenses/MIT 
+[5]: https://flow-proxy-m7o3b.ondigitalocean.app/privacy-policy.html
+
+[6]: https://opensource.org/licenses/MIT 

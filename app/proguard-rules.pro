@@ -30,3 +30,6 @@
 
 -keep class com.google.crypto.tink.** { *; }
 -keep class flow.network.dto.** { *; }
+
+-keepattributes SourceFile,LineNumberTable,RuntimeVisibleAnnotations,AnnotationDefault
+-renamesourcefileattribute SourceFile

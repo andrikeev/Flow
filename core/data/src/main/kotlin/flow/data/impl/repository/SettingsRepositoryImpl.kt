@@ -1,57 +1,48 @@
 package flow.data.impl.repository
 
+import flow.common.SingleItemMutableSharedFlow
 import flow.data.api.repository.SettingsRepository
-import flow.dispatchers.api.Dispatchers
 import flow.models.settings.Endpoint
 import flow.models.settings.Settings
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
-import flow.securestorage.SecureStorage
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import flow.securestorage.PreferencesStorage
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 class SettingsRepositoryImpl @Inject constructor(
-    private val secureStorage: SecureStorage,
-    private val dispatchers: Dispatchers,
+    private val preferencesStorage: PreferencesStorage,
 ) : SettingsRepository {
-    private val mutableSettings = MutableStateFlow(secureStorage.getSettings())
+    private val mutableSettings = SingleItemMutableSharedFlow<Settings>()
 
-    override suspend fun getSettings(): Settings = mutableSettings.value
+    override suspend fun getSettings() = preferencesStorage.getSettings()
 
-    override fun observeSettings(): Flow<Settings> = mutableSettings.asSharedFlow()
+    override fun observeSettings() = mutableSettings
+        .asSharedFlow()
+        .onStart { emit(getSettings()) }
 
     override suspend fun setTheme(theme: Theme) {
-        withContext(dispatchers.io) {
-            val settings = secureStorage.getSettings().copy(theme = theme)
-            secureStorage.saveSettings(settings)
-            mutableSettings.emit(settings)
-        }
+        updateSettings { copy(theme = theme) }
     }
 
     override suspend fun setEndpoint(endpoint: Endpoint) {
-        withContext(dispatchers.io) {
-            val settings = secureStorage.getSettings().copy(endpoint = endpoint)
-            secureStorage.saveSettings(settings)
-            mutableSettings.emit(settings)
-        }
+        updateSettings { copy(endpoint = endpoint) }
     }
 
     override suspend fun setFavoritesSyncPeriod(syncPeriod: SyncPeriod) {
-        withContext(dispatchers.io) {
-            val settings = secureStorage.getSettings().copy(favoritesSyncPeriod = syncPeriod)
-            secureStorage.saveSettings(settings)
-            mutableSettings.emit(settings)
-        }
+        updateSettings { copy(favoritesSyncPeriod = syncPeriod) }
     }
 
     override suspend fun setBookmarksSyncPeriod(syncPeriod: SyncPeriod) {
-        withContext(dispatchers.io) {
-            val settings = secureStorage.getSettings().copy(bookmarksSyncPeriod = syncPeriod)
-            secureStorage.saveSettings(settings)
-            mutableSettings.emit(settings)
-        }
+        updateSettings { copy(bookmarksSyncPeriod = syncPeriod) }
+    }
+
+    private suspend fun updateSettings(update: Settings.() -> Settings) {
+        val settings = preferencesStorage
+            .getSettings()
+            .let(update)
+        preferencesStorage.saveSettings(settings)
+        mutableSettings.emit(settings)
     }
 }

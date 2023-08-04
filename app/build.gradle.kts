@@ -1,5 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
+
 plugins {
     id("flow.android.application")
     id("flow.android.hilt")
@@ -8,8 +10,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "me.rutrackersearch.app"
-        versionCode = 38
-        versionName = "4.5.0"
+        versionCode = 39
+        versionName = "4.5.1"
     }
 
     buildTypes {
@@ -19,11 +21,17 @@ android {
                 getDefaultProguardFile("proguard-android.txt"),
                 "proguard-rules.pro",
             )
+            configure<CrashlyticsExtension> {
+                mappingFileUploadEnabled = true
+            }
         }
         debug {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("debug")
             applicationIdSuffix = ".dev"
+            configure<CrashlyticsExtension> {
+                mappingFileUploadEnabled = false
+            }
         }
     }
 
@@ -44,7 +52,7 @@ dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":core:network:impl"))
     implementation(project(":core:notifications"))
-    implementation(project(":core:securestorage"))
+    implementation(project(":core:preferences"))
     implementation(project(":core:ui"))
     implementation(project(":core:work:impl"))
 

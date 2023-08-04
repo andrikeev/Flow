@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthService {
     fun observeAuthState(): Flow<AuthState>
-    fun isAuthorized(): Boolean
+    suspend fun isAuthorized(): Boolean
     suspend fun login(
         username: String,
         password: String,

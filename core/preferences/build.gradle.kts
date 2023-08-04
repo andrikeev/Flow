@@ -8,6 +8,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:dispatchers"))
     implementation(project(":core:models"))
 
     implementation(libs.androidx.security.ktx)
