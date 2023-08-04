@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.Multibinds
 import flow.network.api.ImageLoader
 import flow.network.api.NetworkApi
 import flow.network.data.ImageLoaderFactoryImpl
@@ -16,6 +17,7 @@ import flow.network.impl.SwitchingNetworkApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -28,6 +30,9 @@ internal interface NetworkModule {
     @Binds
     @Singleton
     fun imageLoaderFactory(impl: ImageLoaderFactoryImpl): ImageLoaderFactory
+
+    @Multibinds
+    fun interceptors(): Set<@JvmSuppressWildcards Interceptor>
 
     @Binds
     @Singleton
