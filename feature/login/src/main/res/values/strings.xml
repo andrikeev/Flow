@@ -1,6 +1,7 @@
 <resources>
     <string name="login_screen_action_sign_in">Sign in</string>
     <string name="login_screen_captcha_hint">Captcha</string>
+    <string name="login_screen_captcha_reload">Reload captcha</string>
     <string name="login_screen_captcha_empty_label">Captcha is required</string>
     <string name="login_screen_header_subtitle">Use your rutracker.org account</string>
     <string name="login_screen_header_title">Sign in</string>

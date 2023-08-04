@@ -1,7 +1,7 @@
 package flow.models.auth
 
 sealed interface AuthResult {
-    object Success : AuthResult
+    data object Success : AuthResult
     data class WrongCredits(val captcha: Captcha?) : AuthResult
     data class CaptchaRequired(val captcha: Captcha) : AuthResult
     data class Error(val error: Throwable) : AuthResult

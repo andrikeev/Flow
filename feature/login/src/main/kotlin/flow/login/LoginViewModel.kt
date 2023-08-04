@@ -31,7 +31,8 @@ internal class LoginViewModel @Inject constructor(
             is LoginAction.UsernameChanged -> validateUsername(action.value)
             is LoginAction.PasswordChanged -> validatePassword(action.value)
             is LoginAction.CaptchaChanged -> validateCaptcha(action.value)
-            is LoginAction.SubmitClick -> submit()
+            is LoginAction.ReloadCaptchaClick -> onReloadCaptchaClick()
+            is LoginAction.SubmitClick -> onSubmitClick()
         }
     }
 
@@ -71,7 +72,33 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun submit() = intent {
+    private fun onReloadCaptchaClick() = intent {
+        val response = loginUseCase(
+            state.usernameInput.value.text,
+            state.passwordInput.value.text,
+            null, null, null,
+        )
+        when (response) {
+            is AuthResult.WrongCredits -> reduce {
+                state.copy(
+                    isLoading = false,
+                    captcha = response.captcha,
+                    captchaInput = InputState.Empty,
+                )
+            }
+            is AuthResult.CaptchaRequired -> reduce {
+                state.copy(
+                    isLoading = false,
+                    captcha = response.captcha,
+                    captchaInput = InputState.Empty,
+                )
+            }
+            is AuthResult.Error -> Unit
+            is AuthResult.Success -> Unit
+        }
+    }
+
+    private fun onSubmitClick() = intent {
         postSideEffect(LoginSideEffect.HideKeyboard)
         reduce { state.copy(isLoading = true) }
         val response = loginUseCase(

@@ -3,6 +3,7 @@ package flow.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,9 +30,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import flow.designsystem.component.Button
 import flow.designsystem.component.CircularProgressIndicator
 import flow.designsystem.component.Icon
+import flow.designsystem.component.IconButton
 import flow.designsystem.component.OutlinedTextField
 import flow.designsystem.component.Placeholder
 import flow.designsystem.component.Text
@@ -224,32 +227,47 @@ internal fun CaptchaInputField(
 
 @Composable
 internal fun CaptchaImage(
-    modifier: Modifier = Modifier,
     captcha: Captcha,
-) = Box(
-    modifier = modifier.padding(AppTheme.spaces.medium),
-    contentAlignment = Alignment.Center,
-    content = {
-        RemoteImage(
-            src = captcha.url,
-            contentDescription = stringResource(R.string.login_screen_captcha_hint),
-            onLoading = { CircularProgressIndicator(modifier = Modifier.size(AppTheme.sizes.medium)) },
-            onSuccess = { painter ->
-                Image(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painter,
-                    contentDescription = stringResource(R.string.login_screen_captcha_hint),
-                )
-            },
-            onError = {
-                Image(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(flow.ui.R.drawable.ill_placeholder),
-                    contentDescription = stringResource(R.string.login_screen_captcha_hint),
-                    colorFilter = ColorFilter.tint(color = AppTheme.colors.primary),
-                )
+    onRetry: () -> Unit,
+) = RemoteImage(
+    src = captcha.url,
+    onLoading = {
+        Box(
+            modifier = Modifier
+                .padding(AppTheme.spaces.medium)
+                .size(100.dp),
+            contentAlignment = Alignment.Center,
+            content = {
+                CircularProgressIndicator(modifier = Modifier.size(AppTheme.sizes.medium))
             },
         )
+    },
+    onSuccess = { painter ->
+        Image(
+            modifier = Modifier
+                .padding(AppTheme.spaces.medium)
+                .size(100.dp),
+            painter = painter,
+            contentDescription = stringResource(R.string.login_screen_captcha_hint),
+        )
+    },
+    onError = {
+        Column(
+            modifier = Modifier.padding(AppTheme.spaces.medium),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                modifier = Modifier.size(100.dp),
+                painter = painterResource(flow.ui.R.drawable.ill_placeholder),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(color = AppTheme.colors.primary),
+            )
+            IconButton(
+                icon = FlowIcons.Reload,
+                contentDescription = stringResource(R.string.login_screen_captcha_reload),
+                onClick = onRetry,
+            )
+        }
     },
 )
 
