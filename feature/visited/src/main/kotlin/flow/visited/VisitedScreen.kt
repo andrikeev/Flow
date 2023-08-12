@@ -7,9 +7,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import flow.designsystem.component.Empty
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.Loading
+import flow.designsystem.component.LocalSnackbarHostState
 import flow.designsystem.theme.AppTheme
 import flow.navigation.viewModel
 import flow.ui.component.TopicListItem
@@ -29,9 +31,12 @@ private fun VisitedScreen(
     viewModel: VisitedViewModel,
     openTopic: (id: String) -> Unit,
 ) {
+    val snackbarHost = LocalSnackbarHostState.current
+    val favoriteToggleError = stringResource(flow.ui.R.string.error_title)
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is VisitedSideEffect.OpenTopic -> openTopic(sideEffect.id)
+            is VisitedSideEffect.ShowFavoriteToggleError -> snackbarHost.showSnackbar(favoriteToggleError)
         }
     }
     val state by viewModel.collectAsState()

@@ -22,6 +22,7 @@ import flow.designsystem.component.BookmarkButton
 import flow.designsystem.component.Dialog
 import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
+import flow.designsystem.component.LocalSnackbarHostState
 import flow.designsystem.component.Scaffold
 import flow.designsystem.component.ScrollBackFloatingActionButton
 import flow.designsystem.component.SearchButton
@@ -68,6 +69,8 @@ private fun CategoryScreen(
     openSearchInput: (categoryId: String) -> Unit,
     openTopic: (id: String) -> Unit,
 ) {
+    val snackbarHost = LocalSnackbarHostState.current
+    val favoriteToggleError = stringResource(flow.ui.R.string.error_title)
     val loginDialogState = rememberVisibilityState()
     LoginDialog(loginDialogState, viewModel::perform)
     viewModel.collectSideEffect { sideEffect ->
@@ -78,6 +81,7 @@ private fun CategoryScreen(
             is CategorySideEffect.OpenTopic -> openTopic(sideEffect.id)
             is CategorySideEffect.ShowLoginDialog -> loginDialogState.show()
             is CategorySideEffect.OpenLogin -> openLogin()
+            is CategorySideEffect.ShowFavoriteToggleError -> snackbarHost.showSnackbar(favoriteToggleError)
         }
     }
     val state by viewModel.collectAsState()

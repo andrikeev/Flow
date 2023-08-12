@@ -122,7 +122,8 @@ internal class CategoryViewModel @Inject constructor(
     }
 
     private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = intent {
-        toggleFavoriteUseCase(topicModel.topic.id)
+        runCatching { toggleFavoriteUseCase(topicModel.topic.id) }
+            .onFailure { postSideEffect(CategorySideEffect.ShowFavoriteToggleError) }
     }
 
     private fun onLoginClick() = intent {
