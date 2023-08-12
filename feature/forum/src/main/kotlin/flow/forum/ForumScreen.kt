@@ -104,10 +104,7 @@ private fun ForumScreen(
             }
         }
 
-        is ForumState.Loaded -> items(
-            items = state.forum,
-            key = { it.item.id },
-        ) { item ->
+        is ForumState.Loaded -> items(items = state.forum) { item ->
             RootCategory(
                 rootCategory = item.item,
                 isExpanded = item.expanded,

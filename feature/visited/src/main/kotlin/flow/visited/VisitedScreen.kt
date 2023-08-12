@@ -53,20 +53,16 @@ private fun VisitedScreen(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
     ) {
-        items(
-            items = state.items,
-            key = { it.topic.id },
-            contentType = { it.topic::class },
-        ) { item ->
+        items(items = state.items) { model ->
             TopicListItem(
                 modifier = Modifier.padding(
                     horizontal = AppTheme.spaces.mediumLarge,
                     vertical = AppTheme.spaces.mediumSmall,
                 ),
-                topicModel = item,
+                topicModel = model,
                 dimVisited = false,
-                onClick = { onAction(VisitedAction.TopicClick(item)) },
-                onFavoriteClick = { onAction(VisitedAction.FavoriteClick(item)) },
+                onClick = { onAction(VisitedAction.TopicClick(model)) },
+                onFavoriteClick = { onAction(VisitedAction.FavoriteClick(model)) },
             )
         }
     }

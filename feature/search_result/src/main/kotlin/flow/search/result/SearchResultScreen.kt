@@ -190,19 +190,15 @@ private fun SearchResultList(
         is LoadState.Loading -> loadingItem()
         is LoadState.NotLoading -> when (state.searchContent) {
             is SearchResultContent.Content -> {
-                items(
-                    items = state.searchContent.torrents,
-                    key = { it.topic.id },
-                    contentType = { it.topic::class },
-                ) { item ->
+                items(items = state.searchContent.torrents) { model ->
                     TopicListItem(
                         modifier = Modifier.padding(
                             horizontal = AppTheme.spaces.mediumLarge,
                             vertical = AppTheme.spaces.mediumSmall,
                         ),
-                        topicModel = item,
-                        onClick = { onAction(SearchResultAction.TopicClick(item)) },
-                        onFavoriteClick = { onAction(SearchResultAction.FavoriteClick(item)) },
+                        topicModel = model,
+                        onClick = { onAction(SearchResultAction.TopicClick(model)) },
+                        onFavoriteClick = { onAction(SearchResultAction.FavoriteClick(model)) },
                     )
                 }
                 appendItems(
