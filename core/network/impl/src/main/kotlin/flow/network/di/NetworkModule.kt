@@ -12,10 +12,12 @@ import flow.network.api.NetworkApi
 import flow.network.data.ImageLoaderFactoryImpl
 import flow.network.data.NetworkApiRepository
 import flow.network.data.NetworkApiRepositoryImpl
+import flow.network.impl.DelegatingProxySelector
 import flow.network.impl.ImageLoaderImpl
 import flow.network.impl.SwitchingNetworkApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import java.net.ProxySelector
 import javax.inject.Singleton
 
 
@@ -42,13 +44,19 @@ internal interface NetworkModule {
     @Singleton
     fun networkApiRepository(impl: NetworkApiRepositoryImpl): NetworkApiRepository
 
+    @Binds
+    @Singleton
+    fun proxySelector(impl: DelegatingProxySelector): ProxySelector
+
     companion object {
         @Provides
         @Singleton
         fun okHttpClient(
+            proxySelector: ProxySelector,
             interceptors: Set<@JvmSuppressWildcards Interceptor>,
         ): OkHttpClient {
             return OkHttpClient.Builder()
+                .proxySelector(proxySelector)
                 .apply { interceptors.forEach(::addInterceptor) }
                 .build()
         }
