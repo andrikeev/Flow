@@ -52,7 +52,8 @@ internal class VisitedViewModel @Inject constructor(
     }
 
     private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = intent {
-        toggleFavoriteUseCase(topicModel.topic.id)
+        runCatching { toggleFavoriteUseCase(topicModel.topic.id) }
+            .onFailure { postSideEffect(VisitedSideEffect.ShowFavoriteToggleError) }
     }
 
     private fun onTopicClick(topicModel: TopicModel<out Topic>) = intent {

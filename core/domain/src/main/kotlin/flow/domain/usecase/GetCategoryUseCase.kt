@@ -8,13 +8,18 @@ import javax.inject.Inject
 
 class GetCategoryUseCase @Inject constructor(
     private val ensureForumLoadUseCase: EnsureForumLoadUseCase,
+    private val refreshForumUseCase: RefreshForumUseCase,
     private val forumRepository: ForumRepository,
     private val dispatchers: Dispatchers,
 ) {
     suspend operator fun invoke(id: String): Category {
         return withContext(dispatchers.default) {
             ensureForumLoadUseCase()
-            forumRepository.getCategory(id)
+            val category = forumRepository.getCategory(id)
+            if (category == null) {
+                refreshForumUseCase.invoke()
+            }
+            requireNotNull(forumRepository.getCategory(id))
         }
     }
 }

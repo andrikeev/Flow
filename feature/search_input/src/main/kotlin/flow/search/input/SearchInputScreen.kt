@@ -90,14 +90,11 @@ private fun SearchInputScreen(
             modifier = Modifier.padding(padding),
             contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
         ) {
-            items(
-                items = state.suggests,
-                key = { item -> item.value },
-            ) { item ->
+            items(items = state.suggests) { suggest ->
                 SuggestItem(
-                    suggest = item,
-                    onClick = { onAction(SearchInputAction.SuggestClick(item)) },
-                    onSubmit = { onAction(SearchInputAction.SuggestEditClick(item)) },
+                    suggest = suggest,
+                    onClick = { onAction(SearchInputAction.SuggestClick(suggest)) },
+                    onSubmit = { onAction(SearchInputAction.SuggestEditClick(suggest)) },
                 )
             }
         }

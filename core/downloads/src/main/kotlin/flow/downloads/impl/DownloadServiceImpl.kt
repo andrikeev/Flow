@@ -49,15 +49,19 @@ class DownloadServiceImpl @Inject constructor(
                         setTitle(downloadRequest.title)
                         setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                     }
-                    val downloadId = downloadManager.enqueue(request)
-                    context.registerDownloadCompleteReceiver(downloadId) {
-                        val fileUri = allowDiskReads {
-                            downloadManager.getDownloadedFileUri(downloadId)
+                    val downloadId = runCatching { downloadManager.enqueue(request) }.getOrNull()
+                    if (downloadId == null) {
+                        continuation.resume(null)
+                    } else {
+                        context.registerDownloadCompleteReceiver(downloadId) {
+                            val fileUri = allowDiskReads {
+                                downloadManager.getDownloadedFileUri(downloadId)
+                            }
+                            if (fileUri != null) {
+                                cache[downloadRequest.id] = fileUri
+                            }
+                            continuation.resume(fileUri)
                         }
-                        if (fileUri != null) {
-                            cache[downloadRequest.id] = fileUri
-                        }
-                        continuation.resume(fileUri)
                     }
                 }
             }

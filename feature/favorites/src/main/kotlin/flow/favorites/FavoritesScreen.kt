@@ -57,14 +57,10 @@ private fun FavoritesScreen(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
     ) {
-        items(
-            items = state.items,
-            key = { it.topic.id },
-            contentType = { it.topic::class },
-        ) {
+        items(items = state.items) { model ->
             FavoriteTopic(
-                topicModel = it,
-                onClick = { onAction(FavoritesAction.TopicClick(it)) },
+                topicModel = model,
+                onClick = { onAction(FavoritesAction.TopicClick(model)) },
             )
         }
     }

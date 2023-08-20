@@ -54,9 +54,9 @@ class ForumRepositoryImpl @Inject constructor(
         return inMemoryForum as Forum
     }
 
-    override suspend fun getCategory(id: String): Category {
+    override suspend fun getCategory(id: String): Category? {
         logger.d { "getCategory: id=$id" }
-        return forumCategoryDao.get(id).toCategory()
+        return forumCategoryDao.get(id)?.toCategory()
     }
 
     private fun forumCategoryToEntity(

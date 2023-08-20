@@ -24,6 +24,7 @@ import flow.designsystem.component.Icon
 import flow.designsystem.component.IconButton
 import flow.designsystem.component.InvertedSurface
 import flow.designsystem.component.LazyList
+import flow.designsystem.component.LocalSnackbarHostState
 import flow.designsystem.component.Scaffold
 import flow.designsystem.component.ScrollBackFloatingActionButton
 import flow.designsystem.drawables.FlowIcons
@@ -50,12 +51,15 @@ internal fun SearchResultScreen(
     openSearchResult: (filter: Filter) -> Unit,
     openTopic: (id: String) -> Unit,
 ) {
+    val snackbarHost = LocalSnackbarHostState.current
+    val favoriteToggleError = stringResource(flow.ui.R.string.error_title)
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is SearchResultSideEffect.Back -> back()
             is SearchResultSideEffect.OpenSearchInput -> openSearchInput(sideEffect.filter)
             is SearchResultSideEffect.OpenSearchResult -> openSearchResult(sideEffect.filter)
             is SearchResultSideEffect.OpenTopic -> openTopic(sideEffect.id)
+            is SearchResultSideEffect.ShowFavoriteToggleError -> snackbarHost.showSnackbar(favoriteToggleError)
         }
     }
     val state by viewModel.collectAsState()
@@ -190,19 +194,15 @@ private fun SearchResultList(
         is LoadState.Loading -> loadingItem()
         is LoadState.NotLoading -> when (state.searchContent) {
             is SearchResultContent.Content -> {
-                items(
-                    items = state.searchContent.torrents,
-                    key = { it.topic.id },
-                    contentType = { it.topic::class },
-                ) { item ->
+                items(items = state.searchContent.torrents) { model ->
                     TopicListItem(
                         modifier = Modifier.padding(
                             horizontal = AppTheme.spaces.mediumLarge,
                             vertical = AppTheme.spaces.mediumSmall,
                         ),
-                        topicModel = item,
-                        onClick = { onAction(SearchResultAction.TopicClick(item)) },
-                        onFavoriteClick = { onAction(SearchResultAction.FavoriteClick(item)) },
+                        topicModel = model,
+                        onClick = { onAction(SearchResultAction.TopicClick(model)) },
+                        onFavoriteClick = { onAction(SearchResultAction.FavoriteClick(model)) },
                     )
                 }
                 appendItems(

@@ -90,6 +90,8 @@ internal fun TopicScreen(
     openLogin: () -> Unit,
     openSearch: (filter: Filter) -> Unit,
 ) {
+    val snackbarHost = LocalSnackbarHostState.current
+    val favoriteToggleError = stringResource(flow.ui.R.string.error_title)
     val openLinkHandler = LocalOpenLinkHandler.current
     val shareLinkHandler = LocalShareLinkHandler.current
     val openFileHandler = LocalOpenFileHandler.current
@@ -107,6 +109,7 @@ internal fun TopicScreen(
             is TopicSideEffect.ShowAddCommentDialog -> Unit // TODO
             is TopicSideEffect.ShowAddCommentError -> Unit // TODO
             is TopicSideEffect.ShowDownloadProgress -> downloadDialogState.show()
+            is TopicSideEffect.ShowFavoriteToggleError -> snackbarHost.showSnackbar(favoriteToggleError)
             is TopicSideEffect.ShowLoginRequired -> loginRequestDialogState.show()
             is TopicSideEffect.ShowMagnet -> magnetDialogState.show(sideEffect.link)
         }
@@ -675,7 +678,7 @@ private class MagnetDialogState {
     }
 
     sealed interface State
-    object Hide : State
+    data object Hide : State
     data class Show(val link: String) : State
 }
 

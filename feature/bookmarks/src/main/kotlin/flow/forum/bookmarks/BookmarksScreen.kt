@@ -68,11 +68,7 @@ private fun BookmarksScreen(
             imageRes = R.drawable.ill_bookmarks,
         )
 
-        is BookmarksState.BookmarksList -> items(
-            items = state.items,
-            key = { it.category.id },
-            contentType = { it.category::class },
-        ) { bookmark ->
+        is BookmarksState.BookmarksList -> items(items = state.items) { bookmark ->
             Bookmark(
                 bookmark = bookmark,
                 onClick = { onAction(BookmarksAction.BookmarkClicked(bookmark)) },

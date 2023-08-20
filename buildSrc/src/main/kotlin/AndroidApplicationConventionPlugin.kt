@@ -1,5 +1,6 @@
 import com.android.build.api.dsl.ApplicationExtension
 import flow.conventions.StaticAnalysisConventionPlugin
+import flow.conventions.configureAndroidCommon
 import flow.conventions.configureAndroidCompose
 import flow.conventions.configureKotlinAndroid
 import org.gradle.api.Plugin
@@ -18,9 +19,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             }
 
             extensions.configure<ApplicationExtension> {
-                defaultConfig.targetSdk = 34
-                @Suppress("UnstableApiUsage")
-                buildToolsVersion = "34.0.0"
+                configureAndroidCommon(this)
                 configureKotlinAndroid(this)
                 configureAndroidCompose(this)
             }

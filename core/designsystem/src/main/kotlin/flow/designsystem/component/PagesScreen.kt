@@ -17,7 +17,7 @@ fun PagesScreen(
     bottomBar: @Composable () -> Unit = {},
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState { pages.size }
     Scaffold(
         modifier = modifier,
         topBar = { appBarState ->
@@ -36,11 +36,9 @@ fun PagesScreen(
     ) { padding ->
         HorizontalPager(
             modifier = Modifier.padding(padding),
-            pageCount = pages.size,
             state = pagerState,
-        ) { page ->
-            pages[page].content()
-        }
+            pageContent = { pages[it].content() },
+        )
     }
 }
 

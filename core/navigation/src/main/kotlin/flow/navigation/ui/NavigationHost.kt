@@ -6,11 +6,11 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.navigation
 import flow.navigation.NavigationController
 import flow.navigation.model.NavigationArgument
 import flow.navigation.model.NavigationDeepLink
@@ -25,7 +25,7 @@ internal fun NavigationHost(
     navigationGraphBuilder: NavigationGraphBuilder.() -> Unit,
 ) {
     val (startRoute, destinations) = buildNavigationGraph(destinationsBuilder = navigationGraphBuilder)
-    AnimatedNavHost(
+    NavHost(
         modifier = modifier,
         navController = navigationController.navHostController,
         startDestination = startRoute,
@@ -44,6 +44,7 @@ internal fun NavGraphBuilder.add(destination: NavigationDestination) {
             popEnterTransition = destination.animations.popEnterTransition.toEnterTransition(),
             popExitTransition = destination.animations.popExitTransition.toExitTransition(),
         )
+
         is NavigationDestination.Destination -> composable(
             route = destination.route,
             content = { destination.content() },
