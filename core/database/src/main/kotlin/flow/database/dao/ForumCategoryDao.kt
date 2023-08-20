@@ -12,7 +12,7 @@ interface ForumCategoryDao {
     suspend fun isForumStored(): Boolean
 
     @Query("SELECT * FROM ForumCategoryEntity WHERE id = :id")
-    suspend fun get(id: String): ForumCategoryEntity
+    suspend fun get(id: String): ForumCategoryEntity?
 
     @Query("SELECT * FROM ForumCategoryEntity WHERE parentId IS NULL")
     suspend fun getTopLevelCategories(): List<ForumCategoryEntity>
