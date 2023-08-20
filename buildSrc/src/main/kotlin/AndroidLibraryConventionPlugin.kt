@@ -1,5 +1,6 @@
 import com.android.build.gradle.LibraryExtension
 import flow.conventions.StaticAnalysisConventionPlugin
+import flow.conventions.configureAndroidCommon
 import flow.conventions.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -15,8 +16,8 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             }
 
             extensions.configure<LibraryExtension> {
+                configureAndroidCommon(this)
                 configureKotlinAndroid(this)
-                defaultConfig.targetSdk = 34
             }
         }
     }

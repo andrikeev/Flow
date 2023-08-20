@@ -6,19 +6,8 @@ import org.gradle.api.JavaVersion
 /**
  * Configure base Kotlin with Android options
  */
-internal fun configureKotlinAndroid(
-    commonExtension: CommonExtension<*, *, *, *, *>,
-) {
+internal fun configureKotlinAndroid(commonExtension: CommonExtension<*, *, *, *, *>) {
     commonExtension.apply {
-        compileSdk = 34
-
-        defaultConfig {
-            minSdk = 21
-            vectorDrawables {
-                useSupportLibrary = true
-            }
-        }
-
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_17
             targetCompatibility = JavaVersion.VERSION_17
