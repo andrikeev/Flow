@@ -153,7 +153,7 @@ fun rememberConfirmationDialogState() =
     remember { ConfirmationDialogState(DialogConfirmationState.Hide) }
 
 internal sealed interface DialogConfirmationState {
-    object Hide : DialogConfirmationState
+    data object Hide : DialogConfirmationState
     data class Show(
         val icon: Icon? = null,
         @StringRes val title: Int,

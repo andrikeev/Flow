@@ -9,7 +9,7 @@ enum class Permission {
 
 @Stable
 sealed interface PermissionStatus {
-    object Granted : PermissionStatus
+    data object Granted : PermissionStatus
     data class Denied(val shouldShowRationale: Boolean) : PermissionStatus
 }
 

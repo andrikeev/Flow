@@ -16,7 +16,7 @@ internal class ObserveEndpointsStatusUseCaseImpl @Inject constructor(
     override suspend fun invoke(): Flow<List<EndpointState>> {
         return endpointsRepository.observeAll()
             .flatMapLatest { endpoints ->
-                combine<EndpointState, List<EndpointState>>(
+                combine(
                     flows = endpoints.map { endpoint -> observeEndpointStatusUseCase(endpoint) },
                     transform = Array<EndpointState>::toList,
                 )

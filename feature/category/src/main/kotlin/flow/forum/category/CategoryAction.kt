@@ -5,13 +5,13 @@ import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 
 internal sealed interface CategoryAction {
-    object BackClick : CategoryAction
-    object BookmarkClick : CategoryAction
+    data object BackClick : CategoryAction
+    data object BookmarkClick : CategoryAction
     data class CategoryClick(val category: Category) : CategoryAction
-    object EndOfListReached : CategoryAction
+    data object EndOfListReached : CategoryAction
     data class FavoriteClick(val topicModel: TopicModel<out Topic>) : CategoryAction
-    object LoginClick : CategoryAction
-    object RetryClick : CategoryAction
-    object SearchClick : CategoryAction
+    data object LoginClick : CategoryAction
+    data object RetryClick : CategoryAction
+    data object SearchClick : CategoryAction
     data class TopicClick(val topicModel: TopicModel<out Topic>) : CategoryAction
 }

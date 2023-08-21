@@ -1,7 +1,7 @@
 package flow.account
 
 internal sealed interface AccountAction {
-    object LoginClick : AccountAction
-    object LogoutClick : AccountAction
-    object ConfirmLogoutClick : AccountAction
+    data object LoginClick : AccountAction
+    data object LogoutClick : AccountAction
+    data object ConfirmLogoutClick : AccountAction
 }

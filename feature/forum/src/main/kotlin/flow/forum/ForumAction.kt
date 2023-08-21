@@ -5,5 +5,5 @@ import flow.models.forum.ForumCategory
 internal sealed interface ForumAction {
     data class CategoryClick(val category: ForumCategory) : ForumAction
     data class ExpandClick(val expandable: Expandable<ForumCategory>) : ForumAction
-    object RetryClick : ForumAction
+    data object RetryClick : ForumAction
 }

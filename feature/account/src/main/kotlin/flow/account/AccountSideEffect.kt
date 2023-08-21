@@ -1,6 +1,6 @@
 package flow.account
 
 internal sealed interface AccountSideEffect {
-    object OpenLogin : AccountSideEffect
-    object ShowLogoutConfirmation : AccountSideEffect
+    data object OpenLogin : AccountSideEffect
+    data object ShowLogoutConfirmation : AccountSideEffect
 }

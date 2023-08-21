@@ -1,8 +1,8 @@
 package flow.rating
 
 sealed interface RatingAction {
-    object AskLaterClick : RatingAction
-    object DismissClick : RatingAction
-    object NeverAskAgainClick : RatingAction
-    object RatingClick : RatingAction
+    data object AskLaterClick : RatingAction
+    data object DismissClick : RatingAction
+    data object NeverAskAgainClick : RatingAction
+    data object RatingClick : RatingAction
 }

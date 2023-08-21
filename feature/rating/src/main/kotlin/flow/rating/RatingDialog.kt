@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -103,7 +103,7 @@ private const val StarsNumber = 5
 
 @Composable
 private fun RatingRow(onSubmit: () -> Unit) {
-    var rating by remember { mutableStateOf(0f) }
+    var rating by remember { mutableFloatStateOf(0f) }
     fun getStateFor(value: Int): RatingStarState {
         return if (rating > value - 0.5) {
             RatingStarState.Full
@@ -114,7 +114,7 @@ private fun RatingRow(onSubmit: () -> Unit) {
         }
     }
 
-    var width by remember { mutableStateOf(0f) }
+    var width by remember { mutableFloatStateOf(0f) }
     fun onPointerPositionChanged(position: Float) {
         rating = (StarsNumber * position.coerceIn(0f, width) / width)
             .coerceAtLeast(1f)

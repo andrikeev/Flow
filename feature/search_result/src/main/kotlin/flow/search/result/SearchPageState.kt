@@ -14,8 +14,8 @@ internal data class SearchPageState(
 )
 
 internal sealed interface SearchResultContent {
-    object Initial : SearchResultContent
-    object Empty : SearchResultContent
+    data object Initial : SearchResultContent
+    data object Empty : SearchResultContent
     data class Content(
         val torrents: List<TopicModel<Torrent>>,
         val categories: List<Category>,

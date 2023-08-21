@@ -6,22 +6,22 @@ import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
 
 internal sealed interface MenuAction {
-    object AboutClick : MenuAction
-    object ClearBookmarksConfirmation : MenuAction
-    object ClearFavoritesConfirmation : MenuAction
-    object ClearHistoryConfirmation : MenuAction
+    data object AboutClick : MenuAction
+    data object ClearBookmarksConfirmation : MenuAction
+    data object ClearFavoritesConfirmation : MenuAction
+    data object ClearHistoryConfirmation : MenuAction
     data class ConfirmableAction(
         @StringRes val title: Int,
         @StringRes val confirmationMessage: Int,
         val onConfirmAction: () -> Unit,
     ) : MenuAction
-    object LoginClick : MenuAction
-    object MyTipsClick : MenuAction
-    object NetMonetClick : MenuAction
-    object PayPalClick : MenuAction
-    object PrivacyPolicyClick : MenuAction
-    object RightsClick : MenuAction
-    object SendFeedbackClick : MenuAction
+    data object LoginClick : MenuAction
+    data object MyTipsClick : MenuAction
+    data object NetMonetClick : MenuAction
+    data object PayPalClick : MenuAction
+    data object PrivacyPolicyClick : MenuAction
+    data object RightsClick : MenuAction
+    data object SendFeedbackClick : MenuAction
     data class SetBookmarksSyncPeriod(val syncPeriod: SyncPeriod) : MenuAction
     data class SetEndpoint(val endpoint: Endpoint) : MenuAction
     data class SetFavoritesSyncPeriod(val syncPeriod: SyncPeriod) : MenuAction

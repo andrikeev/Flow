@@ -15,9 +15,9 @@ sealed interface InputState {
     val value: TextFieldValue
         get() = TextFieldValue()
 
-    object Initial : InputState
+    data object Initial : InputState
 
-    object Empty : InputState
+    data object Empty : InputState
 
     data class Valid(override val value: TextFieldValue) : InputState
 

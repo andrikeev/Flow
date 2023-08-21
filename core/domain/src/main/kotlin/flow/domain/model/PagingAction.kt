@@ -4,9 +4,9 @@ import kotlinx.coroutines.flow.FlowCollector
 
 sealed interface PagingAction {
     data class Refresh(val page: Int = 1) : PagingAction
-    object Prepend : PagingAction
-    object Append : PagingAction
-    object Retry : PagingAction
+    data object Prepend : PagingAction
+    data object Append : PagingAction
+    data object Retry : PagingAction
 }
 
 suspend fun FlowCollector<PagingAction>.refresh(page: Int = 1) {

@@ -1,3 +1,5 @@
+@file:Suppress("UnusedReceiverParameter")
+
 package flow.ui.component
 
 import androidx.annotation.DrawableRes

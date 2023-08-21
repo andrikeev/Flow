@@ -14,6 +14,7 @@ dependencies {
     implementation(libs.google.services.gradlePlugin)
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.kotlin.serializationPlugin)
+    implementation(libs.ksp.gradlePlugin)
     implementation(libs.ktor.gradlePlugin)
     implementation(libs.hilt.gradlePlugin)
     implementation(libs.spotless.gradlePlugin)
@@ -44,6 +45,10 @@ gradlePlugin {
         register("androidFeature") {
             id = "flow.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
+        }
+        register("kotlinKsp") {
+            id = "flow.kotlin.ksp"
+            implementationClass = "KotlinKspConventionPlugin"
         }
         register("kotlinLibrary") {
             id = "flow.kotlin.library"
