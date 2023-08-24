@@ -4,7 +4,7 @@ import flow.models.forum.ForumCategory
 
 sealed interface ForumState {
     sealed interface ForumLoadingState : ForumState
-    object Loading : ForumLoadingState
+    data object Loading : ForumLoadingState
     data class Error(val error: Throwable) : ForumLoadingState
     data class Loaded(val forum: List<Expandable<ForumCategory>>) : ForumState
 }

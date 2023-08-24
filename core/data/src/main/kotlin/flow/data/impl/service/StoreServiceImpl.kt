@@ -34,7 +34,6 @@ internal class StoreServiceImpl @Inject constructor(
     }
 
     private fun isRuStoreInstalled() = try {
-        @Suppress("DEPRECATION")
         context.packageManager.getApplicationInfo("ru.vk.store", 0).enabled
     } catch (e: PackageManager.NameNotFoundException) {
         false

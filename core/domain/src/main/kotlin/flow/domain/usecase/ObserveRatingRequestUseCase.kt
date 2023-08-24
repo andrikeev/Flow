@@ -17,11 +17,11 @@ internal class ObserveRatingRequestUseCaseImpl @Inject constructor(
     private val ratingRepository: RatingRepository,
 ) : ObserveRatingRequestUseCase {
     override suspend fun invoke(): Flow<RatingRequest> {
-        return combine<Boolean, Boolean>(
+        return combine(
             flows = listOf(
                 ratingRepository.observeRatingRequestDisabled().map(Boolean::not),
                 ratingRepository.observeLaunchCount().map { it <= 0 },
-                combine<Boolean, Boolean>(
+                combine(
                     flows = listOf(
                         observeSearchHistoryUseCase().map { it.size > HistoryCounter },
                         observeVisitedUseCase().map { it.size > VisitedCounter },

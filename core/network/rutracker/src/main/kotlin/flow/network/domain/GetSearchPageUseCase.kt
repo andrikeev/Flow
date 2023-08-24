@@ -61,7 +61,7 @@ internal class GetSearchPageUseCase(
                 val tags = getTags(titleWithTags)
                 val authorId = element.select(".u-name > a").queryParamOrNull("pid")
                 val authorName = element.select(".u-name > a").text()
-                val author = authorName.let { AuthorDto(id = authorId, name = it) }
+                val author = AuthorDto(id = authorId, name = authorName)
                 val categoryId = element.select(".f").queryParam("f")
                 val categoryName = element.select(".f").toStr()
                 val size = formatSize(element.select(".tor-size").attr("data-ts_text").toLong())

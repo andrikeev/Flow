@@ -16,9 +16,9 @@ internal sealed interface SearchResultAction {
     data class SetPeriod(val period: Period) : SearchResultAction
     data class SetSort(val sort: Sort) : SearchResultAction
     data class TopicClick(val topicModel: TopicModel<out Topic>) : SearchResultAction
-    object BackClick : SearchResultAction
-    object ExpandAppBarClick : SearchResultAction
-    object ListBottomReached : SearchResultAction
-    object RetryClick : SearchResultAction
-    object SearchClick : SearchResultAction
+    data object BackClick : SearchResultAction
+    data object ExpandAppBarClick : SearchResultAction
+    data object ListBottomReached : SearchResultAction
+    data object RetryClick : SearchResultAction
+    data object SearchClick : SearchResultAction
 }

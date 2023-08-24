@@ -1,6 +1,7 @@
 plugins {
     id("flow.android.library")
     id("flow.android.hilt")
+    id("flow.kotlin.ksp")
 }
 
 android {
@@ -12,5 +13,5 @@ dependencies {
 
     implementation(libs.bundles.room)
 
-    kapt(libs.room.compiler)
+    ksp(libs.room.compiler)
 }

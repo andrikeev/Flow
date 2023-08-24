@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -31,7 +31,7 @@ internal fun <T> FilterDropdownItem(
     onSelect: (T) -> Unit,
 ) {
     val dropdownState = rememberExpandState()
-    var width by remember { mutableStateOf(0) }
+    var width by remember { mutableIntStateOf(0) }
     FilterBarItem(label = label) {
         FilterBarItemContent(
             modifier = Modifier.onSizeChanged { width = it.width },

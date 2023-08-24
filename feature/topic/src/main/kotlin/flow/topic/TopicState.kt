@@ -14,13 +14,13 @@ internal data class TopicState(
 )
 
 internal sealed interface TopicFavoriteState {
-    object Initial : TopicFavoriteState
+    data object Initial : TopicFavoriteState
     data class FavoriteState(val favorite: Boolean) : TopicFavoriteState
 }
 
 internal sealed interface PaginationState {
-    object Initial : PaginationState
-    object NoPagination : PaginationState
+    data object Initial : PaginationState
+    data object NoPagination : PaginationState
     data class Pagination(
         val page: Int,
         val totalPages: Int,
@@ -28,13 +28,13 @@ internal sealed interface PaginationState {
 }
 
 internal sealed interface CommentsContent {
-    object Initial : CommentsContent
-    object Empty : CommentsContent
+    data object Initial : CommentsContent
+    data object Empty : CommentsContent
     data class Posts(val posts: List<Post>) : CommentsContent
 }
 
 internal sealed interface TopicContent {
-    object Initial : TopicContent
+    data object Initial : TopicContent
     data class Topic(val title: String) : TopicContent
     data class Torrent(
         val title: String,
@@ -44,7 +44,7 @@ internal sealed interface TopicContent {
 
 internal sealed interface DownloadState {
     data class Completed(val uri: String) : DownloadState
-    object Error : DownloadState
-    object Initial : DownloadState
-    object Started : DownloadState
+    data object Error : DownloadState
+    data object Initial : DownloadState
+    data object Started : DownloadState
 }

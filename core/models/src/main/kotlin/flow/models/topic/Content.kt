@@ -67,9 +67,9 @@ sealed interface PostContent : Content {
 
     data class PostList(val content: Content) : PostContent
 
-    object Divider : PostContent
+    data object Divider : PostContent
 
-    object Spacer : PostContent
+    data object Spacer : PostContent
 }
 
 enum class TextAlignment { Left, Right, Center, Justify; }

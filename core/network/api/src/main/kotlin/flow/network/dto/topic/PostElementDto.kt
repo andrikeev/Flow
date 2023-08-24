@@ -114,12 +114,12 @@ data class UList(val children: List<PostElementDto>) : PostElementDto
 
 @Serializable
 @SerialName("Hr")
-object Hr : PostElementDto
+data object Hr : PostElementDto
 
 @Serializable
 @SerialName("Br")
-object Br : PostElementDto
+data object Br : PostElementDto
 
 @Serializable
 @SerialName("PostBr")
-object PostBr : PostElementDto
+data object PostBr : PostElementDto

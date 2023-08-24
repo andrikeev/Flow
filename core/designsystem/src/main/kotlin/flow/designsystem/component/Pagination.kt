@@ -21,7 +21,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -128,7 +128,7 @@ fun Pagination(
 private fun Pagination_Preview() {
     FlowTheme {
         Surface {
-            var page by remember { mutableStateOf(2) }
+            var page by remember { mutableIntStateOf(2) }
             Pagination(page, 50) { page = it }
         }
     }

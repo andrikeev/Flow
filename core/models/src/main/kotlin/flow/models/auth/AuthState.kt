@@ -6,7 +6,7 @@ sealed interface AuthState {
         val avatarUrl: String?,
     ) : AuthState
 
-    object Unauthorized : AuthState
+    data object Unauthorized : AuthState
 }
 
 val AuthState?.isAuthorized

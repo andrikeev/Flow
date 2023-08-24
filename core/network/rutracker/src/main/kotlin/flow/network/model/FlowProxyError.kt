@@ -2,10 +2,10 @@ package flow.network.model
 
 sealed class FlowProxyError : Throwable()
 
-object BadRequest : FlowProxyError()
-object Forbidden : FlowProxyError()
-object NoData : FlowProxyError()
-object NoConnection : FlowProxyError()
-object NotFound : FlowProxyError()
-object Unauthorized : FlowProxyError()
-object Unknown : FlowProxyError()
+data object BadRequest : FlowProxyError()
+data object Forbidden : FlowProxyError()
+data object NoData : FlowProxyError()
+data object NoConnection : FlowProxyError()
+data object NotFound : FlowProxyError()
+data object Unauthorized : FlowProxyError()
+data object Unknown : FlowProxyError()

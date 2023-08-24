@@ -42,7 +42,10 @@ fun ExpandCollapseIcon(
     expanded: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val rotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f)
+    val rotation by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        label = "ExpandCollapseIcon_Rotation",
+    )
     Icon(
         modifier = modifier.rotate(rotation),
         icon = FlowIcons.Expand,

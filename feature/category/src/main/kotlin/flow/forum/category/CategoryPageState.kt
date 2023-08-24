@@ -12,7 +12,7 @@ internal data class CategoryPageState(
 )
 
 internal sealed interface CategoryState {
-    object Initial : CategoryState
+    data object Initial : CategoryState
     data class Category(
         val name: String,
         val isBookmark: Boolean,
@@ -20,8 +20,8 @@ internal sealed interface CategoryState {
 }
 
 internal sealed interface CategoryContent {
-    object Initial : CategoryContent
-    object Empty : CategoryContent
+    data object Initial : CategoryContent
+    data object Empty : CategoryContent
     data class Content(val items: List<CategoryItem>) : CategoryContent
 }
 
