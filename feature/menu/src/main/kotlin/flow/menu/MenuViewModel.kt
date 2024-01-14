@@ -51,9 +51,6 @@ internal class MenuViewModel @Inject constructor(
             is MenuAction.ClearHistoryConfirmation -> onClearHistoryConfirmation()
             is MenuAction.ConfirmableAction -> onConfirmableAction(action)
             is MenuAction.LoginClick -> onLoginClick()
-            is MenuAction.MyTipsClick -> onMyTipsClick()
-            is MenuAction.NetMonetClick -> onNetMonetClick()
-            is MenuAction.PayPalClick -> onPayPalClick()
             is MenuAction.PrivacyPolicyClick -> onPrivacyPolicyClick()
             is MenuAction.RightsClick -> onRightsClick()
             is MenuAction.SendFeedbackClick -> onSendFeedbackClick()
@@ -102,18 +99,6 @@ internal class MenuViewModel @Inject constructor(
         postSideEffect(MenuSideEffect.OpenLogin)
     }
 
-    private fun onMyTipsClick() = intent {
-        postSideEffect(MenuSideEffect.OpenLink(MyTips))
-    }
-
-    private fun onNetMonetClick() = intent {
-        postSideEffect(MenuSideEffect.OpenLink(NetMonet))
-    }
-
-    private fun onPayPalClick() = intent {
-        postSideEffect(MenuSideEffect.OpenLink(PayPal))
-    }
-
     private fun onPrivacyPolicyClick() = intent {
         postSideEffect(MenuSideEffect.OpenLink(PrivacyPolicy))
     }
@@ -147,11 +132,8 @@ internal class MenuViewModel @Inject constructor(
 
     companion object {
         private const val DeveloperEmail = "mailto:rutracker.search@gmail.com"
-        private const val Copyrights = "https://flow-proxy-m7o3b.ondigitalocean.app/copyrights.html"
-        private const val PrivacyPolicy =
-            "https://flow-proxy-m7o3b.ondigitalocean.app/privacy-policy.html"
-        private const val PayPal = "https://www.paypal.com/donate/?hosted_button_id=LHVXE7WPCY846"
-        private const val NetMonet = "https://netmonet.ru/s/andrikeev"
-        private const val MyTips = "https://pay.mysbertips.ru/50962107"
+        private const val Copyrights = "https://flow-pn963.ondigitalocean.app/copyrights.html"
+        private const val PrivacyPolicy = "https://flow-pn963.ondigitalocean.app/privacy-policy.html"
     }
 }
+

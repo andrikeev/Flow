@@ -41,21 +41,21 @@ internal fun FilterBar(
 ) {
     FilterDropdownItem(
         label = stringResource(R.string.search_screen_filter_sort_label),
-        items = Sort.values().toList(),
+        items = Sort.entries,
         selected = filter.sort,
         itemLabel = { sort -> stringResource(sort.resId) },
         onSelect = onSelectSort,
     )
     FilterDropdownItem(
         label = stringResource(R.string.search_screen_filter_order_label),
-        items = Order.values().toList(),
+        items = Order.entries,
         selected = filter.order,
         itemLabel = { order -> stringResource(order.resId) },
         onSelect = onSelectOrder,
     )
     FilterDropdownItem(
         label = stringResource(R.string.search_screen_filter_period_label),
-        items = Period.values().toList(),
+        items = Period.entries,
         selected = filter.period,
         itemLabel = { period -> stringResource(period.resId).replaceFirstChar(Char::uppercaseChar) },
         onSelect = onSelectPeriod,
