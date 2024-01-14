@@ -93,7 +93,7 @@ private fun addNestedNavigation(
     openLogin: () -> Unit,
     openTopic: (id: String) -> Unit,
 ) = addDestination {
-    val navigationBarItems = remember { BottomRoute.values().map(BottomRoute::navigationBarItem) }
+    val navigationBarItems = remember { BottomRoute.entries.map(BottomRoute::navigationBarItem) }
     val navigationController = rememberNestedNavigationController()
     with(navigationController) {
         NestedMobileNavigation(
@@ -279,7 +279,7 @@ private enum class BottomRoute(val navigationBarItem: NavigationBarItem) {
 
     private companion object {
         fun valueOf(value: String?): BottomRoute? {
-            return BottomRoute.values().firstOrNull { it.route == value }
+            return entries.firstOrNull { it.route == value }
         }
     }
 }

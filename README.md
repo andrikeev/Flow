@@ -69,17 +69,7 @@ All the code and the content is available on github: <https://github.com/andrike
 
 This software is open source, licensed under the [MIT License][6].
 
-## Support Development
-
-You can support project if you want:
-
-**PayPal**: <https://www.paypal.com/donate/?hosted_button_id=LHVXE7WPCY846>
-
-**Tips #1**: <https://netmonet.ru/s/andrikeev>
-
-**Tips #2**: <https://pay.mysbertips.ru/50962107>
-
-[1]: https://flow-proxy-m7o3b.ondigitalocean.app/copyrights.html
+[1]: https://flow-pn963.ondigitalocean.app/copyrights.html
 
 [2]: https://play.google.com/store/apps/details?id=me.rutrackersearch.app
 
@@ -87,6 +77,6 @@ You can support project if you want:
 
 [4]: https://apps.rustore.ru/app/me.rutrackersearch.app
 
-[5]: https://flow-proxy-m7o3b.ondigitalocean.app/privacy-policy.html
+[5]: https://flow-pn963.ondigitalocean.app/privacy-policy.html
 
 [6]: https://opensource.org/licenses/MIT 

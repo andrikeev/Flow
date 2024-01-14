@@ -3,17 +3,13 @@ package flow.menu
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,7 +26,6 @@ import flow.account.AccountItem
 import flow.connection.ConnectionItem
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.Body
-import flow.designsystem.component.Button
 import flow.designsystem.component.ConfirmationDialog
 import flow.designsystem.component.Dialog
 import flow.designsystem.component.DropdownMenu
@@ -53,9 +48,6 @@ import flow.menu.MenuAction.ClearFavoritesConfirmation
 import flow.menu.MenuAction.ClearHistoryConfirmation
 import flow.menu.MenuAction.ConfirmableAction
 import flow.menu.MenuAction.LoginClick
-import flow.menu.MenuAction.MyTipsClick
-import flow.menu.MenuAction.NetMonetClick
-import flow.menu.MenuAction.PayPalClick
 import flow.menu.MenuAction.SendFeedbackClick
 import flow.menu.MenuAction.SetBookmarksSyncPeriod
 import flow.menu.MenuAction.SetFavoritesSyncPeriod
@@ -129,7 +121,6 @@ private fun MenuScreen(
         contentPadding = PaddingValues(vertical = AppTheme.spaces.medium),
     ) {
         menuAccountItem { onAction(LoginClick) }
-        menuDonateItem(onAction)
         menuSectionLabel { Text(stringResource(R.string.menu_label_settings)) }
         menuSelectionItem(
             title = { Text(stringResource(R.string.menu_settings_theme)) },
@@ -141,14 +132,14 @@ private fun MenuScreen(
         endpointSelectionItem()
         menuSyncSelectionItem(
             title = { Text(stringResource(R.string.menu_settings_favorites_sync)) },
-            items = SyncPeriod.values(),
+            items = SyncPeriod.entries,
             selected = favoritesSyncPeriod,
             labelMapper = { syncPeriod -> stringResource(syncPeriod.resId) },
             onSelect = { syncPeriod -> onAction(SetFavoritesSyncPeriod(syncPeriod)) },
         )
         menuSyncSelectionItem(
             title = { Text(stringResource(R.string.menu_settings_bookmarks_sync)) },
-            items = SyncPeriod.values(),
+            items = SyncPeriod.entries,
             selected = bookmarksSyncPeriod,
             labelMapper = { syncPeriod -> stringResource(syncPeriod.resId) },
             onSelect = { syncPeriod -> onAction(SetBookmarksSyncPeriod(syncPeriod)) },
@@ -214,10 +205,6 @@ private fun LazyListScope.menuAccountItem(
     onLoginClick: () -> Unit,
 ) = item { AccountItem(onLoginClick = onLoginClick) }
 
-private fun LazyListScope.menuDonateItem(
-    onAction: (MenuAction) -> Unit,
-) = item { MenuDonateItem(onAction = onAction) }
-
 private fun LazyListScope.menuItem(
     text: @Composable () -> Unit,
     onClick: () -> Unit,
@@ -227,7 +214,7 @@ private fun LazyListScope.endpointSelectionItem() = item { ConnectionItem() }
 
 private fun <T> LazyListScope.menuSelectionItem(
     title: @Composable () -> Unit,
-    items: Array<T>,
+    items: List<T>,
     selected: T,
     labelMapper: @Composable (T) -> String,
     onSelect: (T) -> Unit,
@@ -235,7 +222,7 @@ private fun <T> LazyListScope.menuSelectionItem(
 
 private fun LazyListScope.menuSyncSelectionItem(
     title: @Composable () -> Unit,
-    items: Array<SyncPeriod>,
+    items: List<SyncPeriod>,
     selected: SyncPeriod,
     labelMapper: @Composable (SyncPeriod) -> String,
     onSelect: (SyncPeriod) -> Unit,
@@ -282,7 +269,7 @@ private fun MenuItem(
 @Composable
 private fun MenuSyncSelectionItem(
     title: @Composable () -> Unit,
-    items: Array<SyncPeriod>,
+    items: List<SyncPeriod>,
     selected: SyncPeriod,
     labelMapper: @Composable (SyncPeriod) -> String,
     onSelect: (SyncPeriod) -> Unit,
@@ -319,7 +306,7 @@ private fun MenuSyncSelectionItem(
 @Composable
 private fun <T> MenuSelectionItem(
     title: @Composable () -> Unit,
-    items: Array<T>,
+    items: List<T>,
     selected: T,
     labelMapper: @Composable (T) -> String,
     onSelect: (T) -> Unit,
@@ -349,101 +336,6 @@ private fun <T> MenuSelectionItem(
                 labelMapper = labelMapper,
                 onSelect = onSelect,
             )
-        }
-    }
-}
-
-@Composable
-private fun MenuDonateItem(onAction: (MenuAction) -> Unit) {
-    val donateDialogState = rememberVisibilityState()
-    if (donateDialogState.visible) {
-        Dialog(
-            iconContentColor = AppTheme.colors.primary,
-            title = { Text(text = stringResource(R.string.support_development_title)) },
-            text = {
-                Column {
-                    Text(text = stringResource(R.string.support_development_line1))
-                    Spacer(modifier = Modifier.height(AppTheme.spaces.medium))
-                    Text(text = stringResource(R.string.support_development_line2))
-                    Spacer(modifier = Modifier.height(AppTheme.spaces.large))
-                    Button(
-                        modifier = Modifier
-                            .padding(horizontal = AppTheme.spaces.large)
-                            .fillMaxWidth(),
-                        text = stringResource(R.string.support_development_paypal),
-                        onClick = { onAction(PayPalClick) },
-                        color = AppTheme.colors.accentBlue,
-                    )
-                    Button(
-                        modifier = Modifier
-                            .padding(horizontal = AppTheme.spaces.large)
-                            .fillMaxWidth(),
-                        text = stringResource(R.string.support_development_netmonet),
-                        onClick = { onAction(NetMonetClick) },
-                        color = AppTheme.colors.accentOrange,
-                    )
-                    Button(
-                        modifier = Modifier
-                            .padding(horizontal = AppTheme.spaces.large)
-                            .fillMaxWidth(),
-                        text = stringResource(R.string.support_development_mytips),
-                        onClick = { onAction(MyTipsClick) },
-                        color = AppTheme.colors.accentGreen,
-                    )
-                }
-            },
-            onDismissRequest = donateDialogState::hide,
-            confirmButton = {
-                TextButton(
-                    text = stringResource(DsR.string.designsystem_action_close),
-                    onClick = donateDialogState::hide,
-                )
-            },
-        )
-    }
-    val itemState = rememberVisibilityState(true)
-    if (itemState.visible) {
-        Surface(
-            modifier = Modifier.padding(AppTheme.spaces.large),
-            onClick = { donateDialogState.show() },
-            shape = AppTheme.shapes.large,
-            tonalElevation = AppTheme.elevations.small,
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(AppTheme.spaces.large),
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.CenterEnd,
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(AppTheme.sizes.small)
-                            .clickable(onClick = itemState::hide),
-                        icon = FlowIcons.Clear,
-                        contentDescription = null,
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .padding(AppTheme.spaces.medium)
-                            .size(AppTheme.sizes.medium),
-                        icon = FlowIcons.StarFull,
-                        contentDescription = null,
-                    )
-                    Text(
-                        modifier = Modifier.padding(AppTheme.spaces.medium),
-                        text = stringResource(R.string.support_development_title),
-                        style = AppTheme.typography.titleMedium,
-                    )
-                }
-            }
         }
     }
 }
@@ -528,11 +420,11 @@ private val SyncPeriod.resId: Int
         SyncPeriod.WEEK -> R.string.sync_period_weekly
     }
 
-private fun Theme.Companion.availableValues(): Array<Theme> {
+private fun Theme.Companion.availableValues(): List<Theme> {
     return if (isMaterialYouAvailable()) {
-        Theme.values()
+        Theme.entries
     } else {
-        Theme.values().filter { it != Theme.DYNAMIC }.toTypedArray()
+        Theme.entries.filter { it != Theme.DYNAMIC }
     }
 }
 
@@ -542,13 +434,5 @@ private fun AboutDialog_Preview() {
     FlowTheme(isDynamic = false) {
         val dialogState = rememberVisibilityState(true)
         AboutAppDialog(dialogState)
-    }
-}
-
-@ThemePreviews
-@Composable
-private fun MenuDonateItem_Preview() {
-    FlowTheme(isDynamic = false) {
-        MenuDonateItem {}
     }
 }

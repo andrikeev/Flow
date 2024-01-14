@@ -4,7 +4,7 @@ sealed interface Endpoint {
     val host: String
 
     data object Proxy : Endpoint {
-        override val host: String = "flow-proxy-m7o3b.ondigitalocean.app"
+        override val host: String = "flow-pn963.ondigitalocean.app"
     }
 
     sealed interface RutrackerEndpoint : Endpoint
