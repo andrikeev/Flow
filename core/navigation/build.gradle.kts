@@ -13,7 +13,6 @@ dependencies {
     implementation(project(":core:logger"))
     implementation(project(":core:ui"))
 
-    implementation(libs.accompanist.navigation.animation)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.viewModel.savedState)

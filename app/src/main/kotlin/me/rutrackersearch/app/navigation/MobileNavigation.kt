@@ -285,8 +285,8 @@ private enum class BottomRoute(val navigationBarItem: NavigationBarItem) {
 }
 
 private object DeepLinks {
-    private const val baseUrl = "rutracker.org/forum/"
-    val topicUrls = listOf(baseUrl.let { "${it}viewtopic.php" })
-    val categoryUrls = listOf(baseUrl.let { "${it}viewforum.php" })
-    val searchResultUrls = listOf(baseUrl.let { "${it}tracker.php" })
+    private const val BASE_URL = "rutracker.org/forum/"
+    val topicUrls = listOf("${BASE_URL}viewtopic.php")
+    val categoryUrls = listOf("${BASE_URL}viewforum.php")
+    val searchResultUrls = listOf("${BASE_URL}tracker.php")
 }

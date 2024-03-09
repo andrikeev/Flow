@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.navigation.NavHostController
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import androidx.navigation.compose.rememberNavController
 import flow.logger.api.LoggerFactory
 import flow.ui.platform.LocalLoggerFactory
 import kotlinx.coroutines.flow.Flow
@@ -152,14 +152,14 @@ private class NestedNavigationControllerImpl(
 
 @Composable
 fun rememberNavigationController(): NavigationController {
-    val navHostController = rememberAnimatedNavController()
+    val navHostController = rememberNavController()
     val loggerFactory = LocalLoggerFactory.current
     return remember { NavigationControllerImpl(navHostController, loggerFactory) }
 }
 
 @Composable
 fun rememberNestedNavigationController(): NestedNavigationController {
-    val navHostController = rememberAnimatedNavController()
+    val navHostController = rememberNavController()
     val loggerFactory = LocalLoggerFactory.current
     return rememberSaveable(
         inputs = arrayOf(navHostController),
