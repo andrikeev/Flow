@@ -131,9 +131,8 @@ internal class MenuViewModel @Inject constructor(
         MenuSideEffect.ShowConfirmation(title, confirmationMessage, onConfirmAction)
 
     companion object {
-        private const val DeveloperEmail = "mailto:rutracker.search@gmail.com"
+        private const val DeveloperEmail = "mailto:flow.tracker.app@gmail.com"
         private const val Copyrights = "https://flow-pn963.ondigitalocean.app/copyrights.html"
         private const val PrivacyPolicy = "https://flow-pn963.ondigitalocean.app/privacy-policy.html"
     }
 }
-

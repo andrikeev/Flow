@@ -184,7 +184,7 @@ class MenuViewModelTest {
             states(
                 { this },
             )
-            postedSideEffects(MenuSideEffect.OpenLink("mailto:rutracker.search@gmail.com"))
+            postedSideEffects(MenuSideEffect.OpenLink("mailto:flow.tracker.app@gmail.com"))
         }
     }
 
