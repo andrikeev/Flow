@@ -5,7 +5,8 @@ import flow.models.search.Search
 import kotlinx.coroutines.flow.Flow
 
 interface SearchHistoryRepository {
-    fun observeSearchHistory(): Flow<List<Search>>
-    suspend fun addSearch(filter: Filter)
+    fun observeAll(): Flow<List<Search>>
+    suspend fun add(filter: Filter)
+    suspend fun remove(id: Int)
     suspend fun clear()
 }

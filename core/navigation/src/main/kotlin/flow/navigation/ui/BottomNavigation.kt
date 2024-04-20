@@ -1,6 +1,8 @@
 package flow.navigation.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import flow.designsystem.component.NavigationBar
 import flow.designsystem.component.NavigationBarItem
@@ -23,12 +25,16 @@ private fun BottomNavigation(
     selected: (route: String) -> Boolean,
     onClick: (route: String) -> Unit,
 ) = NavigationBar {
+    val haptic = LocalHapticFeedback.current
     items.forEach { tab ->
         NavigationBarItem(
             icon = tab.icon,
             label = stringResource(tab.labelResId),
             selected = selected(tab.route),
-            onClick = { onClick(tab.route) },
+            onClick = {
+                onClick(tab.route)
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            },
         )
     }
 }

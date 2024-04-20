@@ -8,7 +8,10 @@ internal sealed interface SearchState {
 
     sealed interface AuthorisedSearchState : SearchState
     data object Empty : AuthorisedSearchState
-    data class SearchList(val items: List<Search>) : AuthorisedSearchState
+    data class SearchList(
+        val pinned: List<Search>,
+        val other: List<Search>,
+    ) : AuthorisedSearchState
 }
 
 internal val SearchState.showSearchAction: Boolean

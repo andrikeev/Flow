@@ -23,6 +23,7 @@ import dagger.hilt.components.SingletonComponent
 import flow.database.AppDatabase
 import flow.database.dao.BookmarkDao
 import flow.database.dao.EndpointDao
+import flow.database.dao.FavoriteSearchDao
 import flow.database.dao.FavoriteTopicDao
 import flow.database.dao.ForumCategoryDao
 import flow.database.dao.ForumMetadataDao
@@ -34,7 +35,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DaosModule {
-
     @Provides
     @Singleton
     fun providesBookmarkDao(appDatabase: AppDatabase): BookmarkDao = appDatabase.bookmarkDao()
@@ -45,25 +45,35 @@ object DaosModule {
 
     @Provides
     @Singleton
-    fun providesFavoriteTopicDao(appDatabase: AppDatabase): FavoriteTopicDao = appDatabase.favoriteTopicDao()
+    fun providesFavoriteSearchDao(appDatabase: AppDatabase): FavoriteSearchDao =
+        appDatabase.favoritesSearchDao()
 
     @Provides
     @Singleton
-    fun providesForumCategoryDao(appDatabase: AppDatabase): ForumCategoryDao = appDatabase.forumCategoryDao()
+    fun providesFavoriteTopicDao(appDatabase: AppDatabase): FavoriteTopicDao =
+        appDatabase.favoriteTopicDao()
 
     @Provides
     @Singleton
-    fun providesForumMetadataDao(appDatabase: AppDatabase): ForumMetadataDao = appDatabase.forumMetadataDao()
+    fun providesForumCategoryDao(appDatabase: AppDatabase): ForumCategoryDao =
+        appDatabase.forumCategoryDao()
 
     @Provides
     @Singleton
-    fun providesVisitedTopicDao(appDatabase: AppDatabase): VisitedTopicDao = appDatabase.visitedTopicDao()
+    fun providesForumMetadataDao(appDatabase: AppDatabase): ForumMetadataDao =
+        appDatabase.forumMetadataDao()
 
     @Provides
     @Singleton
-    fun providesSearchHistoryDao(appDatabase: AppDatabase): SearchHistoryDao = appDatabase.searchHistoryDao()
+    fun providesSearchHistoryDao(appDatabase: AppDatabase): SearchHistoryDao =
+        appDatabase.searchHistoryDao()
 
     @Provides
     @Singleton
     fun providesSuggestDao(appDatabase: AppDatabase): SuggestDao = appDatabase.suggestDao()
+
+    @Provides
+    @Singleton
+    fun providesVisitedTopicDao(appDatabase: AppDatabase): VisitedTopicDao =
+        appDatabase.visitedTopicDao()
 }

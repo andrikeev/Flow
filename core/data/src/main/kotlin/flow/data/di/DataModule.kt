@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import flow.data.api.repository.BookmarksRepository
 import flow.data.api.repository.EndpointsRepository
+import flow.data.api.repository.FavoriteSearchRepository
 import flow.data.api.repository.FavoritesRepository
 import flow.data.api.repository.ForumRepository
 import flow.data.api.repository.RatingRepository
@@ -22,6 +23,7 @@ import flow.data.api.service.TopicService
 import flow.data.api.service.TorrentService
 import flow.data.impl.repository.BookmarksRepositoryImpl
 import flow.data.impl.repository.EndpointsRepositoryImpl
+import flow.data.impl.repository.FavoriteSearchRepositoryImpl
 import flow.data.impl.repository.FavoritesRepositoryImpl
 import flow.data.impl.repository.ForumRepositoryImpl
 import flow.data.impl.repository.RatingRepositoryImpl
@@ -104,4 +106,8 @@ internal interface DataModule {
     @Binds
     @Singleton
     fun visitedRepository(impl: VisitedRepositoryImpl): VisitedRepository
+
+    @Binds
+    @Singleton
+    fun favoriteSearchRepository(impl: FavoriteSearchRepositoryImpl): FavoriteSearchRepository
 }

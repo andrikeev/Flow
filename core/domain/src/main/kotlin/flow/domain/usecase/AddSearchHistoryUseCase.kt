@@ -13,7 +13,7 @@ class AddSearchHistoryUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(filter: Filter) {
         withContext(dispatchers.default) {
-            repository.addSearch(enrichFilterUseCase(filter))
+            repository.add(enrichFilterUseCase(filter))
         }
     }
 }

@@ -25,6 +25,12 @@ interface SearchHistoryDao {
     suspend fun insert(entity: SearchHistoryEntity)
 
     /**
+     * Delete [SearchHistoryEntity].
+     */
+    @Query("DELETE FROM Search WHERE :id == id")
+    suspend fun delete(id: Int)
+
+    /**
      * Clear all [SearchHistoryEntity]s.
      */
     @Query("DELETE FROM Search")
