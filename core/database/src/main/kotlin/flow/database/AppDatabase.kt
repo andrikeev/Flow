@@ -3,6 +3,8 @@ package flow.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import flow.database.converters.Converters
 import flow.database.dao.BookmarkDao
 import flow.database.dao.EndpointDao
@@ -35,8 +37,8 @@ import flow.database.entity.VisitedTopicEntity
         SuggestEntity::class,
         VisitedTopicEntity::class,
     ],
-    version = 3,
-    exportSchema = false,
+    version = 4,
+    exportSchema = true,
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -49,4 +51,12 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun searchHistoryDao(): SearchHistoryDao
     abstract fun suggestDao(): SuggestDao
     abstract fun visitedTopicDao(): VisitedTopicDao
+
+    companion object {
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS `FavoriteSearch` (`id` INTEGER NOT NULL, PRIMARY KEY(`id`))")
+            }
+        }
+    }
 }

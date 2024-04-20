@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import flow.database.AppDatabase
+import flow.database.AppDatabase.Companion.MIGRATION_3_4
 import javax.inject.Singleton
 
 @Module
@@ -21,6 +22,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "flow-db",
         )
+            .addMigrations(MIGRATION_3_4)
             .fallbackToDestructiveMigration()
             .build()
 }

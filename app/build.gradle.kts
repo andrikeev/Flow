@@ -8,8 +8,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "me.rutrackersearch.app"
-        versionCode = 42
-        versionName = "4.6.0"
+        versionCode = 43
+        versionName = "4.6.1"
     }
 
     buildTypes {
