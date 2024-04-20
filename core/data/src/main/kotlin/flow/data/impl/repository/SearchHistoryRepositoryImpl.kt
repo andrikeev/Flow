@@ -14,14 +14,18 @@ import javax.inject.Inject
 class SearchHistoryRepositoryImpl @Inject constructor(
     private val searchHistoryDao: SearchHistoryDao,
 ) : SearchHistoryRepository {
-    override fun observeSearchHistory(): Flow<List<Search>> {
+    override fun observeAll(): Flow<List<Search>> {
         return searchHistoryDao.observerAll().map { entities ->
             entities.map(SearchHistoryEntity::toSearch)
         }
     }
 
-    override suspend fun addSearch(filter: Filter) {
+    override suspend fun add(filter: Filter) {
         searchHistoryDao.insert(filter.toEntity())
+    }
+
+    override suspend fun remove(id: Int) {
+        searchHistoryDao.delete(id)
     }
 
     override suspend fun clear() {

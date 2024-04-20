@@ -63,13 +63,14 @@ internal class SearchInputViewModel @Inject constructor(
     }
 
     private fun onSubmit() = intent {
-        val query = state.searchInput.text
+        val query = state.searchInput.text.trim()
         saveSuggestUseCase(query)
         postSideEffect(SearchInputSideEffect.HideKeyboard)
         postSideEffect(SearchInputSideEffect.OpenSearch(filter.copy(query = query)))
     }
 
-    private fun onSubmit(query: String) = intent {
+    private fun onSubmit(value: String) = intent {
+        val query = value.trim()
         saveSuggestUseCase(query)
         postSideEffect(SearchInputSideEffect.HideKeyboard)
         postSideEffect(SearchInputSideEffect.OpenSearch(filter.copy(query = query)))

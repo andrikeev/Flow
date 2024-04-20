@@ -23,7 +23,9 @@ internal class ObserveRatingRequestUseCaseImpl @Inject constructor(
                 ratingRepository.observeLaunchCount().map { it <= 0 },
                 combine(
                     flows = listOf(
-                        observeSearchHistoryUseCase().map { it.size > HistoryCounter },
+                        observeSearchHistoryUseCase().map { (pinned, other) ->
+                            pinned.size > PinnedSearchCounter || other.size > HistoryCounter
+                        },
                         observeVisitedUseCase().map { it.size > VisitedCounter },
                         observeBookmarksUseCase().map { it.size > BookmarksCounter },
                     ),
@@ -41,6 +43,7 @@ internal class ObserveRatingRequestUseCaseImpl @Inject constructor(
     }
 
     private companion object {
+        const val PinnedSearchCounter = 1
         const val HistoryCounter = 3
         const val VisitedCounter = 5
         const val BookmarksCounter = 2
