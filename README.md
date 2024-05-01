@@ -69,7 +69,7 @@ All the code and the content is available on github: <https://github.com/andrike
 
 This software is open source, licensed under the [MIT License][6].
 
-[1]: https://flow-pn963.ondigitalocean.app/copyrights.html
+[1]: https://flow-app.tech/copyrights.html
 
 [2]: https://play.google.com/store/apps/details?id=me.rutrackersearch.app
 
@@ -77,6 +77,6 @@ This software is open source, licensed under the [MIT License][6].
 
 [4]: https://apps.rustore.ru/app/me.rutrackersearch.app
 
-[5]: https://flow-pn963.ondigitalocean.app/privacy-policy.html
+[5]: https://flow-app.tech/privacy-policy.html
 
 [6]: https://opensource.org/licenses/MIT 

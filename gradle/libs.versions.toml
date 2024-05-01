@@ -126,6 +126,7 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 kotlin-serializationPlugin = { group = "org.jetbrains.kotlin", name = "kotlin-serialization", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "symbol-processing-gradle-plugin", version.ref = "kspGradlePlugin" }
 ktor-gradlePlugin = { group = "io.ktor.plugin", name = "plugin", version.ref = "ktor" }
+room-gradlePlugin = { group = "androidx.room", name = "androidx.room.gradle.plugin", version.ref = "room" }
 spotless-gradlePlugin = { group = "com.diffplug.spotless", name = "spotless-plugin-gradle", version.ref = "spotlessGradlePlugin" }
 
 [bundles]

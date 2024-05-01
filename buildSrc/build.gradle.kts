@@ -17,6 +17,7 @@ dependencies {
     implementation(libs.ksp.gradlePlugin)
     implementation(libs.ktor.gradlePlugin)
     implementation(libs.hilt.gradlePlugin)
+    implementation(libs.room.gradlePlugin)
     implementation(libs.spotless.gradlePlugin)
 }
 
