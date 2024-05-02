@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 4,
-    "identityHash": "66a83ad026b2e7c5d10d26251c3b043c",
+    "version": 5,
+    "identityHash": "8f11e75def77493a1e44bbec446d6cbe",
     "entities": [
       {
         "tableName": "Bookmark",
@@ -227,7 +227,17 @@
             "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_ForumCategoryEntity_parentId",
+            "unique": false,
+            "columnNames": [
+              "parentId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ForumCategoryEntity_parentId` ON `${TABLE_NAME}` (`parentId`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "ForumCategoryEntity",
@@ -452,7 +462,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '66a83ad026b2e7c5d10d26251c3b043c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8f11e75def77493a1e44bbec446d6cbe')"
     ]
   }
 }

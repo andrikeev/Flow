@@ -17,5 +17,12 @@ internal fun configureAndroidCommon(commonExtension: CommonExtension<*, *, *, *,
                 useSupportLibrary = true
             }
         }
+        packaging {
+            resources.excludes.addAll(
+                listOf(
+                    "META-INF/LICENSE.md",
+                )
+            )
+        }
     }
 }

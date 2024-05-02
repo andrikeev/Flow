@@ -2,7 +2,6 @@ package flow.search.result.categories
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -30,7 +29,6 @@ import flow.models.forum.Category
 import flow.search.result.R
 import flow.ui.component.VisibilityState
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun CategorySelectionDialog(
     state: VisibilityState,

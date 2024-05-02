@@ -15,6 +15,4 @@ dependencies {
     implementation(project(":core:notifications"))
 
     implementation(libs.bundles.work)
-
-    kapt(libs.hilt.ext.compiler)
 }

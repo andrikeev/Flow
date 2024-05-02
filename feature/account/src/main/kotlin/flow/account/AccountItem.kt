@@ -123,7 +123,7 @@ internal fun AccountItem(
 private fun AccountItem_Preview(
     @PreviewParameter(AccountItemParamProvider::class) authState: AuthState,
 ) = FlowTheme {
-    AccountItem(state = AuthState.Unauthorized, onAction = {})
+    AccountItem(state = authState, onAction = {})
 }
 
 private class AccountItemParamProvider : CollectionPreviewParameterProvider<AuthState>(

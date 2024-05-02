@@ -148,7 +148,10 @@ private fun FilterAuthorItemPreview(
 ) {
     FlowTheme {
         Surface {
-            FilterAuthorItem(selected = null) {}
+            FilterAuthorItem(
+                selected = author,
+                onSubmit = {},
+            )
         }
     }
 }
@@ -159,7 +162,12 @@ private fun AuthorDialogPreview(
     @PreviewParameter(FilterAuthorPreviewParamProvider::class) author: Author?,
 ) {
     FlowTheme {
-        AuthorDialog(VisibilityState(true), author = author, {}) {}
+        AuthorDialog(
+            state = VisibilityState(true),
+            author = author,
+            onDismissRequest = {},
+            onSubmit = {},
+        )
     }
 }
 
