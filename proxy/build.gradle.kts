@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+
 plugins {
     id("flow.ktor.application")
 }
@@ -13,6 +15,10 @@ ktor {
     fatJar {
         archiveFileName.set("app.jar")
     }
+}
+
+tasks.named<KotlinCompilationTask<*>>("compileKotlin").configure {
+    compilerOptions.freeCompilerArgs.add("-opt-in=kotlin.io.encoding.ExperimentalEncodingApi")
 }
 
 dependencies {
