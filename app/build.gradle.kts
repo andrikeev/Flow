@@ -6,10 +6,12 @@ plugins {
 }
 
 android {
+    namespace = "me.rutrackersearch.app"
+
     defaultConfig {
         applicationId = "me.rutrackersearch.app"
-        versionCode = 43
-        versionName = "4.6.1"
+        versionCode = 44
+        versionName = "4.6.2"
     }
 
     buildTypes {
@@ -34,8 +36,6 @@ android {
             applicationIdSuffix = ".dev"
         }
     }
-
-    namespace = "me.rutrackersearch.app"
 }
 
 dependencies {

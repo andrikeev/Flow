@@ -33,11 +33,10 @@ internal fun Project.configureAndroidCompose(
             freeCompilerArgs = freeCompilerArgs + listOf(
                 "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
                 "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+                "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
                 "-opt-in=androidx.compose.runtime.ExperimentalComposeApi",
                 "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-                "-opt-in=com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi",
-                "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi",
+                "-opt-in=androidx.compose.ui.text.ExperimentalTextApi",
             )
         }
     }

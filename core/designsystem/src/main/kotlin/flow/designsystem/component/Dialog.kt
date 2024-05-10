@@ -3,6 +3,7 @@ package flow.designsystem.component
 import androidx.annotation.StringRes
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.Stable
@@ -61,7 +62,7 @@ fun Dialog(
     modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties(),
     content: @Composable () -> Unit,
-) = AlertDialog(
+) = BasicAlertDialog(
     onDismissRequest = onDismissRequest,
     modifier = modifier,
     properties = properties,

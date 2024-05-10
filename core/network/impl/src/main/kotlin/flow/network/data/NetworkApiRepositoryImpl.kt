@@ -14,7 +14,9 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import okhttp3.OkHttpClient
+import java.net.URLEncoder
 import javax.inject.Inject
+import kotlin.io.encoding.Base64
 
 internal class NetworkApiRepositoryImpl @Inject constructor(
     private val settingsRepository: SettingsRepository,
@@ -30,6 +32,13 @@ internal class NetworkApiRepositoryImpl @Inject constructor(
                 is Endpoint.Proxy -> proxyApi(endpoint.host)
                 is Endpoint.RutrackerEndpoint -> rutrackerApi(endpoint.host)
             }
+        }
+    }
+
+    override suspend fun getCaptchaUrl(url: String): String {
+        return when (val endpoint = endpoint()) {
+            is Endpoint.Proxy -> "https://${endpoint.host}/captcha/${url.encode()}"
+            is Endpoint.RutrackerEndpoint -> url
         }
     }
 
@@ -76,5 +85,9 @@ internal class NetworkApiRepositoryImpl @Inject constructor(
                 }
             },
         )
+    }
+
+    private fun String.encode(): String {
+        return Base64.UrlSafe.encode(encodeToByteArray())
     }
 }

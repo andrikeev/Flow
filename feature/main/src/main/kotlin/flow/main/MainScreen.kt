@@ -1,13 +1,14 @@
 package flow.main
 
+import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import androidx.compose.ui.platform.LocalContext
 import flow.designsystem.platform.PlatformType
 import flow.designsystem.theme.FlowTheme
+import flow.designsystem.utils.rememberSystemBarStyle
 import flow.models.settings.Theme
 
 @Composable
@@ -16,22 +17,20 @@ fun MainScreen(
     platformType: PlatformType,
     content: @Composable () -> Unit,
 ) {
-    val isDark = platformType == PlatformType.TV || theme.isDark()
-    val isDynamic = theme.isDynamic()
-    val systemUiController = rememberSystemUiController()
-    LaunchedEffect(isDark) {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = !isDark,
-            isNavigationBarContrastEnforced = false,
-            transformColorForLightContent = { original -> Color.Black.compositeOver(original) },
-        )
-    }
     FlowTheme(
-        isDark = isDark,
-        isDynamic = isDynamic,
-        content = content,
-    )
+        isDark = platformType == PlatformType.TV || theme.isDark(),
+        isDynamic = theme.isDynamic(),
+    ) {
+        val activity = LocalContext.current as ComponentActivity
+        val systemBarStyle = rememberSystemBarStyle()
+        LaunchedEffect(systemBarStyle) {
+            activity.enableEdgeToEdge(
+                statusBarStyle = systemBarStyle,
+                navigationBarStyle = systemBarStyle,
+            )
+        }
+        content()
+    }
 }
 
 @Composable

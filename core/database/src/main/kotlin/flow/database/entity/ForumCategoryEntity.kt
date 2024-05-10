@@ -2,6 +2,7 @@ package flow.database.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -13,6 +14,9 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE,
         ),
     ],
+    indices = [
+        Index("parentId"),
+    ]
 )
 data class ForumCategoryEntity(
     @PrimaryKey val id: String,

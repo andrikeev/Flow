@@ -2,6 +2,7 @@ package flow.designsystem.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.ui.Modifier
@@ -15,7 +16,7 @@ import flow.designsystem.theme.FlowTheme
 fun Divider(
     modifier: Modifier = Modifier,
     color: Color = AppTheme.colors.outlineVariant,
-) = androidx.compose.material3.Divider(
+) = HorizontalDivider(
     modifier = modifier,
     color = color,
     thickness = Dp.Hairline,

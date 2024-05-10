@@ -1,10 +1,12 @@
 [versions]
 accompanist = "0.34.0"
 androidGradlePlugin = "8.1.4"
-androidxActivity = "1.8.2"
-androidxComposeBom = "2024.02.02"
-androidxComposeCompiler = "1.5.1"
-androidxCore = "1.12.0"
+androidxActivity = "1.9.0"
+androidxComposeBom = "2024.05.00"
+androidxComposeCompiler = "1.5.10" # depends on kotlin version https://developer.android.com/jetpack/androidx/releases/compose-kotlin#pre-release_kotlin_compatibility
+androidxComposeTv = "1.0.0-alpha10"
+androidxComposeMaterialTv = "1.0.0-beta01"
+androidxCore = "1.13.1"
 androidxCoreSplashscreen = "1.0.1"
 androidxLifecycle = "2.7.0"
 androidxNavigation = "2.7.7"
@@ -26,11 +28,11 @@ hiltExt = "1.2.0"
 jsoup = "1.15.3"
 junit4 = "4.13.2"
 koin = "3.4.0"
-kotlin = "1.9.0"
-kotlinxCoroutines = "1.7.3"
+kotlin = "1.9.22"
+kotlinxCoroutines = "1.8.0"
 kotlinxDatetime = "0.3.1"
 kotlinxSerialization = "1.5.1"
-kspGradlePlugin = "1.9.10-1.0.13"
+kspGradlePlugin = "1.9.22-1.0.17"
 ktor = "2.3.1"
 leakcanary = "2.10"
 logback = "1.3.5"
@@ -41,17 +43,14 @@ room = "2.6.1"
 spotlessGradlePlugin = "6.20.0"
 
 [libraries]
-accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "accompanist" }
-accompanist-navigation-animation = { group = "com.google.accompanist", name = "accompanist-navigation-animation", version.ref = "accompanist" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
-accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
-accompanist-swiperefresh = { group = "com.google.accompanist", name = "accompanist-swiperefresh", version.ref = "accompanist" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
+androidx-compose-foundation-tv = { group = "androidx.tv", name = "tv-foundation", version.ref = "androidxComposeTv" }
 androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
-androidx-compose-material-ui = { group = "androidx.compose.material", name = "material" }
+androidx-compose-material-tv = { group = "androidx.tv", name = "tv-material", version.ref = "androidxComposeMaterialTv" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
@@ -85,7 +84,7 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", v
 hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
 hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
 javax-inject = { group = "javax.inject", name = "javax.inject", version = "1" }
-json = { group = "org.json", name = "json", version = "20201115" }
+json = { group = "org.json", name = "json", version = "20220924" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 koin = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }

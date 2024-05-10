@@ -1,6 +1,8 @@
 package flow.designsystem.component
 
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
@@ -28,9 +30,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import flow.designsystem.theme.AppTheme
+import flow.designsystem.utils.componentActivity
+import flow.designsystem.utils.rememberSystemBarStyle
 
 @Composable
 fun ModalBottomSheet(
@@ -41,20 +45,22 @@ fun ModalBottomSheet(
     val transitionState = remember { MutableTransitionState(false) }
     transitionState.targetState = visible
 
-    val systemUiController = rememberSystemUiController()
-    val statusBarDarkContentEnabled = !AppTheme.colors.isDark
-    LaunchedEffect(visible) {
-        if (visible) {
-            systemUiController.statusBarDarkContentEnabled = false
-        } else {
-            systemUiController.statusBarDarkContentEnabled = statusBarDarkContentEnabled
-        }
+    val activity = LocalContext.current.componentActivity
+    val systemBarStyle = rememberSystemBarStyle()
+    LaunchedEffect(visible, systemBarStyle) {
+        activity.enableEdgeToEdge(
+            statusBarStyle = if (visible) {
+                SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+            } else {
+                systemBarStyle
+            },
+        )
     }
 
     if (transitionState.currentState || transitionState.targetState) {
         val transition = updateTransition(
             transitionState = transitionState,
-            label = "DropdownMenu_Transition",
+            label = "ModalBottomSheet_Transition",
         )
         val scrimAlpha by transition.animateFloat(
             targetValueByState = { if (it) 0.37f else 0.0f },

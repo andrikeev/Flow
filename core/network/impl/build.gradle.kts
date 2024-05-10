@@ -6,6 +6,12 @@ plugins {
 
 android {
     namespace = "flow.network"
+
+    kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + listOf(
+            "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi",
+        )
+    }
 }
 
 dependencies {

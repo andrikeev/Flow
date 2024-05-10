@@ -9,7 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.UrlAnnotation
@@ -77,7 +75,6 @@ private fun Content(
     content.forEach { Content(it, modifier = modifier) }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Content(
     content: Content,
@@ -124,7 +121,6 @@ private fun TextContent(
     )
 }
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 private fun AnnotatedString.Builder.TextContent(content: Content) {
     when (content) {

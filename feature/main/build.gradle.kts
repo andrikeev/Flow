@@ -8,5 +8,5 @@ android {
 }
 
 dependencies {
-    implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.androidx.activity.compose)
 }

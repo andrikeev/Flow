@@ -6,6 +6,12 @@ plugins {
 
 android {
     namespace = "flow.ui"
+
+    kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + listOf(
+            "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi",
+        )
+    }
 }
 
 dependencies {
@@ -14,7 +20,6 @@ dependencies {
     implementation(project(":core:logger"))
     implementation(project(":core:models"))
 
-    implementation(libs.accompanist.flowlayout)
     implementation(libs.accompanist.permissions)
     implementation(libs.bundles.coil)
 }

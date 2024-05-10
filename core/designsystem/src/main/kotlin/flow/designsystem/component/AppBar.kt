@@ -1,5 +1,6 @@
 package flow.designsystem.component
 
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandVertically
@@ -19,6 +20,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -29,14 +31,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import flow.designsystem.R
 import flow.designsystem.drawables.FlowIcons
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
-import flow.designsystem.utils.RunOnFirstComposition
+import flow.designsystem.utils.componentActivity
+import flow.designsystem.utils.rememberSystemBarStyle
 
 @Composable
 @NonRestartableComposable
@@ -104,7 +107,7 @@ fun TabAppBar(
         containerColor = Color.Transparent,
         contentColor = AppTheme.colors.onSurface,
         indicator = { tabPositions ->
-            TabRowDefaults.Indicator(
+            TabRowDefaults.SecondaryIndicator(
                 modifier = Modifier.tabIndicatorOffset(tabPositions[selectedPage]),
                 color = AppTheme.colors.primary,
             )
@@ -136,15 +139,6 @@ internal fun AppBarContainer(
     appBarState: AppBarState = rememberPinnedAppBarState(),
     content: @Composable BoxScope.() -> Unit,
 ) {
-    val systemUiController = rememberSystemUiController()
-    val darkIcons = !AppTheme.colors.isDark
-    RunOnFirstComposition {
-        systemUiController.setStatusBarColor(
-            color = Color.Transparent,
-            darkIcons = darkIcons,
-            transformColorForLightContent = { Color.Transparent },
-        )
-    }
     val elevation by animateDpAsState(
         targetValue = if (appBarState.elevated) {
             AppTheme.elevations.medium
@@ -153,6 +147,11 @@ internal fun AppBarContainer(
         },
         label = "AppBarContainer_Elevation",
     )
+    val activity = LocalContext.current.componentActivity
+    val systemBarStyle = rememberSystemBarStyle()
+    LaunchedEffect(systemBarStyle) {
+        activity.enableEdgeToEdge(statusBarStyle = systemBarStyle)
+    }
     Surface(
         modifier = modifier,
         tonalElevation = elevation,
