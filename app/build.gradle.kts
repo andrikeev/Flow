@@ -10,8 +10,8 @@ android {
 
     defaultConfig {
         applicationId = "me.rutrackersearch.app"
-        versionCode = 44
-        versionName = "4.6.2"
+        versionCode = 45
+        versionName = "4.6.3"
     }
 
     buildTypes {
