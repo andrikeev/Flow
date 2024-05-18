@@ -53,7 +53,7 @@ internal class GetCategoryPageUseCase(private val api: RuTrackerInnerApi) {
             val topics = mutableListOf<ForumTopicDto>()
             var currentSection: String? = null
             val currentSectionIds: MutableList<String> = mutableListOf()
-            val rows = doc.select("table.vf-table.vf-tor.forumline.forum > tbody > tr")
+            val rows = doc.select("table.vf-table.forum > tbody > tr")
             rows.forEach { element ->
                 if (element.children().any { it.hasClass("topicSep") }) {
                     currentSection?.let { name ->
