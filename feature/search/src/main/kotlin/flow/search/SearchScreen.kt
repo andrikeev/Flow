@@ -133,7 +133,7 @@ private fun SearchScreen(
                             swipeState = swipeState,
                             onClick = { onAction(SearchAction.SearchItemClick(search)) },
                             onUnpinClick = { onAction(SearchAction.UnpinItemClick(search)) },
-                            onDeleteClick = { onAction(SearchAction.DeleteItemClick(search)) }
+                            onDeleteClick = { onAction(SearchAction.DeleteItemClick(search)) },
                         )
                     }
                 }
@@ -157,7 +157,7 @@ private fun SearchScreen(
                         swipeState = swipeState,
                         onClick = { onAction(SearchAction.SearchItemClick(search)) },
                         onPinClick = { onAction(SearchAction.PinItemClick(search)) },
-                        onDeleteClick = { onAction(SearchAction.DeleteItemClick(search)) }
+                        onDeleteClick = { onAction(SearchAction.DeleteItemClick(search)) },
                     )
                 }
             }

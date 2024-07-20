@@ -163,15 +163,7 @@ private fun Endpoint(
                     .weight(1f)
                     .padding(vertical = AppTheme.spaces.medium),
             ) {
-                BodyLarge(
-                    text = stringResource(
-                        when (endpoint) {
-                            is Endpoint.Proxy -> R.string.connection_endpoint_proxy
-                            is Endpoint.Rutracker -> R.string.connection_endpoint_rutracker
-                            is Endpoint.Mirror -> R.string.connection_endpoint_mirror
-                        },
-                    ),
-                )
+                BodyLarge(text = endpoint.title)
                 Text(
                     modifier = Modifier.padding(top = AppTheme.spaces.small),
                     text = endpoint.host,
@@ -189,8 +181,8 @@ private fun AddConnectionItem(
     onAction: (ConnectionsAction) -> Unit,
 ) = AnimatedVisibility(
     visible = state.edit,
-    enter = fadeIn() + expandVertically { 0 },
-    exit = shrinkVertically { 0 } + fadeOut(),
+    enter = fadeIn() + expandVertically(),
+    exit = shrinkVertically() + fadeOut(),
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldValue by remember { mutableStateOf(TextFieldValue()) }

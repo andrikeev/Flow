@@ -1,8 +1,7 @@
+import flow.conventions.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getByType
 
 class AndroidHiltConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -12,11 +11,10 @@ class AndroidHiltConventionPlugin : Plugin<Project> {
                 apply("flow.kotlin.ksp")
             }
 
-            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             dependencies {
-                "implementation"(libs.findLibrary("hilt.android").get())
-                "ksp"(libs.findLibrary("hilt.compiler").get())
-                "kspAndroidTest"(libs.findLibrary("hilt.compiler").get())
+                add("implementation", libs.findLibrary("hilt.android").get())
+                add("ksp", libs.findLibrary("hilt.compiler").get())
+                add("ksp", libs.findLibrary("hilt.dagger.compiler").get())
             }
         }
     }

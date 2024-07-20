@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-
 plugins {
     id("flow.ktor.application")
 }
@@ -17,8 +15,12 @@ ktor {
     }
 }
 
-tasks.named<KotlinCompilationTask<*>>("compileKotlin").configure {
-    compilerOptions.freeCompilerArgs.add("-opt-in=kotlin.io.encoding.ExperimentalEncodingApi")
+kotlin {
+    compilerOptions {
+        optIn.addAll(
+            "kotlin.io.encoding.ExperimentalEncodingApi",
+        )
+    }
 }
 
 dependencies {

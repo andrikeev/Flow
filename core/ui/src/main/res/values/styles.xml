@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppThemeOverlay.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="bottomSheetStyle">@style/AppTheme.BottomSheet</item>
+    </style>
+
+    <style name="AppTheme.BottomSheet" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+</resources>

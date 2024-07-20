@@ -1,6 +1,7 @@
 package me.rutrackersearch.app
 
 import android.app.UiModeManager
+import android.content.Intent
 import android.content.res.Configuration.UI_MODE_TYPE_TELEVISION
 import android.graphics.Color
 import android.os.Bundle
@@ -18,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat.setDecorFitsSystemWindows
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -29,6 +29,8 @@ import flow.logger.api.LoggerFactory
 import flow.main.MainScreen
 import flow.main.MainViewModel
 import flow.models.settings.Theme
+import flow.navigation.DeepLinks
+import flow.navigation.LocalDeepLinks
 import flow.navigation.rememberNavigationController
 import flow.rating.RatingDialog
 import flow.ui.platform.LocalLoggerFactory
@@ -38,10 +40,7 @@ import flow.ui.platform.LocalShareLinkHandler
 import flow.ui.platform.OpenFileHandler
 import flow.ui.platform.OpenLinkHandler
 import flow.ui.platform.ShareLinkHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.rutrackersearch.app.navigation.MobileNavigation
 import me.rutrackersearch.app.platform.OpenFileHandlerImpl
@@ -56,6 +55,8 @@ open class MainActivity : ComponentActivity() {
     lateinit var loggerFactory: LoggerFactory
 
     private val viewModel: MainViewModel by viewModels()
+
+    private val deepLinks = DeepLinks()
 
     open val deviceType: PlatformType
         get() {
@@ -74,26 +75,18 @@ open class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
         )
-        var animationCompleted = false
-
-        lifecycleScope.launch(Dispatchers.Default) {
-            delay(800)
-            animationCompleted = true
-        }
-
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            deepLinks.initialDeepLink = intent.data
+        }
 
         var theme: Theme? by mutableStateOf(null)
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.theme
-                    .onEach { theme = it }
-                    .collect()
+                viewModel.theme.collectLatest { theme = it }
             }
         }
-        splashScreen.setKeepOnScreenCondition {
-            theme == null || !animationCompleted
-        }
+        splashScreen.setKeepOnScreenCondition { theme == null }
 
         setContent {
             theme?.let { theme ->
@@ -106,6 +99,7 @@ open class MainActivity : ComponentActivity() {
                     LocalOpenFileHandler provides openFileHandler,
                     LocalPlatformType provides deviceType,
                     LocalLoggerFactory provides loggerFactory,
+                    LocalDeepLinks provides deepLinks,
                 ) {
                     val navigationController = rememberNavigationController()
                     RatingDialog()
@@ -117,6 +111,12 @@ open class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        loggerFactory.get("MainActivity").d { "New intent: $intent" }
+        deepLinks.deepLink = intent.data
     }
 
     @Composable

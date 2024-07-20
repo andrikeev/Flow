@@ -5,10 +5,12 @@ plugins {
 
 android {
     namespace = "flow.designsystem"
+}
 
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs + listOf(
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+kotlin {
+    compilerOptions {
+        optIn.addAll(
+            "androidx.compose.material3.ExperimentalMaterial3Api",
         )
     }
 }

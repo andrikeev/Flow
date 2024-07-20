@@ -2,14 +2,17 @@ import com.android.build.gradle.LibraryExtension
 import flow.conventions.configureAndroidCompose
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.configure
 
 class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            pluginManager.apply("com.android.library")
-            val extension = extensions.getByType<LibraryExtension>()
-            configureAndroidCompose(extension)
+            with(pluginManager) {
+                apply("com.android.library")
+            }
+            extensions.configure<LibraryExtension> {
+                configureAndroidCompose(this)
+            }
         }
     }
 }

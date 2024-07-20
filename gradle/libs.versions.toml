@@ -2,37 +2,36 @@
 accompanist = "0.34.0"
 androidGradlePlugin = "8.1.4"
 androidxActivity = "1.9.0"
-androidxComposeBom = "2024.05.00"
-androidxComposeCompiler = "1.5.13" # depends on kotlin version https://developer.android.com/jetpack/androidx/releases/compose-kotlin#pre-release_kotlin_compatibility
-androidxComposeTv = "1.0.0-alpha10"
-androidxComposeMaterialTv = "1.0.0-beta01"
+androidxComposeBom = "2024.06.00"
+androidxComposeTv = "1.0.0-alpha11"
+androidxComposeMaterialTv = "1.0.0-rc01"
 androidxCore = "1.13.1"
 androidxCoreSplashscreen = "1.0.1"
-androidxLifecycle = "2.7.0"
+androidxLifecycle = "2.8.3"
 androidxNavigation = "2.7.7"
 androidxSavedState = "1.2.1"
 #noinspection GradleDependency
 androidxSecurity = "1.1.0-alpha03"
-androidxTestCore = "1.5.0"
-androidxTestExt = "1.1.5"
-androidxTestRunner = "1.5.2"
-androidxTestRules = "1.5.0"
+androidxTestCore = "1.6.1"
+androidxTestExt = "1.2.1"
+androidxTestRunner = "1.6.1"
+androidxTestRules = "1.6.1"
 androidxWork = "2.9.0"
-coil = "2.4.0"
+coil = "2.7.0"
 chucker = "4.0.0"
-firebaseBom = "32.7.4"
-firebaseCrashlyticsGradlePlugin = "2.9.9"
-googleServicesGradlePlugin = "4.4.1"
+firebaseBom = "33.1.2"
+firebaseCrashlyticsGradlePlugin = "3.0.2"
+googleServicesGradlePlugin = "4.4.2"
 hilt = "2.49"
 hiltExt = "1.2.0"
 jsoup = "1.15.3"
 junit4 = "4.13.2"
 koin = "3.4.0"
-kotlin = "1.9.23"
-kotlinxCoroutines = "1.8.0"
+kotlin = "2.0.0"
+kotlinxCoroutines = "1.8.1"
 kotlinxDatetime = "0.3.1"
-kotlinxSerialization = "1.5.1"
-kspGradlePlugin = "1.9.23-1.0.20"
+kotlinxSerialization = "1.6.3"
+kspGradlePlugin = "2.0.0-1.0.23"
 ktor = "2.3.1"
 leakcanary = "2.10"
 logback = "1.3.5"
@@ -71,7 +70,7 @@ androidx-test-core = { group = "androidx.test", name = "core", version.ref = "an
 androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
-androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
+androidx-work = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-kt-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
@@ -79,10 +78,9 @@ chucker = { group = "com.github.chuckerteam.chucker", name = "library", version.
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
-hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
-hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
-hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "hilt" }
+hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
 javax-inject = { group = "javax.inject", name = "javax.inject", version = "1" }
 json = { group = "org.json", name = "json", version = "20220924" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
@@ -121,6 +119,7 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsGradlePlugin" }
 google-services-gradlePlugin = { group = "com.google.gms", name = "google-services", version.ref = "googleServicesGradlePlugin" }
 hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
+kotlin-composePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-serializationPlugin = { group = "org.jetbrains.kotlin", name = "kotlin-serialization", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "symbol-processing-gradle-plugin", version.ref = "kspGradlePlugin" }
@@ -157,6 +156,6 @@ room = [
     "room-ktx"
 ]
 work = [
-    "androidx-work-ktx",
-    "hilt-ext-work"
+    "androidx-work",
+    "hilt-work"
 ]

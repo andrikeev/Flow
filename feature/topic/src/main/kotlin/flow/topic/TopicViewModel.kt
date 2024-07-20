@@ -149,7 +149,8 @@ internal class TopicViewModel @Inject constructor(
 
     private fun onFavoriteClick() = intent {
         runCatching { toggleFavoriteUseCase(id) }
-            .onFailure { postSideEffect(TopicSideEffect.ShowFavoriteToggleError) }    }
+            .onFailure { postSideEffect(TopicSideEffect.ShowFavoriteToggleError) }
+    }
 
     private fun onGoToPage(page: Int) = intent {
         pagingActions.refresh(page)

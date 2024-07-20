@@ -14,7 +14,6 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import okhttp3.OkHttpClient
-import java.net.URLEncoder
 import javax.inject.Inject
 import kotlin.io.encoding.Base64
 

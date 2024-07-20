@@ -3,9 +3,11 @@ package flow.navigation.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import flow.designsystem.component.Scaffold
+import flow.navigation.LocalDeepLinks
 import flow.navigation.NavigationController
 import flow.navigation.NestedNavigationController
 import flow.navigation.canPopBackAsState
@@ -23,6 +25,15 @@ fun MobileNavigation(
         navigationController = navigationController,
         navigationGraphBuilder = navigationGraphBuilder,
     )
+    val deepLinks = LocalDeepLinks.current
+    LaunchedEffect(deepLinks.initialDeepLink) {
+        deepLinks.initialDeepLink
+            ?.let(navigationController::deeplink)
+    }
+    LaunchedEffect(deepLinks.deepLink) {
+        deepLinks.deepLink
+            ?.let(navigationController::deeplink)
+    }
 }
 
 @Composable

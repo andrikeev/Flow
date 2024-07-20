@@ -7,15 +7,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import flow.designsystem.component.Body
 import flow.designsystem.component.BodyLarge
-import flow.designsystem.component.LocalPopupHostState
 import flow.designsystem.component.Surface
 import flow.designsystem.theme.AppTheme
 import flow.navigation.viewModel
+import flow.ui.component.ModalBottomDialog
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -26,13 +29,19 @@ fun ConnectionItem() = ConnectionItem(
 
 @Composable
 private fun ConnectionItem(viewModel: ConnectionsViewModel) {
-    val popupHostState = LocalPopupHostState.current
+    var showDialog by remember { mutableStateOf(false) }
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is ConnectionsSideEffect.ShowConnectionDialog -> {
-                popupHostState.show { ConnectionsList() }
+                showDialog = true
             }
         }
+    }
+    if (showDialog) {
+        ModalBottomDialog(
+            onDismissRequest = { showDialog = false },
+            content = { ConnectionsList() },
+        )
     }
     val state by viewModel.collectAsState()
     ConnectionItem(
@@ -61,7 +70,7 @@ private fun ConnectionItem(
                 ) {
                     BodyLarge(stringResource(R.string.connection_item_title))
                     Body(
-                        text = endpointState.endpoint.host,
+                        text = endpointState.endpoint.title,
                         color = AppTheme.colors.outline,
                     )
                 }

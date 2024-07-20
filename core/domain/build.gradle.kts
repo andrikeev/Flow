@@ -25,8 +25,10 @@ dependencies {
     testImplementation(project(":core:testing"))
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += listOf(
-        "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-    )
+kotlin {
+    compilerOptions {
+        optIn.addAll(
+            "kotlinx.coroutines.ExperimentalCoroutinesApi",
+        )
+    }
 }

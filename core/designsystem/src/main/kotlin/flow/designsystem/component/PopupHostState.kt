@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
 
 interface PopupHostState {
     val visible: Boolean
@@ -40,8 +39,4 @@ internal class PopupHostStateImpl : PopupHostState {
 @Composable
 internal fun rememberPopupHostState(): PopupHostState {
     return remember { PopupHostStateImpl() }
-}
-
-val LocalPopupHostState = staticCompositionLocalOf<PopupHostState> {
-    error("LocalSnackbarHostState not present")
 }

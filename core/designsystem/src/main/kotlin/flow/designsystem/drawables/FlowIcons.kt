@@ -17,13 +17,14 @@ import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Bookmarks
+import androidx.compose.material.icons.outlined.BrightnessAuto
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircleOutline
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.ContentCopy
-import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.ExpandLess
@@ -44,11 +45,13 @@ import androidx.compose.material.icons.outlined.Filter7
 import androidx.compose.material.icons.outlined.Filter8
 import androidx.compose.material.icons.outlined.Filter9
 import androidx.compose.material.icons.outlined.Filter9Plus
+import androidx.compose.material.icons.outlined.FilterVintage
 import androidx.compose.material.icons.outlined.FirstPage
 import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Functions
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.ImageNotSupported
+import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.LinkOff
 import androidx.compose.material.icons.outlined.Menu
@@ -132,6 +135,10 @@ object FlowIcons {
     val StarFull: Icon = Icon.ImageVectorIcon(MaterialIcons.Star)
     val StarHalf: Icon = Icon.ImageVectorIcon(MaterialIconsAutoMirrored.StarHalf)
     val Storage: Icon = Icon.ImageVectorIcon(MaterialIcons.SdStorage)
+    val ThemeDark: Icon = Icon.ImageVectorIcon(MaterialIcons.DarkMode)
+    val ThemeDynamic: Icon = Icon.ImageVectorIcon(MaterialIcons.FilterVintage)
+    val ThemeLight: Icon = Icon.ImageVectorIcon(MaterialIcons.LightMode)
+    val ThemeSystem: Icon = Icon.ImageVectorIcon(MaterialIcons.BrightnessAuto)
     val Topics: Icon = Icon.ImageVectorIcon(MaterialIcons.Forum)
     val Unpin: Icon = Icon.ImageVectorIcon(MaterialIcons.PushPin)
     val Updating: Icon = Icon.ImageVectorIcon(MaterialIcons.Sync)

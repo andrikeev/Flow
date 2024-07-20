@@ -12,14 +12,5 @@ internal fun configureKotlinAndroid(commonExtension: CommonExtension<*, *, *, *,
             sourceCompatibility = JavaVersion.VERSION_17
             targetCompatibility = JavaVersion.VERSION_17
         }
-
-        kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + listOf(
-                "-opt-in=kotlin.RequiresOptIn",
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=kotlinx.coroutines.FlowPreview",
-                "-Xcontext-receivers"
-            )
-        }
     }
 }

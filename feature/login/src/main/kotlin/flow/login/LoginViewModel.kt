@@ -74,9 +74,11 @@ internal class LoginViewModel @Inject constructor(
 
     private fun onReloadCaptchaClick() = intent {
         val response = loginUseCase(
-            state.usernameInput.value.text,
-            state.passwordInput.value.text,
-            null, null, null,
+            username = state.usernameInput.value.text,
+            password = state.passwordInput.value.text,
+            captchaSid = null,
+            captchaCode = null,
+            captchaValue = null,
         )
         when (response) {
             is AuthResult.WrongCredits -> reduce {

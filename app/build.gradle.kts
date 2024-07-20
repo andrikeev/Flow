@@ -10,8 +10,8 @@ android {
 
     defaultConfig {
         applicationId = "me.rutrackersearch.app"
-        versionCode = 45
-        versionName = "4.6.3"
+        versionCode = 46
+        versionName = "4.7.0"
     }
 
     buildTypes {
@@ -26,7 +26,7 @@ android {
                     listOf(
                         getDefaultProguardFile("proguard-defaults.txt"),
                         "proguard-rules.pro",
-                    )
+                    ),
                 )
             }
         }

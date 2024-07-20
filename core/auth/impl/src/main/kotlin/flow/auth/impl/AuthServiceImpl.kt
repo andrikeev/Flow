@@ -40,8 +40,15 @@ internal class AuthServiceImpl @Inject constructor(
         captchaValue: String?,
     ): AuthResult {
         fun CaptchaDto?.toCaptcha(): Captcha? = this?.let { Captcha(id, code, url) }
-        return when (val dto =
-            api.login(username, password, captchaSid, captchaCode, captchaValue)) {
+        return when (
+            val dto = api.login(
+                username = username,
+                password = password,
+                captchaSid = captchaSid,
+                captchaCode = captchaCode,
+                captchaValue = captchaValue,
+            )
+        ) {
             is AuthResponseDto.CaptchaRequired -> {
                 AuthResult.CaptchaRequired(requireNotNull(dto.captcha.toCaptcha()))
             }

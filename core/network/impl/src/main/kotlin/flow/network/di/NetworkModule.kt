@@ -20,7 +20,6 @@ import okhttp3.OkHttpClient
 import java.net.ProxySelector
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal interface NetworkModule {

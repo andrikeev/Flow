@@ -1,11 +1,13 @@
 package flow.navigation
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import flow.logger.api.LoggerFactory
@@ -17,6 +19,7 @@ import kotlinx.coroutines.flow.onEach
 interface NavigationController {
     val navHostController: NavHostController
     fun navigate(route: String)
+    fun deeplink(uri: Uri)
     fun popBackStack(): Boolean
 }
 
@@ -47,8 +50,18 @@ private open class NavigationControllerImpl(
         navHostController.navigate(route = route)
     }
 
+    @Suppress("RestrictedApi")
+    override fun deeplink(uri: Uri) {
+        logger.d { "deeplink: uri=$uri" }
+        val deepLinkRequest = NavDeepLinkRequest.Builder.fromUri(uri).build()
+        val deepLinkMatch = navHostController.graph.matchDeepLink(deepLinkRequest)
+        if (deepLinkMatch != null) {
+            navHostController.navigate(request = deepLinkRequest)
+        }
+    }
+
     override fun popBackStack(): Boolean {
-        return navHostController.popBackStack().also {
+        return navHostController.navigateUp().also {
             logger.d { "popBackStack: handled=$it" }
         }
     }
@@ -103,7 +116,7 @@ private class NestedNavigationControllerImpl(
 
     override fun popBackStack(): Boolean {
         return when {
-            navHostController.popBackStack() -> true
+            navHostController.navigateUp() -> true
             topLevelBackStack.isNotEmpty() -> {
                 navigate(
                     route = topLevelBackStack.removeLast(),

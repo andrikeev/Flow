@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,15 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
 import flow.account.AccountItem
 import flow.connection.ConnectionItem
 import flow.designsystem.component.AppBar
 import flow.designsystem.component.Body
+import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.ConfirmationDialog
 import flow.designsystem.component.Dialog
-import flow.designsystem.component.DropdownMenu
 import flow.designsystem.component.Icon
 import flow.designsystem.component.LazyList
 import flow.designsystem.component.ProvideTextStyle
@@ -55,6 +55,7 @@ import flow.menu.MenuAction.SetTheme
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
 import flow.navigation.viewModel
+import flow.ui.component.ModalBottomDialog
 import flow.ui.component.VisibilityState
 import flow.ui.component.rememberVisibilityState
 import flow.ui.permissions.Permission
@@ -63,7 +64,7 @@ import flow.ui.permissions.shouldShowRationale
 import flow.ui.platform.LocalOpenLinkHandler
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-import java.util.Calendar
+import java.util.*
 import flow.designsystem.R as DsR
 
 @Composable
@@ -127,6 +128,17 @@ private fun MenuScreen(
             items = Theme.availableValues(),
             selected = theme,
             labelMapper = { theme -> stringResource(theme.resId) },
+            iconMapper = { theme ->
+                Icon(
+                    icon = when (theme) {
+                        Theme.SYSTEM -> FlowIcons.ThemeSystem
+                        Theme.DYNAMIC -> FlowIcons.ThemeDynamic
+                        Theme.DARK -> FlowIcons.ThemeDark
+                        Theme.LIGHT -> FlowIcons.ThemeLight
+                    },
+                    contentDescription = null,
+                )
+            },
             onSelect = { theme -> onAction(SetTheme(theme)) },
         )
         endpointSelectionItem()
@@ -217,8 +229,9 @@ private fun <T> LazyListScope.menuSelectionItem(
     items: List<T>,
     selected: T,
     labelMapper: @Composable (T) -> String,
+    iconMapper: (@Composable (T) -> Unit)? = null,
     onSelect: (T) -> Unit,
-) = item { MenuSelectionItem(title, items, selected, labelMapper, onSelect) }
+) = item { MenuSelectionItem(title, items, selected, labelMapper, iconMapper, onSelect) }
 
 private fun LazyListScope.menuSyncSelectionItem(
     title: @Composable () -> Unit,
@@ -309,14 +322,15 @@ private fun <T> MenuSelectionItem(
     items: List<T>,
     selected: T,
     labelMapper: @Composable (T) -> String,
+    iconMapper: (@Composable (T) -> Unit)? = null,
     onSelect: (T) -> Unit,
 ) {
-    var showDropdown by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .height(AppTheme.sizes.extraLarge),
-        onClick = { showDropdown = true },
+        onClick = { showDialog = true },
     ) {
         Column(
             modifier = Modifier.padding(horizontal = AppTheme.spaces.large),
@@ -328,14 +342,79 @@ private fun <T> MenuSelectionItem(
                 text = labelMapper.invoke(selected),
                 color = AppTheme.colors.outline,
             )
-            DropdownMenu(
-                expanded = showDropdown,
-                onDismissRequest = { showDropdown = false },
-                offset = DpOffset(24.dp, (-32).dp),
-                items = items.asIterable(),
-                labelMapper = labelMapper,
-                onSelect = onSelect,
-            )
+            if (showDialog) {
+                MenuSelectionDialog(
+                    title = title,
+                    items = items,
+                    selected = selected,
+                    labelMapper = labelMapper,
+                    iconMapper = iconMapper,
+                    onSelect = onSelect,
+                    onDismiss = { showDialog = false },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun <T> MenuSelectionDialog(
+    title: @Composable () -> Unit,
+    items: List<T>,
+    selected: T,
+    labelMapper: @Composable (T) -> String,
+    iconMapper: (@Composable (T) -> Unit)? = null,
+    onSelect: (T) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    ModalBottomDialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AppTheme.spaces.large),
+        ) {
+            ProvideTextStyle(AppTheme.typography.headlineSmall) {
+                title()
+            }
+        }
+        items.forEach { item ->
+            val isSelected = item == selected
+            Surface(
+                modifier = Modifier.defaultMinSize(minHeight = AppTheme.sizes.large),
+                onClick = { onSelect(item) },
+                enabled = !isSelected,
+            ) {
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(horizontal = AppTheme.spaces.large),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spaces.mediumSmall),
+                ) {
+                    Icon(
+                        icon = if (isSelected) {
+                            FlowIcons.Selected
+                        } else {
+                            FlowIcons.NotSelected
+                        },
+                        tint = AppTheme.colors.onSurface,
+                        contentDescription = stringResource(
+                            if (isSelected) {
+                                flow.connection.R.string.content_description_endpoint_selected
+                            } else {
+                                flow.connection.R.string.content_description_endpoint_not_selected
+                            },
+                        ),
+                    )
+                    BodyLarge(
+                        modifier = Modifier.weight(1f),
+                        text = labelMapper(item),
+                    )
+                    if (iconMapper != null) {
+                        iconMapper(item)
+                    }
+                }
+            }
         }
     }
 }

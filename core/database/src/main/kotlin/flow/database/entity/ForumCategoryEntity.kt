@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
     ],
     indices = [
         Index("parentId"),
-    ]
+    ],
 )
 data class ForumCategoryEntity(
     @PrimaryKey val id: String,

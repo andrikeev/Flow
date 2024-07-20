@@ -2,9 +2,9 @@ package flow.conventions
 
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
-import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 /**
  * Configure Compose-specific options
@@ -12,31 +12,25 @@ import org.gradle.kotlin.dsl.getByType
 internal fun Project.configureAndroidCompose(
     commonExtension: CommonExtension<*, *, *, *, *>,
 ) {
-    val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-
+    with(pluginManager) {
+        apply("org.jetbrains.kotlin.plugin.compose")
+    }
     commonExtension.apply {
-        buildFeatures {
-            compose = true
-        }
-
-        composeOptions {
-            kotlinCompilerExtensionVersion = libs.findVersion("androidxComposeCompiler").get().toString()
-        }
-
         dependencies {
-            val bom = libs.findLibrary("androidx-compose-bom").get()
-            add("implementation", platform(bom))
-            add("androidTestImplementation", platform(bom))
+            val composeBom = libs.findLibrary("androidx-compose-bom").get()
+            add("implementation", platform(composeBom))
+            add("androidTestImplementation", platform(composeBom))
         }
-
-        kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + listOf(
-                "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
-                "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-                "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
-                "-opt-in=androidx.compose.runtime.ExperimentalComposeApi",
-                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-                "-opt-in=androidx.compose.ui.text.ExperimentalTextApi",
+    }
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        compilerOptions {
+            optIn.addAll(
+                "androidx.compose.animation.ExperimentalAnimationApi",
+                "androidx.compose.foundation.ExperimentalFoundationApi",
+                "androidx.compose.foundation.layout.ExperimentalLayoutApi",
+                "androidx.compose.runtime.ExperimentalComposeApi",
+                "androidx.compose.ui.ExperimentalComposeUiApi",
+                "androidx.compose.ui.text.ExperimentalTextApi",
             )
         }
     }

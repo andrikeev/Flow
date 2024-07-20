@@ -8,6 +8,14 @@ android {
     namespace = "flow.testing"
 }
 
+kotlin {
+    compilerOptions {
+        optIn.addAll(
+            "kotlinx.coroutines.ExperimentalCoroutinesApi",
+        )
+    }
+}
+
 dependencies {
     api(project(":core:auth:api"))
     api(project(":core:auth:impl"))
@@ -25,7 +33,6 @@ dependencies {
     api(libs.androidx.test.runner)
     api(libs.androidx.test.rules)
     api(libs.androidx.compose.ui.test)
-    api(libs.hilt.android.testing)
     api(libs.mockk.android)
 
     debugApi(libs.androidx.compose.ui.testManifest)

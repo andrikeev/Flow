@@ -30,21 +30,21 @@ data class NavigationAnimations(
         val ScaleInOutAnimation = NavigationAnimations(
             enterTransition = {
                 scaleIn(initialScale = 0.75f) +
-                        expandIn(
-                            expandFrom = Alignment.Center,
-                            initialSize = { it / 4 },
-                        ) +
-                        fadeIn()
+                    expandIn(
+                        expandFrom = Alignment.Center,
+                        initialSize = { it / 4 },
+                    ) +
+                    fadeIn()
             },
             exitTransition = null,
             popEnterTransition = null,
             popExitTransition = {
                 fadeOut() +
-                        shrinkOut(
-                            shrinkTowards = Alignment.Center,
-                            targetSize = { it / 4 },
-                        ) +
-                        scaleOut(targetScale = 0.75f)
+                    shrinkOut(
+                        shrinkTowards = Alignment.Center,
+                        targetSize = { it / 4 },
+                    ) +
+                    scaleOut(targetScale = 0.75f)
             },
         )
         val FadeInOutAnimations = NavigationAnimations(

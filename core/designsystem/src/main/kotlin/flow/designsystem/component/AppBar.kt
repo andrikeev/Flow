@@ -118,7 +118,9 @@ fun TabAppBar(
                 selected = selectedPage == index,
                 onClick = { onSelectPage(index) },
                 text = page.labelResId?.let {
-                    { Text(stringResource(page.labelResId)) }
+                    {
+                        Text(stringResource(page.labelResId))
+                    }
                 },
                 icon = page.icon?.let {
                     {

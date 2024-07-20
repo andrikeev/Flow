@@ -80,11 +80,7 @@ fun Scaffold(
 fun Scaffold(content: @Composable (PaddingValues) -> Unit) {
     val snackbarState = remember { MaterialSnackbarHostState() }
     val delegateSnackbarState = remember { DelegateSnackbarHostState(snackbarState) }
-    val popupHostState = rememberPopupHostState()
-    CompositionLocalProvider(
-        LocalSnackbarHostState provides delegateSnackbarState,
-        LocalPopupHostState provides popupHostState,
-    ) {
+    CompositionLocalProvider(LocalSnackbarHostState provides delegateSnackbarState) {
         MaterialDesignScaffold(
             snackbarHost = {
                 SnackbarHost(
@@ -95,14 +91,8 @@ fun Scaffold(content: @Composable (PaddingValues) -> Unit) {
             containerColor = AppTheme.colors.background,
             contentColor = AppTheme.colors.onBackground,
             contentWindowInsets = DefaultWindowInset,
-        ) { padding ->
-            content(padding)
-            ModalBottomSheet(
-                visible = popupHostState.visible,
-                onDismissRequest = popupHostState::hide,
-                content = popupHostState.content,
-            )
-        }
+            content = content,
+        )
     }
 }
 

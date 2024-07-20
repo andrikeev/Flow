@@ -6,6 +6,8 @@ import flow.conventions.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -22,6 +24,12 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 configureAndroidCommon(this)
                 configureKotlinAndroid(this)
                 configureAndroidCompose(this)
+            }
+
+            tasks.withType<KotlinJvmCompile>().configureEach {
+                compilerOptions {
+                    freeCompilerArgs.addAll("-Xcontext-receivers")
+                }
             }
         }
     }

@@ -8,6 +8,12 @@ android {
     namespace = "flow.navigation"
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xcontext-receivers")
+    }
+}
+
 dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:logger"))
