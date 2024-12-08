@@ -14,6 +14,10 @@ android {
         versionName = "4.7.0"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")

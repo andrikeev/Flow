@@ -1,45 +1,44 @@
 [versions]
 accompanist = "0.34.0"
-androidGradlePlugin = "8.1.4"
-androidxActivity = "1.9.0"
-androidxComposeBom = "2024.06.00"
-androidxComposeTv = "1.0.0-alpha11"
-androidxComposeMaterialTv = "1.0.0-rc01"
-androidxCore = "1.13.1"
+androidGradlePlugin = "8.6.1"
+androidxActivity = "1.10.1"
+androidxComposeBom = "2025.06.01"
+androidxComposeTv = "1.0.0-alpha12"
+androidxComposeMaterialTv = "1.0.0"
+androidxCore = "1.16.0"
 androidxCoreSplashscreen = "1.0.1"
-androidxLifecycle = "2.8.3"
-androidxNavigation = "2.7.7"
-androidxSavedState = "1.2.1"
+androidxLifecycle = "2.9.1"
+androidxNavigation = "2.9.0"
+androidxSavedState = "1.3.0"
 #noinspection GradleDependency
 androidxSecurity = "1.1.0-alpha03"
 androidxTestCore = "1.6.1"
 androidxTestExt = "1.2.1"
-androidxTestRunner = "1.6.1"
+androidxTestRunner = "1.6.2"
 androidxTestRules = "1.6.1"
-androidxWork = "2.9.0"
+androidxWork = "2.10.2"
 coil = "2.7.0"
 chucker = "4.0.0"
-firebaseBom = "33.1.2"
-firebaseCrashlyticsGradlePlugin = "3.0.2"
+firebaseBom = "33.15.0"
+firebaseCrashlyticsGradlePlugin = "3.0.4"
 googleServicesGradlePlugin = "4.4.2"
-hilt = "2.49"
+hilt = "2.54"
 hiltExt = "1.2.0"
 jsoup = "1.15.3"
 junit4 = "4.13.2"
 koin = "3.4.0"
-kotlin = "2.0.0"
-kotlinxCoroutines = "1.8.1"
+kotlin = "2.1.0"
+kotlinxCoroutines = "1.9.0"
 kotlinxDatetime = "0.3.1"
 kotlinxSerialization = "1.6.3"
-kspGradlePlugin = "2.0.0-1.0.23"
+kspGradlePlugin = "2.1.0-1.0.29"
 ktor = "2.3.1"
 leakcanary = "2.10"
-logback = "1.3.5"
 material = "1.12.0"
 mockk = "1.13.5"
 orbit = "7.1.0"
-room = "2.6.1"
-spotlessGradlePlugin = "6.20.0"
+room = "2.7.2"
+spotlessGradlePlugin = "6.22.0"
 
 [libraries]
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
@@ -104,7 +103,6 @@ ktor-server-host-common-jvm = { group = "io.ktor", name = "ktor-server-host-comm
 ktor-server-status-pages-jvm = { group = "io.ktor", name = "ktor-server-status-pages-jvm", version.ref = "ktor" }
 ktor-server-netty-jvm = { group = "io.ktor", name = "ktor-server-netty-jvm", version.ref = "ktor" }
 leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
-logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
 material3 = { group = "com.google.android.material", name = "material", version.ref = "material" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 orbit-compose = { group = "org.orbit-mvi", name = "orbit-compose", version.ref = "orbit" }

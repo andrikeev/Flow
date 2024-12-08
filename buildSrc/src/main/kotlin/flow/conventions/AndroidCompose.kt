@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
  * Configure Compose-specific options
  */
 internal fun Project.configureAndroidCompose(
-    commonExtension: CommonExtension<*, *, *, *, *>,
+    commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
     with(pluginManager) {
         apply("org.jetbrains.kotlin.plugin.compose")

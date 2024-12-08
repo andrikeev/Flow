@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import flow.logger.api.LoggerFactory
 import flow.ui.platform.OpenLinkHandler
+import androidx.core.net.toUri
 
 class OpenLinkHandlerImpl(
     private val context: Context,
@@ -31,7 +32,7 @@ class OpenLinkHandlerImpl(
     }
 
     private fun parseUri(link: String): Uri {
-        val uri = Uri.parse(link)
+        val uri = link.toUri()
         return uri.buildUpon().apply {
             if (uri.scheme.isNullOrBlank()) {
                 scheme("https")

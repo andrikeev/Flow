@@ -129,8 +129,7 @@ private val SavedStateHandle.author: Author?
 
 private fun List<Category>?.queryParam(): String? {
     return this?.takeIf(List<Category>::isNotEmpty)
-        ?.map(Category::id)
-        ?.joinToString(",")
+        ?.joinToString(separator = ",", transform = Category::id)
 }
 
 private val Sort.queryParam

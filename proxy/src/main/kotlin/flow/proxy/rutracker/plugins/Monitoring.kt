@@ -7,6 +7,6 @@ import org.slf4j.event.Level
 
 internal fun Application.configureMonitoring() {
     install(CallLogging) {
-        level = Level.INFO
+        level = Level.ERROR
     }
 }

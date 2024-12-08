@@ -27,6 +27,5 @@ dependencies {
     implementation(libs.bundles.ktor)
     implementation(libs.jsoup)
     implementation(libs.koin)
-    implementation(libs.logback.classic)
     implementation(project(":core:network:rutracker"))
 }

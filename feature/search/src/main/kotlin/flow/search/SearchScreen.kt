@@ -121,14 +121,14 @@ private fun SearchScreen(
 
             is SearchState.SearchList -> {
                 if (state.pinned.isNotEmpty()) {
-                    item { PinnedHeader(modifier = Modifier.animateItemPlacement()) }
+                    item { PinnedHeader(modifier = Modifier.animateItem()) }
                     items(
                         items = state.pinned,
                         key = Search::id,
                         contentType = { it::class },
                     ) { search ->
                         PinnedSearch(
-                            modifier = Modifier.animateItemPlacement(),
+                            modifier = Modifier.animateItem(),
                             search = search,
                             swipeState = swipeState,
                             onClick = { onAction(SearchAction.SearchItemClick(search)) },
@@ -142,7 +142,7 @@ private fun SearchScreen(
                         Divider(
                             modifier = Modifier
                                 .padding(8.dp)
-                                .animateItemPlacement(),
+                                .animateItem(),
                         )
                     }
                 }
@@ -152,7 +152,7 @@ private fun SearchScreen(
                     contentType = { it::class },
                 ) { search ->
                     HistorySearch(
-                        modifier = Modifier.animateItemPlacement(),
+                        modifier = Modifier.animateItem(),
                         search = search,
                         swipeState = swipeState,
                         onClick = { onAction(SearchAction.SearchItemClick(search)) },

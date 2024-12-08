@@ -7,9 +7,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.LocalAbsoluteTonalElevation
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -83,7 +83,7 @@ fun Surface(
                 )
                 .clickable(
                     interactionSource = interactionSource,
-                    indication = rememberRipple(),
+                    indication = ripple(),
                     enabled = enabled,
                     role = Role.Button,
                     onClick = onClick,
@@ -127,7 +127,7 @@ fun InvertedSurface(
                 )
                 .clickable(
                     interactionSource = interactionSource,
-                    indication = rememberRipple(),
+                    indication = ripple(),
                     enabled = enabled,
                     role = Role.Button,
                     onClick = onClick,

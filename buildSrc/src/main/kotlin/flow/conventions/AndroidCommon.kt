@@ -6,13 +6,13 @@ import com.android.build.gradle.internal.dsl.DefaultConfig
 /**
  * Configure base Android properties.
  */
-internal fun configureAndroidCommon(commonExtension: CommonExtension<*, *, *, *, *>) {
+internal fun configureAndroidCommon(commonExtension: CommonExtension<*, *, *, *, *, *>) {
     commonExtension.apply {
-        compileSdk = 34
+        compileSdk = 35
 
         (defaultConfig as DefaultConfig).apply {
             minSdk = 21
-            targetSdk = 34
+            targetSdk = 35
             vectorDrawables {
                 useSupportLibrary = true
             }

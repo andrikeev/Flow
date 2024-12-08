@@ -12,20 +12,17 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.autofill.AutofillNode
-import androidx.compose.ui.autofill.AutofillType
-import androidx.compose.ui.composed
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.autofill.ContentDataType
+import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.boundsInWindow
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalAutofill
-import androidx.compose.ui.platform.LocalAutofillTree
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.semantics.contentDataType
+import androidx.compose.ui.semantics.contentType
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
@@ -66,10 +63,10 @@ internal fun UsernameInputField(
                 onChanged(state.usernameInput.value)
             }
         }
-        .autofill(
-            autofillTypes = listOf(AutofillType.Username),
-            onFill = onChanged,
-        )
+        .semantics {
+            contentType = ContentType.Username
+            contentDataType = ContentDataType.Text
+        }
         .onEnter(onSelectNext),
     value = state.usernameInput.value,
     onValueChange = onChanged,
@@ -94,9 +91,10 @@ internal fun UsernameInputField(
         )
     },
     keyboardOptions = KeyboardOptions(
-        keyboardType = KeyboardType.Text,
+        capitalization = KeyboardCapitalization.None,
+        keyboardType = KeyboardType.Email,
         imeAction = ImeAction.Next,
-        autoCorrect = false,
+        autoCorrectEnabled = false,
     ),
     keyboardActions = KeyboardActions(
         onNext = { onSelectNext() },
@@ -120,10 +118,10 @@ internal fun PasswordInputField(
                     onChanged(state.passwordInput.value)
                 }
             }
-            .autofill(
-                autofillTypes = listOf(AutofillType.Password),
-                onFill = onChanged,
-            )
+            .semantics {
+                contentType = ContentType.Password
+                contentDataType = ContentDataType.Text
+            }
             .onEnter(onSelectNext),
         value = state.passwordInput.value,
         onValueChange = onChanged,
@@ -168,13 +166,14 @@ internal fun PasswordInputField(
             }
         },
         keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.None,
             keyboardType = KeyboardType.Password,
             imeAction = if (state.hasCaptcha) {
                 ImeAction.Next
             } else {
                 ImeAction.Done
             },
-            autoCorrect = false,
+            autoCorrectEnabled = false,
         ),
         keyboardActions = KeyboardActions(
             onNext = { onSelectNext() },
@@ -216,9 +215,10 @@ internal fun CaptchaInputField(
         )
     },
     keyboardOptions = KeyboardOptions(
+        capitalization = KeyboardCapitalization.None,
         keyboardType = KeyboardType.Text,
         imeAction = ImeAction.Done,
-        autoCorrect = false,
+        autoCorrectEnabled = false,
     ),
     keyboardActions = KeyboardActions(
         onDone = { onSubmit() },
@@ -291,26 +291,3 @@ internal fun LoginButton(
         Text(stringResource(R.string.login_screen_action_sign_in))
     },
 )
-
-private fun Modifier.autofill(
-    autofillTypes: List<AutofillType>,
-    onFill: (TextFieldValue) -> Unit,
-) = composed {
-    val autofill = LocalAutofill.current
-    val autofillNode = AutofillNode(
-        autofillTypes = autofillTypes,
-        onFill = { value -> onFill(TextFieldValue(value, TextRange(value.length))) },
-    )
-    LocalAutofillTree.current += autofillNode
-    onGloballyPositioned { coordinates ->
-        autofillNode.boundingBox = coordinates.boundsInWindow()
-    }.onFocusChanged { focusState ->
-        autofill?.run {
-            if (focusState.isFocused) {
-                requestAutofillForNode(autofillNode)
-            } else {
-                cancelAutofillForNode(autofillNode)
-            }
-        }
-    }
-}

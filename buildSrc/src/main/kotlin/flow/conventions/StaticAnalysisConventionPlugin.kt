@@ -15,7 +15,7 @@ internal class StaticAnalysisConventionPlugin : Plugin<Project> {
             extensions.configure<SpotlessExtension> {
                 kotlin {
                     target("**/*.kt")
-                    targetExclude("$buildDir/**/*.kt")
+                    targetExclude("${layout.buildDirectory}/**/*.kt")
                     ktlint()
                 }
 

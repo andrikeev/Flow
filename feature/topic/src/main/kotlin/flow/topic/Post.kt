@@ -19,22 +19,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.UrlAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.sp
-import flow.designsystem.component.ClickableText
 import flow.designsystem.component.Divider
 import flow.designsystem.component.ExpandCollapseIcon
 import flow.designsystem.component.LocalSnackbarHostState
@@ -44,6 +46,7 @@ import flow.designsystem.component.Surface
 import flow.designsystem.component.Text
 import flow.designsystem.component.ThemePreviews
 import flow.designsystem.component.rememberExpandState
+import flow.designsystem.theme.AppColors
 import flow.designsystem.theme.AppTheme
 import flow.designsystem.theme.FlowTheme
 import flow.models.topic.ColorValue
@@ -85,6 +88,7 @@ private fun Content(
         is ContentRow -> FlowRow(verticalArrangement = Arrangement.Center) {
             Content(content.children)
         }
+
         is TextContent -> TextContent(content)
         is PostContent -> PostContent(content)
     }
@@ -95,88 +99,76 @@ private fun TextContent(
     content: Content,
     modifier: Modifier = Modifier,
 ) {
-    val openLinkHandler = LocalOpenLinkHandler.current
-    val snackbarState = LocalSnackbarHostState.current
-    val coroutinesScope = rememberCoroutineScope()
-    val linkErrorMessage = stringResource(R.string.error_open_url)
-    val text = buildAnnotatedString { TextContent(content) }
-    ClickableText(
+    Text(
         modifier = modifier.padding(vertical = AppTheme.spaces.extraSmall),
-        text = text,
-        onClick = { offset ->
-            text.getStringAnnotations(
-                tag = "URL",
-                start = offset,
-                end = offset,
+        text = buildAnnotatedString {
+            append(
+                content = content,
+                colors = AppTheme.colors,
+                openLinkHandler = rememberLinkHandler(),
             )
-                .firstOrNull()
-                ?.let {
-                    try {
-                        openLinkHandler.openLink(it.item)
-                    } catch (e: Throwable) {
-                        coroutinesScope.launch { snackbarState.showSnackbar(linkErrorMessage) }
-                    }
-                }
         },
     )
 }
 
-@Composable
-private fun AnnotatedString.Builder.TextContent(content: Content) {
+private fun AnnotatedString.Builder.append(
+    content: Content,
+    colors: AppColors,
+    openLinkHandler: (String) -> Unit,
+) {
     when (content) {
         is TextContent.Text -> append(content.text)
 
-        is TextContent.TextRow -> content.children.forEach { TextContent(it) }
+        is TextContent.TextRow -> content.children.forEach { append(it, colors, openLinkHandler) }
 
-        is TextContent.Link -> append(
-            buildAnnotatedString {
-                pushStyle(
-                    SpanStyle(
-                        color = AppTheme.colors.primary,
-                        textDecoration = TextDecoration.Underline,
+        is TextContent.Link -> {
+            withLink(
+                link = LinkAnnotation.Clickable(
+                    tag = content.src,
+                    styles = TextLinkStyles(
+                        style = SpanStyle(
+                            color = colors.primary,
+                            textDecoration = TextDecoration.Underline,
+                        ),
                     ),
-                )
-                pushUrlAnnotation(UrlAnnotation(content.src))
-                pushStringAnnotation(
-                    tag = "URL",
-                    annotation = content.src,
-                )
-                TextContent(content.content)
-            },
-        )
+                    linkInteractionListener = { openLinkHandler.invoke(content.src) }
+                ),
+                block = { append(content.content, colors, openLinkHandler) },
+            )
+        }
 
         is TextContent.Bold -> append(
             buildAnnotatedString {
                 pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
-                TextContent(content.content)
+                append(content.content, colors, openLinkHandler)
             },
         )
 
         is TextContent.Crossed -> append(
             buildAnnotatedString {
                 pushStyle(SpanStyle(textDecoration = TextDecoration.LineThrough))
-                TextContent(content.content)
+                append(content.content, colors, openLinkHandler)
             },
         )
 
         is TextContent.Italic -> append(
             buildAnnotatedString {
                 pushStyle(SpanStyle(fontStyle = FontStyle.Italic))
-                TextContent(content.content)
+                append(content.content, colors, openLinkHandler)
             },
         )
 
         is TextContent.Underscore -> append(
             buildAnnotatedString {
                 pushStyle(SpanStyle(textDecoration = TextDecoration.Underline))
-                TextContent(content.content)
+                append(content.content, colors, openLinkHandler)
             },
         )
 
         is TextContent.Color -> append(
             buildAnnotatedString {
-                pushStyle(SpanStyle(color = AppTheme.colors.primary))
-                TextContent(content.content)
+                pushStyle(SpanStyle(color = colors.primary))
+                append(content.content, colors, openLinkHandler)
             },
         )
 
@@ -381,23 +373,34 @@ private fun LinkItem(
     content: Content,
     modifier: Modifier = Modifier,
 ) {
+    val openLinkHandler = rememberLinkHandler()
+    Box(
+        modifier = modifier
+            .padding(AppTheme.spaces.small)
+            .clickable { openLinkHandler.invoke(src) }
+            .clip(AppTheme.shapes.extraSmall),
+        content = { Content(content) },
+    )
+}
+
+@Composable
+private fun rememberLinkHandler(): (String) -> Unit {
     val openLinkHandler = LocalOpenLinkHandler.current
     val snackbarState = LocalSnackbarHostState.current
     val coroutinesScope = rememberCoroutineScope()
     val linkErrorMessage = stringResource(R.string.error_open_url)
-    Box(
-        modifier = modifier
-            .padding(AppTheme.spaces.small)
-            .clickable {
-                try {
-                    openLinkHandler.openLink(src)
-                } catch (e: Throwable) {
-                    coroutinesScope.launch { snackbarState.showSnackbar(linkErrorMessage) }
-                }
-            }
-            .clip(AppTheme.shapes.extraSmall),
-        content = { Content(content) },
-    )
+    return remember(
+        openLinkHandler,
+        snackbarState,
+        linkErrorMessage,
+        coroutinesScope,
+    ) {
+        { link ->
+            openLinkHandler
+                .runCatching { openLink(link) }
+                .onFailure { coroutinesScope.launch { snackbarState.showSnackbar(linkErrorMessage) } }
+        }
+    }
 }
 
 @ThemePreviews
