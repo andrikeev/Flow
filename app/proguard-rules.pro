@@ -31,5 +31,54 @@
 -keep class com.google.crypto.tink.** { *; }
 -keep class flow.network.dto.** { *; }
 
+# kotlinx.serialization: keep generated serializers and Companion-held $serializer fields
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt
+-keepclasseswithmembers class **.*$Companion {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+-if class **.*$Companion {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+-keepclassmembers class <1>.<2> {
+    <1>.<2>$Companion Companion;
+}
+-keepclasseswithmembers class * {
+    public static **$Companion Companion;
+}
+
+# Hilt / Dagger
+-keep class dagger.hilt.** { *; }
+-keep class * extends dagger.hilt.android.lifecycle.HiltViewModel
+-keep,allowobfuscation @interface dagger.hilt.**
+-keep,allowobfuscation @interface javax.inject.**
+
+# Ktor client/server use reflection for engines and plugins
+-keep class io.ktor.** { *; }
+-keepclassmembers class io.ktor.** { *; }
+-dontwarn io.ktor.**
+-dontwarn io.netty.**
+-dontwarn org.slf4j.**
+
+# OkHttp / Okio (transitive via Ktor + Coil)
+-dontwarn okhttp3.internal.platform.**
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+
+# Coroutines: drop service-loader warnings on Android
+-dontwarn kotlinx.coroutines.debug.**
+
+# Orbit MVI uses reflection on container/intent classes
+-keep class org.orbitmvi.orbit.** { *; }
+
+# Jsoup occasionally referenced reflectively by parsers
+-keep class org.jsoup.** { *; }
+-dontwarn org.jsoup.**
+
+# Room: generated _Impl classes are accessed by reflection at runtime
+-keep class * extends androidx.room.RoomDatabase
+-keep @androidx.room.Entity class *
+-dontwarn androidx.room.paging.**
+
 -keepattributes SourceFile,LineNumberTable,RuntimeVisibleAnnotations,AnnotationDefault
 -renamesourcefileattribute SourceFile
