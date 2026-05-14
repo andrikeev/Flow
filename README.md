@@ -1,5 +1,10 @@
 # Flow
 
+[![Build](https://github.com/andrikeev/Flow/actions/workflows/build.yml/badge.svg)](https://github.com/andrikeev/Flow/actions/workflows/build.yml)
+[![Release](https://github.com/andrikeev/Flow/actions/workflows/release.yml/badge.svg)](https://github.com/andrikeev/Flow/actions/workflows/release.yml)
+[![Latest release](https://img.shields.io/github/v/release/andrikeev/Flow)](https://github.com/andrikeev/Flow/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Flow is an Android mobile app that is an unofficial client for the popular
 Russian torrent tracker website – rutracker.org. With Flow, users can easily
 search and download torrent files, manage their downloads, and stay up-to-date
