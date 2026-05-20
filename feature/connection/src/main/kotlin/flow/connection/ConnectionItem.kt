@@ -10,8 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.designsystem.component.Body
@@ -41,7 +41,7 @@ internal class ConnectionStatusViewModel @Inject constructor(
 @Composable
 fun ConnectionItem() {
     val viewModel: ConnectionStatusViewModel = viewModel()
-    val status by viewModel.status.collectAsStateWithLifecycle()
+    val status by viewModel.status.collectAsState()
     Surface(
         modifier = Modifier
             .fillMaxWidth()
