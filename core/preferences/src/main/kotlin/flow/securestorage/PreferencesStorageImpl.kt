@@ -46,6 +46,12 @@ internal class PreferencesStorageImpl @Inject constructor(
                 val token = accountPreferences.getString(accountTokenKey, null)
                 val password = accountPreferences.getString(accountPasswordKey, null)
                 if (id != null && username != null && token != null && password != null) {
+                    // Stale proxy tokens don't contain the RuTracker session cookie name.
+                    // Clear such accounts so users re-authenticate via rutracker.org directly.
+                    if (!token.contains("bb_session")) {
+                        accountPreferences.clear()
+                        return@runCatching null
+                    }
                     Account(
                         id = id,
                         name = username,
