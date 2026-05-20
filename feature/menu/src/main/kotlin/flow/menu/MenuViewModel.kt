@@ -7,11 +7,9 @@ import flow.domain.usecase.ClearHistoryUseCase
 import flow.domain.usecase.ClearLocalFavoritesUseCase
 import flow.domain.usecase.ObserveSettingsUseCase
 import flow.domain.usecase.SetBookmarksSyncPeriodUseCase
-import flow.domain.usecase.SetEndpointUseCase
 import flow.domain.usecase.SetFavoritesSyncPeriodUseCase
 import flow.domain.usecase.SetThemeUseCase
 import flow.logger.api.LoggerFactory
-import flow.models.settings.Endpoint
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
 import kotlinx.coroutines.flow.collectLatest
@@ -30,7 +28,6 @@ internal class MenuViewModel @Inject constructor(
     private val clearHistoryUseCase: ClearHistoryUseCase,
     private val observeSettingsUseCase: ObserveSettingsUseCase,
     private val setBookmarksSyncPeriodUseCase: SetBookmarksSyncPeriodUseCase,
-    private val setEndpointUseCase: SetEndpointUseCase,
     private val setFavoritesSyncPeriodUseCase: SetFavoritesSyncPeriodUseCase,
     private val setThemeUseCase: SetThemeUseCase,
     loggerFactory: LoggerFactory,
@@ -55,7 +52,6 @@ internal class MenuViewModel @Inject constructor(
             is MenuAction.RightsClick -> onRightsClick()
             is MenuAction.SendFeedbackClick -> onSendFeedbackClick()
             is MenuAction.SetBookmarksSyncPeriod -> onSetBookmarksSyncPeriod(action.syncPeriod)
-            is MenuAction.SetEndpoint -> onSetEndpoint(action.endpoint)
             is MenuAction.SetFavoritesSyncPeriod -> onSetFavoritesSyncPeriod(action.syncPeriod)
             is MenuAction.SetTheme -> onSetTheme(action.theme)
         }
@@ -113,10 +109,6 @@ internal class MenuViewModel @Inject constructor(
 
     private fun onSetBookmarksSyncPeriod(period: SyncPeriod) = intent {
         setBookmarksSyncPeriodUseCase(period)
-    }
-
-    private fun onSetEndpoint(endpoint: Endpoint) = intent {
-        setEndpointUseCase(endpoint)
     }
 
     private fun onSetFavoritesSyncPeriod(period: SyncPeriod) = intent {
