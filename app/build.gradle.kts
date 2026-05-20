@@ -18,9 +18,25 @@ android {
         buildConfig = true
     }
 
+    val releaseSigningConfig = signingConfigs.create("release") {
+        val storeFilePath = System.getenv("KEYSTORE_FILE")
+            ?: project.findProperty("KEYSTORE_FILE") as String?
+        if (!storeFilePath.isNullOrBlank() && file(storeFilePath).exists()) {
+            storeFile = file(storeFilePath)
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+                ?: project.findProperty("KEYSTORE_PASSWORD") as String?
+            keyAlias = System.getenv("KEY_ALIAS")
+                ?: project.findProperty("KEY_ALIAS") as String?
+            keyPassword = System.getenv("KEY_PASSWORD")
+                ?: project.findProperty("KEY_PASSWORD") as String?
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = releaseSigningConfig.storeFile
+                ?.let { releaseSigningConfig }
+                ?: signingConfigs.getByName("debug")
             postprocessing {
                 isRemoveUnusedCode = true
                 isRemoveUnusedResources = true
