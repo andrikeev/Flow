@@ -400,9 +400,9 @@ private fun <T> MenuSelectionDialog(
                         tint = AppTheme.colors.onSurface,
                         contentDescription = stringResource(
                             if (isSelected) {
-                                flow.connection.R.string.content_description_endpoint_selected
+                                R.string.content_description_selected
                             } else {
-                                flow.connection.R.string.content_description_endpoint_not_selected
+                                R.string.content_description_not_selected
                             },
                         ),
                     )
