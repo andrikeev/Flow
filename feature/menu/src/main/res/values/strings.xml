@@ -18,6 +18,8 @@
     <string name="menu_misc_contacts">Send feedback</string>
     <string name="menu_misc_privacy">Privacy policy</string>
     <string name="menu_misc_rights">Information for copyright holders</string>
+    <string name="content_description_selected">Selected</string>
+    <string name="content_description_not_selected">Not selected</string>
     <string name="menu_settings_bookmarks_sync">Bookmarks sync</string>
     <string name="menu_settings_favorites_sync">Favorites sync</string>
     <string name="menu_settings_endpoint">Endpoint</string>

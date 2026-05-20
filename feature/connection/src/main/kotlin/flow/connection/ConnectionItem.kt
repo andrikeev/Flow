@@ -7,75 +7,59 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.designsystem.component.Body
 import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.Surface
 import flow.designsystem.theme.AppTheme
+import flow.domain.model.endpoint.EndpointStatus
+import flow.domain.usecase.ObserveEndpointStatusUseCase
 import flow.navigation.viewModel
-import flow.ui.component.ModalBottomDialog
-import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-@Composable
-fun ConnectionItem() = ConnectionItem(
-    viewModel = viewModel(),
-)
-
-@Composable
-private fun ConnectionItem(viewModel: ConnectionsViewModel) {
-    var showDialog by remember { mutableStateOf(false) }
-    viewModel.collectSideEffect { sideEffect ->
-        when (sideEffect) {
-            is ConnectionsSideEffect.ShowConnectionDialog -> {
-                showDialog = true
-            }
-        }
-    }
-    if (showDialog) {
-        ModalBottomDialog(
-            onDismissRequest = { showDialog = false },
-            content = { ConnectionsList() },
+@HiltViewModel
+internal class ConnectionStatusViewModel @Inject constructor(
+    observeEndpointStatusUseCase: ObserveEndpointStatusUseCase,
+) : ViewModel() {
+    val status: StateFlow<EndpointStatus> = observeEndpointStatusUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = EndpointStatus.Updating,
         )
-    }
-    val state by viewModel.collectAsState()
-    ConnectionItem(
-        state = state,
-        onAction = viewModel::perform,
-    )
 }
 
 @Composable
-private fun ConnectionItem(
-    state: ConnectionsState,
-    onAction: (ConnectionsAction) -> Unit,
-) {
-    state.selected?.let { endpointState ->
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(AppTheme.sizes.extraLarge),
-            onClick = { onAction(ConnectionsAction.ConnectionItemClick) },
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = AppTheme.spaces.large),
-                ) {
-                    BodyLarge(stringResource(R.string.connection_item_title))
-                    Body(
-                        text = endpointState.endpoint.title,
-                        color = AppTheme.colors.outline,
-                    )
-                }
-                ConnectionStatusIcon(endpointState.status)
+fun ConnectionItem() {
+    val viewModel: ConnectionStatusViewModel = viewModel()
+    val status by viewModel.status.collectAsState()
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(AppTheme.sizes.extraLarge),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = AppTheme.spaces.large),
+            ) {
+                BodyLarge(stringResource(R.string.connection_item_title))
+                Body(
+                    text = "rutracker.org",
+                    color = AppTheme.colors.outline,
+                )
             }
+            ConnectionStatusIcon(status)
         }
     }
 }

@@ -2,12 +2,10 @@ package flow.securestorage
 
 import android.content.SharedPreferences
 import flow.dispatchers.api.Dispatchers
-import flow.models.settings.Endpoint
 import flow.models.settings.Settings
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
 import flow.securestorage.model.Account
-import flow.securestorage.model.EndpointConverter
 import flow.securestorage.preferences.SharedPreferencesFactory
 import flow.securestorage.utils.clear
 import flow.securestorage.utils.edit
@@ -48,6 +46,12 @@ internal class PreferencesStorageImpl @Inject constructor(
                 val token = accountPreferences.getString(accountTokenKey, null)
                 val password = accountPreferences.getString(accountPasswordKey, null)
                 if (id != null && username != null && token != null && password != null) {
+                    // Stale proxy tokens don't contain the RuTracker session cookie name.
+                    // Clear such accounts so users re-authenticate via rutracker.org directly.
+                    if (!token.contains("bb_session")) {
+                        accountPreferences.clear()
+                        return@runCatching null
+                    }
                     Account(
                         id = id,
                         name = username,
@@ -71,7 +75,6 @@ internal class PreferencesStorageImpl @Inject constructor(
     override suspend fun saveSettings(settings: Settings) {
         withContext(dispatchers.io) {
             settingsPreferences.edit {
-                putString(endpointKey, with(EndpointConverter) { settings.endpoint.toJson() })
                 putString(themeKey, settings.theme.name)
                 putString(favoritesSyncPeriodKey, settings.favoritesSyncPeriod.name)
                 putString(bookmarksSyncPeriodKey, settings.bookmarksSyncPeriod.name)
@@ -81,9 +84,6 @@ internal class PreferencesStorageImpl @Inject constructor(
 
     override suspend fun getSettings(): Settings {
         return withContext(dispatchers.io) {
-            val endpoint = settingsPreferences.getString(endpointKey, null)?.let {
-                with(EndpointConverter) { fromJson(it) }
-            } ?: Endpoint.Proxy
             val theme = settingsPreferences.getString(themeKey, null)?.let {
                 enumValueOf(it)
             } ?: Theme.SYSTEM
@@ -96,7 +96,6 @@ internal class PreferencesStorageImpl @Inject constructor(
                     enumValueOf(it)
                 } ?: SyncPeriod.OFF
             Settings(
-                endpoint = endpoint,
                 theme = theme,
                 favoritesSyncPeriod = favoritesSyncPeriod,
                 bookmarksSyncPeriod = bookmarksSyncPeriod,
@@ -147,7 +146,6 @@ internal class PreferencesStorageImpl @Inject constructor(
         const val accountTokenKey = "account_token"
         const val accountAvatarKey = "account_avatar_url"
 
-        const val endpointKey = "endpoint"
         const val themeKey = "theme"
         const val favoritesSyncPeriodKey = "favorites_sync_period"
         const val bookmarksSyncPeriodKey = "bookmarks_sync_period"

@@ -7,7 +7,6 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import flow.database.converters.Converters
 import flow.database.dao.BookmarkDao
-import flow.database.dao.EndpointDao
 import flow.database.dao.FavoriteSearchDao
 import flow.database.dao.FavoriteTopicDao
 import flow.database.dao.ForumCategoryDao
@@ -16,7 +15,6 @@ import flow.database.dao.SearchHistoryDao
 import flow.database.dao.SuggestDao
 import flow.database.dao.VisitedTopicDao
 import flow.database.entity.BookmarkEntity
-import flow.database.entity.EndpointEntity
 import flow.database.entity.FavoriteSearchEntity
 import flow.database.entity.FavoriteTopicEntity
 import flow.database.entity.ForumCategoryEntity
@@ -28,7 +26,6 @@ import flow.database.entity.VisitedTopicEntity
 @Database(
     entities = [
         BookmarkEntity::class,
-        EndpointEntity::class,
         FavoriteSearchEntity::class,
         FavoriteTopicEntity::class,
         ForumCategoryEntity::class,
@@ -37,13 +34,12 @@ import flow.database.entity.VisitedTopicEntity
         SuggestEntity::class,
         VisitedTopicEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bookmarkDao(): BookmarkDao
-    abstract fun endpointDao(): EndpointDao
     abstract fun favoriteTopicDao(): FavoriteTopicDao
     abstract fun favoritesSearchDao(): FavoriteSearchDao
     abstract fun forumCategoryDao(): ForumCategoryDao
@@ -61,6 +57,11 @@ abstract class AppDatabase : RoomDatabase() {
         val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("CREATE INDEX IF NOT EXISTS `index_ForumCategoryEntity_parentId` ON `ForumCategoryEntity` (`parentId`)")
+            }
+        }
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DROP TABLE IF EXISTS `Endpoint`")
             }
         }
     }

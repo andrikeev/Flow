@@ -10,6 +10,7 @@ import dagger.hilt.components.SingletonComponent
 import flow.database.AppDatabase
 import flow.database.AppDatabase.Companion.MIGRATION_3_4
 import flow.database.AppDatabase.Companion.MIGRATION_4_5
+import flow.database.AppDatabase.Companion.MIGRATION_5_6
 import javax.inject.Singleton
 
 @Module
@@ -25,6 +26,7 @@ object DatabaseModule {
         )
             .addMigrations(MIGRATION_3_4)
             .addMigrations(MIGRATION_4_5)
+            .addMigrations(MIGRATION_5_6)
             .fallbackToDestructiveMigration(true)
             .build()
 }

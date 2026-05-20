@@ -2,7 +2,6 @@ package flow.data.impl.repository
 
 import flow.common.SingleItemMutableSharedFlow
 import flow.data.api.repository.SettingsRepository
-import flow.models.settings.Endpoint
 import flow.models.settings.Settings
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
@@ -24,10 +23,6 @@ class SettingsRepositoryImpl @Inject constructor(
 
     override suspend fun setTheme(theme: Theme) {
         updateSettings { copy(theme = theme) }
-    }
-
-    override suspend fun setEndpoint(endpoint: Endpoint) {
-        updateSettings { copy(endpoint = endpoint) }
     }
 
     override suspend fun setFavoritesSyncPeriod(syncPeriod: SyncPeriod) {

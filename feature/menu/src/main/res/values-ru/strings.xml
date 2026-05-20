@@ -18,6 +18,8 @@
     <string name="menu_misc_contacts">Обратная связь</string>
     <string name="menu_misc_privacy">Политики конфиденциальности</string>
     <string name="menu_misc_rights">Информация для правообладателей</string>
+    <string name="content_description_selected">Выбрано</string>
+    <string name="content_description_not_selected">Не выбрано</string>
     <string name="menu_settings_bookmarks_sync">Синхронизация закладок</string>
     <string name="menu_settings_favorites_sync">Синхронизация избранного</string>
     <string name="menu_settings_endpoint">Сервер</string>
