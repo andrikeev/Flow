@@ -24,5 +24,4 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewModel.savedState)
 
     implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.navigation3.ui)
 }
