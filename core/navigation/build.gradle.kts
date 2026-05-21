@@ -22,6 +22,4 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.viewModel.savedState)
-
-    implementation(libs.androidx.navigation3.runtime)
 }
