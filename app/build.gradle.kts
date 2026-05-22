@@ -34,21 +34,15 @@ android {
 
     buildTypes {
         release {
+            isMinifyEnabled = true
+            isShrinkResources = true
             signingConfig = releaseSigningConfig.storeFile
                 ?.let { releaseSigningConfig }
                 ?: signingConfigs.getByName("debug")
-            postprocessing {
-                isRemoveUnusedCode = true
-                isRemoveUnusedResources = true
-                isObfuscate = false
-                isOptimizeCode = true
-                setProguardFiles(
-                    listOf(
-                        getDefaultProguardFile("proguard-defaults.txt"),
-                        "proguard-rules.pro",
-                    ),
-                )
-            }
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
         debug {
             isMinifyEnabled = false
