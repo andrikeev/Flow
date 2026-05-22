@@ -24,6 +24,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 configureAndroidCommon(this)
                 configureKotlinAndroid(this)
                 configureAndroidCompose(this)
+                defaultConfig.targetSdk = 35
             }
 
             tasks.withType<KotlinJvmCompile>().configureEach {

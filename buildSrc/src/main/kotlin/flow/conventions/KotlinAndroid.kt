@@ -6,9 +6,9 @@ import org.gradle.api.JavaVersion
 /**
  * Configure base Kotlin with Android options
  */
-internal fun configureKotlinAndroid(commonExtension: CommonExtension<*, *, *, *, *, *>) {
+internal fun configureKotlinAndroid(commonExtension: CommonExtension) {
     commonExtension.apply {
-        compileOptions {
+        compileOptions.apply {
             sourceCompatibility = JavaVersion.VERSION_17
             targetCompatibility = JavaVersion.VERSION_17
         }
