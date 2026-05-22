@@ -32,6 +32,7 @@ dependencies {
 
     api(libs.androidx.test.runner)
     api(libs.androidx.test.rules)
+    api(platform(libs.androidx.compose.bom))
     api(libs.androidx.compose.ui.test)
     api(libs.mockk.android)
 
