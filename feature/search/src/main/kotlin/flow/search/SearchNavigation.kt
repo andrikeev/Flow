@@ -8,22 +8,24 @@ import flow.navigation.viewModel
 
 private const val SearchHistoryRoute = "search_history"
 
-context(NavigationGraphBuilder)
+context(graphBuilder: NavigationGraphBuilder)
 fun addSearchHistory(
     openLogin: () -> Unit,
     openSearchInput: () -> Unit,
     openSearchResult: (Filter) -> Unit,
     animations: NavigationAnimations,
-) = addDestination(
-    route = buildRoute(SearchHistoryRoute),
-    isStartRoute = true,
-    content = {
-        SearchScreen(
-            viewModel = viewModel(),
-            openLogin = openLogin,
-            openSearchInput = openSearchInput,
-            openSearch = openSearchResult,
-        )
-    },
-    animations = animations,
-)
+) = with(graphBuilder) {
+    addDestination(
+        route = buildRoute(SearchHistoryRoute),
+        isStartRoute = true,
+        content = {
+            SearchScreen(
+                viewModel = viewModel(),
+                openLogin = openLogin,
+                openSearchInput = openSearchInput,
+                openSearch = openSearchResult,
+            )
+        },
+        animations = animations,
+    )
+}

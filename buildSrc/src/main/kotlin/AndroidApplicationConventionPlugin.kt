@@ -28,7 +28,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
 
             tasks.withType<KotlinJvmCompile>().configureEach {
                 compilerOptions {
-                    freeCompilerArgs.addAll("-Xcontext-receivers")
+                    freeCompilerArgs.addAll("-Xcontext-parameters")
                 }
             }
         }

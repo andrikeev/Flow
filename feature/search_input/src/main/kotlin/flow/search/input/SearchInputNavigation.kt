@@ -25,12 +25,12 @@ private const val OrderKey = "order"
 private const val PeriodKey = "period"
 private const val SearchInputRoute = "search_input"
 
-context(NavigationGraphBuilder)
+context(graphBuilder: NavigationGraphBuilder)
 fun addSearchInput(
     back: () -> Unit,
     openSearchResult: (Filter) -> Unit,
     animations: NavigationAnimations,
-) {
+) = with(graphBuilder) {
     addDestination(
         route = buildRoute(
             route = SearchInputRoute,
@@ -65,8 +65,8 @@ fun addSearchInput(
     }
 }
 
-context(NavigationGraphBuilder, NavigationController)
-fun openSearchInput(filter: Filter = Filter()) {
+context(_: NavigationGraphBuilder, navigationController: NavigationController)
+fun openSearchInput(filter: Filter = Filter()) = with(navigationController) {
     navigate(
         buildRoute(
             route = SearchInputRoute,
@@ -85,8 +85,8 @@ fun openSearchInput(filter: Filter = Filter()) {
     )
 }
 
-context(NavigationGraphBuilder, NavigationController)
-fun openSearchInput(categoryId: String) {
+context(_: NavigationGraphBuilder, navigationController: NavigationController)
+fun openSearchInput(categoryId: String) = with(navigationController) {
     navigate(
         buildRoute(
             route = SearchInputRoute,

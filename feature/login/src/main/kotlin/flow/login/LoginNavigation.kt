@@ -8,22 +8,24 @@ import flow.navigation.viewModel
 
 private const val LoginRoute = "login"
 
-context(NavigationGraphBuilder)
+context(graphBuilder: NavigationGraphBuilder)
 fun addLogin(
     back: () -> Unit,
     animations: NavigationAnimations,
-) = addDestination(
-    route = buildRoute(LoginRoute),
-    arguments = emptyList(),
-    animations = animations,
-) {
-    LoginScreen(
-        viewModel = viewModel(),
-        back = back,
-    )
+) = with(graphBuilder) {
+    addDestination(
+        route = buildRoute(LoginRoute),
+        arguments = emptyList(),
+        animations = animations,
+    ) {
+        LoginScreen(
+            viewModel = viewModel(),
+            back = back,
+        )
+    }
 }
 
-context(NavigationGraphBuilder, NavigationController)
-fun openLogin() {
+context(_: NavigationGraphBuilder, navigationController: NavigationController)
+fun openLogin() = with(navigationController) {
     navigate(buildRoute(LoginRoute))
 }

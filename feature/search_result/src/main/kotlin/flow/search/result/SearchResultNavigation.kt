@@ -27,7 +27,7 @@ private const val OrderKey = "s"
 private const val PeriodKey = "tm"
 private const val SearchResultRoute = "search_result"
 
-context(NavigationGraphBuilder)
+context(graphBuilder: NavigationGraphBuilder)
 fun addSearchResult(
     back: () -> Unit,
     openSearchInput: (filter: Filter) -> Unit,
@@ -35,33 +35,11 @@ fun addSearchResult(
     openTopic: (id: String) -> Unit,
     deepLinkUrls: List<String> = emptyList(),
     animations: NavigationAnimations,
-) = addDestination(
-    route = buildRoute(
-        route = SearchResultRoute,
-        optionalArgsBuilder = {
-            appendOptionalArgs(
-                QueryKey,
-                CategoriesKey,
-                AuthorIdKey,
-                AuthorNameKey,
-                SortKey,
-                OrderKey,
-                PeriodKey,
-            )
-        },
-    ),
-    arguments = listOf(
-        NavigationArgument(QueryKey, true),
-        NavigationArgument(CategoriesKey, true),
-        NavigationArgument(AuthorIdKey, true),
-        NavigationArgument(AuthorNameKey, true),
-        NavigationArgument(SortKey, true),
-        NavigationArgument(OrderKey, true),
-        NavigationArgument(PeriodKey, true),
-    ),
-    deepLinks = deepLinkUrls.map { url ->
-        NavigationDeepLink(
-            buildDeepLink(url) {
+) = with(graphBuilder) {
+    addDestination(
+        route = buildRoute(
+            route = SearchResultRoute,
+            optionalArgsBuilder = {
                 appendOptionalArgs(
                     QueryKey,
                     CategoriesKey,
@@ -72,21 +50,45 @@ fun addSearchResult(
                     PeriodKey,
                 )
             },
+        ),
+        arguments = listOf(
+            NavigationArgument(QueryKey, true),
+            NavigationArgument(CategoriesKey, true),
+            NavigationArgument(AuthorIdKey, true),
+            NavigationArgument(AuthorNameKey, true),
+            NavigationArgument(SortKey, true),
+            NavigationArgument(OrderKey, true),
+            NavigationArgument(PeriodKey, true),
+        ),
+        deepLinks = deepLinkUrls.map { url ->
+            NavigationDeepLink(
+                buildDeepLink(url) {
+                    appendOptionalArgs(
+                        QueryKey,
+                        CategoriesKey,
+                        AuthorIdKey,
+                        AuthorNameKey,
+                        SortKey,
+                        OrderKey,
+                        PeriodKey,
+                    )
+                },
+            )
+        },
+        animations = animations,
+    ) {
+        SearchResultScreen(
+            viewModel = viewModel(),
+            back = back,
+            openSearchInput = openSearchInput,
+            openSearchResult = openSearchResult,
+            openTopic = openTopic,
         )
-    },
-    animations = animations,
-) {
-    SearchResultScreen(
-        viewModel = viewModel(),
-        back = back,
-        openSearchInput = openSearchInput,
-        openSearchResult = openSearchResult,
-        openTopic = openTopic,
-    )
+    }
 }
 
-context(NavigationGraphBuilder, NavigationController)
-fun openSearchResult(filter: Filter) {
+context(_: NavigationGraphBuilder, navigationController: NavigationController)
+fun openSearchResult(filter: Filter) = with(navigationController) {
     navigate(
         buildRoute(
             route = SearchResultRoute,

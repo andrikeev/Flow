@@ -18,7 +18,7 @@ import flow.navigation.viewModel
 private const val TopicIdKey = "t"
 private const val TopicRoute = "topic"
 
-context(NavigationGraphBuilder)
+context(graphBuilder: NavigationGraphBuilder)
 fun addTopic(
     back: () -> Unit,
     openCategory: (id: String) -> Unit,
@@ -26,28 +26,30 @@ fun addTopic(
     openSearch: (filter: Filter) -> Unit,
     deepLinkUrls: List<String> = emptyList(),
     animations: NavigationAnimations,
-) = addDestination(
-    route = buildRoute(
-        route = TopicRoute,
-        optionalArgsBuilder = { appendRequiredArgs(TopicIdKey) },
-    ),
-    arguments = listOf(NavigationArgument(TopicIdKey)),
-    deepLinks = deepLinkUrls.map { url ->
-        NavigationDeepLink(buildDeepLink(url) { appendOptionalArgs(TopicIdKey) })
-    },
-    animations = animations,
-) {
-    TopicScreen(
-        viewModel = viewModel(),
-        back = back,
-        openCategory = openCategory,
-        openLogin = openLogin,
-        openSearch = openSearch,
-    )
+) = with(graphBuilder) {
+    addDestination(
+        route = buildRoute(
+            route = TopicRoute,
+            optionalArgsBuilder = { appendRequiredArgs(TopicIdKey) },
+        ),
+        arguments = listOf(NavigationArgument(TopicIdKey)),
+        deepLinks = deepLinkUrls.map { url ->
+            NavigationDeepLink(buildDeepLink(url) { appendOptionalArgs(TopicIdKey) })
+        },
+        animations = animations,
+    ) {
+        TopicScreen(
+            viewModel = viewModel(),
+            back = back,
+            openCategory = openCategory,
+            openLogin = openLogin,
+            openSearch = openSearch,
+        )
+    }
 }
 
-context(NavigationGraphBuilder, NavigationController)
-fun openTopic(id: String) {
+context(_: NavigationGraphBuilder, navigationController: NavigationController)
+fun openTopic(id: String) = with(navigationController) {
     navigate(
         buildRoute(
             route = TopicRoute,

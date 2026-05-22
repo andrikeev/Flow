@@ -87,12 +87,12 @@ fun MobileNavigation(navigationController: NavigationController) {
     }
 }
 
-context(NavigationGraphBuilder)
+context(graphBuilder: NavigationGraphBuilder)
 private fun addNestedNavigation(
     openSearchInput: (id: String) -> Unit,
     openLogin: () -> Unit,
     openTopic: (id: String) -> Unit,
-) = addDestination {
+) = graphBuilder.addDestination {
     val navigationBarItems = remember { BottomRoute.entries.map(BottomRoute::navigationBarItem) }
     val navigationController = rememberNestedNavigationController()
     with(navigationController) {
@@ -119,11 +119,11 @@ private fun addNestedNavigation(
     }
 }
 
-context(NavigationGraphBuilder, NavigationController)
+context(graphBuilder: NavigationGraphBuilder, navigationController: NavigationController)
 private fun addSearch(
     openLogin: () -> Unit,
     openTopic: (id: String) -> Unit,
-) = addGraph(
+) = graphBuilder.addGraph(
     isStartRoute = true,
     route = BottomRoute.Search.route,
     animations = BottomRoute.Search.animations,
@@ -135,15 +135,15 @@ private fun addSearch(
         animations = NavigationAnimations.Default,
     )
     addSearchInput(
-        back = ::popBackStack,
+        back = navigationController::popBackStack,
         openSearchResult = {
-            popBackStack()
+            navigationController.popBackStack()
             openSearchResult(it)
         },
         animations = NavigationAnimations.FadeInOutAnimations,
     )
     addSearchResult(
-        back = ::popBackStack,
+        back = navigationController::popBackStack,
         openSearchInput = { openSearchInput(it) },
         openSearchResult = { openSearchResult(it) },
         openTopic = openTopic,
@@ -151,17 +151,17 @@ private fun addSearch(
     )
 }
 
-context(NavigationGraphBuilder, NavigationController)
+context(graphBuilder: NavigationGraphBuilder, navigationController: NavigationController)
 private fun addForum(
     openSearchInput: (categoryId: String) -> Unit,
     openLogin: () -> Unit,
     openTopic: (id: String) -> Unit,
-) = addGraph(
+) = graphBuilder.addGraph(
     route = BottomRoute.Forum.route,
     animations = BottomRoute.Forum.animations,
 ) {
     addCategory(
-        back = ::popBackStack,
+        back = navigationController::popBackStack,
         openCategory = { openCategory(it) },
         openLogin = openLogin,
         openSearchInput = openSearchInput,
@@ -189,10 +189,10 @@ private fun addForum(
     }
 }
 
-context(NavigationGraphBuilder)
+context(graphBuilder: NavigationGraphBuilder)
 private fun addTopics(
     openTopic: (id: String) -> Unit,
-) = addDestination(
+) = graphBuilder.addDestination(
     route = BottomRoute.Topics.route,
     animations = BottomRoute.Topics.animations,
 ) {
@@ -212,10 +212,10 @@ private fun addTopics(
     )
 }
 
-context(NavigationGraphBuilder, NavigationController)
+context(graphBuilder: NavigationGraphBuilder, _: NavigationController)
 private fun addMenu(
     openLogin: () -> Unit,
-) = addDestination(
+) = graphBuilder.addDestination(
     route = BottomRoute.Menu.route,
     animations = BottomRoute.Menu.animations,
     content = { MenuScreen(openLogin = openLogin) },
