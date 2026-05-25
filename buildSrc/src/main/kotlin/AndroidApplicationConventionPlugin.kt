@@ -16,7 +16,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("com.android.application")
                 apply("com.google.gms.google-services")
-                apply("com.google.firebase.crashlytics")
                 apply(StaticAnalysisConventionPlugin::class.java)
             }
 
