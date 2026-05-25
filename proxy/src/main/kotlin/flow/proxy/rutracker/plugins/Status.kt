@@ -11,7 +11,6 @@ import flow.network.model.Unknown
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
-import io.ktor.server.engine.logError
 import io.ktor.server.plugins.MissingRequestParameterException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
@@ -20,7 +19,7 @@ import java.io.IOException
 internal fun Application.configureStatusPages() {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            logError(call, cause)
+            call.application.log.error("Unhandled exception", cause)
             when (cause) {
                 is IOException -> call.respond(status = HttpStatusCode.GatewayTimeout, message = Unit)
                 is IllegalStateException -> call.respond(status = HttpStatusCode.BadRequest, message = Unit)

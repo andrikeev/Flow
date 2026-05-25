@@ -17,13 +17,12 @@ import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
-import io.ktor.client.statement.readBytes
+import io.ktor.client.statement.readRawBytes
 import io.ktor.http.ContentType.Application.FormUrlEncoded
 import io.ktor.http.HttpMethod
 import io.ktor.http.Parameters
 import io.ktor.http.content.OutgoingContent
 import io.ktor.http.withCharset
-import io.ktor.utils.io.core.toByteArray
 import java.net.URLEncoder
 
 internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTrackerInnerApi {
@@ -103,7 +102,7 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
         FileDto(
             contentDisposition = response.headers["Content-Disposition"].orEmpty(),
             contentType = response.headers["Content-Type"].orEmpty(),
-            bytes = response.readBytes(),
+            bytes = response.readRawBytes(),
         )
     }
 

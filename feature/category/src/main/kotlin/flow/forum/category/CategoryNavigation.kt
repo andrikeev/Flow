@@ -16,7 +16,7 @@ import flow.navigation.ui.NavigationAnimations
 private const val CategoryIdKey = "f"
 private const val CategoryRoute = "category"
 
-context(NavigationGraphBuilder)
+context(graphBuilder: NavigationGraphBuilder)
 fun addCategory(
     back: () -> Unit,
     openCategory: (id: String) -> Unit,
@@ -25,29 +25,31 @@ fun addCategory(
     openTopic: (id: String) -> Unit,
     deepLinkUrls: List<String> = emptyList(),
     animations: NavigationAnimations,
-) = addDestination(
-    route = buildRoute(
-        route = CategoryRoute,
-        requiredArgsBuilder = { appendRequiredArgs(CategoryIdKey) },
-    ),
-    arguments = listOf(NavigationArgument(CategoryIdKey)),
-    deepLinks = deepLinkUrls.map { url ->
-        NavigationDeepLink(buildDeepLink(url) { appendOptionalArgs(CategoryIdKey) })
-    },
-    content = {
-        CategoryScreen(
-            back = back,
-            openCategory = openCategory,
-            openLogin = openLogin,
-            openSearchInput = openSearchInput,
-            openTopic = openTopic,
-        )
-    },
-    animations = animations,
-)
+) = with(graphBuilder) {
+    addDestination(
+        route = buildRoute(
+            route = CategoryRoute,
+            requiredArgsBuilder = { appendRequiredArgs(CategoryIdKey) },
+        ),
+        arguments = listOf(NavigationArgument(CategoryIdKey)),
+        deepLinks = deepLinkUrls.map { url ->
+            NavigationDeepLink(buildDeepLink(url) { appendOptionalArgs(CategoryIdKey) })
+        },
+        content = {
+            CategoryScreen(
+                back = back,
+                openCategory = openCategory,
+                openLogin = openLogin,
+                openSearchInput = openSearchInput,
+                openTopic = openTopic,
+            )
+        },
+        animations = animations,
+    )
+}
 
-context(NavigationGraphBuilder, NavigationController)
-fun openCategory(id: String) {
+context(_: NavigationGraphBuilder, navigationController: NavigationController)
+fun openCategory(id: String) = with(navigationController) {
     navigate(
         buildRoute(
             route = CategoryRoute,

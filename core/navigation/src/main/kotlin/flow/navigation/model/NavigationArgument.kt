@@ -5,13 +5,13 @@ data class NavigationArgument(
     val nullable: Boolean = false,
 )
 
-context(NavigationGraphBuilder)
+context(graphBuilder: NavigationGraphBuilder)
 fun buildRoute(
     route: String,
     requiredArgsBuilder: StringBuilder.() -> Unit = {},
     optionalArgsBuilder: StringBuilder.() -> Unit = {},
 ) = buildString {
-    graph?.let { append(it, '/') }
+    graphBuilder.graph?.let { append(it, '/') }
     append(route)
     requiredArgsBuilder()
     optionalArgsBuilder()

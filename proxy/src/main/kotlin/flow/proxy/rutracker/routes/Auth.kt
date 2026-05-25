@@ -4,11 +4,10 @@ import flow.network.api.NetworkApi
 import flow.proxy.rutracker.di.inject
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
-import io.ktor.client.statement.readBytes
+import io.ktor.client.statement.readRawBytes
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
 import io.ktor.server.request.receiveParameters
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
@@ -43,7 +42,7 @@ internal fun Application.configureAuthRoutes() {
             call.respondBytes(
                 status = HttpStatusCode.OK,
                 contentType = response.contentType(),
-                bytes = response.readBytes(),
+                bytes = response.readRawBytes(),
             )
         }
     }

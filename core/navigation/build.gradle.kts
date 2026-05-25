@@ -10,7 +10,7 @@ android {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.addAll("-Xcontext-receivers")
+        freeCompilerArgs.addAll("-Xcontext-parameters")
     }
 }
 

@@ -8,7 +8,6 @@ import io.ktor.server.application.BaseApplicationPlugin
 import io.ktor.server.application.install
 import io.ktor.server.application.pluginOrNull
 import io.ktor.util.AttributeKey
-import io.ktor.util.KtorDsl
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -30,7 +29,7 @@ private class Koin(val koinApplication: KoinApplication) {
         override val key = AttributeKey<Koin>("Koin")
 
         override fun install(pipeline: Application, configure: KoinAppDeclaration): Koin {
-            val monitor = pipeline.environment.monitor
+            val monitor = pipeline.monitor
 
             val koinApplication = startKoin(appDeclaration = configure)
             monitor.raise(koinApplicationStarted, koinApplication)
@@ -46,7 +45,6 @@ private class Koin(val koinApplication: KoinApplication) {
     }
 }
 
-@KtorDsl
 private fun Application.koin(configuration: KoinAppDeclaration) = pluginOrNull(Koin)?.apply {
     koinApplication.apply(configuration).createEagerInstances()
 } ?: install(Koin, configuration)

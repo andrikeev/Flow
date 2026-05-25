@@ -2,6 +2,7 @@ import com.android.build.api.dsl.ApplicationExtension
 import flow.conventions.StaticAnalysisConventionPlugin
 import flow.conventions.configureAndroidCommon
 import flow.conventions.configureAndroidCompose
+import flow.conventions.configureExcludes
 import flow.conventions.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -14,7 +15,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.application")
-                apply("org.jetbrains.kotlin.android")
                 apply("com.google.gms.google-services")
                 apply("com.google.firebase.crashlytics")
                 apply(StaticAnalysisConventionPlugin::class.java)
@@ -24,11 +24,13 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 configureAndroidCommon(this)
                 configureKotlinAndroid(this)
                 configureAndroidCompose(this)
+                defaultConfig.targetSdk = 35
+                packaging.configureExcludes()
             }
 
             tasks.withType<KotlinJvmCompile>().configureEach {
                 compilerOptions {
-                    freeCompilerArgs.addAll("-Xcontext-receivers")
+                    freeCompilerArgs.addAll("-Xcontext-parameters")
                 }
             }
         }

@@ -20,6 +20,9 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+# Code shrinking and optimization are enabled, but obfuscation is not.
+-dontobfuscate
+
 -dontwarn com.google.errorprone.annotations.Immutable
 -dontwarn org.bouncycastle.jsse.*
 -dontwarn org.bouncycastle.jsse.provider.*
