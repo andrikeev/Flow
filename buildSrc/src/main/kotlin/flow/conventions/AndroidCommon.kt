@@ -8,7 +8,7 @@ import com.android.build.api.dsl.Packaging
  */
 internal fun configureAndroidCommon(commonExtension: CommonExtension) {
     commonExtension.apply {
-        compileSdk = 35
+        compileSdk = 36
 
         defaultConfig.apply {
             minSdk = 21
