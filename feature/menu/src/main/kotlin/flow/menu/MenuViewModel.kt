@@ -33,7 +33,21 @@ internal class MenuViewModel @Inject constructor(
 
     override val container: Container<MenuState, MenuSideEffect> = container(
         initialState = MenuState(),
-        onCreate = { observeSettings() },
+        onCreate = {
+            repeatOnSubscription {
+                logger.d { "Start observing settings" }
+                observeSettingsUseCase().collectLatest { settings ->
+                    reduce {
+                        logger.d { "On new settings: $settings" }
+                        MenuState(
+                            theme = settings.theme,
+                            favoritesSyncPeriod = settings.favoritesSyncPeriod,
+                            bookmarksSyncPeriod = settings.bookmarksSyncPeriod,
+                        )
+                    }
+                }
+            }
+        },
     )
 
     fun perform(action: MenuAction) {
@@ -51,20 +65,6 @@ internal class MenuViewModel @Inject constructor(
             is MenuAction.SetBookmarksSyncPeriod -> onSetBookmarksSyncPeriod(action.syncPeriod)
             is MenuAction.SetFavoritesSyncPeriod -> onSetFavoritesSyncPeriod(action.syncPeriod)
             is MenuAction.SetTheme -> onSetTheme(action.theme)
-        }
-    }
-
-    private fun observeSettings() = intent {
-        logger.d { "Start observing settings" }
-        observeSettingsUseCase().collectLatest { settings ->
-            reduce {
-                logger.d { "On new settings: $settings" }
-                MenuState(
-                    theme = settings.theme,
-                    favoritesSyncPeriod = settings.favoritesSyncPeriod,
-                    bookmarksSyncPeriod = settings.bookmarksSyncPeriod,
-                )
-            }
         }
     }
 

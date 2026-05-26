@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import flow.common.runSuspendCatching
 import flow.domain.model.PagingAction
 import flow.domain.model.append
 import flow.domain.model.category.CategoryPage
@@ -21,6 +22,7 @@ import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
@@ -43,9 +45,43 @@ internal class CategoryViewModel @Inject constructor(
     override val container: Container<CategoryPageState, CategorySideEffect> = container(
         initialState = CategoryPageState(),
         onCreate = {
-            observeAuthState()
-            observeCategoryModel()
-            observePagingData()
+            repeatOnSubscription {
+                launch {
+                    logger.d { "Start observing auth state" }
+                    authStateUseCase().collectLatest { authState ->
+                        reduce { state.copy(authState = authState) }
+                    }
+                }
+                launch {
+                    logger.d { "Start observing category model" }
+                    observeCategoryModelUseCase(categoryId).collectLatest { categoryModel ->
+                        val categoryState = CategoryState.Category(
+                            name = categoryModel.category.name,
+                            isBookmark = categoryModel.isBookmark,
+                        )
+                        reduce { state.copy(categoryState = categoryState) }
+                    }
+                }
+                launch {
+                    logger.d { "Start observing paging data" }
+                    observeCategoryPagingDataUseCase(
+                        id = categoryId,
+                        actionsFlow = pagingActions,
+                        scope = viewModelScope,
+                    ).collectLatest { (data, loadStates) ->
+                        reduce {
+                            state.copy(
+                                categoryContent = when {
+                                    data == null -> CategoryContent.Initial
+                                    data.isEmpty() -> CategoryContent.Empty
+                                    else -> data.toContent()
+                                },
+                                loadStates = loadStates,
+                            )
+                        }
+                    }
+                }
+            }
         },
     )
 
@@ -61,44 +97,6 @@ internal class CategoryViewModel @Inject constructor(
             is CategoryAction.RetryClick -> onRetryClick()
             is CategoryAction.SearchClick -> onSearchClick()
             is CategoryAction.TopicClick -> onTopicClick(action.topicModel)
-        }
-    }
-
-    private fun observeAuthState() = intent {
-        logger.d { "Start observing auth state" }
-        authStateUseCase().collectLatest { authState ->
-            reduce { state.copy(authState = authState) }
-        }
-    }
-
-    private fun observeCategoryModel() = intent {
-        logger.d { "Start observing category model" }
-        observeCategoryModelUseCase(categoryId).collectLatest { categoryModel ->
-            val categoryState = CategoryState.Category(
-                name = categoryModel.category.name,
-                isBookmark = categoryModel.isBookmark,
-            )
-            reduce { state.copy(categoryState = categoryState) }
-        }
-    }
-
-    private fun observePagingData() = intent {
-        logger.d { "Start observing paging data" }
-        observeCategoryPagingDataUseCase(
-            id = categoryId,
-            actionsFlow = pagingActions,
-            scope = viewModelScope,
-        ).collectLatest { (data, loadStates) ->
-            reduce {
-                state.copy(
-                    categoryContent = when {
-                        data == null -> CategoryContent.Initial
-                        data.isEmpty() -> CategoryContent.Empty
-                        else -> data.toContent()
-                    },
-                    loadStates = loadStates,
-                )
-            }
         }
     }
 
@@ -119,7 +117,7 @@ internal class CategoryViewModel @Inject constructor(
     }
 
     private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = intent {
-        runCatching { toggleFavoriteUseCase(topicModel.topic.id) }
+        runSuspendCatching { toggleFavoriteUseCase(topicModel.topic.id) }
             .onFailure { postSideEffect(CategorySideEffect.ShowFavoriteToggleError) }
     }
 

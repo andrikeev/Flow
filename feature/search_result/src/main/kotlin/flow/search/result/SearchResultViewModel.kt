@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import flow.common.runSuspendCatching
 import flow.domain.model.PagingAction
 import flow.domain.model.append
 import flow.domain.model.retry
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
@@ -44,8 +46,38 @@ internal class SearchResultViewModel @Inject constructor(
     override val container: Container<SearchPageState, SearchResultSideEffect> = container(
         initialState = SearchPageState(mutableFilter.value),
         onCreate = {
-            observeFilter()
-            observePagingData()
+            mutableFilter.emit(enrichFilterUseCase(state.filter))
+            repeatOnSubscription {
+                launch {
+                    mutableFilter
+                        .onEach(addSearchHistoryUseCase::invoke)
+                        .collectLatest { filter ->
+                            reduce { state.copy(filter = filter) }
+                        }
+                }
+                launch {
+                    logger.d { "Start observing paging data" }
+                    observeSearchPagingDataUseCase(
+                        filterFlow = mutableFilter,
+                        actionsFlow = pagingActions,
+                        scope = viewModelScope,
+                    ).collectLatest { (data, loadingState) ->
+                        reduce {
+                            state.copy(
+                                searchContent = when {
+                                    data == null -> SearchResultContent.Initial
+                                    data.isEmpty() -> SearchResultContent.Empty
+                                    else -> SearchResultContent.Content(
+                                        torrents = data,
+                                        categories = data.mapNotNull { it.topic.category }.distinct(),
+                                    )
+                                },
+                                loadStates = loadingState,
+                            )
+                        }
+                    }
+                }
+            }
         },
     )
 
@@ -67,38 +99,6 @@ internal class SearchResultViewModel @Inject constructor(
         }
     }
 
-    private fun observeFilter() = intent {
-        mutableFilter.emit(enrichFilterUseCase(state.filter))
-        mutableFilter
-            .onEach(addSearchHistoryUseCase::invoke)
-            .collectLatest { filter ->
-                reduce { state.copy(filter = filter) }
-            }
-    }
-
-    private fun observePagingData() = intent {
-        logger.d { "Start observing paging data" }
-        observeSearchPagingDataUseCase(
-            filterFlow = mutableFilter,
-            actionsFlow = pagingActions,
-            scope = viewModelScope,
-        ).collectLatest { (data, loadingState) ->
-            reduce {
-                state.copy(
-                    searchContent = when {
-                        data == null -> SearchResultContent.Initial
-                        data.isEmpty() -> SearchResultContent.Empty
-                        else -> SearchResultContent.Content(
-                            torrents = data,
-                            categories = data.mapNotNull { it.topic.category }.distinct(),
-                        )
-                    },
-                    loadStates = loadingState,
-                )
-            }
-        }
-    }
-
     private fun onBackClick() = intent {
         postSideEffect(SearchResultSideEffect.Back)
     }
@@ -108,7 +108,7 @@ internal class SearchResultViewModel @Inject constructor(
     }
 
     private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = intent {
-        runCatching { toggleFavoriteUseCase(topicModel.topic.id) }
+        runSuspendCatching { toggleFavoriteUseCase(topicModel.topic.id) }
             .onFailure { postSideEffect(SearchResultSideEffect.ShowFavoriteToggleError) }
     }
 

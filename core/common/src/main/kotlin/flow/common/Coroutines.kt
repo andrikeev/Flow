@@ -1,5 +1,6 @@
 package flow.common
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -10,4 +11,12 @@ fun CoroutineScope.newCancelableScope() = CoroutineScope(coroutineContext + Supe
 fun CoroutineScope.relaunch(block: suspend CoroutineScope.() -> Unit) {
     coroutineContext.cancelChildren()
     launch(block = block)
+}
+
+inline fun <R> runSuspendCatching(block: () -> R): Result<R> = try {
+    Result.success(block())
+} catch (e: CancellationException) {
+    throw e
+} catch (e: Throwable) {
+    Result.failure(e)
 }

@@ -2,6 +2,7 @@ package flow.visited
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import flow.common.runSuspendCatching
 import flow.domain.usecase.ObserveVisitedUseCase
 import flow.domain.usecase.ToggleFavoriteUseCase
 import flow.logger.api.LoggerFactory
@@ -23,7 +24,21 @@ internal class VisitedViewModel @Inject constructor(
 
     override val container: Container<VisitedState, VisitedSideEffect> = container(
         initialState = VisitedState.Initial,
-        onCreate = { observeVisited() },
+        onCreate = {
+            repeatOnSubscription {
+                logger.d { "Start observing visited" }
+                observeVisitedUseCase().collectLatest { items ->
+                    logger.d { "On new visited list: $items" }
+                    reduce {
+                        if (items.isEmpty()) {
+                            VisitedState.Empty
+                        } else {
+                            VisitedState.VisitedList(items)
+                        }
+                    }
+                }
+            }
+        },
     )
 
     fun perform(action: VisitedAction) {
@@ -34,22 +49,8 @@ internal class VisitedViewModel @Inject constructor(
         }
     }
 
-    private fun observeVisited() = intent {
-        logger.d { "Start observing visited" }
-        observeVisitedUseCase().collectLatest { items ->
-            logger.d { "On new visited list: $items" }
-            reduce {
-                if (items.isEmpty()) {
-                    VisitedState.Empty
-                } else {
-                    VisitedState.VisitedList(items)
-                }
-            }
-        }
-    }
-
     private fun onFavoriteClick(topicModel: TopicModel<out Topic>) = intent {
-        runCatching { toggleFavoriteUseCase(topicModel.topic.id) }
+        runSuspendCatching { toggleFavoriteUseCase(topicModel.topic.id) }
             .onFailure { postSideEffect(VisitedSideEffect.ShowFavoriteToggleError) }
     }
 

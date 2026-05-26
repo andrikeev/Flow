@@ -22,27 +22,27 @@ class FavoritesViewModel @Inject constructor(
 
     override val container: Container<FavoritesState, FavoritesSideEffect> = container(
         initialState = FavoritesState.Initial,
-        onCreate = { observeFavorites() },
+        onCreate = {
+            repeatOnSubscription {
+                logger.d { "Start observing favorites" }
+                observeFavoritesUseCase(viewModelScope).collectLatest { items ->
+                    logger.d { "On new favorites list: $items" }
+                    reduce {
+                        if (items.isEmpty()) {
+                            FavoritesState.Empty
+                        } else {
+                            FavoritesState.FavoritesList(items)
+                        }
+                    }
+                }
+            }
+        },
     )
 
     fun perform(action: FavoritesAction) {
         logger.d { "Perform $action" }
         when (action) {
             is FavoritesAction.TopicClick -> onTopicClick(action.topicModel)
-        }
-    }
-
-    private fun observeFavorites() = intent {
-        logger.d { "Start observing favorites" }
-        observeFavoritesUseCase(viewModelScope).collectLatest { items ->
-            logger.d { "On new favorites list: $items" }
-            reduce {
-                if (items.isEmpty()) {
-                    FavoritesState.Empty
-                } else {
-                    FavoritesState.FavoritesList(items)
-                }
-            }
         }
     }
 

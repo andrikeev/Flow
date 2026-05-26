@@ -2,6 +2,7 @@ package flow.search.result.categories
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import flow.common.runSuspendCatching
 import flow.logger.api.LoggerFactory
 import flow.models.forum.Category
 import flow.search.result.categories.CategorySelectionAction.ExpandClick
@@ -49,7 +50,7 @@ internal class CategorySelectionViewModel @Inject constructor(
     }
 
     private fun loadForumTree() = intent {
-        runCatching {
+        runSuspendCatching {
             coroutineScope {
                 getFlattenForumTreeUseCase.invoke(expandedIds, selectedIds)
             }
@@ -64,7 +65,7 @@ internal class CategorySelectionViewModel @Inject constructor(
     }
 
     private fun onExpandClick(item: ForumTreeItem) = intent {
-        runCatching {
+        runSuspendCatching {
             coroutineScope {
                 if (expandedIds.contains(item.id)) {
                     expandedIds.remove(item.id)
@@ -78,7 +79,7 @@ internal class CategorySelectionViewModel @Inject constructor(
     }
 
     private fun onSelectClick(item: ForumTreeItem) = intent {
-        runCatching {
+        runSuspendCatching {
             coroutineScope {
                 val id = item.id
                 val updatedCategories = when (item) {

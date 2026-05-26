@@ -1,7 +1,6 @@
 package flow.search
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.model.search.isEmpty
 import flow.domain.usecase.ObserveAuthStateUseCase
@@ -13,7 +12,6 @@ import flow.logger.api.LoggerFactory
 import flow.models.auth.isAuthorized
 import flow.models.search.Search
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
@@ -32,7 +30,29 @@ internal class SearchViewModel @Inject constructor(
 
     override val container: Container<SearchState, SearchSideEffect> = container(
         initialState = SearchState.Initial,
-        onCreate = { observeSearchHistory() },
+        onCreate = {
+            repeatOnSubscription {
+                logger.d { "Start observing search history" }
+                observeAuthStateUseCase().collectLatest { authState ->
+                    if (authState.isAuthorized) {
+                        observeSearchHistoryUseCase().collectLatest { searchHistory ->
+                            reduce {
+                                if (searchHistory.isEmpty()) {
+                                    SearchState.Empty
+                                } else {
+                                    SearchState.SearchList(
+                                        pinned = searchHistory.pinned,
+                                        other = searchHistory.other,
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        reduce { SearchState.Unauthorised }
+                    }
+                }
+            }
+        },
     )
 
     fun perform(action: SearchAction) {
@@ -47,38 +67,16 @@ internal class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun observeSearchHistory() = intent {
-        logger.d { "Start observing search history" }
-        observeAuthStateUseCase().collectLatest { authState ->
-            if (authState.isAuthorized) {
-                observeSearchHistoryUseCase().collectLatest { searchHistory ->
-                    reduce {
-                        if (searchHistory.isEmpty()) {
-                            SearchState.Empty
-                        } else {
-                            SearchState.SearchList(
-                                pinned = searchHistory.pinned,
-                                other = searchHistory.other,
-                            )
-                        }
-                    }
-                }
-            } else {
-                reduce { SearchState.Unauthorised }
-            }
-        }
-    }
-
-    private fun onDeleteItemClick(search: Search) = viewModelScope.launch {
-        removeSearchHistoryUseCase.invoke(search)
+    private fun onDeleteItemClick(search: Search) = intent {
+        removeSearchHistoryUseCase(search)
     }
 
     private fun onLoginClick() = intent {
         postSideEffect(SearchSideEffect.OpenLogin)
     }
 
-    private fun onPinItemClick(search: Search) = viewModelScope.launch {
-        pinSearchHistoryUseCase.invoke(search)
+    private fun onPinItemClick(search: Search) = intent {
+        pinSearchHistoryUseCase(search)
     }
 
     private fun onSearchActionClick() = intent {
@@ -89,7 +87,7 @@ internal class SearchViewModel @Inject constructor(
         postSideEffect(SearchSideEffect.OpenSearch(search.filter))
     }
 
-    private fun onUnpinItemClick(search: Search) = viewModelScope.launch {
-        unpinSearchHistoryUseCase.invoke(search)
+    private fun onUnpinItemClick(search: Search) = intent {
+        unpinSearchHistoryUseCase(search)
     }
 }
