@@ -61,7 +61,7 @@ fun CategoryScreen(
 )
 
 @Composable
-private fun CategoryScreen(
+internal fun CategoryScreen(
     viewModel: CategoryViewModel,
     back: () -> Unit,
     openCategory: (id: String) -> Unit,

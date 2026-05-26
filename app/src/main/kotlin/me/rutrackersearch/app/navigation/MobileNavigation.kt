@@ -79,7 +79,7 @@ fun MobileNavigation() {
     MobileNavigation(
         navigator = navigator,
         navigationBarItems = navigationBarItems,
-        entryProvider = entryProvider { addEntries(navigator) },
+        entryProvider = entryProvider<NavKey> { addEntries(navigator) },
     )
 }
 
