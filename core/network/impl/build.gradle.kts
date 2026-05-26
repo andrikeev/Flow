@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":core:network:rutracker"))
 
     implementation(libs.coil.kt)
+    implementation(libs.coil.kt.network.okhttp)
 
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.client.core)

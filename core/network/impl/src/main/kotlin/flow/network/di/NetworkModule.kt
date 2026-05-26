@@ -1,6 +1,6 @@
 package flow.network.di
 
-import coil.ImageLoaderFactory
+import coil3.SingletonImageLoader
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,7 +30,7 @@ internal interface NetworkModule {
 
     @Binds
     @Singleton
-    fun imageLoaderFactory(impl: ImageLoaderFactoryImpl): ImageLoaderFactory
+    fun imageLoaderFactory(impl: ImageLoaderFactoryImpl): SingletonImageLoader.Factory
 
     @Multibinds
     fun interceptors(): Set<@JvmSuppressWildcards Interceptor>
