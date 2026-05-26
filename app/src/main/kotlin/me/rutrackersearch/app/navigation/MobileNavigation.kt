@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
 import flow.designsystem.component.Page
 import flow.designsystem.component.PagesScreen
 import flow.designsystem.drawables.FlowIcons
@@ -78,7 +79,7 @@ fun MobileNavigation() {
     MobileNavigation(
         navigator = navigator,
         navigationBarItems = navigationBarItems,
-        entryProviderBuilder = { addEntries(navigator) },
+        entryProvider = entryProvider { addEntries(navigator) },
     )
 }
 

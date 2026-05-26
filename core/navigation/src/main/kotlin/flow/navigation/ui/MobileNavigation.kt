@@ -9,9 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import flow.designsystem.component.Scaffold
@@ -24,12 +23,10 @@ import flow.navigation.model.NavigationBarItem
 fun MobileNavigation(
     navigator: Navigator,
     navigationBarItems: List<NavigationBarItem>,
-    entryProviderBuilder: EntryProviderScope<NavKey>.() -> Unit,
+    entryProvider: (NavKey) -> NavEntry<NavKey>,
 ) {
     val state = navigator.state
-    val entries = state.toEntries(
-        entryProvider = entryProvider<NavKey>(builder = entryProviderBuilder),
-    )
+    val entries = state.toEntries(entryProvider = entryProvider)
 
     BackHandler(
         enabled = state.canPopBackStack,
