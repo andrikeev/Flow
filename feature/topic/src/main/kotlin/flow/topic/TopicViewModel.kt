@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import flow.common.runSuspendCatching
 import flow.domain.model.PagingAction
 import flow.domain.model.refresh
 import flow.domain.model.retry
@@ -21,6 +22,7 @@ import flow.models.topic.Author
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
@@ -46,8 +48,40 @@ internal class TopicViewModel @Inject constructor(
         initialState = TopicState(),
         onCreate = {
             loadTopic()
-            observePagingData()
-            observeFavoritesState()
+            repeatOnSubscription {
+                launch {
+                    observeTopicPagingDataUseCase(
+                        id = id,
+                        actions = pagingActions,
+                        scope = viewModelScope,
+                    ).collectLatest { (data, loadStates, pagination) ->
+                        reduce {
+                            state.copy(
+                                paginationState = if (pagination.totalPages > 1) {
+                                    PaginationState.Pagination(
+                                        page = pagination.loadedPages.first,
+                                        totalPages = pagination.totalPages,
+                                    )
+                                } else {
+                                    PaginationState.NoPagination
+                                },
+                                commentsContent = when {
+                                    data == null -> CommentsContent.Initial
+                                    data.isEmpty() -> CommentsContent.Empty
+                                    else -> CommentsContent.Posts(data)
+                                },
+                                loadStates = loadStates,
+                            )
+                        }
+                    }
+                }
+                launch {
+                    observeFavoriteStateUseCase(id).collectLatest { isFavorite ->
+                        val favoriteState = TopicFavoriteState.FavoriteState(isFavorite)
+                        reduce { state.copy(favoriteState = favoriteState) }
+                    }
+                }
+            }
         },
     )
 
@@ -71,7 +105,7 @@ internal class TopicViewModel @Inject constructor(
     }
 
     private fun loadTopic() = intent {
-        runCatching { coroutineScope { getTopicUseCase(id) } }
+        runSuspendCatching { coroutineScope { getTopicUseCase(id) } }
             .onSuccess { topic ->
                 reduce {
                     val torrentData = topic.torrentData
@@ -87,41 +121,7 @@ internal class TopicViewModel @Inject constructor(
                     )
                 }
             }
-            .onFailure { }
-    }
-
-    private fun observeFavoritesState() = intent {
-        observeFavoriteStateUseCase(id).collectLatest { isFavorite ->
-            val favoriteState = TopicFavoriteState.FavoriteState(isFavorite)
-            reduce { state.copy(favoriteState = favoriteState) }
-        }
-    }
-
-    private fun observePagingData() = intent {
-        observeTopicPagingDataUseCase(
-            id = id,
-            actions = pagingActions,
-            scope = viewModelScope,
-        ).collectLatest { (data, loadStates, pagination) ->
-            reduce {
-                state.copy(
-                    paginationState = if (pagination.totalPages > 1) {
-                        PaginationState.Pagination(
-                            page = pagination.loadedPages.first,
-                            totalPages = pagination.totalPages,
-                        )
-                    } else {
-                        PaginationState.NoPagination
-                    },
-                    commentsContent = when {
-                        data == null -> CommentsContent.Initial
-                        data.isEmpty() -> CommentsContent.Empty
-                        else -> CommentsContent.Posts(data)
-                    },
-                    loadStates = loadStates,
-                )
-            }
-        }
+            .onFailure { error -> logger.e(error) { "Topic load error" } }
     }
 
     private fun onAddComment(comment: String) = intent {
@@ -145,7 +145,7 @@ internal class TopicViewModel @Inject constructor(
     }
 
     private fun onFavoriteClick() = intent {
-        runCatching { toggleFavoriteUseCase(id) }
+        runSuspendCatching { toggleFavoriteUseCase(id) }
             .onFailure { postSideEffect(TopicSideEffect.ShowFavoriteToggleError) }
     }
 
@@ -184,12 +184,12 @@ internal class TopicViewModel @Inject constructor(
             reduce { state.copy(downloadState = DownloadState.Started) }
             val uri = downloadTorrentUseCase(id, title)
             if (uri != null) {
-                intent { reduce { state.copy(downloadState = DownloadState.Completed(uri)) } }
+                reduce { state.copy(downloadState = DownloadState.Completed(uri)) }
             } else {
-                intent { reduce { state.copy(downloadState = DownloadState.Error) } }
+                reduce { state.copy(downloadState = DownloadState.Error) }
             }
         } else {
-            intent { postSideEffect(TopicSideEffect.ShowLoginRequired) }
+            postSideEffect(TopicSideEffect.ShowLoginRequired)
         }
     }
 

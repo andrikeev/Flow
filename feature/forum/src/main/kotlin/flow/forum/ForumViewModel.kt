@@ -2,6 +2,7 @@ package flow.forum
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import flow.common.runSuspendCatching
 import flow.domain.usecase.GetForumUseCase
 import flow.logger.api.LoggerFactory
 import flow.models.forum.ForumCategory
@@ -35,7 +36,7 @@ internal class ForumViewModel @Inject constructor(
     private fun loadForum() = intent {
         logger.d { "Launch load forum" }
         reduce { ForumState.Loading }
-        runCatching { coroutineScope { getForumUseCase() } }
+        runSuspendCatching { coroutineScope { getForumUseCase() } }
             .onSuccess { forum ->
                 logger.d { "Forum loaded" }
                 reduce { ForumState.Loaded(forum.children.map(::Expandable)) }

@@ -22,7 +22,15 @@ internal class AccountViewModel @Inject constructor(
 
     override val container: Container<AuthState, AccountSideEffect> = container(
         initialState = AuthState.Unauthorized,
-        onCreate = { observeAuthState() },
+        onCreate = {
+            repeatOnSubscription {
+                logger.d { "Start observing auth state" }
+                observeAuthStateUseCase().collectLatest { authState ->
+                    logger.d { "On new auth state: $authState" }
+                    reduce { authState }
+                }
+            }
+        },
     )
 
     fun perform(action: AccountAction) {
@@ -31,14 +39,6 @@ internal class AccountViewModel @Inject constructor(
             AccountAction.ConfirmLogoutClick -> onConfirmLogoutClick()
             AccountAction.LoginClick -> onLoginClick()
             AccountAction.LogoutClick -> onLogoutClick()
-        }
-    }
-
-    private fun observeAuthState() = intent {
-        logger.d { "Start observing auth state" }
-        observeAuthStateUseCase().collectLatest { authState ->
-            logger.d { "On new auth state: $authState" }
-            reduce { authState }
         }
     }
 

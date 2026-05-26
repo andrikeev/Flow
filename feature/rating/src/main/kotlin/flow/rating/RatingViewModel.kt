@@ -29,8 +29,10 @@ class RatingViewModel @Inject constructor(
     override val container: Container<RatingRequest, RatingSideEffect> = container(
         initialState = RatingRequest.Hide,
         onCreate = {
-            observeRatingRequest()
-            intent { appLaunchedUseCase() }
+            appLaunchedUseCase()
+            repeatOnSubscription {
+                observeRatingRequestUseCase().collectLatest { reduce { it } }
+            }
         },
     )
 
@@ -42,10 +44,6 @@ class RatingViewModel @Inject constructor(
             is RatingAction.NeverAskAgainClick -> onNeverAskAgainClick()
             is RatingAction.RatingClick -> onRatingClick()
         }
-    }
-
-    private fun observeRatingRequest() = intent {
-        observeRatingRequestUseCase().collectLatest { reduce { it } }
     }
 
     private fun onAskLaterClick() = intent {

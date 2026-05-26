@@ -19,7 +19,21 @@ internal class BookmarksViewModel @Inject constructor(
 
     override val container: Container<BookmarksState, BookmarksSideEffect> = container(
         initialState = BookmarksState.Initial,
-        onCreate = { observeBookmarks() },
+        onCreate = {
+            repeatOnSubscription {
+                logger.d { "Start observing bookmarks" }
+                observeBookmarksUseCase().collectLatest { items ->
+                    reduce {
+                        logger.d { "On new bookmarks list: $items" }
+                        if (items.isEmpty()) {
+                            BookmarksState.Empty
+                        } else {
+                            BookmarksState.BookmarksList(items)
+                        }
+                    }
+                }
+            }
+        },
     )
 
     fun perform(action: BookmarksAction) {
@@ -27,20 +41,6 @@ internal class BookmarksViewModel @Inject constructor(
         when (action) {
             is BookmarksAction.BookmarkClicked -> intent {
                 postSideEffect(BookmarksSideEffect.OpenCategory(action.bookmark.category.id))
-            }
-        }
-    }
-
-    private fun observeBookmarks() = intent {
-        logger.d { "Start observing bookmarks" }
-        observeBookmarksUseCase().collectLatest { items ->
-            reduce {
-                logger.d { "On new bookmarks list: $items" }
-                if (items.isEmpty()) {
-                    BookmarksState.Empty
-                } else {
-                    BookmarksState.BookmarksList(items)
-                }
             }
         }
     }
