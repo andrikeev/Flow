@@ -2,32 +2,38 @@ package flow.search.input
 
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.common.newCancelableScope
 import flow.common.relaunch
 import flow.domain.usecase.AddSuggestUseCase
 import flow.domain.usecase.ObserveSuggestsUseCase
 import flow.logger.api.LoggerFactory
+import flow.models.search.Filter
 import flow.models.search.Suggest
 import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import javax.inject.Inject
 
-@HiltViewModel
-internal class SearchInputViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = SearchInputViewModel.Factory::class)
+internal class SearchInputViewModel @AssistedInject constructor(
+    @Assisted private val filter: Filter,
     private val observeSuggestsUseCase: ObserveSuggestsUseCase,
     private val saveSuggestUseCase: AddSuggestUseCase,
     loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<SearchInputState, SearchInputSideEffect> {
     private val logger = loggerFactory.get("SearchInputViewModel")
-    private val filter = savedStateHandle.filter
     private val observeSuggestsScope = viewModelScope.newCancelableScope()
+
+    @AssistedFactory
+    interface Factory {
+        fun create(filter: Filter): SearchInputViewModel
+    }
 
     override val container: Container<SearchInputState, SearchInputSideEffect> = container(
         initialState = SearchInputState(),

@@ -1,31 +1,25 @@
 package flow.search
 
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import flow.models.search.Filter
-import flow.navigation.model.NavigationGraphBuilder
-import flow.navigation.model.buildRoute
-import flow.navigation.ui.NavigationAnimations
 import flow.navigation.viewModel
+import kotlinx.serialization.Serializable
 
-private const val SearchHistoryRoute = "search_history"
+@Serializable
+data object SearchHistoryRoute : NavKey
 
-context(graphBuilder: NavigationGraphBuilder)
-fun addSearchHistory(
+fun EntryProviderScope<NavKey>.addSearchHistory(
     openLogin: () -> Unit,
     openSearchInput: () -> Unit,
     openSearchResult: (Filter) -> Unit,
-    animations: NavigationAnimations,
-) = with(graphBuilder) {
-    addDestination(
-        route = buildRoute(SearchHistoryRoute),
-        isStartRoute = true,
-        content = {
-            SearchScreen(
-                viewModel = viewModel(),
-                openLogin = openLogin,
-                openSearchInput = openSearchInput,
-                openSearch = openSearchResult,
-            )
-        },
-        animations = animations,
-    )
+) {
+    entry<SearchHistoryRoute> {
+        SearchScreen(
+            viewModel = viewModel(),
+            openLogin = openLogin,
+            openSearchInput = openSearchInput,
+            openSearch = openSearchResult,
+        )
+    }
 }

@@ -1,292 +1,203 @@
 package me.rutrackersearch.app.navigation
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
 import flow.designsystem.component.Page
 import flow.designsystem.component.PagesScreen
 import flow.designsystem.drawables.FlowIcons
 import flow.favorites.FavoritesScreen
 import flow.forum.ForumScreen
 import flow.forum.bookmarks.BookmarksScreen
+import flow.forum.category.CategoryRoute
 import flow.forum.category.addCategory
-import flow.forum.category.openCategory
+import flow.login.LoginRoute
 import flow.login.addLogin
-import flow.login.openLogin
 import flow.menu.MenuScreen
-import flow.navigation.NavigationController
+import flow.navigation.Navigator
 import flow.navigation.model.NavigationBarItem
-import flow.navigation.model.NavigationGraphBuilder
-import flow.navigation.model.buildRoute
-import flow.navigation.rememberNestedNavigationController
+import flow.navigation.rememberNavigationState
+import flow.navigation.rememberNavigator
 import flow.navigation.ui.MobileNavigation
-import flow.navigation.ui.NavigationAnimations
-import flow.navigation.ui.NavigationAnimations.Companion.slideInLeft
-import flow.navigation.ui.NavigationAnimations.Companion.slideInRight
-import flow.navigation.ui.NavigationAnimations.Companion.slideOutLeft
-import flow.navigation.ui.NavigationAnimations.Companion.slideOutRight
-import flow.navigation.ui.NestedMobileNavigation
+import flow.search.SearchHistoryRoute
 import flow.search.addSearchHistory
+import flow.search.input.SearchInputRoute
 import flow.search.input.addSearchInput
-import flow.search.input.openSearchInput
+import flow.search.result.SearchResultRoute
 import flow.search.result.addSearchResult
-import flow.search.result.openSearchResult
+import flow.topic.TopicRoute
 import flow.topic.addTopic
-import flow.topic.openTopic
 import flow.visited.VisitedScreen
+import kotlinx.serialization.Serializable
 import me.rutrackersearch.app.R
 
+@Serializable data object ForumTabRoute : NavKey
+@Serializable data object TopicsTabRoute : NavKey
+@Serializable data object MenuTabRoute : NavKey
+
 @Composable
-fun MobileNavigation(navigationController: NavigationController) {
-    MobileNavigation(navigationController) {
-        with(navigationController) {
-            addLogin(
-                back = ::popBackStack,
-                animations = NavigationAnimations.ScaleInOutAnimation,
-            )
-            addSearchInput(
-                back = ::popBackStack,
-                openSearchResult = {
-                    popBackStack()
-                    openSearchResult(it)
-                },
-                animations = NavigationAnimations.Default,
-            )
-            addSearchResult(
-                back = ::popBackStack,
-                openSearchInput = { openSearchInput(it) },
-                openSearchResult = { openSearchResult(it) },
-                openTopic = { openTopic(it) },
-                deepLinkUrls = DeepLinks.searchResultUrls,
-                animations = NavigationAnimations.Default,
-            )
-            addCategory(
-                back = ::popBackStack,
-                openCategory = { openCategory(it) },
-                openLogin = { openLogin() },
-                openSearchInput = { openSearchInput(it) },
-                openTopic = { openTopic(it) },
-                deepLinkUrls = DeepLinks.categoryUrls,
-                animations = NavigationAnimations.ScaleInOutAnimation,
-            )
-            addTopic(
-                back = ::popBackStack,
-                openCategory = { openCategory(it) },
-                openLogin = { openLogin() },
-                openSearch = { openSearchResult(it) },
-                deepLinkUrls = DeepLinks.topicUrls,
-                animations = NavigationAnimations.ScaleInOutAnimation,
-            )
-            addNestedNavigation(
-                openSearchInput = { openSearchInput(it) },
-                openLogin = { openLogin() },
-                openTopic = { openTopic(it) },
-            )
-        }
+fun MobileNavigation() {
+    val navigationBarItems = remember {
+        listOf(
+            NavigationBarItem(
+                route = SearchHistoryRoute,
+                labelResId = R.string.label_search,
+                icon = FlowIcons.Search,
+            ),
+            NavigationBarItem(
+                route = ForumTabRoute,
+                labelResId = R.string.label_forum,
+                icon = FlowIcons.Forum,
+            ),
+            NavigationBarItem(
+                route = TopicsTabRoute,
+                labelResId = R.string.label_topics,
+                icon = FlowIcons.Topics,
+            ),
+            NavigationBarItem(
+                route = MenuTabRoute,
+                labelResId = R.string.label_menu,
+                icon = FlowIcons.Menu,
+            ),
+        )
     }
+    val topLevelRoutes = remember(navigationBarItems) {
+        navigationBarItems.map(NavigationBarItem::route)
+    }
+    val state = rememberNavigationState(
+        startRoute = SearchHistoryRoute,
+        topLevelRoutes = topLevelRoutes,
+    )
+    val navigator = rememberNavigator(
+        state = state,
+        deepLinkResolver = ::resolveDeepLink,
+    )
+
+    MobileNavigation(
+        navigator = navigator,
+        navigationBarItems = navigationBarItems,
+        entryProvider = entryProvider<NavKey> { addEntries(navigator) },
+    )
 }
 
-context(graphBuilder: NavigationGraphBuilder)
-private fun addNestedNavigation(
-    openSearchInput: (id: String) -> Unit,
-    openLogin: () -> Unit,
-    openTopic: (id: String) -> Unit,
-) = graphBuilder.addDestination {
-    val navigationBarItems = remember { BottomRoute.entries.map(BottomRoute::navigationBarItem) }
-    val navigationController = rememberNestedNavigationController()
-    with(navigationController) {
-        NestedMobileNavigation(
-            navigationController = navigationController,
-            navigationBarItems = navigationBarItems,
-        ) {
-            addSearch(
-                openLogin = openLogin,
-                openTopic = openTopic,
-            )
-            addForum(
-                openSearchInput = openSearchInput,
-                openLogin = openLogin,
-                openTopic = openTopic,
-            )
-            addTopics(
-                openTopic = openTopic,
-            )
-            addMenu(
-                openLogin = openLogin,
-            )
-        }
-    }
-}
-
-context(graphBuilder: NavigationGraphBuilder, navigationController: NavigationController)
-private fun addSearch(
-    openLogin: () -> Unit,
-    openTopic: (id: String) -> Unit,
-) = graphBuilder.addGraph(
-    isStartRoute = true,
-    route = BottomRoute.Search.route,
-    animations = BottomRoute.Search.animations,
-) {
-    addSearchHistory(
-        openLogin = openLogin,
-        openSearchInput = { openSearchInput() },
-        openSearchResult = { openSearchResult(it) },
-        animations = NavigationAnimations.Default,
+private fun EntryProviderScope<NavKey>.addEntries(navigator: Navigator) {
+    addLogin(
+        back = { navigator.popBackStack() },
     )
     addSearchInput(
-        back = navigationController::popBackStack,
-        openSearchResult = {
-            navigationController.popBackStack()
-            openSearchResult(it)
+        back = { navigator.popBackStack() },
+        openSearchResult = { filter ->
+            navigator.popBackStack()
+            navigator.navigate(SearchResultRoute(filter))
         },
-        animations = NavigationAnimations.FadeInOutAnimations,
     )
     addSearchResult(
-        back = navigationController::popBackStack,
-        openSearchInput = { openSearchInput(it) },
-        openSearchResult = { openSearchResult(it) },
-        openTopic = openTopic,
-        animations = NavigationAnimations.Default,
+        back = { navigator.popBackStack() },
+        openSearchInput = { navigator.navigate(SearchInputRoute(it)) },
+        openSearchResult = { navigator.navigate(SearchResultRoute(it)) },
+        openTopic = { navigator.navigate(TopicRoute(it)) },
     )
+    addCategory(
+        back = { navigator.popBackStack() },
+        openCategory = { navigator.navigate(CategoryRoute(it)) },
+        openLogin = { navigator.navigate(LoginRoute) },
+        openSearchInput = { navigator.navigate(SearchInputRoute(it)) },
+        openTopic = { navigator.navigate(TopicRoute(it)) },
+    )
+    addTopic(
+        back = { navigator.popBackStack() },
+        openCategory = { navigator.navigate(CategoryRoute(it)) },
+        openLogin = { navigator.navigate(LoginRoute) },
+        openSearch = { navigator.navigate(SearchResultRoute(it)) },
+    )
+    addSearchHistory(
+        openLogin = { navigator.navigate(LoginRoute) },
+        openSearchInput = { navigator.navigate(SearchInputRoute()) },
+        openSearchResult = { navigator.navigate(SearchResultRoute(it)) },
+    )
+    addForumTab(navigator)
+    addTopicsTab(navigator)
+    addMenuTab(navigator)
 }
 
-context(graphBuilder: NavigationGraphBuilder, navigationController: NavigationController)
-private fun addForum(
-    openSearchInput: (categoryId: String) -> Unit,
-    openLogin: () -> Unit,
-    openTopic: (id: String) -> Unit,
-) = graphBuilder.addGraph(
-    route = BottomRoute.Forum.route,
-    animations = BottomRoute.Forum.animations,
-) {
-    addCategory(
-        back = navigationController::popBackStack,
-        openCategory = { openCategory(it) },
-        openLogin = openLogin,
-        openSearchInput = openSearchInput,
-        openTopic = openTopic,
-        animations = BottomRoute.Forum.animations,
-    )
-    addDestination(
-        route = buildRoute("forums"),
-        isStartRoute = true,
-    ) {
+private fun EntryProviderScope<NavKey>.addForumTab(navigator: Navigator) {
+    entry<ForumTabRoute> {
         PagesScreen(
             pages = listOf(
                 Page(
                     labelResId = R.string.tab_title_forum,
                     icon = FlowIcons.Forum,
-                    content = { ForumScreen { openCategory(it) } },
+                    content = {
+                        ForumScreen { id ->
+                            navigator.navigate(CategoryRoute(id))
+                        }
+                    },
                 ),
                 Page(
                     labelResId = R.string.tab_title_bookmarks,
                     icon = FlowIcons.Bookmarks,
-                    content = { BookmarksScreen { openCategory(it) } },
+                    content = {
+                        BookmarksScreen { id ->
+                            navigator.navigate(CategoryRoute(id))
+                        }
+                    },
                 ),
             ),
         )
     }
 }
 
-context(graphBuilder: NavigationGraphBuilder)
-private fun addTopics(
-    openTopic: (id: String) -> Unit,
-) = graphBuilder.addDestination(
-    route = BottomRoute.Topics.route,
-    animations = BottomRoute.Topics.animations,
-) {
-    PagesScreen(
-        pages = listOf(
-            Page(
-                labelResId = R.string.tab_title_favorites,
-                icon = FlowIcons.Favorite,
-                content = { FavoritesScreen(openTopic = openTopic) },
+private fun EntryProviderScope<NavKey>.addTopicsTab(navigator: Navigator) {
+    entry<TopicsTabRoute> {
+        PagesScreen(
+            pages = listOf(
+                Page(
+                    labelResId = R.string.tab_title_favorites,
+                    icon = FlowIcons.Favorite,
+                    content = {
+                        FavoritesScreen(openTopic = { navigator.navigate(TopicRoute(it)) })
+                    },
+                ),
+                Page(
+                    labelResId = R.string.tab_title_recents,
+                    icon = FlowIcons.History,
+                    content = {
+                        VisitedScreen(openTopic = { navigator.navigate(TopicRoute(it)) })
+                    },
+                ),
             ),
-            Page(
-                labelResId = R.string.tab_title_recents,
-                icon = FlowIcons.History,
-                content = { VisitedScreen(openTopic = openTopic) },
-            ),
-        ),
-    )
-}
-
-context(graphBuilder: NavigationGraphBuilder, _: NavigationController)
-private fun addMenu(
-    openLogin: () -> Unit,
-) = graphBuilder.addDestination(
-    route = BottomRoute.Menu.route,
-    animations = BottomRoute.Menu.animations,
-    content = { MenuScreen(openLogin = openLogin) },
-)
-
-private enum class BottomRoute(val navigationBarItem: NavigationBarItem) {
-    Search(
-        navigationBarItem = NavigationBarItem(
-            route = "search",
-            labelResId = R.string.label_search,
-            icon = FlowIcons.Search,
-        ),
-    ),
-    Forum(
-        navigationBarItem = NavigationBarItem(
-            route = "forum",
-            labelResId = R.string.label_forum,
-            icon = FlowIcons.Forum,
-        ),
-    ),
-    Topics(
-        navigationBarItem = NavigationBarItem(
-            route = "topics",
-            labelResId = R.string.label_topics,
-            icon = FlowIcons.Topics,
-        ),
-    ),
-    Menu(
-        navigationBarItem = NavigationBarItem(
-            route = "menu",
-            labelResId = R.string.label_menu,
-            icon = FlowIcons.Menu,
-        ),
-    ),
-    ;
-
-    val route = navigationBarItem.route
-
-    val animations: NavigationAnimations = NavigationAnimations(
-        enterTransition = {
-            val route = BottomRoute.valueOf(from.graph ?: from.route)
-            when {
-                route == null -> fadeIn()
-                route.ordinal > ordinal -> slideInRight()
-                route.ordinal < ordinal -> slideInLeft()
-                else -> fadeIn()
-            }
-        },
-        exitTransition = {
-            val route = BottomRoute.valueOf(to.graph ?: to.route)
-            when {
-                route == null -> fadeOut()
-                route.ordinal > ordinal -> slideOutRight()
-                route.ordinal < ordinal -> slideOutLeft()
-                else -> fadeOut()
-            }
-        },
-        popEnterTransition = { fadeIn() },
-        popExitTransition = { slideOutLeft() },
-    )
-
-    private companion object {
-        fun valueOf(value: String?): BottomRoute? {
-            return entries.firstOrNull { it.route == value }
-        }
+        )
     }
 }
 
-private object DeepLinks {
-    private const val BASE_URL = "rutracker.org/forum/"
-    val topicUrls = listOf("${BASE_URL}viewtopic.php")
-    val categoryUrls = listOf("${BASE_URL}viewforum.php")
-    val searchResultUrls = listOf("${BASE_URL}tracker.php")
+private fun EntryProviderScope<NavKey>.addMenuTab(navigator: Navigator) {
+    entry<MenuTabRoute> {
+        MenuScreen(openLogin = { navigator.navigate(LoginRoute) })
+    }
 }
+
+private fun resolveDeepLink(uri: Uri): NavKey? {
+    if (uri.host != HOST) return null
+    return when (uri.path) {
+        PATH_TOPIC -> uri.getQueryParameter("t")?.let(::TopicRoute)
+        PATH_CATEGORY -> uri.getQueryParameter("f")?.let(::CategoryRoute)
+        PATH_SEARCH -> SearchResultRoute(
+            query = uri.getQueryParameter("nm"),
+            categoryIds = uri.getQueryParameter("f"),
+            authorId = uri.getQueryParameter("pid"),
+            authorName = uri.getQueryParameter("pn"),
+            sort = uri.getQueryParameter("o"),
+            order = uri.getQueryParameter("s"),
+            period = uri.getQueryParameter("tm"),
+        )
+        else -> null
+    }
+}
+
+private const val HOST = "rutracker.org"
+private const val PATH_TOPIC = "/forum/viewtopic.php"
+private const val PATH_CATEGORY = "/forum/viewforum.php"
+private const val PATH_SEARCH = "/forum/tracker.php"

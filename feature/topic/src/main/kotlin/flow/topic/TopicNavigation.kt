@@ -1,45 +1,25 @@
 package flow.topic
 
-import androidx.lifecycle.SavedStateHandle
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import flow.models.search.Filter
-import flow.navigation.NavigationController
-import flow.navigation.model.NavigationArgument
-import flow.navigation.model.NavigationDeepLink
-import flow.navigation.model.NavigationGraphBuilder
-import flow.navigation.model.appendOptionalArgs
-import flow.navigation.model.appendRequiredArgs
-import flow.navigation.model.appendRequiredParams
-import flow.navigation.model.buildDeepLink
-import flow.navigation.model.buildRoute
-import flow.navigation.require
-import flow.navigation.ui.NavigationAnimations
 import flow.navigation.viewModel
+import kotlinx.serialization.Serializable
 
-private const val TopicIdKey = "t"
-private const val TopicRoute = "topic"
+@Serializable
+data class TopicRoute(val id: String) : NavKey
 
-context(graphBuilder: NavigationGraphBuilder)
-fun addTopic(
+fun EntryProviderScope<NavKey>.addTopic(
     back: () -> Unit,
     openCategory: (id: String) -> Unit,
     openLogin: () -> Unit,
     openSearch: (filter: Filter) -> Unit,
-    deepLinkUrls: List<String> = emptyList(),
-    animations: NavigationAnimations,
-) = with(graphBuilder) {
-    addDestination(
-        route = buildRoute(
-            route = TopicRoute,
-            optionalArgsBuilder = { appendRequiredArgs(TopicIdKey) },
-        ),
-        arguments = listOf(NavigationArgument(TopicIdKey)),
-        deepLinks = deepLinkUrls.map { url ->
-            NavigationDeepLink(buildDeepLink(url) { appendOptionalArgs(TopicIdKey) })
-        },
-        animations = animations,
-    ) {
+) {
+    entry<TopicRoute> { key ->
         TopicScreen(
-            viewModel = viewModel(),
+            viewModel = viewModel<TopicViewModel, TopicViewModel.Factory> { factory ->
+                factory.create(key.id)
+            },
             back = back,
             openCategory = openCategory,
             openLogin = openLogin,
@@ -47,16 +27,3 @@ fun addTopic(
         )
     }
 }
-
-context(_: NavigationGraphBuilder, navigationController: NavigationController)
-fun openTopic(id: String) = with(navigationController) {
-    navigate(
-        buildRoute(
-            route = TopicRoute,
-            requiredArgsBuilder = { appendRequiredParams(id) },
-        ),
-    )
-}
-
-internal val SavedStateHandle.id: String
-    get() = require(TopicIdKey)

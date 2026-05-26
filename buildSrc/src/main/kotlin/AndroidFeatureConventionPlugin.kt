@@ -13,6 +13,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             pluginManager.apply {
                 apply("flow.android.library")
                 apply("flow.android.hilt")
+                apply("flow.kotlin.serialization")
             }
 
             extensions.configure<LibraryExtension> {

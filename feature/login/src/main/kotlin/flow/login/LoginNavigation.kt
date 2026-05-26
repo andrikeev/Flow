@@ -1,31 +1,20 @@
 package flow.login
 
-import flow.navigation.NavigationController
-import flow.navigation.model.NavigationGraphBuilder
-import flow.navigation.model.buildRoute
-import flow.navigation.ui.NavigationAnimations
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import flow.navigation.viewModel
+import kotlinx.serialization.Serializable
 
-private const val LoginRoute = "login"
+@Serializable
+data object LoginRoute : NavKey
 
-context(graphBuilder: NavigationGraphBuilder)
-fun addLogin(
+fun EntryProviderScope<NavKey>.addLogin(
     back: () -> Unit,
-    animations: NavigationAnimations,
-) = with(graphBuilder) {
-    addDestination(
-        route = buildRoute(LoginRoute),
-        arguments = emptyList(),
-        animations = animations,
-    ) {
+) {
+    entry<LoginRoute> {
         LoginScreen(
             viewModel = viewModel(),
             back = back,
         )
     }
-}
-
-context(_: NavigationGraphBuilder, navigationController: NavigationController)
-fun openLogin() = with(navigationController) {
-    navigate(buildRoute(LoginRoute))
 }
