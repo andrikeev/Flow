@@ -1,5 +1,4 @@
 [versions]
-accompanist = "0.36.0"
 androidGradlePlugin = "9.2.0"
 androidxActivity = "1.12.3"
 androidxComposeBom = "2026.05.00"
@@ -41,7 +40,6 @@ room = "2.8.4"
 spotlessGradlePlugin = "8.4.0"
 
 [libraries]
-accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
