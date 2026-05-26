@@ -36,7 +36,7 @@ ktor = "3.5.0"
 leakcanary = "2.14"
 material = "1.12.0"
 mockk = "1.13.14"
-orbit = "7.2.0"
+orbit = "10.0.0"
 room = "2.8.4"
 spotlessGradlePlugin = "8.4.0"
 
