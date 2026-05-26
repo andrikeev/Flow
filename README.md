@@ -25,9 +25,8 @@ copyright and file sharing.
 
 ## Mobile app
 
-[<img src="badges/google-play-badge.png" alt="Get it on Google Play" height="90">][2]
-[<img src="badges/github-badge.png" alt="Get it on GitHub" height="90">][3]
-[<img src="badges/rustore-badge.png" alt="Get it on RuStore" height="90">][4]
+[<img src="badges/github-badge.png" alt="Get it on GitHub" height="90">][2]
+[<img src="badges/rustore-badge.png" alt="Get it on RuStore" height="90">][3]
 
 ## Screenshots
 
@@ -68,20 +67,18 @@ All the code and the content is available on github: <https://github.com/andrike
 
 ## Privacy Policy
 
-[Privacy Policy][5]
+[Privacy Policy][4]
 
 ## License
 
-This software is open source, licensed under the [MIT License][6].
+This software is open source, licensed under the [MIT License][5].
 
-[1]: https://flow-app.tech/copyrights.html
+[1]: proxy/src/main/resources/static/copyrights.html
 
-[2]: https://play.google.com/store/apps/details?id=me.rutrackersearch.app
+[2]: https://github.com/andrikeev/Flow/releases
 
-[3]: https://github.com/andrikeev/Flow/releases
+[3]: https://apps.rustore.ru/app/me.rutrackersearch.app
 
-[4]: https://apps.rustore.ru/app/me.rutrackersearch.app
+[4]: proxy/src/main/resources/static/privacy-policy.html
 
-[5]: https://flow-app.tech/privacy-policy.html
-
-[6]: https://opensource.org/licenses/MIT 
+[5]: https://opensource.org/licenses/MIT 
