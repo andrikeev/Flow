@@ -1,17 +1,24 @@
 package flow.ui.permissions
 
 import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.PermissionState as AccompanistPermissionState
-import com.google.accompanist.permissions.PermissionStatus as AccompanistPermissionStatus
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 
 @Stable
 interface PermissionState {
@@ -24,13 +31,13 @@ fun rememberPermissionState(permission: Permission): PermissionState = when (per
     Permission.WriteExternalStorage -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         rememberAlwaysGrantedPermissions()
     } else {
-        rememberDelegatePermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        rememberRuntimePermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
     Permission.PostNotifications -> if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
         rememberAlwaysGrantedPermissions()
     } else {
-        rememberDelegatePermissionState(Manifest.permission.POST_NOTIFICATIONS)
+        rememberRuntimePermissionState(Manifest.permission.POST_NOTIFICATIONS)
     }
 }
 
@@ -45,31 +52,57 @@ private fun rememberAlwaysGrantedPermissions(): PermissionState =
     remember { AlwaysGrantedPermissions }
 
 @Composable
-private fun rememberDelegatePermissionState(permission: String): PermissionState {
-    val permissionState = rememberPermissionState(permission)
-    val delegateState = remember {
-        PermissionStateImpl(
-            initial = permissionState.status(),
-            request = permissionState::launchPermissionRequest,
-        )
+private fun rememberRuntimePermissionState(permission: String): PermissionState {
+    val context = LocalContext.current
+    val activity = remember(context) { context.findActivity() }
+    val statusState = remember(permission) {
+        mutableStateOf(currentPermissionStatus(context, activity, permission))
     }
-    LaunchedEffect(permissionState.status) { delegateState.status = permissionState.status() }
-    return delegateState
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) {
+        statusState.value = currentPermissionStatus(context, activity, permission)
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner, permission) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                statusState.value = currentPermissionStatus(context, activity, permission)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    return remember(launcher, permission, statusState) {
+        object : PermissionState {
+            override val status: PermissionStatus get() = statusState.value
+            override fun requestPermission() = launcher.launch(permission)
+        }
+    }
 }
 
-private class PermissionStateImpl(
-    initial: PermissionStatus,
-    private val request: () -> Unit,
-) : PermissionState {
-    override var status: PermissionStatus by mutableStateOf(initial)
-        internal set
-
-    override fun requestPermission() = request()
+private fun currentPermissionStatus(
+    context: Context,
+    activity: Activity?,
+    permission: String,
+): PermissionStatus {
+    val granted = ContextCompat.checkSelfPermission(context, permission) ==
+        PackageManager.PERMISSION_GRANTED
+    return if (granted) {
+        PermissionStatus.Granted
+    } else {
+        val rationale = activity?.let {
+            ActivityCompat.shouldShowRequestPermissionRationale(it, permission)
+        } ?: false
+        PermissionStatus.Denied(shouldShowRationale = rationale)
+    }
 }
 
-private fun AccompanistPermissionState.status(): PermissionStatus {
-    return when (val status = status) {
-        is AccompanistPermissionStatus.Denied -> PermissionStatus.Denied(status.shouldShowRationale)
-        is AccompanistPermissionStatus.Granted -> PermissionStatus.Granted
-    }
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }
