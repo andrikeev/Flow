@@ -1,8 +1,10 @@
 package flow.search.result
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.common.runSuspendCatching
 import flow.domain.model.PagingAction
@@ -28,11 +30,10 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import javax.inject.Inject
 
-@HiltViewModel
-internal class SearchResultViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = SearchResultViewModel.Factory::class)
+internal class SearchResultViewModel @AssistedInject constructor(
+    @Assisted initialFilter: Filter,
     loggerFactory: LoggerFactory,
     private val observeSearchPagingDataUseCase: ObserveSearchPagingDataUseCase,
     private val addSearchHistoryUseCase: AddSearchHistoryUseCase,
@@ -40,8 +41,13 @@ internal class SearchResultViewModel @Inject constructor(
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
 ) : ViewModel(), ContainerHost<SearchPageState, SearchResultSideEffect> {
     private val logger = loggerFactory.get("SearchResultViewModel")
-    private val mutableFilter = MutableStateFlow(savedStateHandle.filter)
+    private val mutableFilter = MutableStateFlow(initialFilter)
     private val pagingActions = MutableSharedFlow<PagingAction>()
+
+    @AssistedFactory
+    interface Factory {
+        fun create(filter: Filter): SearchResultViewModel
+    }
 
     override val container: Container<SearchPageState, SearchResultSideEffect> = container(
         initialState = SearchPageState(mutableFilter.value),

@@ -3,6 +3,7 @@
 plugins {
     id("flow.android.application")
     id("flow.android.hilt")
+    id("flow.kotlin.serialization")
 }
 
 android {

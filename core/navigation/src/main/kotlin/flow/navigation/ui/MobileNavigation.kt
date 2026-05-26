@@ -1,67 +1,70 @@
 package flow.navigation.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.scene.DialogSceneStrategy
+import androidx.navigation3.ui.NavDisplay
 import flow.designsystem.component.Scaffold
 import flow.navigation.LocalDeepLinks
-import flow.navigation.NavigationController
-import flow.navigation.NestedNavigationController
-import flow.navigation.canPopBackAsState
-import flow.navigation.currentTopLevelRouteAsState
+import flow.navigation.NavigationState
+import flow.navigation.Navigator
 import flow.navigation.model.NavigationBarItem
-import flow.navigation.model.NavigationGraphBuilder
 
 @Composable
 fun MobileNavigation(
-    navigationController: NavigationController,
-    navigationGraphBuilder: NavigationGraphBuilder.() -> Unit,
-) = Scaffold { padding ->
-    NavigationHost(
-        modifier = Modifier.padding(padding),
-        navigationController = navigationController,
-        navigationGraphBuilder = navigationGraphBuilder,
-    )
-    val deepLinks = LocalDeepLinks.current
-    LaunchedEffect(deepLinks.initialDeepLink) {
-        deepLinks.initialDeepLink
-            ?.let(navigationController::deeplink)
-    }
-    LaunchedEffect(deepLinks.deepLink) {
-        deepLinks.deepLink
-            ?.let(navigationController::deeplink)
-    }
-}
-
-@Composable
-fun NestedMobileNavigation(
-    navigationController: NestedNavigationController,
+    navigator: Navigator,
     navigationBarItems: List<NavigationBarItem>,
-    navigationGraphBuilder: NavigationGraphBuilder.() -> Unit,
+    entryProviderBuilder: EntryProviderScope<NavKey>.() -> Unit,
 ) {
-    val backHandlerEnabled by navigationController.canPopBackAsState()
-    BackHandler(
-        enabled = backHandlerEnabled,
-        onBack = navigationController::popBackStack,
+    val state = navigator.state
+    val entries = state.toEntries(
+        entryProvider = entryProvider<NavKey>(builder = entryProviderBuilder),
     )
+
+    BackHandler(
+        enabled = state.canPopBackStack,
+        onBack = { navigator.popBackStack() },
+    )
+
     Scaffold(
         content = { padding ->
-            NavigationHost(
+            NavDisplay(
                 modifier = Modifier.padding(padding),
-                navigationController = navigationController,
-                navigationGraphBuilder = navigationGraphBuilder,
+                entries = entries,
+                onBack = { navigator.popBackStack() },
+                sceneStrategies = remember { listOf(DialogSceneStrategy()) },
             )
         },
         bottomBar = {
-            val currentGraphRoute by navigationController.currentTopLevelRouteAsState()
-            BottomNavigation(
-                items = navigationBarItems,
-                selected = currentGraphRoute,
-                onClick = navigationController::navigateTopLevel,
-            )
+            AnimatedVisibility(
+                visible = state.isAtTopLevelRoot,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                BottomNavigation(
+                    items = navigationBarItems,
+                    selected = state.topLevelRoute,
+                    onClick = navigator::navigate,
+                )
+            }
         },
     )
+
+    val deepLinks = LocalDeepLinks.current
+    LaunchedEffect(deepLinks.initialDeepLink) {
+        deepLinks.initialDeepLink?.let(navigator::deeplink)
+    }
+    LaunchedEffect(deepLinks.deepLink) {
+        deepLinks.deepLink?.let(navigator::deeplink)
+    }
 }

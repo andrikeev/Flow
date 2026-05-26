@@ -31,7 +31,6 @@ import flow.main.MainViewModel
 import flow.models.settings.Theme
 import flow.navigation.DeepLinks
 import flow.navigation.LocalDeepLinks
-import flow.navigation.rememberNavigationController
 import flow.rating.RatingDialog
 import flow.ui.platform.LocalLoggerFactory
 import flow.ui.platform.LocalOpenFileHandler
@@ -101,12 +100,11 @@ open class MainActivity : ComponentActivity() {
                     LocalLoggerFactory provides loggerFactory,
                     LocalDeepLinks provides deepLinks,
                 ) {
-                    val navigationController = rememberNavigationController()
                     RatingDialog()
                     MainScreen(
                         theme = theme,
                         platformType = deviceType,
-                        content = { MobileNavigation(navigationController) },
+                        content = { MobileNavigation() },
                     )
                 }
             }

@@ -1,8 +1,10 @@
 package flow.topic
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.common.runSuspendCatching
 import flow.domain.model.PagingAction
@@ -26,11 +28,10 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import javax.inject.Inject
 
-@HiltViewModel
-internal class TopicViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = TopicViewModel.Factory::class)
+internal class TopicViewModel @AssistedInject constructor(
+    @Assisted private val id: String,
     private val addCommentUseCase: AddCommentUseCase,
     private val downloadTorrentUseCase: DownloadTorrentUseCase,
     private val getTopicUseCase: GetTopicUseCase,
@@ -41,8 +42,12 @@ internal class TopicViewModel @Inject constructor(
     loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<TopicState, TopicSideEffect> {
     private val logger = loggerFactory.get("OpenTopicViewModel")
-    private val id = savedStateHandle.id
     private val pagingActions = MutableSharedFlow<PagingAction>()
+
+    @AssistedFactory
+    interface Factory {
+        fun create(id: String): TopicViewModel
+    }
 
     override val container: Container<TopicState, TopicSideEffect> = container(
         initialState = TopicState(),
