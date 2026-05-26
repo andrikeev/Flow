@@ -14,6 +14,7 @@ import flow.domain.usecase.ObserveSearchPagingDataUseCase
 import flow.domain.usecase.ToggleFavoriteUseCase
 import flow.logger.api.LoggerFactory
 import flow.models.forum.Category
+import flow.models.search.Filter
 import flow.models.search.Order
 import flow.models.search.Period
 import flow.models.search.Sort
@@ -23,7 +24,6 @@ import flow.models.topic.TopicModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -46,14 +46,14 @@ internal class SearchResultViewModel @Inject constructor(
     override val container: Container<SearchPageState, SearchResultSideEffect> = container(
         initialState = SearchPageState(mutableFilter.value),
         onCreate = {
-            mutableFilter.emit(enrichFilterUseCase(state.filter))
+            val enriched = enrichFilterUseCase(state.filter)
+            mutableFilter.emit(enriched)
+            addSearchHistoryUseCase(enriched)
             repeatOnSubscription {
                 launch {
-                    mutableFilter
-                        .onEach(addSearchHistoryUseCase::invoke)
-                        .collectLatest { filter ->
-                            reduce { state.copy(filter = filter) }
-                        }
+                    mutableFilter.collectLatest { filter ->
+                        reduce { state.copy(filter = filter) }
+                    }
                 }
                 launch {
                     logger.d { "Start observing paging data" }
@@ -126,21 +126,27 @@ internal class SearchResultViewModel @Inject constructor(
     }
 
     private fun onSetAuthor(author: Author?) = intent {
-        mutableFilter.emit(mutableFilter.value.copy(author = author))
+        updateFilter { copy(author = author) }
         reduce { state.copy(appBarExpanded = false) }
     }
 
     private fun onSetCategories(categories: List<Category>?) = intent {
-        mutableFilter.emit(mutableFilter.value.copy(categories = categories))
+        updateFilter { copy(categories = categories) }
         reduce { state.copy(appBarExpanded = false) }
     }
 
     private fun onSetSort(sort: Sort) = intent {
-        mutableFilter.emit(mutableFilter.value.copy(sort = sort))
+        updateFilter { copy(sort = sort) }
     }
 
     private fun onSetOrder(order: Order) = intent {
-        mutableFilter.emit(mutableFilter.value.copy(order = order))
+        updateFilter { copy(order = order) }
+    }
+
+    private suspend fun updateFilter(transform: Filter.() -> Filter) {
+        val updated = mutableFilter.value.transform()
+        mutableFilter.emit(updated)
+        addSearchHistoryUseCase(updated)
     }
 
     private fun onSetPeriod(period: Period) = intent {
