@@ -1,6 +1,5 @@
 package flow.navigation.ui
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -27,11 +26,6 @@ fun MobileNavigation(
 ) {
     val state = navigator.state
     val entries = state.toEntries(entryProvider = entryProvider)
-
-    BackHandler(
-        enabled = state.canPopBackStack,
-        onBack = { navigator.popBackStack() },
-    )
 
     Scaffold(
         content = { padding ->

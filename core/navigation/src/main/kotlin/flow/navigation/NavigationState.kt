@@ -53,9 +53,6 @@ class NavigationState internal constructor(
         get() = backStacks[topLevelRoute]
             ?: error("Back stack for $topLevelRoute not found")
 
-    val canPopBackStack: Boolean
-        get() = currentBackStack.size > 1 || topLevelRoute != startRoute
-
     val isAtTopLevelRoot: Boolean
         get() = currentBackStack.size == 1 && currentBackStack.last() == topLevelRoute
 
