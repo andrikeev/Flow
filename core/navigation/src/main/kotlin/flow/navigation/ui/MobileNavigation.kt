@@ -34,6 +34,9 @@ fun MobileNavigation(
                 entries = entries,
                 onBack = { navigator.popBackStack() },
                 sceneStrategies = remember { listOf(DialogSceneStrategy()) },
+                transitionSpec = forwardTransitionSpec(),
+                popTransitionSpec = backTransitionSpec(),
+                predictivePopTransitionSpec = predictiveBackTransitionSpec(),
             )
         },
         bottomBar = {
