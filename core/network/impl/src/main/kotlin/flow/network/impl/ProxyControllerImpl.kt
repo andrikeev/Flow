@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import okhttp3.Credentials
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
@@ -21,6 +22,7 @@ import java.net.ProxySelector
 import java.net.SocketAddress
 import java.net.URI
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 import flow.models.settings.Proxy as ProxyConfig
 import flow.models.settings.ProxyType
@@ -41,6 +43,8 @@ import flow.models.settings.ProxyType
 class ProxyControllerImpl @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val dispatchers: Dispatchers,
+    // Provider breaks the dependency cycle: the OkHttpClient is built using this selector.
+    private val okHttpClientProvider: Provider<OkHttpClient>,
     loggerFactory: LoggerFactory,
 ) : ProxySelector(), ProxyController {
     private val logger = loggerFactory.get("ProxyController")
@@ -51,6 +55,8 @@ class ProxyControllerImpl @Inject constructor(
 
     @Volatile
     private var credentials: Pair<String, String>? = null
+
+    private var initialized = false
 
     override fun setup() {
         scope.launch {
@@ -65,36 +71,45 @@ class ProxyControllerImpl @Inject constructor(
         val isValid = config.enabled &&
             config.host.isNotBlank() &&
             config.port in 1..65535
-        if (!isValid) {
+        if (isValid) {
+            val type = when (config.type) {
+                ProxyType.HTTP -> Proxy.Type.HTTP
+                ProxyType.SOCKS -> Proxy.Type.SOCKS
+            }
+            proxy = Proxy(type, InetSocketAddress.createUnresolved(config.host, config.port))
+            credentials = config.username
+                .takeIf(String::isNotBlank)
+                ?.let { it to config.password }
+            // OkHttp delegates SOCKS proxy auth to the default Authenticator.
+            Authenticator.setDefault(credentials?.let(::proxyAuthenticator))
+            logger.d { "Proxy enabled: ${config.type} ${config.host}:${config.port}" }
+        } else {
             proxy = null
             credentials = null
             Authenticator.setDefault(null)
             logger.d { "Proxy disabled" }
-            return
         }
-        val type = when (config.type) {
-            ProxyType.HTTP -> Proxy.Type.HTTP
-            ProxyType.SOCKS -> Proxy.Type.SOCKS
+        // Drop pooled connections so the new configuration takes effect immediately for
+        // hosts already contacted. OkHttp would otherwise keep reusing existing sockets,
+        // bypassing the proxy change until the pool evicts naturally or the app restarts.
+        // Skipped on the very first application to avoid building the client prematurely.
+        if (initialized) {
+            runCatching { okHttpClientProvider.get().connectionPool.evictAll() }
         }
-        proxy = Proxy(type, InetSocketAddress.createUnresolved(config.host, config.port))
-        credentials = config.username
-            .takeIf(String::isNotBlank)
-            ?.let { it to config.password }
-        // OkHttp delegates SOCKS proxy auth to the default Authenticator.
-        Authenticator.setDefault(
-            credentials?.let { (username, password) ->
-                object : Authenticator() {
-                    override fun getPasswordAuthentication(): PasswordAuthentication? {
-                        return if (requestorType == RequestorType.PROXY) {
-                            PasswordAuthentication(username, password.toCharArray())
-                        } else {
-                            null
-                        }
-                    }
+        initialized = true
+    }
+
+    private fun proxyAuthenticator(credentials: Pair<String, String>): Authenticator {
+        val (username, password) = credentials
+        return object : Authenticator() {
+            override fun getPasswordAuthentication(): PasswordAuthentication? {
+                return if (requestorType == RequestorType.PROXY) {
+                    PasswordAuthentication(username, password.toCharArray())
+                } else {
+                    null
                 }
-            },
-        )
-        logger.d { "Proxy enabled: ${config.type} ${config.host}:${config.port}" }
+            }
+        }
     }
 
     override fun select(uri: URI?): List<Proxy> {
