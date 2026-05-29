@@ -1,6 +1,7 @@
 package flow.testing.repository
 
 import flow.data.api.repository.SettingsRepository
+import flow.models.settings.Proxy
 import flow.models.settings.Settings
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
@@ -29,6 +30,11 @@ class TestSettingsRepository : SettingsRepository {
 
     override suspend fun setBookmarksSyncPeriod(syncPeriod: SyncPeriod) {
         val settings = mutableSettings.value.copy(bookmarksSyncPeriod = syncPeriod)
+        mutableSettings.emit(settings)
+    }
+
+    override suspend fun setProxy(proxy: Proxy) {
+        val settings = mutableSettings.value.copy(proxy = proxy)
         mutableSettings.emit(settings)
     }
 }
