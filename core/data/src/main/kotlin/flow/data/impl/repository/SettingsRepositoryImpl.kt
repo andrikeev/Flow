@@ -2,6 +2,7 @@ package flow.data.impl.repository
 
 import flow.common.SingleItemMutableSharedFlow
 import flow.data.api.repository.SettingsRepository
+import flow.models.settings.Proxy
 import flow.models.settings.Settings
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
@@ -31,6 +32,10 @@ class SettingsRepositoryImpl @Inject constructor(
 
     override suspend fun setBookmarksSyncPeriod(syncPeriod: SyncPeriod) {
         updateSettings { copy(bookmarksSyncPeriod = syncPeriod) }
+    }
+
+    override suspend fun setProxy(proxy: Proxy) {
+        updateSettings { copy(proxy = proxy) }
     }
 
     private suspend fun updateSettings(update: Settings.() -> Settings) {

@@ -5,4 +5,17 @@
     <string name="content_description_connection_blocked">Blocked</string>
     <string name="content_description_connection_updating">Updating</string>
     <string name="content_description_no_internet">No internet</string>
+
+    <string name="connection_proxy_title">Proxy</string>
+    <string name="connection_proxy_subtitle">Connecting through %1$s</string>
+    <string name="connection_proxy_enabled">Use proxy</string>
+    <string name="connection_proxy_type">Type</string>
+    <string name="connection_proxy_type_http">HTTP</string>
+    <string name="connection_proxy_type_socks">SOCKS5</string>
+    <string name="connection_proxy_host">Host</string>
+    <string name="connection_proxy_host_hint">proxy.example.com</string>
+    <string name="connection_proxy_port">Port</string>
+    <string name="connection_proxy_username">Username (optional)</string>
+    <string name="connection_proxy_password">Password (optional)</string>
+    <string name="connection_proxy_content_description">Configure proxy</string>
 </resources>

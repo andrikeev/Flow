@@ -5,4 +5,17 @@
     <string name="content_description_connection_blocked">Не доступен</string>
     <string name="content_description_connection_updating">Обновляется</string>
     <string name="content_description_no_internet">Отсутствует подключение к интернету</string>
+
+    <string name="connection_proxy_title">Прокси</string>
+    <string name="connection_proxy_subtitle">Подключение через %1$s</string>
+    <string name="connection_proxy_enabled">Использовать прокси</string>
+    <string name="connection_proxy_type">Тип</string>
+    <string name="connection_proxy_type_http">HTTP</string>
+    <string name="connection_proxy_type_socks">SOCKS5</string>
+    <string name="connection_proxy_host">Адрес</string>
+    <string name="connection_proxy_host_hint">proxy.example.com</string>
+    <string name="connection_proxy_port">Порт</string>
+    <string name="connection_proxy_username">Логин (необязательно)</string>
+    <string name="connection_proxy_password">Пароль (необязательно)</string>
+    <string name="connection_proxy_content_description">Настроить прокси</string>
 </resources>

@@ -4,12 +4,16 @@ import android.app.Application
 import android.os.StrictMode
 import dagger.hilt.android.HiltAndroidApp
 import flow.network.api.ImageLoader
+import flow.network.api.ProxyController
 import javax.inject.Inject
 
 @HiltAndroidApp
 class FlowApplication : Application() {
     @Inject
     lateinit var imageLoader: ImageLoader
+
+    @Inject
+    lateinit var proxyController: ProxyController
 
     override fun onCreate() {
         if (BuildConfig.DEBUG) {
@@ -28,5 +32,6 @@ class FlowApplication : Application() {
         }
         super.onCreate()
         imageLoader.setup()
+        proxyController.setup()
     }
 }
