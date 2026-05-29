@@ -2,6 +2,8 @@ package flow.securestorage
 
 import android.content.SharedPreferences
 import flow.dispatchers.api.Dispatchers
+import flow.models.settings.Proxy
+import flow.models.settings.ProxyType
 import flow.models.settings.Settings
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
@@ -78,6 +80,12 @@ internal class PreferencesStorageImpl @Inject constructor(
                 putString(themeKey, settings.theme.name)
                 putString(favoritesSyncPeriodKey, settings.favoritesSyncPeriod.name)
                 putString(bookmarksSyncPeriodKey, settings.bookmarksSyncPeriod.name)
+                putBoolean(proxyEnabledKey, settings.proxy.enabled)
+                putString(proxyTypeKey, settings.proxy.type.name)
+                putString(proxyHostKey, settings.proxy.host)
+                putInt(proxyPortKey, settings.proxy.port)
+                putString(proxyUsernameKey, settings.proxy.username)
+                putString(proxyPasswordKey, settings.proxy.password)
             }
         }
     }
@@ -95,10 +103,21 @@ internal class PreferencesStorageImpl @Inject constructor(
                 settingsPreferences.getString(bookmarksSyncPeriodKey, null)?.let {
                     enumValueOf(it)
                 } ?: SyncPeriod.OFF
+            val proxy = Proxy(
+                enabled = settingsPreferences.getBoolean(proxyEnabledKey, false),
+                type = settingsPreferences.getString(proxyTypeKey, null)
+                    ?.let { runCatching { enumValueOf<ProxyType>(it) }.getOrNull() }
+                    ?: ProxyType.HTTP,
+                host = settingsPreferences.getString(proxyHostKey, null).orEmpty(),
+                port = settingsPreferences.getInt(proxyPortKey, 0),
+                username = settingsPreferences.getString(proxyUsernameKey, null).orEmpty(),
+                password = settingsPreferences.getString(proxyPasswordKey, null).orEmpty(),
+            )
             Settings(
                 theme = theme,
                 favoritesSyncPeriod = favoritesSyncPeriod,
                 bookmarksSyncPeriod = bookmarksSyncPeriod,
+                proxy = proxy,
             )
         }
     }
@@ -149,6 +168,13 @@ internal class PreferencesStorageImpl @Inject constructor(
         const val themeKey = "theme"
         const val favoritesSyncPeriodKey = "favorites_sync_period"
         const val bookmarksSyncPeriodKey = "bookmarks_sync_period"
+
+        const val proxyEnabledKey = "proxy_enabled"
+        const val proxyTypeKey = "proxy_type"
+        const val proxyHostKey = "proxy_host"
+        const val proxyPortKey = "proxy_port"
+        const val proxyUsernameKey = "proxy_username"
+        const val proxyPasswordKey = "proxy_password"
 
         const val ratingLaunchCountKey = "rating_launch_count"
         const val ratingDisabledKey = "rating_disabled"

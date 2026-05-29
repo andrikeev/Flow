@@ -9,15 +9,15 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.Multibinds
 import flow.network.api.ImageLoader
 import flow.network.api.NetworkApi
+import flow.network.api.ProxyController
 import flow.network.data.ImageLoaderFactoryImpl
 import flow.network.data.NetworkApiRepository
 import flow.network.data.NetworkApiRepositoryImpl
-import flow.network.impl.DelegatingProxySelector
 import flow.network.impl.ImageLoaderImpl
+import flow.network.impl.ProxyControllerImpl
 import flow.network.impl.SwitchingNetworkApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import java.net.ProxySelector
 import javax.inject.Singleton
 
 @Module
@@ -45,17 +45,18 @@ internal interface NetworkModule {
 
     @Binds
     @Singleton
-    fun proxySelector(impl: DelegatingProxySelector): ProxySelector
+    fun proxyController(impl: ProxyControllerImpl): ProxyController
 
     companion object {
         @Provides
         @Singleton
         fun okHttpClient(
-            proxySelector: ProxySelector,
+            proxyController: ProxyControllerImpl,
             interceptors: Set<@JvmSuppressWildcards Interceptor>,
         ): OkHttpClient {
             return OkHttpClient.Builder()
-                .proxySelector(proxySelector)
+                .proxySelector(proxyController)
+                .proxyAuthenticator { _, response -> proxyController.authenticate(response) }
                 .apply { interceptors.forEach(::addInterceptor) }
                 .build()
         }

@@ -1,5 +1,6 @@
 package flow.data.api.repository
 
+import flow.models.settings.Proxy
 import flow.models.settings.Settings
 import flow.models.settings.SyncPeriod
 import flow.models.settings.Theme
@@ -11,4 +12,5 @@ interface SettingsRepository {
     suspend fun setTheme(theme: Theme)
     suspend fun setFavoritesSyncPeriod(syncPeriod: SyncPeriod)
     suspend fun setBookmarksSyncPeriod(syncPeriod: SyncPeriod)
+    suspend fun setProxy(proxy: Proxy)
 }
