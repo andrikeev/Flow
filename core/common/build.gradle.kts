@@ -1,7 +1,11 @@
 plugins {
-    id("flow.kotlin.library")
+    id("flow.kmp.library")
 }
 
-dependencies {
-    implementation(libs.kotlinx.coroutines.core)
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
+        }
+    }
 }

@@ -1,4 +1,4 @@
 plugins {
-    id("flow.kotlin.library")
+    id("flow.kmp.library")
     id("flow.kotlin.serialization")
 }

@@ -1,3 +1,3 @@
 plugins {
-    id("flow.kotlin.library")
+    id("flow.kmp.library")
 }

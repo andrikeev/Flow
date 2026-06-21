@@ -1,7 +1,11 @@
 plugins {
-    id("flow.kotlin.library")
+    id("flow.kmp.library")
 }
 
-dependencies {
-    implementation(project(":core:models"))
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":core:models"))
+        }
+    }
 }
