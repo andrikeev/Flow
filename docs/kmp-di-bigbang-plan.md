@@ -232,3 +232,34 @@ class SyncFavoritesWorker(
 PreferencesStorage) → `domain` → `features` → `work:impl` → удаление Hilt.
 На стыках, где потребитель ещё на Hilt, а зависимость уже в Koin — inverse-bridge
 (Hilt `@Provides` читает из Koin), единственный владелец — Koin.
+
+---
+
+## 11. Прогресс исполнения (живой лог)
+
+Каждая фаза — отдельный PR, зелёный Android-CI как гейт.
+
+- ✅ **Ф0** — Koin поднят в `:app` (пустой граф до `super.onCreate`), smoke-тест.
+- ✅ **Ф1** — инфра во владении Koin (dispatchers, logger, preferences,
+  notifications, downloads) + inverse-bridge в `:app`.
+- ✅ **Ф2a** — `core:database` → Koin (`AppDatabase` + 8 DAO), inverse-bridge DAO.
+- ✅ **Ф2b** — репозитории `core:data` (9 шт.) → Koin (`singleOf`), DAO-мосты
+  заменены на repo-мосты, добавлен `RepositoryModuleTest.verify()` —
+  **статическая проверка графа в CI**.
+- ⏭️ **Ф2c (кластер)** — `data`-сервисы + `core:network:impl` + `core:auth:impl`
+  мигрируются **вместе**: они взаимозависимы (`data`-сервисы → `NetworkApi`/
+  `AuthService`; `network:impl.ProxyController` → `data.SettingsRepository`), и
+  миграция любого по отдельности потребовала бы forward-bridge'ей (Koin→Hilt) и
+  рисковала бы циклом. Кластером их взаимные зависимости резолвятся внутри Koin;
+  наружу (ещё-Hilt-`domain`) — inverse-bridge на `NetworkApi` + сервисы.
+  Особенности: multibinding `Set<Interceptor>`, провайдер `OkHttpClient`,
+  debug-Chucker. Для @Inject-классов — `singleOf`/Koin Annotations + `verify()`.
+- ⏭️ **Ф4** — `core:domain` (десятки use-case'ов) → Koin (annotations + `verify()`).
+- ⏭️ **Ф5** — 15 `feature:*` ViewModel'и → Koin, флип `viewModel()` → `koinViewModel()`.
+- ⏭️ **Ф6** — `core:work:impl` → `KoinWorkerFactory`.
+- ⏭️ **Ф7** — удаление Hilt (плагины, deps, мосты, `@HiltAndroidApp` → `Application`).
+
+**Ограничение верификации:** CI проверяет компиляцию + `verify()`-графы на тестах, но
+**не запускает приложение** — рантайм Hilt↔Koin (порядок `startKoin`, резолв мостов)
+подтверждается только smoke-запуском на устройстве. Рекомендуется прогон на девайсе
+после кластерных фаз.
