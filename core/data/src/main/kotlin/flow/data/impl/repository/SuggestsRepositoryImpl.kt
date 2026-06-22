@@ -6,9 +6,8 @@ import flow.database.dao.SuggestDao
 import flow.database.entity.SuggestEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class SuggestsRepositoryImpl @Inject constructor(
+class SuggestsRepositoryImpl(
     private val suggestDao: SuggestDao,
 ) : SuggestsRepository {
     override fun observeSuggests(): Flow<List<String>> = suggestDao.observerAll().map { suggests ->

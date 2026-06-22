@@ -9,9 +9,8 @@ import flow.models.settings.Theme
 import flow.securestorage.PreferencesStorage
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
 
-class SettingsRepositoryImpl @Inject constructor(
+class SettingsRepositoryImpl(
     private val preferencesStorage: PreferencesStorage,
 ) : SettingsRepository {
     private val mutableSettings = SingleItemMutableSharedFlow<Settings>()

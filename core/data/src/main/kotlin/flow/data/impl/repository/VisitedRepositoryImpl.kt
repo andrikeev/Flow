@@ -9,9 +9,8 @@ import flow.models.topic.Topic
 import flow.models.topic.TopicPage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class VisitedRepositoryImpl @Inject constructor(
+class VisitedRepositoryImpl(
     private val visitedTopicDao: VisitedTopicDao,
 ) : VisitedRepository {
     override fun observeTopics(): Flow<List<Topic>> {

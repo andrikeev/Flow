@@ -9,9 +9,8 @@ import flow.models.forum.CategoryModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.json.JSONArray
-import javax.inject.Inject
 
-class BookmarksRepositoryImpl @Inject constructor(
+class BookmarksRepositoryImpl(
     private val bookmarkDao: BookmarkDao,
 ) : BookmarksRepository {
     override fun observeBookmarks(): Flow<List<CategoryModel>> {

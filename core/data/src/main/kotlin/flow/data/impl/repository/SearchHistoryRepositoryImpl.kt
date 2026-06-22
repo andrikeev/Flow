@@ -9,9 +9,8 @@ import flow.models.search.Filter
 import flow.models.search.Search
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class SearchHistoryRepositoryImpl @Inject constructor(
+class SearchHistoryRepositoryImpl(
     private val searchHistoryDao: SearchHistoryDao,
 ) : SearchHistoryRepository {
     override fun observeAll(): Flow<List<Search>> {

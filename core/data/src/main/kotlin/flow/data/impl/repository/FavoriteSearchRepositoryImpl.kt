@@ -5,9 +5,8 @@ import flow.database.dao.FavoriteSearchDao
 import flow.database.entity.FavoriteSearchEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class FavoriteSearchRepositoryImpl @Inject constructor(
+class FavoriteSearchRepositoryImpl(
     private val dao: FavoriteSearchDao,
 ) : FavoriteSearchRepository {
     override fun observeAll(): Flow<Set<Int>> {

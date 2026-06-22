@@ -11,9 +11,8 @@ import flow.models.forum.Category
 import flow.models.forum.Forum
 import flow.models.forum.ForumCategory
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class ForumRepositoryImpl @Inject constructor(
+class ForumRepositoryImpl(
     private val forumCategoryDao: ForumCategoryDao,
     private val forumMetadataDao: ForumMetadataDao,
     loggerFactory: LoggerFactory,

@@ -3,6 +3,7 @@ package me.rutrackersearch.app
 import android.app.Application
 import android.os.StrictMode
 import dagger.hilt.android.HiltAndroidApp
+import flow.data.di.repositoryModule
 import flow.database.di.databaseModule
 import flow.dispatchers.di.dispatchersModule
 import flow.downloads.di.downloadsModule
@@ -36,6 +37,7 @@ class FlowApplication : Application() {
                 preferencesModule,
                 notificationsModule,
                 downloadsModule,
+                repositoryModule,
             )
         }
         if (BuildConfig.DEBUG) {

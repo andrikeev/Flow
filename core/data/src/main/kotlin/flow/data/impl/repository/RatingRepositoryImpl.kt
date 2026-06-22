@@ -5,9 +5,8 @@ import flow.data.api.repository.RatingRepository
 import flow.securestorage.PreferencesStorage
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
 
-internal class RatingRepositoryImpl @Inject constructor(
+internal class RatingRepositoryImpl(
     private val preferencesStorage: PreferencesStorage,
 ) : RatingRepository {
     private val mutableRatingDisabledFlow = SingleItemMutableSharedFlow<Boolean>()

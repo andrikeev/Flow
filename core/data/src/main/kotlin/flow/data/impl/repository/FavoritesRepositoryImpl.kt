@@ -13,9 +13,8 @@ import flow.models.topic.Torrent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
-class FavoritesRepositoryImpl @Inject constructor(
+class FavoritesRepositoryImpl(
     private val favoriteTopicDao: FavoriteTopicDao,
     loggerFactory: LoggerFactory,
 ) : FavoritesRepository {
