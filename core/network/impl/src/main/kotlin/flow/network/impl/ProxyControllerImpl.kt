@@ -21,9 +21,6 @@ import java.net.Proxy
 import java.net.ProxySelector
 import java.net.SocketAddress
 import java.net.URI
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
 import flow.models.settings.Proxy as ProxyConfig
 import flow.models.settings.ProxyType
 
@@ -39,12 +36,11 @@ import flow.models.settings.ProxyType
  *
  * @see <a href=https://github.com/square/okhttp/issues/6877#issuecomment-1438554879>workaround</>
  */
-@Singleton
-class ProxyControllerImpl @Inject constructor(
+class ProxyControllerImpl(
     private val settingsRepository: SettingsRepository,
     private val dispatchers: Dispatchers,
     // Provider breaks the dependency cycle: the OkHttpClient is built using this selector.
-    private val okHttpClientProvider: Provider<OkHttpClient>,
+    private val okHttpClientProvider: () -> OkHttpClient,
     loggerFactory: LoggerFactory,
 ) : ProxySelector(), ProxyController {
     private val logger = loggerFactory.get("ProxyController")
@@ -94,7 +90,7 @@ class ProxyControllerImpl @Inject constructor(
         // bypassing the proxy change until the pool evicts naturally or the app restarts.
         // Skipped on the very first application to avoid building the client prematurely.
         if (initialized) {
-            runCatching { okHttpClientProvider.get().connectionPool.evictAll() }
+            runCatching { okHttpClientProvider().connectionPool.evictAll() }
         }
         initialized = true
     }

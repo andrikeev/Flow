@@ -1,64 +1,45 @@
 package flow.network.di
 
 import coil3.SingletonImageLoader
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import dagger.multibindings.Multibinds
 import flow.network.api.ImageLoader
 import flow.network.api.NetworkApi
 import flow.network.api.ProxyController
 import flow.network.data.ImageLoaderFactoryImpl
 import flow.network.data.NetworkApiRepository
 import flow.network.data.NetworkApiRepositoryImpl
+import flow.network.data.NetworkLogger
 import flow.network.impl.ImageLoaderImpl
 import flow.network.impl.ProxyControllerImpl
 import flow.network.impl.SwitchingNetworkApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import javax.inject.Singleton
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal interface NetworkModule {
+/**
+ * Koin module for the network layer. SettingsRepository/Dispatchers/LoggerFactory come
+ * from the Koin graph. The OkHttpClient <-> ProxyController cycle is broken by passing a
+ * lazy `() -> OkHttpClient` into ProxyControllerImpl. Interceptors are collected via
+ * getAll() (Chucker is added by the debug-only module, see networkDebugModules()).
+ *
+ * On Android the public types are exposed to remaining Hilt consumers via an
+ * inverse-bridge in :app until those consumers move to Koin.
+ */
+val networkModule = module {
+    singleOf(::NetworkLogger)
+    singleOf(::NetworkApiRepositoryImpl) bind NetworkApiRepository::class
+    singleOf(::SwitchingNetworkApi) bind NetworkApi::class
+    singleOf(::ImageLoaderFactoryImpl) bind SingletonImageLoader.Factory::class
+    singleOf(::ImageLoaderImpl) bind ImageLoader::class
 
-    @Binds
-    @Singleton
-    fun imageLoader(impl: ImageLoaderImpl): ImageLoader
+    single { ProxyControllerImpl(get(), get(), { get<OkHttpClient>() }, get()) } bind ProxyController::class
 
-    @Binds
-    @Singleton
-    fun imageLoaderFactory(impl: ImageLoaderFactoryImpl): SingletonImageLoader.Factory
-
-    @Multibinds
-    fun interceptors(): Set<@JvmSuppressWildcards Interceptor>
-
-    @Binds
-    @Singleton
-    fun networkApi(impl: SwitchingNetworkApi): NetworkApi
-
-    @Binds
-    @Singleton
-    fun networkApiRepository(impl: NetworkApiRepositoryImpl): NetworkApiRepository
-
-    @Binds
-    @Singleton
-    fun proxyController(impl: ProxyControllerImpl): ProxyController
-
-    companion object {
-        @Provides
-        @Singleton
-        fun okHttpClient(
-            proxyController: ProxyControllerImpl,
-            interceptors: Set<@JvmSuppressWildcards Interceptor>,
-        ): OkHttpClient {
-            return OkHttpClient.Builder()
-                .proxySelector(proxyController)
-                .proxyAuthenticator { _, response -> proxyController.authenticate(response) }
-                .apply { interceptors.forEach(::addInterceptor) }
-                .build()
-        }
+    single<OkHttpClient> {
+        OkHttpClient.Builder()
+            .proxySelector(get<ProxyControllerImpl>())
+            .proxyAuthenticator { _, response -> get<ProxyControllerImpl>().authenticate(response) }
+            .apply { getAll<Interceptor>().forEach(::addInterceptor) }
+            .build()
     }
 }

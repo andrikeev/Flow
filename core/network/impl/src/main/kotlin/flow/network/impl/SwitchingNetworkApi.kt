@@ -5,9 +5,8 @@ import flow.network.data.NetworkApiRepository
 import flow.network.dto.search.SearchPeriodDto
 import flow.network.dto.search.SearchSortOrderDto
 import flow.network.dto.search.SearchSortTypeDto
-import javax.inject.Inject
 
-class SwitchingNetworkApi @Inject constructor(
+class SwitchingNetworkApi(
     private val networkApiRepository: NetworkApiRepository,
 ) : NetworkApi {
 

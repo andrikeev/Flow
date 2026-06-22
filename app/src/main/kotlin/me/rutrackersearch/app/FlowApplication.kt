@@ -3,6 +3,7 @@ package me.rutrackersearch.app
 import android.app.Application
 import android.os.StrictMode
 import dagger.hilt.android.HiltAndroidApp
+import flow.auth.di.authModule
 import flow.data.di.repositoryModule
 import flow.data.di.serviceModule
 import flow.database.di.databaseModule
@@ -11,6 +12,8 @@ import flow.downloads.di.downloadsModule
 import flow.logger.di.loggerModule
 import flow.network.api.ImageLoader
 import flow.network.api.ProxyController
+import flow.network.di.networkDebugModules
+import flow.network.di.networkModule
 import flow.notifications.di.notificationsModule
 import flow.securestorage.di.preferencesModule
 import org.koin.android.ext.koin.androidContext
@@ -40,7 +43,10 @@ class FlowApplication : Application() {
                 downloadsModule,
                 repositoryModule,
                 serviceModule,
+                networkModule,
+                authModule,
             )
+            modules(networkDebugModules())
         }
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(

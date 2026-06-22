@@ -1,6 +1,5 @@
 plugins {
     id("flow.android.library")
-    id("flow.android.hilt")
     id("flow.kotlin.serialization")
 }
 
@@ -35,5 +34,12 @@ dependencies {
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.serialization.kotlinx.json)
 
+    // Coroutines were previously pulled in transitively via hilt-android.
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.koin)
+
     debugImplementation(libs.chucker)
+
+    testImplementation(libs.koin.test)
+    testImplementation(libs.junit4)
 }

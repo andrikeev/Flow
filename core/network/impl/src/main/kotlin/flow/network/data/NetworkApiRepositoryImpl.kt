@@ -8,9 +8,8 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import okhttp3.OkHttpClient
-import javax.inject.Inject
 
-internal class NetworkApiRepositoryImpl @Inject constructor(
+internal class NetworkApiRepositoryImpl(
     private val okHttpClient: OkHttpClient,
     private val networkLogger: NetworkLogger,
 ) : NetworkApiRepository {

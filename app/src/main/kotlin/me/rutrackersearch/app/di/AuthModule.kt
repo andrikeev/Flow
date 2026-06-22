@@ -6,29 +6,22 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import flow.auth.api.AuthService
 import flow.auth.api.TokenProvider
-import flow.auth.api.createAuthService
-import flow.network.api.NetworkApi
-import flow.securestorage.PreferencesStorage
+import org.koin.core.context.GlobalContext
 import javax.inject.Singleton
 
 /**
- * Bridges the framework-agnostic auth service into the Android Hilt graph.
- *
- * core:auth:impl no longer depends on Hilt (it exposes a Koin module instead).
- * A single stateful instance backs both [AuthService] and [TokenProvider], matching
- * the previous @Singleton behaviour.
+ * Inverse-bridge: Koin owns the auth service (authModule); remaining Hilt consumers
+ * (data services, domain) read AuthService/TokenProvider from Koin during the migration.
+ * A single stateful instance backs both interfaces (see authModule).
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthModule {
     @Provides
     @Singleton
-    fun authService(
-        api: NetworkApi,
-        preferencesStorage: PreferencesStorage,
-    ): AuthService = createAuthService(api, preferencesStorage)
+    fun authService(): AuthService = GlobalContext.get().get()
 
     @Provides
     @Singleton
-    fun tokenProvider(authService: AuthService): TokenProvider = authService as TokenProvider
+    fun tokenProvider(): TokenProvider = GlobalContext.get().get()
 }
