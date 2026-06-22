@@ -42,6 +42,9 @@ jobs:
       - name: Lint
         run: ./gradlew :app:lintDebug --stacktrace
 
+      - name: Verify Koin DI graph
+        run: ./gradlew :app:testDebugUnitTest --tests "me.rutrackersearch.app.AppGraphTest" --stacktrace
+
       - name: Unit tests
         run: ./gradlew testDebugUnitTest --stacktrace
 

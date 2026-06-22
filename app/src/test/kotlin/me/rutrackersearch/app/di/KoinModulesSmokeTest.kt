@@ -18,9 +18,10 @@ import org.koin.dsl.koinApplication
 class KoinModulesSmokeTest {
     @Test
     fun infraModulesResolve() {
-        val koin = koinApplication {
-            modules(dispatchersModule, loggerModule)
-        }.koin
+        val koin =
+            koinApplication {
+                modules(dispatchersModule, loggerModule)
+            }.koin
 
         assertNotNull(koin.get<Dispatchers>())
         assertNotNull(koin.get<LoggerFactory>())

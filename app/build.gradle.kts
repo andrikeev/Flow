@@ -100,6 +100,7 @@ dependencies {
     implementation(libs.firebase.crashlytics)
 
     testImplementation(libs.junit4)
+    testImplementation(libs.koin.test)
 
     debugImplementation(libs.leakcanary)
 }

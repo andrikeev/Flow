@@ -16,8 +16,8 @@ import flow.favorites.di.favoritesModule
 import flow.forum.bookmarks.di.bookmarksModule
 import flow.forum.category.di.categoryModule
 import flow.forum.di.forumModule
-import flow.login.di.loginModule
 import flow.logger.di.loggerModule
+import flow.login.di.loginModule
 import flow.main.di.mainModule
 import flow.menu.di.menuModule
 import flow.network.api.ImageLoader
@@ -38,12 +38,15 @@ import org.koin.androidx.workmanager.factory.KoinWorkerFactory
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 
-class FlowApplication : Application(), Configuration.Provider {
-
+class FlowApplication :
+    Application(),
+    Configuration.Provider {
     override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder()
-            .setWorkerFactory(KoinWorkerFactory())
-            .build()
+        get() =
+            Configuration
+                .Builder()
+                .setWorkerFactory(KoinWorkerFactory())
+                .build()
 
     override fun onCreate() {
         // Koin must be started before WorkManager initializes (on demand) and before any
@@ -85,13 +88,15 @@ class FlowApplication : Application(), Configuration.Provider {
         }
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(
-                StrictMode.ThreadPolicy.Builder()
+                StrictMode.ThreadPolicy
+                    .Builder()
                     .detectAll()
                     .penaltyLog()
                     .build(),
             )
             StrictMode.setVmPolicy(
-                StrictMode.VmPolicy.Builder()
+                StrictMode.VmPolicy
+                    .Builder()
                     .detectAll()
                     .penaltyLog()
                     .build(),

@@ -47,7 +47,6 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 open class MainActivity : ComponentActivity() {
-
     private val loggerFactory: LoggerFactory by inject()
 
     private val viewModel: MainViewModel by viewModel()

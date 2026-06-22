@@ -3,9 +3,9 @@ package me.rutrackersearch.app.platform
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.core.net.toUri
 import flow.logger.api.LoggerFactory
 import flow.ui.platform.OpenLinkHandler
-import androidx.core.net.toUri
 
 class OpenLinkHandlerImpl(
     private val context: Context,
@@ -18,9 +18,10 @@ class OpenLinkHandlerImpl(
             logger.d { "Open link=$link" }
             if (isSupportedLink(link)) {
                 val uri = parseUri(link)
-                val intent = Intent(Intent.ACTION_VIEW, uri).apply {
-                    setPackage(context.packageName)
-                }
+                val intent =
+                    Intent(Intent.ACTION_VIEW, uri).apply {
+                        setPackage(context.packageName)
+                    }
                 context.startActivity(intent)
             } else {
                 val intent = Intent.createChooser(Intent(Intent.ACTION_VIEW, Uri.parse(link)), null)
@@ -33,22 +34,23 @@ class OpenLinkHandlerImpl(
 
     private fun parseUri(link: String): Uri {
         val uri = link.toUri()
-        return uri.buildUpon().apply {
-            if (uri.scheme.isNullOrBlank()) {
-                scheme("https")
-            }
-            if (uri.host.isNullOrBlank()) {
-                authority("rutracker.org")
-            }
-            if (uri.path?.startsWith("forum") == false) {
-                path("/forum/${uri.path}")
-            }
-        }.build()
+        return uri
+            .buildUpon()
+            .apply {
+                if (uri.scheme.isNullOrBlank()) {
+                    scheme("https")
+                }
+                if (uri.host.isNullOrBlank()) {
+                    authority("rutracker.org")
+                }
+                if (uri.path?.startsWith("forum") == false) {
+                    path("/forum/${uri.path}")
+                }
+            }.build()
     }
 
-    private fun isSupportedLink(link: String): Boolean {
-        return link.contains("viewtopic.php") ||
+    private fun isSupportedLink(link: String): Boolean =
+        link.contains("viewtopic.php") ||
             link.contains("viewforum.php") ||
             link.contains("tracker.php")
-    }
 }
