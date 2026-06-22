@@ -5,19 +5,18 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import flow.dispatchers.api.Dispatchers
-import flow.dispatchers.api.createDispatchers
+import org.koin.core.context.GlobalContext
 import javax.inject.Singleton
 
 /**
- * Bridges the framework-agnostic [Dispatchers] into the Android Hilt graph.
- *
- * core:dispatchers no longer depends on Hilt (it exposes a Koin module instead);
- * this bridge keeps existing Hilt consumers working until the app moves to Koin.
+ * Inverse-bridge: Koin owns the single [Dispatchers] instance (dispatchersModule,
+ * registered in FlowApplication); remaining Hilt consumers read it from Koin during the
+ * migration. Removed in Ф7 once the app runs entirely on Koin.
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object DispatchersModule {
     @Provides
     @Singleton
-    fun dispatchers(): Dispatchers = createDispatchers()
+    fun dispatchers(): Dispatchers = GlobalContext.get().get()
 }

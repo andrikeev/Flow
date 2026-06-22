@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.androidx.security.ktx)
     // Coroutines were previously pulled in transitively via hilt-android.
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.koin)
 
     testImplementation(libs.junit4)
     testImplementation(libs.json)

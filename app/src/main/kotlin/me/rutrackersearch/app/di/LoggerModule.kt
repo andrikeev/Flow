@@ -5,19 +5,17 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import flow.logger.api.LoggerFactory
-import flow.logger.api.createLoggerFactory
+import org.koin.core.context.GlobalContext
 import javax.inject.Singleton
 
 /**
- * Bridges the framework-agnostic [LoggerFactory] into the Android Hilt graph.
- *
- * core:logger no longer depends on Hilt (it exposes a Koin module instead);
- * this bridge keeps existing Hilt consumers working until the app moves to Koin.
+ * Inverse-bridge: Koin owns the single [LoggerFactory] (loggerModule); remaining Hilt
+ * consumers read it from Koin during the migration. Removed in Ф7.
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object LoggerModule {
     @Provides
     @Singleton
-    fun loggerFactory(): LoggerFactory = createLoggerFactory()
+    fun loggerFactory(): LoggerFactory = GlobalContext.get().get()
 }
