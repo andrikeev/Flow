@@ -94,8 +94,13 @@ dependencies {
 
     implementation(libs.bundles.orbit)
 
+    // Koin runs alongside Hilt during the DI migration (see docs/kmp-di-bigbang-plan.md).
+    implementation(libs.koin.android)
+
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
+
+    testImplementation(libs.junit4)
 
     debugImplementation(libs.leakcanary)
 }
