@@ -109,7 +109,7 @@ internal object ParsePostUseCase {
                 else -> appendElement(node)
             }
 
-            is TextNode -> text(node.wholeText)
+            is TextNode -> text(node.getWholeText())
         }
     }
 
