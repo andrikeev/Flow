@@ -14,11 +14,8 @@ import flow.securestorage.model.Account
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-internal class AuthServiceImpl @Inject constructor(
+internal class AuthServiceImpl(
     private val api: NetworkApi,
     private val preferencesStorage: PreferencesStorage,
 ) : AuthService, TokenProvider {
