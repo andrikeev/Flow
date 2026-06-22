@@ -7,13 +7,9 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV
 import androidx.security.crypto.EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
 import androidx.security.crypto.MasterKey
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-internal class SharedPreferencesFactoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
+internal class SharedPreferencesFactoryImpl(
+    private val context: Context,
 ) : SharedPreferencesFactory {
 
     private val mainKey = MasterKey.Builder(context)

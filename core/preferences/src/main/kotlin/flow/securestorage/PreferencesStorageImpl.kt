@@ -12,9 +12,8 @@ import flow.securestorage.preferences.SharedPreferencesFactory
 import flow.securestorage.utils.clear
 import flow.securestorage.utils.edit
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-internal class PreferencesStorageImpl @Inject constructor(
+internal class PreferencesStorageImpl(
     sharedPreferencesFactory: SharedPreferencesFactory,
     private val dispatchers: Dispatchers,
 ) : PreferencesStorage {

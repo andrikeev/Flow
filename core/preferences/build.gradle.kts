@@ -1,6 +1,5 @@
 plugins {
     id("flow.android.library")
-    id("flow.android.hilt")
 }
 
 android {
@@ -12,6 +11,8 @@ dependencies {
     implementation(project(":core:models"))
 
     implementation(libs.androidx.security.ktx)
+    // Coroutines were previously pulled in transitively via hilt-android.
+    implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(libs.junit4)
     testImplementation(libs.json)
