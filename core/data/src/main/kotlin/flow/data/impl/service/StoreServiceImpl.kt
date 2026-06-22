@@ -5,13 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import dagger.hilt.android.qualifiers.ApplicationContext
 import flow.data.api.service.StoreService
 import flow.models.Store
-import javax.inject.Inject
 
-internal class StoreServiceImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
+internal class StoreServiceImpl(
+    private val context: Context,
 ) : StoreService {
     private val ratingStore: Store by lazy { Store(getResolvableLink()) }
 

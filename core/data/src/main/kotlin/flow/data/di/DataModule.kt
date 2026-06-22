@@ -4,26 +4,22 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import flow.data.api.service.ConnectionService
 import flow.data.api.service.FavoritesService
 import flow.data.api.service.ForumService
 import flow.data.api.service.SearchService
-import flow.data.api.service.StoreService
 import flow.data.api.service.TopicService
 import flow.data.api.service.TorrentService
-import flow.data.impl.service.ConnectionServiceImpl
 import flow.data.impl.service.FavoritesServiceImpl
 import flow.data.impl.service.ForumServiceImpl
 import flow.data.impl.service.SearchServiceImpl
-import flow.data.impl.service.StoreServiceImpl
 import flow.data.impl.service.TopicServiceImpl
 import flow.data.impl.service.TorrentServiceImpl
 import javax.inject.Singleton
 
 /**
- * Hilt module for the data services. The repositories have moved to Koin
- * (repositoryModule); services consume them through the inverse-bridge in :app and
- * will migrate to Koin together with network:impl (their NetworkApi dependency).
+ * Hilt module for the network-backed data services (still on Hilt because they depend on
+ * NetworkApi/AuthService). Repositories and the Context-only services (Connection, Store)
+ * have moved to Koin; these migrate together with network:impl + auth.
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -38,15 +34,7 @@ internal interface DataModule {
 
     @Binds
     @Singleton
-    fun networkConnectionService(impl: ConnectionServiceImpl): ConnectionService
-
-    @Binds
-    @Singleton
     fun searchService(impl: SearchServiceImpl): SearchService
-
-    @Binds
-    @Singleton
-    fun storeService(impl: StoreServiceImpl): StoreService
 
     @Binds
     @Singleton

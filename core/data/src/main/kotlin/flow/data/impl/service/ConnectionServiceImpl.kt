@@ -7,7 +7,6 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
 import androidx.core.content.getSystemService
-import dagger.hilt.android.qualifiers.ApplicationContext
 import flow.data.api.service.ConnectionService
 import flow.dispatchers.api.Dispatchers
 import flow.logger.api.LoggerFactory
@@ -19,11 +18,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.URL
-import javax.inject.Inject
 import javax.net.ssl.HttpsURLConnection
 
-internal class ConnectionServiceImpl @Inject constructor(
-    @ApplicationContext context: Context,
+internal class ConnectionServiceImpl(
+    context: Context,
     private val dispatchers: Dispatchers,
     loggerFactory: LoggerFactory,
 ) : ConnectionService {
