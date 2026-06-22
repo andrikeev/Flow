@@ -1,17 +1,13 @@
 package flow.dispatchers.di
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import flow.dispatchers.api.Dispatchers
-import flow.dispatchers.impl.DispatchersImpl
-import javax.inject.Singleton
+import flow.dispatchers.api.createDispatchers
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal interface DispatchersModule {
-    @Binds
-    @Singleton
-    fun dispatchers(impl: DispatchersImpl): Dispatchers
+/**
+ * Koin module for [Dispatchers] — the target DI wiring for the multiplatform graph.
+ * On Android the same binding is bridged into Hilt until the app is migrated to Koin.
+ */
+val dispatchersModule = module {
+    single<Dispatchers> { createDispatchers() }
 }
