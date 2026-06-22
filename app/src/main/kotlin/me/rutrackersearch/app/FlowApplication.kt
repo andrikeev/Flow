@@ -3,6 +3,7 @@ package me.rutrackersearch.app
 import android.app.Application
 import android.os.StrictMode
 import dagger.hilt.android.HiltAndroidApp
+import flow.database.di.databaseModule
 import flow.dispatchers.di.dispatchersModule
 import flow.downloads.di.downloadsModule
 import flow.logger.di.loggerModule
@@ -29,6 +30,7 @@ class FlowApplication : Application() {
         startKoin {
             androidContext(this@FlowApplication)
             modules(
+                databaseModule,
                 dispatchersModule,
                 loggerModule,
                 preferencesModule,
