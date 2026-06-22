@@ -1,7 +1,6 @@
 package flow.network.domain
 
 import flow.network.model.Unauthorized
-import java.util.regex.Pattern
 
 internal object WithFormTokenUseCase {
 
@@ -17,14 +16,9 @@ internal object WithFormTokenUseCase {
         }
     }
 
-    private val formTokenRegex = Pattern.compile("form_token: '(.*)',")
+    private val formTokenRegex = Regex("form_token: '(.*)',")
 
     private fun parseFormToken(html: String): String {
-        val matcher = formTokenRegex.matcher(html)
-        return if (matcher.find()) {
-            matcher.group(1)
-        } else {
-            ""
-        }
+        return formTokenRegex.find(html)?.groupValues?.get(1) ?: ""
     }
 }

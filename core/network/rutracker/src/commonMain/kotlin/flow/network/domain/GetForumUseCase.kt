@@ -3,7 +3,7 @@ package flow.network.domain
 import flow.network.api.RuTrackerInnerApi
 import flow.network.dto.forum.CategoryDto
 import flow.network.dto.forum.ForumDto
-import org.jsoup.Jsoup
+import com.fleeksoft.ksoup.Ksoup
 
 internal class GetForumUseCase(private val api: RuTrackerInnerApi) {
 
@@ -16,7 +16,7 @@ internal class GetForumUseCase(private val api: RuTrackerInnerApi) {
 
     companion object {
         private fun parseForumTree(html: String): ForumDto {
-            val doc = Jsoup.parse(html)
+            val doc = Ksoup.parse(html)
             val categories = mutableListOf<CategoryDto>()
             val treeRoots = doc.select(".tree-root")
             treeRoots.forEach { categoryElement ->

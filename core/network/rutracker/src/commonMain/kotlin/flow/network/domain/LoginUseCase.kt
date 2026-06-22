@@ -6,7 +6,6 @@ import flow.network.dto.auth.CaptchaDto
 import flow.network.dto.auth.UserDto
 import flow.network.model.NoData
 import flow.network.model.Unknown
-import java.util.regex.Pattern
 
 internal class LoginUseCase(
     private val api: RuTrackerInnerApi,
@@ -51,19 +50,19 @@ internal class LoginUseCase(
     }
 
     private object ParseCaptchaUseCase {
-        private val codeRegex = Pattern.compile("<input[^>]*name=\"(cap_code_[^\"]+)\"[^>]*>")
-        private val sidRegex = Pattern.compile("<input[^>]*name=\"cap_sid\"[^>]*value=\"([^\"]+)\"[^>]*>")
-        private val urlRegex = Pattern.compile("<img[^>]*src=\"([^\"]+/captcha/[^\"]+)\"[^>]*>")
+        private val codeRegex = Regex("<input[^>]*name=\"(cap_code_[^\"]+)\"[^>]*>")
+        private val sidRegex = Regex("<input[^>]*name=\"cap_sid\"[^>]*value=\"([^\"]+)\"[^>]*>")
+        private val urlRegex = Regex("<img[^>]*src=\"([^\"]+/captcha/[^\"]+)\"[^>]*>")
 
         operator fun invoke(from: String): CaptchaDto? {
-            val codeMatcher = codeRegex.matcher(from)
-            val sidMatcher = sidRegex.matcher(from)
-            val urlMatcher = urlRegex.matcher(from)
-            return if (codeMatcher.find() && sidMatcher.find() && urlMatcher.find()) {
-                val captchaUrl = urlMatcher.group(1).let { url ->
+            val codeMatch = codeRegex.find(from)
+            val sidMatch = sidRegex.find(from)
+            val urlMatch = urlRegex.find(from)
+            return if (codeMatch != null && sidMatch != null && urlMatch != null) {
+                val captchaUrl = urlMatch.groupValues[1].let { url ->
                     url.takeIf { it.contains("http") } ?: "https://${url.trim('/')}"
                 }
-                CaptchaDto(sidMatcher.group(1), codeMatcher.group(1), captchaUrl)
+                CaptchaDto(sidMatch.groupValues[1], codeMatch.groupValues[1], captchaUrl)
             } else {
                 null
             }

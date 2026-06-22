@@ -1,7 +1,7 @@
 package flow.network.domain
 
 import flow.network.dto.topic.TorrentStatusDto
-import org.jsoup.nodes.Element
+import com.fleeksoft.ksoup.nodes.Element
 
 internal object ParseTorrentStatusUseCase {
     operator fun invoke(element: Element?): TorrentStatusDto? {

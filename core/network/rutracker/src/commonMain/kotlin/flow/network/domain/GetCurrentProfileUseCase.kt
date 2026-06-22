@@ -2,7 +2,7 @@ package flow.network.domain
 
 import flow.network.api.RuTrackerInnerApi
 import flow.network.dto.user.ProfileDto
-import org.jsoup.Jsoup
+import com.fleeksoft.ksoup.Ksoup
 
 internal class GetCurrentProfileUseCase(
     private val api: RuTrackerInnerApi,
@@ -14,7 +14,7 @@ internal class GetCurrentProfileUseCase(
 
     companion object {
         private fun parseUserId(html: String): String {
-            return Jsoup.parse(html)
+            return Ksoup.parse(html)
                 .select("#logged-in-username")
                 .queryParam("u")
         }

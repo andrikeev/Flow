@@ -1,10 +1,23 @@
 plugins {
-    id("flow.kotlin.library")
+    id("flow.kmp.library")
 }
 
-dependencies {
-    api(project(":core:network:api"))
+kotlin {
+    sourceSets {
+        // Charset/HTTP-specific code (Windows-1251 form encoding via java.net.URLEncoder)
+        // is shared by Android and JVM only; native engines are handled in a later stage.
+        val nonNativeMain by creating {
+            dependsOn(commonMain.get())
+            dependencies {
+                implementation(libs.ktor.client.core)
+            }
+        }
+        androidMain.get().dependsOn(nonNativeMain)
+        jvmMain.get().dependsOn(nonNativeMain)
 
-    implementation(libs.ktor.client.core)
-    implementation(libs.jsoup)
+        commonMain.dependencies {
+            api(project(":core:network:api"))
+            implementation(libs.ksoup)
+        }
+    }
 }

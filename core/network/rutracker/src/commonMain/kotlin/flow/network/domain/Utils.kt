@@ -1,11 +1,10 @@
 package flow.network.domain
 
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
-import java.net.URI
-import java.util.regex.Pattern
+import com.fleeksoft.ksoup.nodes.Element
+import com.fleeksoft.ksoup.select.Elements
 import kotlin.math.ln
 import kotlin.math.pow
+import kotlin.math.roundToInt
 
 internal fun Element?.toInt(default: Int = 0): Int {
     return this?.text()?.toIntOrNull() ?: default
@@ -88,8 +87,9 @@ internal fun getTitle(titleWithTags: String): String {
 
 internal fun getTags(titleWithTags: String): String {
     val stringBuilder = StringBuilder()
-    val matcher = Pattern.compile("(\\[[^]]*])").matcher(titleWithTags)
-    while (matcher.find()) stringBuilder.append(matcher.group(1), ' ')
+    Regex("(\\[[^]]*])").findAll(titleWithTags).forEach { match ->
+        stringBuilder.append(match.groupValues[1]).append(' ')
+    }
     return stringBuilder.toString()
 }
 
@@ -99,12 +99,16 @@ internal fun formatSize(sizeBytes: Long): String {
     }
     val exp = (ln(sizeBytes.toDouble()) / ln(1024.0)).toInt()
     val pre = "KMGTPE"[exp - 1].toString()
-    return String.format("%.1f %sB", sizeBytes / 1024.0.pow(exp.toDouble()), pre)
+    val value = sizeBytes / 1024.0.pow(exp.toDouble())
+    // Mimics "%.1f" formatting without the JVM-only String.format.
+    val scaled = (value * 10).roundToInt()
+    return "${scaled / 10}.${scaled % 10} ${pre}B"
 }
 
-private fun parseUrl(url: String) = runCatching {
-    URI.create(url)
-        .query.split("&")
+private fun parseUrl(url: String): Map<String, List<String>> = runCatching {
+    url.substringAfter('?', "")
+        .split("&")
+        .filter(String::isNotEmpty)
         .associate { queryParam ->
             val split = queryParam.split("=")
             split[0] to split.drop(1)

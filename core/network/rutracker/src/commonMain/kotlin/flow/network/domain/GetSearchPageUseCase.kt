@@ -9,7 +9,7 @@ import flow.network.dto.search.SearchSortTypeDto
 import flow.network.dto.topic.AuthorDto
 import flow.network.dto.topic.TorrentDto
 import flow.network.dto.topic.TorrentStatusDto
-import org.jsoup.Jsoup
+import com.fleeksoft.ksoup.Ksoup
 
 internal class GetSearchPageUseCase(
     private val api: RuTrackerInnerApi,
@@ -48,7 +48,7 @@ internal class GetSearchPageUseCase(
 
     companion object {
         fun parseSearchPage(html: String): SearchPageDto {
-            val doc = Jsoup.parse(html)
+            val doc = Ksoup.parse(html)
             val navigation =
                 doc.select("#main_content_wrap > div.bottom_info > div.nav > p:nth-child(1)")
             val currentPage = navigation.select("b:nth-child(1)").toInt(1)

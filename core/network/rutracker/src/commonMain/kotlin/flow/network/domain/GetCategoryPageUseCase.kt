@@ -10,7 +10,7 @@ import flow.network.dto.topic.TopicDto
 import flow.network.dto.topic.TorrentDto
 import flow.network.model.Forbidden
 import flow.network.model.NotFound
-import org.jsoup.Jsoup
+import com.fleeksoft.ksoup.Ksoup
 
 internal class GetCategoryPageUseCase(private val api: RuTrackerInnerApi) {
 
@@ -35,7 +35,7 @@ internal class GetCategoryPageUseCase(private val api: RuTrackerInnerApi) {
         }
 
         private fun parseCategoryPage(html: String, forumId: String): CategoryPageDto {
-            val doc = Jsoup.parse(html)
+            val doc = Ksoup.parse(html)
             val currentPage = doc.select("#pagination > p:nth-child(1) > b:nth-child(1)").toInt(1)
             val totalPages = doc.select("#pagination > p:nth-child(1) > b:nth-child(2)").toInt(1)
             val forumName = doc.select(".maintitle").toStr()

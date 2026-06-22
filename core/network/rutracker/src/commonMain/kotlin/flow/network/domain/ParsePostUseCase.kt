@@ -23,11 +23,10 @@ import flow.network.dto.topic.Text
 import flow.network.dto.topic.TextAlignment
 import flow.network.dto.topic.UList
 import flow.network.dto.topic.Underscore
-import org.jsoup.nodes.Element
-import org.jsoup.nodes.Node
-import org.jsoup.nodes.TextNode
-import org.jsoup.select.Elements
-import java.util.Locale
+import com.fleeksoft.ksoup.nodes.Element
+import com.fleeksoft.ksoup.nodes.Node
+import com.fleeksoft.ksoup.nodes.TextNode
+import com.fleeksoft.ksoup.select.Elements
 
 private typealias ElementsList = MutableList<PostElementDto>
 
@@ -104,9 +103,9 @@ internal object ParsePostUseCase {
                     appendElement(node.selectFirst(".q"))
                 }
 
-                node.hasClass("post-hr") || node.tag().name == "hr" -> hr()
+                node.hasClass("post-hr") || node.tagName() == "hr" -> hr()
                 node.hasClass("post-br") -> postBr()
-                node.tag().name == "br" -> br()
+                node.tagName() == "br" -> br()
                 else -> appendElement(node)
             }
 
@@ -210,7 +209,7 @@ internal object ParsePostUseCase {
                         TextAlignment.valueOf(
                             styles.getValue("text-align").replaceFirstChar {
                                 if (it.isLowerCase()) {
-                                    it.titlecase(Locale.getDefault())
+                                    it.titlecase()
                                 } else {
                                     it.toString()
                                 }
