@@ -11,15 +11,11 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import dagger.hilt.android.qualifiers.ApplicationContext
 import flow.models.forum.Category
 import flow.models.topic.Topic
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-internal class NotificationServiceImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
+internal class NotificationServiceImpl(
+    private val context: Context,
 ) : NotificationService {
 
     private val notificationManager = NotificationManagerCompat.from(context)

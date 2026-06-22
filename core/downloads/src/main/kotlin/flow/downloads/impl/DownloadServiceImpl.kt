@@ -18,17 +18,15 @@ import android.os.Build
 import android.os.Environment.DIRECTORY_DOWNLOADS
 import android.os.StrictMode
 import androidx.core.content.getSystemService
-import dagger.hilt.android.qualifiers.ApplicationContext
 import flow.downloads.api.DownloadRequest
 import flow.downloads.api.DownloadService
 import java.io.File
 import java.net.URI
-import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class DownloadServiceImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
+internal class DownloadServiceImpl(
+    private val context: Context,
 ) : DownloadService {
     private val cache = mutableMapOf<String, String>()
 
