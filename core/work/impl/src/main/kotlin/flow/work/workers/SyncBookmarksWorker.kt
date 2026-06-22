@@ -13,5 +13,6 @@ internal class SyncBookmarksWorker(
     private val notificationService: NotificationService,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork() = runCatching({ syncBookmarksUseCase() })
+
     override suspend fun getForegroundInfo() = notificationService.createForegroundInfo()
 }

@@ -13,5 +13,6 @@ internal class LoadFavoritesWorker(
     private val notificationService: NotificationService,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result = runCatching({ loadFavoritesUseCase() })
+
     override suspend fun getForegroundInfo() = notificationService.createForegroundInfo()
 }

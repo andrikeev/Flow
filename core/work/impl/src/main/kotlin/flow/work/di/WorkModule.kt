@@ -4,6 +4,7 @@ import androidx.work.WorkManager
 import flow.work.api.BackgroundService
 import flow.work.impl.WorkBackgroundService
 import flow.work.workers.AddFavoriteWorker
+import flow.work.workers.DelegatingWorker
 import flow.work.workers.LoadFavoritesWorker
 import flow.work.workers.RemoveFavoriteWorker
 import flow.work.workers.SyncBookmarksWorker
@@ -20,14 +21,18 @@ import org.koin.dsl.module
  * KoinWorkerFactory (set up in :app), which supplies Context/WorkerParameters and resolves
  * the remaining constructor dependencies (domain use cases, NotificationService) from Koin.
  */
-val workModule = module {
-    single { WorkManager.getInstance(androidContext()) }
-    singleOf(::WorkBackgroundService) bind BackgroundService::class
+val workModule =
+    module {
+        single { WorkManager.getInstance(androidContext()) }
+        singleOf(::WorkBackgroundService) bind BackgroundService::class
 
-    workerOf(::AddFavoriteWorker)
-    workerOf(::LoadFavoritesWorker)
-    workerOf(::RemoveFavoriteWorker)
-    workerOf(::SyncBookmarksWorker)
-    workerOf(::SyncFavoritesWorker)
-    workerOf(::UpdateBookmarkWorker)
-}
+        workerOf(::AddFavoriteWorker)
+        // Compatibility: services periodic specs persisted by older builds that targeted
+        // DelegatingWorker. Safe to drop one release after the Koin migration ships.
+        workerOf(::DelegatingWorker)
+        workerOf(::LoadFavoritesWorker)
+        workerOf(::RemoveFavoriteWorker)
+        workerOf(::SyncBookmarksWorker)
+        workerOf(::SyncFavoritesWorker)
+        workerOf(::UpdateBookmarkWorker)
+    }
