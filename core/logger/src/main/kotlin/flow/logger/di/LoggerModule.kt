@@ -1,17 +1,13 @@
 package flow.logger.di
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import flow.logger.api.LoggerFactory
-import flow.logger.impl.LoggerFactoryImpl
-import javax.inject.Singleton
+import flow.logger.api.createLoggerFactory
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal interface LoggerModule {
-    @Binds
-    @Singleton
-    fun loggerFactory(impl: LoggerFactoryImpl): LoggerFactory
+/**
+ * Koin module for [LoggerFactory] — the target DI wiring for the multiplatform graph.
+ * On Android the same binding is bridged into Hilt until the app is migrated to Koin.
+ */
+val loggerModule = module {
+    single<LoggerFactory> { createLoggerFactory() }
 }
