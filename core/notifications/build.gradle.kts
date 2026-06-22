@@ -9,4 +9,7 @@ android {
 dependencies {
     implementation(project(":core:models"))
     implementation(project(":core:designsystem"))
+
+    // androidx.core (NotificationCompat etc.) was previously transitive via hilt-android.
+    implementation(libs.androidx.core.ktx)
 }
