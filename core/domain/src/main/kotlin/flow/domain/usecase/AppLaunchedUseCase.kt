@@ -3,11 +3,10 @@ package flow.domain.usecase
 import flow.data.api.repository.RatingRepository
 import flow.dispatchers.api.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 interface AppLaunchedUseCase : suspend () -> Unit
 
-internal class AppLaunchedUseCaseImpl @Inject constructor(
+internal class AppLaunchedUseCaseImpl(
     private val ratingRepository: RatingRepository,
     private val dispatchers: Dispatchers,
 ) : AppLaunchedUseCase {

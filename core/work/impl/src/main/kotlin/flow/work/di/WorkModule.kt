@@ -1,27 +1,33 @@
 package flow.work.di
 
-import android.content.Context
 import androidx.work.WorkManager
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import flow.work.api.BackgroundService
 import flow.work.impl.WorkBackgroundService
-import javax.inject.Singleton
+import flow.work.workers.AddFavoriteWorker
+import flow.work.workers.LoadFavoritesWorker
+import flow.work.workers.RemoveFavoriteWorker
+import flow.work.workers.SyncBookmarksWorker
+import flow.work.workers.SyncFavoritesWorker
+import flow.work.workers.UpdateBookmarkWorker
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.workmanager.dsl.workerOf
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal interface WorkModule {
-    @Binds
-    @Singleton
-    fun backgroundService(impl: WorkBackgroundService): BackgroundService
+/**
+ * Koin module for the background work scheduler and workers. Workers are created by the
+ * KoinWorkerFactory (set up in :app), which supplies Context/WorkerParameters and resolves
+ * the remaining constructor dependencies (domain use cases, NotificationService) from Koin.
+ */
+val workModule = module {
+    single { WorkManager.getInstance(androidContext()) }
+    singleOf(::WorkBackgroundService) bind BackgroundService::class
 
-    companion object {
-        @Provides
-        @Singleton
-        fun workManager(@ApplicationContext context: Context): WorkManager = WorkManager.getInstance(context)
-    }
+    workerOf(::AddFavoriteWorker)
+    workerOf(::LoadFavoritesWorker)
+    workerOf(::RemoveFavoriteWorker)
+    workerOf(::SyncBookmarksWorker)
+    workerOf(::SyncFavoritesWorker)
+    workerOf(::UpdateBookmarkWorker)
 }

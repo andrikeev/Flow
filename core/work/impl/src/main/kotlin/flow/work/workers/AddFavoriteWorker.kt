@@ -1,20 +1,16 @@
 package flow.work.workers
 
 import android.content.Context
-import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import flow.domain.usecase.AddRemoteFavoriteUseCase
 import flow.domain.usecase.RemoveLocalFavoriteUseCase
 import flow.notifications.NotificationService
 
-@HiltWorker
-internal class AddFavoriteWorker @AssistedInject constructor(
-    @Assisted appContext: Context,
-    @Assisted workerParams: WorkerParameters,
+internal class AddFavoriteWorker(
+    appContext: Context,
+    workerParams: WorkerParameters,
     private val addRemoteFavoriteUseCase: AddRemoteFavoriteUseCase,
     private val removeLocalFavoriteUseCase: RemoveLocalFavoriteUseCase,
     private val notificationService: NotificationService,

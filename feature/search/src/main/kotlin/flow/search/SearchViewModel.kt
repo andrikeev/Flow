@@ -1,7 +1,6 @@
 package flow.search
 
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.model.search.isEmpty
 import flow.domain.usecase.ObserveAuthStateUseCase
 import flow.domain.usecase.ObserveSearchHistoryUseCase
@@ -15,10 +14,8 @@ import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import javax.inject.Inject
 
-@HiltViewModel
-internal class SearchViewModel @Inject constructor(
+internal class SearchViewModel(
     private val observeAuthStateUseCase: ObserveAuthStateUseCase,
     private val observeSearchHistoryUseCase: ObserveSearchHistoryUseCase,
     private val removeSearchHistoryUseCase: RemoveSearchHistoryUseCase,

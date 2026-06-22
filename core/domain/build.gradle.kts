@@ -1,6 +1,5 @@
 plugins {
     id("flow.android.library")
-    id("flow.android.hilt")
 }
 
 android {
@@ -19,7 +18,7 @@ dependencies {
     implementation(project(":core:notifications"))
     implementation(project(":core:work:api"))
 
-    implementation(libs.javax.inject)
+    implementation(libs.koin)
     implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(project(":core:testing"))

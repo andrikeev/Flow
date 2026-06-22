@@ -16,52 +16,37 @@ import androidx.work.WorkRequest
 import flow.models.settings.SyncPeriod
 import flow.work.api.BackgroundService
 import flow.work.workers.AddFavoriteWorker
-import flow.work.workers.DelegatingWorker
 import flow.work.workers.LoadFavoritesWorker
 import flow.work.workers.RemoveFavoriteWorker
 import flow.work.workers.SyncBookmarksWorker
 import flow.work.workers.SyncFavoritesWorker
 import flow.work.workers.UpdateBookmarkWorker
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
-internal class WorkBackgroundService @Inject constructor(
+internal class WorkBackgroundService(
     private val workManager: WorkManager,
 ) : BackgroundService {
     override suspend fun addFavoriteTopic(id: String) {
-        val data = DelegatingWorker.delegateData(
-            AddFavoriteWorker::class,
-            AddFavoriteWorker.workerData(id),
-        )
-        val workRequest = oneTimeWorkRequest<DelegatingWorker>(AddFavoriteWork, data)
+        val workRequest = oneTimeWorkRequest<AddFavoriteWorker>(AddFavoriteWork, dataOf(AddFavoriteWorker.workerData(id)))
         workManager.enqueueUniqueWork(id, ExistingWorkPolicy.REPLACE, workRequest)
     }
 
     override suspend fun removeFavoriteTopic(id: String) {
-        val data = DelegatingWorker.delegateData(
-            RemoveFavoriteWorker::class,
-            RemoveFavoriteWorker.workerData(id),
-        )
-        val workRequest = oneTimeWorkRequest<DelegatingWorker>(RemoveFavoriteWork, data)
+        val workRequest = oneTimeWorkRequest<RemoveFavoriteWorker>(RemoveFavoriteWork, dataOf(RemoveFavoriteWorker.workerData(id)))
         workManager.enqueueUniqueWork(id, ExistingWorkPolicy.REPLACE, workRequest)
     }
 
     override suspend fun updateBookmark(id: String) {
-        val data = DelegatingWorker.delegateData(
-            UpdateBookmarkWorker::class,
-            UpdateBookmarkWorker.workerData(id),
-        )
-        val workRequest = oneTimeWorkRequest<DelegatingWorker>(UpdateBookmarkWork, data)
+        val workRequest = oneTimeWorkRequest<UpdateBookmarkWorker>(UpdateBookmarkWork, dataOf(UpdateBookmarkWorker.workerData(id)))
         workManager.enqueueUniqueWork(id, ExistingWorkPolicy.REPLACE, workRequest)
     }
 
     override suspend fun loadFavorites() {
-        val data = DelegatingWorker.delegateData(LoadFavoritesWorker::class)
-        val workRequest = oneTimeWorkRequest<DelegatingWorker>(LoadFavoritesWork, data)
+        val workRequest = oneTimeWorkRequest<LoadFavoritesWorker>(LoadFavoritesWork)
         workManager.enqueueUniqueWork(LoadFavoritesWork, ExistingWorkPolicy.REPLACE, workRequest)
     }
 
@@ -69,8 +54,7 @@ internal class WorkBackgroundService @Inject constructor(
         if (syncPeriod == SyncPeriod.OFF) {
             workManager.cancelUniqueWork(SyncFavoritesWork)
         } else {
-            val data = DelegatingWorker.delegateData(SyncFavoritesWorker::class)
-            val workRequest = periodicWorkRequest<DelegatingWorker>(SyncFavoritesWork, syncPeriod, data)
+            val workRequest = periodicWorkRequest<SyncFavoritesWorker>(SyncFavoritesWork, syncPeriod)
             workManager.enqueueUniquePeriodicWork(
                 SyncFavoritesWork,
                 ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
@@ -83,8 +67,7 @@ internal class WorkBackgroundService @Inject constructor(
         if (syncPeriod == SyncPeriod.OFF) {
             workManager.cancelUniqueWork(SyncBookmarksWork)
         } else {
-            val data = DelegatingWorker.delegateData(SyncBookmarksWorker::class)
-            val workRequest = periodicWorkRequest<DelegatingWorker>(SyncBookmarksWork, syncPeriod, data)
+            val workRequest = periodicWorkRequest<SyncBookmarksWorker>(SyncBookmarksWork, syncPeriod)
             workManager.enqueueUniquePeriodicWork(
                 SyncBookmarksWork,
                 ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
@@ -141,6 +124,8 @@ internal class WorkBackgroundService @Inject constructor(
                 TimeUnit.MILLISECONDS,
             )
         }.build()
+
+        fun dataOf(block: Data.Builder.() -> Unit): Data = Data.Builder().apply(block).build()
 
         fun requiredNetworkConstraints(): Constraints {
             return Constraints.Builder()

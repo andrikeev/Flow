@@ -5,9 +5,8 @@ import flow.data.api.service.TorrentService
 import flow.data.converters.toTorrent
 import flow.models.topic.Torrent
 import flow.network.api.NetworkApi
-import javax.inject.Inject
 
-class TorrentServiceImpl @Inject constructor(
+class TorrentServiceImpl(
     private val networkApi: NetworkApi,
     private val tokenProvider: TokenProvider,
 ) : TorrentService {

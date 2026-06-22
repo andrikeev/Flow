@@ -7,9 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
-import javax.inject.Inject
 
-class ObserveVisitedUseCase @Inject constructor(
+class ObserveVisitedUseCase(
     private val visitedRepository: VisitedRepository,
     private val enrichTopicsUseCase: EnrichTopicsUseCase,
 ) {

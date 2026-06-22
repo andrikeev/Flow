@@ -6,9 +6,8 @@ import flow.downloads.api.DownloadRequest
 import flow.downloads.api.DownloadService
 import flow.network.data.NetworkApiRepository
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class DownloadTorrentUseCase @Inject constructor(
+class DownloadTorrentUseCase(
     private val networkApiRepository: NetworkApiRepository,
     private val downloadService: DownloadService,
     private val tokenProvider: TokenProvider,

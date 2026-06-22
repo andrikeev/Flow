@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.designsystem.component.Body
 import flow.designsystem.component.BodyLarge
 import flow.designsystem.component.Surface
@@ -32,10 +31,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-internal class ConnectionViewModel @Inject constructor(
+internal class ConnectionViewModel(
     observeEndpointStatusUseCase: ObserveEndpointStatusUseCase,
     observeSettingsUseCase: ObserveSettingsUseCase,
     private val setProxyUseCase: SetProxyUseCase,

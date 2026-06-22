@@ -11,9 +11,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
 
-class ObserveTopicPagingDataUseCase @Inject constructor(
+class ObserveTopicPagingDataUseCase(
     private val topicService: TopicService,
     private val loggerFactory: LoggerFactory,
 ) {

@@ -3,9 +3,8 @@ package flow.domain.usecase
 import flow.data.api.service.TopicService
 import flow.dispatchers.api.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class AddCommentUseCase @Inject constructor(
+class AddCommentUseCase(
     private val topicService: TopicService,
     private val dispatchers: Dispatchers,
 ) {

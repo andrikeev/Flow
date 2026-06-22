@@ -4,9 +4,8 @@ import flow.data.api.repository.BookmarksRepository
 import flow.dispatchers.api.Dispatchers
 import flow.work.api.BackgroundService
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class ToggleBookmarkUseCase @Inject constructor(
+class ToggleBookmarkUseCase(
     private val bookmarksRepository: BookmarksRepository,
     private val backgroundService: BackgroundService,
     private val getCategoryUseCase: GetCategoryUseCase,

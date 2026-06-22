@@ -8,9 +8,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class ObserveSearchHistoryUseCase @Inject constructor(
+class ObserveSearchHistoryUseCase(
     private val searchHistoryRepository: SearchHistoryRepository,
     private val favoriteSearchRepository: FavoriteSearchRepository,
     private val dispatchers: Dispatchers,

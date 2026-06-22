@@ -4,9 +4,8 @@ import flow.data.api.repository.BookmarksRepository
 import flow.models.forum.CategoryModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import javax.inject.Inject
 
-class ObserveCategoryModelUseCase @Inject constructor(
+class ObserveCategoryModelUseCase(
     private val getCategoryUseCase: GetCategoryUseCase,
     private val bookmarksRepository: BookmarksRepository,
 ) {

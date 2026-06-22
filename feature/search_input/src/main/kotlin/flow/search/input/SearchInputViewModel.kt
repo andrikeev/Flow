@@ -4,10 +4,6 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.common.newCancelableScope
 import flow.common.relaunch
 import flow.domain.usecase.AddSuggestUseCase
@@ -20,9 +16,8 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 
-@HiltViewModel(assistedFactory = SearchInputViewModel.Factory::class)
-internal class SearchInputViewModel @AssistedInject constructor(
-    @Assisted private val filter: Filter,
+internal class SearchInputViewModel(
+    private val filter: Filter,
     private val observeSuggestsUseCase: ObserveSuggestsUseCase,
     private val saveSuggestUseCase: AddSuggestUseCase,
     loggerFactory: LoggerFactory,
@@ -30,10 +25,6 @@ internal class SearchInputViewModel @AssistedInject constructor(
     private val logger = loggerFactory.get("SearchInputViewModel")
     private val observeSuggestsScope = viewModelScope.newCancelableScope()
 
-    @AssistedFactory
-    interface Factory {
-        fun create(filter: Filter): SearchInputViewModel
-    }
 
     override val container: Container<SearchInputState, SearchInputSideEffect> = container(
         initialState = SearchInputState(),

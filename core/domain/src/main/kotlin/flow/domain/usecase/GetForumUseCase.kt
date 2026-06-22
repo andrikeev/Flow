@@ -4,9 +4,8 @@ import flow.data.api.repository.ForumRepository
 import flow.dispatchers.api.Dispatchers
 import flow.models.forum.Forum
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class GetForumUseCase @Inject constructor(
+class GetForumUseCase(
     private val ensureForumLoadUseCase: EnsureForumLoadUseCase,
     private val forumRepository: ForumRepository,
     private val dispatchers: Dispatchers,

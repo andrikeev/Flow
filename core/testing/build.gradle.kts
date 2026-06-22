@@ -1,7 +1,6 @@
 plugins {
     id("flow.android.library")
     id("flow.android.library.compose")
-    id("flow.android.hilt")
 }
 
 android {

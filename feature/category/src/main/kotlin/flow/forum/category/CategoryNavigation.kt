@@ -17,9 +17,7 @@ fun EntryProviderScope<NavKey>.addCategory(
 ) {
     entry<CategoryRoute> { key ->
         CategoryScreen(
-            viewModel = viewModel<CategoryViewModel, CategoryViewModel.Factory> { factory ->
-                factory.create(key.id)
-            },
+            viewModel = viewModel<CategoryViewModel>(key.id),
             back = back,
             openCategory = openCategory,
             openLogin = openLogin,

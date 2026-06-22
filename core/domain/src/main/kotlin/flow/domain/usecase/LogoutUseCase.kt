@@ -9,11 +9,10 @@ import flow.data.api.repository.VisitedRepository
 import flow.dispatchers.api.Dispatchers
 import flow.work.api.BackgroundService
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 interface LogoutUseCase : suspend () -> Unit
 
-internal class LogoutUseCaseImpl @Inject constructor(
+internal class LogoutUseCaseImpl(
     private val authService: AuthService,
     private val backgroundService: BackgroundService,
     private val bookmarksRepository: BookmarksRepository,

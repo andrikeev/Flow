@@ -6,9 +6,8 @@ import flow.data.api.service.FavoritesService
 import flow.data.converters.toFavorites
 import flow.models.topic.Topic
 import flow.network.api.NetworkApi
-import javax.inject.Inject
 
-class FavoritesServiceImpl @Inject constructor(
+class FavoritesServiceImpl(
     private val authService: AuthService,
     private val tokenProvider: TokenProvider,
     private val networkApi: NetworkApi,

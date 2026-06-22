@@ -7,9 +7,8 @@ import flow.models.auth.Captcha
 import flow.network.data.NetworkApiRepository
 import flow.work.api.BackgroundService
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class LoginUseCase @Inject constructor(
+class LoginUseCase(
     private val authService: AuthService,
     private val backgroundService: BackgroundService,
     private val networkApiRepository: NetworkApiRepository,

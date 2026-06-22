@@ -1,7 +1,6 @@
 package flow.forum
 
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.common.runSuspendCatching
 import flow.domain.usecase.GetForumUseCase
 import flow.logger.api.LoggerFactory
@@ -10,10 +9,8 @@ import kotlinx.coroutines.coroutineScope
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import javax.inject.Inject
 
-@HiltViewModel
-internal class ForumViewModel @Inject constructor(
+internal class ForumViewModel(
     private val getForumUseCase: GetForumUseCase,
     loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<ForumState, ForumSideEffect> {

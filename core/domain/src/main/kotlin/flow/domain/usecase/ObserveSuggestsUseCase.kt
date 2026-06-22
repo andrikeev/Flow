@@ -4,9 +4,8 @@ import flow.data.api.repository.SuggestsRepository
 import flow.models.search.Suggest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class ObserveSuggestsUseCase @Inject constructor(
+class ObserveSuggestsUseCase(
     private val suggestsRepository: SuggestsRepository,
 ) {
     operator fun invoke(query: String): Flow<List<Suggest>> {

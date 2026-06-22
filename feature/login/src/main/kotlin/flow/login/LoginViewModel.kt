@@ -2,7 +2,6 @@ package flow.login
 
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.LoginUseCase
 import flow.domain.usecase.ValidateInputUseCase
 import flow.logger.api.LoggerFactory
@@ -10,10 +9,8 @@ import flow.models.auth.AuthResult
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import javax.inject.Inject
 
-@HiltViewModel
-internal class LoginViewModel @Inject constructor(
+internal class LoginViewModel(
     private val loginUseCase: LoginUseCase,
     private val validateInputUseCase: ValidateInputUseCase,
     loggerFactory: LoggerFactory,

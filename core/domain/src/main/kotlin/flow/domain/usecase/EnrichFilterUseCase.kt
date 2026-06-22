@@ -3,9 +3,8 @@ package flow.domain.usecase
 import flow.dispatchers.api.Dispatchers
 import flow.models.search.Filter
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class EnrichFilterUseCase @Inject constructor(
+class EnrichFilterUseCase(
     private val getCategoryUseCase: GetCategoryUseCase,
     private val dispatchers: Dispatchers,
 ) {

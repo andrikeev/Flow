@@ -3,9 +3,8 @@ package flow.domain.usecase
 import flow.data.api.repository.SuggestsRepository
 import flow.dispatchers.api.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class AddSuggestUseCase @Inject constructor(
+class AddSuggestUseCase(
     private val suggestsRepository: SuggestsRepository,
     private val dispatchers: Dispatchers,
 ) {

@@ -6,9 +6,8 @@ import flow.dispatchers.api.Dispatchers
 import flow.models.topic.Topic
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class LoadFavoritesUseCase @Inject constructor(
+class LoadFavoritesUseCase(
     private val favoritesService: FavoritesService,
     private val favoritesRepository: FavoritesRepository,
     private val dispatchers: Dispatchers,

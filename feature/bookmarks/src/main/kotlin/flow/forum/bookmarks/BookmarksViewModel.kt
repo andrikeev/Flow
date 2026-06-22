@@ -1,17 +1,14 @@
 package flow.forum.bookmarks
 
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.ObserveBookmarksUseCase
 import flow.logger.api.LoggerFactory
 import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import javax.inject.Inject
 
-@HiltViewModel
-internal class BookmarksViewModel @Inject constructor(
+internal class BookmarksViewModel(
     private val observeBookmarksUseCase: ObserveBookmarksUseCase,
     loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<BookmarksState, BookmarksSideEffect> {

@@ -6,11 +6,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
-import javax.inject.Inject
 
 interface ObserveRatingRequestUseCase : suspend () -> Flow<RatingRequest>
 
-internal class ObserveRatingRequestUseCaseImpl @Inject constructor(
+internal class ObserveRatingRequestUseCaseImpl(
     private val observeSearchHistoryUseCase: ObserveSearchHistoryUseCase,
     private val observeVisitedUseCase: ObserveVisitedUseCase,
     private val observeBookmarksUseCase: ObserveBookmarksUseCase,

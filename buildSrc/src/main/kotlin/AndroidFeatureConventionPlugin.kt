@@ -12,7 +12,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
         with(target) {
             pluginManager.apply {
                 apply("flow.android.library")
-                apply("flow.android.hilt")
                 apply("flow.kotlin.serialization")
             }
 
@@ -38,6 +37,8 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
 
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewModel.compose").get())
                 add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
+
+                add("implementation", libs.findLibrary("koin.android").get())
 
                 add("implementation", libs.findBundle("orbit").get())
 

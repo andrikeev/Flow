@@ -1,7 +1,6 @@
 package flow.rating
 
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.model.rating.RatingRequest
 import flow.domain.usecase.AppLaunchedUseCase
 import flow.domain.usecase.DisableRatingRequestUseCase
@@ -13,10 +12,8 @@ import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import javax.inject.Inject
 
-@HiltViewModel
-class RatingViewModel @Inject constructor(
+class RatingViewModel(
     private val appLaunchedUseCase: AppLaunchedUseCase,
     private val disableRatingRequestUseCase: DisableRatingRequestUseCase,
     private val getRatingStoreUseCase: GetRatingStoreUseCase,

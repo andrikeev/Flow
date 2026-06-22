@@ -4,11 +4,10 @@ import flow.data.api.service.StoreService
 import flow.dispatchers.api.Dispatchers
 import flow.models.Store
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 interface GetRatingStoreUseCase : suspend () -> Store
 
-internal class GetRatingStoreUseCaseImpl @Inject constructor(
+internal class GetRatingStoreUseCaseImpl(
     private val storeService: StoreService,
     private val dispatchers: Dispatchers,
 ) : GetRatingStoreUseCase {

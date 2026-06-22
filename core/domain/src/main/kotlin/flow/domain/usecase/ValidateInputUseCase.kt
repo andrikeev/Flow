@@ -1,8 +1,7 @@
 package flow.domain.usecase
 
-import javax.inject.Inject
 
-class ValidateInputUseCase @Inject constructor() {
+class ValidateInputUseCase() {
     operator fun invoke(text: String): Boolean {
         return text.isNotBlank()
     }

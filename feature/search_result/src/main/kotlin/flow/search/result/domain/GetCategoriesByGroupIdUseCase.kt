@@ -4,9 +4,8 @@ import flow.dispatchers.api.Dispatchers
 import flow.domain.usecase.GetForumUseCase
 import flow.models.forum.Category
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-internal class GetCategoriesByGroupIdUseCase @Inject constructor(
+internal class GetCategoriesByGroupIdUseCase(
     private val getForumUseCase: GetForumUseCase,
     private val dispatchers: Dispatchers,
 ) {

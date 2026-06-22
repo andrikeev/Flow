@@ -54,9 +54,7 @@ fun EntryProviderScope<NavKey>.addSearchResult(
 ) {
     entry<SearchResultRoute> { key ->
         SearchResultScreen(
-            viewModel = viewModel<SearchResultViewModel, SearchResultViewModel.Factory> { factory ->
-                factory.create(key.toFilter())
-            },
+            viewModel = viewModel<SearchResultViewModel>(key.toFilter()),
             back = back,
             openSearchInput = openSearchInput,
             openSearchResult = openSearchResult,

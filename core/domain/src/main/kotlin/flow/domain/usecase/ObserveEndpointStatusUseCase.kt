@@ -5,11 +5,10 @@ import flow.domain.model.endpoint.EndpointStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.transformLatest
-import javax.inject.Inject
 
 interface ObserveEndpointStatusUseCase : () -> Flow<EndpointStatus>
 
-internal class ObserveEndpointStatusUseCaseImpl @Inject constructor(
+internal class ObserveEndpointStatusUseCaseImpl(
     private val connectionService: ConnectionService,
 ) : ObserveEndpointStatusUseCase {
     override fun invoke(): Flow<EndpointStatus> {

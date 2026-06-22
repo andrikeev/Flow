@@ -6,9 +6,8 @@ import flow.models.forum.ForumCategory
 import flow.search.result.domain.models.ForumTreeItem
 import flow.search.result.domain.models.SelectState
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-internal class GetFlattenForumTreeUseCase @Inject constructor(
+internal class GetFlattenForumTreeUseCase(
     private val getForumUseCase: GetForumUseCase,
     private val dispatchers: Dispatchers,
 ) {

@@ -24,6 +24,19 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="TIRAMISU">
 
+        <!-- On-demand WorkManager init via FlowApplication (Configuration.Provider) with
+             the KoinWorkerFactory: remove the default initializer. -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

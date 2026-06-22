@@ -2,7 +2,6 @@
 
 plugins {
     id("flow.android.application")
-    id("flow.android.hilt")
     id("flow.kotlin.serialization")
 }
 
@@ -94,8 +93,8 @@ dependencies {
 
     implementation(libs.bundles.orbit)
 
-    // Koin runs alongside Hilt during the DI migration (see docs/kmp-di-bigbang-plan.md).
     implementation(libs.koin.android)
+    implementation(libs.koin.androidx.workmanager)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)

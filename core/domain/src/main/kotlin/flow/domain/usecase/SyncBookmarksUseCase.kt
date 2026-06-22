@@ -5,9 +5,8 @@ import flow.data.api.service.ForumService
 import flow.dispatchers.api.Dispatchers
 import flow.notifications.NotificationService
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class SyncBookmarksUseCase @Inject constructor(
+class SyncBookmarksUseCase(
     private val bookmarksRepository: BookmarksRepository,
     private val forumService: ForumService,
     private val notificationService: NotificationService,

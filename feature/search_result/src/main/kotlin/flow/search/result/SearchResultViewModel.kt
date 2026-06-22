@@ -2,10 +2,6 @@ package flow.search.result
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.common.runSuspendCatching
 import flow.domain.model.PagingAction
 import flow.domain.model.append
@@ -31,9 +27,8 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 
-@HiltViewModel(assistedFactory = SearchResultViewModel.Factory::class)
-internal class SearchResultViewModel @AssistedInject constructor(
-    @Assisted initialFilter: Filter,
+internal class SearchResultViewModel(
+    initialFilter: Filter,
     loggerFactory: LoggerFactory,
     private val observeSearchPagingDataUseCase: ObserveSearchPagingDataUseCase,
     private val addSearchHistoryUseCase: AddSearchHistoryUseCase,
@@ -44,10 +39,6 @@ internal class SearchResultViewModel @AssistedInject constructor(
     private val mutableFilter = MutableStateFlow(initialFilter)
     private val pagingActions = MutableSharedFlow<PagingAction>()
 
-    @AssistedFactory
-    interface Factory {
-        fun create(filter: Filter): SearchResultViewModel
-    }
 
     override val container: Container<SearchPageState, SearchResultSideEffect> = container(
         initialState = SearchPageState(mutableFilter.value),

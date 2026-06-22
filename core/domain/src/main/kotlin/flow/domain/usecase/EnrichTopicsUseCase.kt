@@ -7,9 +7,8 @@ import flow.models.topic.Topic
 import flow.models.topic.TopicModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import javax.inject.Inject
 
-class EnrichTopicsUseCase @Inject constructor(
+class EnrichTopicsUseCase(
     private val bookmarksRepository: BookmarksRepository,
     private val favoritesRepository: FavoritesRepository,
     private val visitedRepository: VisitedRepository,

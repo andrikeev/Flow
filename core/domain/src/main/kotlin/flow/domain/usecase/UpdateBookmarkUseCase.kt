@@ -5,9 +5,8 @@ import flow.data.api.service.ForumService
 import flow.dispatchers.api.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class UpdateBookmarkUseCase @Inject constructor(
+class UpdateBookmarkUseCase(
     private val forumService: ForumService,
     private val bookmarksRepository: BookmarksRepository,
     private val dispatchers: Dispatchers,

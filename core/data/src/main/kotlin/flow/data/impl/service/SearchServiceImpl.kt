@@ -9,9 +9,8 @@ import flow.models.forum.Category
 import flow.models.search.Filter
 import flow.models.topic.Torrent
 import flow.network.api.NetworkApi
-import javax.inject.Inject
 
-class SearchServiceImpl @Inject constructor(
+class SearchServiceImpl(
     private val networkApi: NetworkApi,
     private val tokenProvider: TokenProvider,
 ) : SearchService {

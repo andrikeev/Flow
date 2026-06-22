@@ -1,7 +1,6 @@
 package flow.search.result.categories
 
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.common.runSuspendCatching
 import flow.logger.api.LoggerFactory
 import flow.models.forum.Category
@@ -15,10 +14,8 @@ import kotlinx.coroutines.coroutineScope
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import javax.inject.Inject
 
-@HiltViewModel
-internal class CategorySelectionViewModel @Inject constructor(
+internal class CategorySelectionViewModel(
     private val getFlattenForumTreeUseCase: GetFlattenForumTreeUseCase,
     private val getCategoriesByGroupIdUseCase: GetCategoriesByGroupIdUseCase,
     loggerFactory: LoggerFactory,

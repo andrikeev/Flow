@@ -3,9 +3,8 @@ package flow.domain.usecase
 import flow.data.api.service.FavoritesService
 import flow.dispatchers.api.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class RemoveRemoteFavoriteUseCase @Inject constructor(
+class RemoveRemoteFavoriteUseCase(
     private val favoritesService: FavoritesService,
     private val dispatchers: Dispatchers,
 ) {

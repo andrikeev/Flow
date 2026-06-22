@@ -5,9 +5,8 @@ import flow.data.api.repository.VisitedRepository
 import flow.dispatchers.api.Dispatchers
 import flow.models.topic.TopicPage
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class VisitTopicUseCase @Inject constructor(
+class VisitTopicUseCase(
     private val visitedRepository: VisitedRepository,
     private val favoritesRepository: FavoritesRepository,
     private val dispatchers: Dispatchers,

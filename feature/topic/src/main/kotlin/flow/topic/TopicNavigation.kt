@@ -17,9 +17,7 @@ fun EntryProviderScope<NavKey>.addTopic(
 ) {
     entry<TopicRoute> { key ->
         TopicScreen(
-            viewModel = viewModel<TopicViewModel, TopicViewModel.Factory> { factory ->
-                factory.create(key.id)
-            },
+            viewModel = viewModel<TopicViewModel>(key.id),
             back = back,
             openCategory = openCategory,
             openLogin = openLogin,

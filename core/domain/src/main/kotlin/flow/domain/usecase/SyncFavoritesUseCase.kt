@@ -6,9 +6,8 @@ import flow.dispatchers.api.Dispatchers
 import flow.notifications.NotificationService
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class SyncFavoritesUseCase @Inject constructor(
+class SyncFavoritesUseCase(
     private val favoritesRepository: FavoritesRepository,
     private val torrentService: TorrentService,
     private val notificationService: NotificationService,

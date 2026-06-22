@@ -9,9 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class ObserveFavoritesUseCase @Inject constructor(
+class ObserveFavoritesUseCase(
     private val favoritesRepository: FavoritesRepository,
     private val refreshFavoritesUseCase: RefreshFavoritesUseCase,
     private val dispatchers: Dispatchers,

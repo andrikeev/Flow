@@ -7,9 +7,8 @@ import flow.models.Page
 import flow.models.forum.Forum
 import flow.models.forum.ForumItem
 import flow.network.api.NetworkApi
-import javax.inject.Inject
 
-class ForumServiceImpl @Inject constructor(
+class ForumServiceImpl(
     private val networkApi: NetworkApi,
 ) : ForumService {
     override suspend fun getForum(): Forum {

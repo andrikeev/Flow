@@ -6,9 +6,8 @@ import flow.data.api.service.TopicService
 import flow.dispatchers.api.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class AddRemoteFavoriteUseCase @Inject constructor(
+class AddRemoteFavoriteUseCase(
     private val favoritesService: FavoritesService,
     private val favoritesRepository: FavoritesRepository,
     private val topicService: TopicService,

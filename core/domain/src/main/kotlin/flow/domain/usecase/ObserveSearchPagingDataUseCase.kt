@@ -13,9 +13,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
 
-class ObserveSearchPagingDataUseCase @Inject constructor(
+class ObserveSearchPagingDataUseCase(
     private val enrichTopicsUseCase: EnrichTopicsUseCase,
     private val searchService: SearchService,
     private val loggerFactory: LoggerFactory,

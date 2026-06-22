@@ -10,9 +10,8 @@ import flow.models.topic.Post
 import flow.models.topic.Topic
 import flow.models.topic.TopicPage
 import flow.network.api.NetworkApi
-import javax.inject.Inject
 
-class TopicServiceImpl @Inject constructor(
+class TopicServiceImpl(
     private val networkApi: NetworkApi,
     private val tokenProvider: TokenProvider,
 ) : TopicService {

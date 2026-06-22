@@ -4,9 +4,8 @@ import flow.data.api.service.TopicService
 import flow.dispatchers.api.Dispatchers
 import flow.models.topic.TopicPage
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class GetTopicUseCase @Inject constructor(
+class GetTopicUseCase(
     private val topicService: TopicService,
     private val visitTopicUseCase: VisitTopicUseCase,
     private val dispatchers: Dispatchers,

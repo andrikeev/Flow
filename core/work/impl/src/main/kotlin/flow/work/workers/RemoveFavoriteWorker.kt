@@ -1,18 +1,14 @@
 package flow.work.workers
 
 import android.content.Context
-import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import flow.domain.usecase.RemoveRemoteFavoriteUseCase
 
-@HiltWorker
-internal class RemoveFavoriteWorker @AssistedInject constructor(
-    @Assisted appContext: Context,
-    @Assisted workerParams: WorkerParameters,
+internal class RemoveFavoriteWorker(
+    appContext: Context,
+    workerParams: WorkerParameters,
     private val removeRemoteFavoriteUseCase: RemoveRemoteFavoriteUseCase,
     private val notificationService: flow.notifications.NotificationService,
 ) : CoroutineWorker(appContext, workerParams) {

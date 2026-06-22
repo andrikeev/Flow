@@ -2,7 +2,6 @@ package flow.favorites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.domain.usecase.ObserveFavoritesUseCase
 import flow.logger.api.LoggerFactory
 import flow.models.topic.Topic
@@ -11,10 +10,8 @@ import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import javax.inject.Inject
 
-@HiltViewModel
-class FavoritesViewModel @Inject constructor(
+class FavoritesViewModel(
     private val observeFavoritesUseCase: ObserveFavoritesUseCase,
     loggerFactory: LoggerFactory,
 ) : ViewModel(), ContainerHost<FavoritesState, FavoritesSideEffect> {

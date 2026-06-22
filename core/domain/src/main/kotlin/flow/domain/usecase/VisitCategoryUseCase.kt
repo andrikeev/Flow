@@ -4,9 +4,8 @@ import flow.data.api.repository.BookmarksRepository
 import flow.dispatchers.api.Dispatchers
 import flow.models.topic.Topic
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class VisitCategoryUseCase @Inject constructor(
+class VisitCategoryUseCase(
     private val bookmarksRepository: BookmarksRepository,
     private val dispatchers: Dispatchers,
 ) {

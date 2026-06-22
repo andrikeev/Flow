@@ -6,9 +6,8 @@ import flow.data.api.repository.SuggestsRepository
 import flow.data.api.repository.VisitedRepository
 import flow.dispatchers.api.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class ClearHistoryUseCase @Inject constructor(
+class ClearHistoryUseCase(
     private val suggestsRepository: SuggestsRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
     private val favoriteSearchRepository: FavoriteSearchRepository,

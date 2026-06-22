@@ -18,7 +18,6 @@ dependencies {
     implementation(libs.kotlin.serializationPlugin)
     implementation(libs.ksp.gradlePlugin)
     implementation(libs.ktor.gradlePlugin)
-    implementation(libs.hilt.gradlePlugin)
     implementation(libs.room.gradlePlugin)
     implementation(libs.spotless.gradlePlugin)
 }
@@ -43,10 +42,6 @@ gradlePlugin {
         register("androidLibrary") {
             id = "flow.android.library.compose"
             implementationClass = "AndroidLibraryComposeConventionPlugin"
-        }
-        register("androidHilt") {
-            id = "flow.android.hilt"
-            implementationClass = "AndroidHiltConventionPlugin"
         }
         register("androidFeature") {
             id = "flow.android.feature"

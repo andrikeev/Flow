@@ -9,7 +9,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -22,7 +21,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import dagger.hilt.android.AndroidEntryPoint
 import flow.designsystem.platform.LocalPlatformType
 import flow.designsystem.platform.PlatformType
 import flow.logger.api.LoggerFactory
@@ -45,15 +43,14 @@ import me.rutrackersearch.app.navigation.MobileNavigation
 import me.rutrackersearch.app.platform.OpenFileHandlerImpl
 import me.rutrackersearch.app.platform.OpenLinkHandlerImpl
 import me.rutrackersearch.app.platform.ShareLinkHandlerImpl
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 open class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var loggerFactory: LoggerFactory
+    private val loggerFactory: LoggerFactory by inject()
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModel()
 
     private val deepLinks = DeepLinks()
 

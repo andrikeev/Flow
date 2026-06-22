@@ -20,7 +20,7 @@ dependencies {
     implementation(project(":core:ui"))
 
     api(libs.androidx.navigation3.runtime)
-    api(libs.androidx.hilt.navigation.compose)
+    api(libs.koin.androidx.compose)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.lifecycle.viewModel.navigation3)
     implementation(libs.androidx.lifecycle.viewModel.savedState)

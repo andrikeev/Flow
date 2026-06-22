@@ -13,9 +13,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
 
-class ObserveCategoryPagingDataUseCase @Inject constructor(
+class ObserveCategoryPagingDataUseCase(
     private val forumService: ForumService,
     private val enrichTopicsUseCase: EnrichTopicsUseCase,
     private val visitCategoryUseCase: VisitCategoryUseCase,

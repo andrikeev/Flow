@@ -2,10 +2,6 @@ package flow.forum.category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import flow.common.runSuspendCatching
 import flow.domain.model.PagingAction
 import flow.domain.model.append
@@ -29,9 +25,8 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 
-@HiltViewModel(assistedFactory = CategoryViewModel.Factory::class)
-internal class CategoryViewModel @AssistedInject constructor(
-    @Assisted private val categoryId: String,
+internal class CategoryViewModel(
+    private val categoryId: String,
     loggerFactory: LoggerFactory,
     private val authStateUseCase: ObserveAuthStateUseCase,
     private val observeCategoryPagingDataUseCase: ObserveCategoryPagingDataUseCase,
@@ -42,10 +37,6 @@ internal class CategoryViewModel @AssistedInject constructor(
     private val logger = loggerFactory.get("CategoryViewModel")
     private val pagingActions = MutableSharedFlow<PagingAction>()
 
-    @AssistedFactory
-    interface Factory {
-        fun create(categoryId: String): CategoryViewModel
-    }
 
     override val container: Container<CategoryPageState, CategorySideEffect> = container(
         initialState = CategoryPageState(),

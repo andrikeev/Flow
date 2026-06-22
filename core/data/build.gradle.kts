@@ -1,6 +1,5 @@
 plugins {
     id("flow.android.library")
-    id("flow.android.hilt")
 }
 
 android {
@@ -17,8 +16,11 @@ dependencies {
     implementation(project(":core:network:api"))
     implementation(project(":core:preferences"))
 
-    // Repositories are wired with Koin; data services remain on Hilt for now.
+    // Repositories and services are wired with Koin.
     implementation(libs.koin)
+    // Previously transitive via hilt-android.
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinx.coroutines.core)
 
     testImplementation(libs.koin.test)
     testImplementation(libs.junit4)
