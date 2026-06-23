@@ -1,17 +1,17 @@
 package flow.network.domain
 
+import com.fleeksoft.ksoup.Ksoup
+import com.fleeksoft.ksoup.nodes.Document
+import com.fleeksoft.ksoup.nodes.Element
 import flow.network.dto.forum.CategoryDto
 import flow.network.dto.topic.AuthorDto
 import flow.network.dto.topic.PostDto
 import flow.network.dto.topic.TopicPageCommentsDto
 import flow.network.dto.topic.TopicPageDto
 import flow.network.dto.topic.TorrentDataDto
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 
 internal object ParseTopicPageUseCase {
-    operator fun invoke(html: String) = Jsoup.parse(html).let { doc ->
+    operator fun invoke(html: String) = Ksoup.parse(html).let { doc ->
         TopicPageDto(
             id = doc.parseId(),
             title = doc.parseTitle(),

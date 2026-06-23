@@ -1,14 +1,14 @@
 package flow.network.domain
 
+import com.fleeksoft.ksoup.Ksoup
 import flow.network.dto.forum.CategoryDto
 import flow.network.dto.topic.AuthorDto
 import flow.network.dto.topic.TorrentDescriptionDto
 import flow.network.dto.topic.TorrentDto
-import org.jsoup.Jsoup
 
 internal object ParseTorrentUseCase {
     operator fun invoke(html: String): TorrentDto {
-        val doc = Jsoup.parse(html)
+        val doc = Ksoup.parse(html)
         val id = doc.select("#topic-title").queryParam("t")
         val author = doc.select(".nick").first()?.text()?.let {
             val authorId = doc.select(".poster_btn").select(".txtb").first().queryParamOrNull("u")
@@ -45,7 +45,7 @@ internal object ParseTorrentUseCase {
     }
 
     private fun parseTorrentDescription(html: String): TorrentDescriptionDto {
-        val doc = Jsoup.parse(html)
+        val doc = Ksoup.parse(html)
         return try {
             val firstPost = doc.select("tbody[id^=post]").first()?.select(".post_body")
             TorrentDescriptionDto(ParsePostUseCase(firstPost))

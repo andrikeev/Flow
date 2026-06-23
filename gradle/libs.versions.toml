@@ -24,7 +24,7 @@ firebaseCrashlyticsGradlePlugin = "3.0.7"
 googleServicesGradlePlugin = "4.4.4"
 hilt = "2.59.2"
 hiltExt = "1.2.0"
-jsoup = "1.22.2"
+ksoup = "0.2.6"
 junit4 = "4.13.2"
 koin = "4.2.1"
 kotlin = "2.3.21"
@@ -84,7 +84,7 @@ hilt-dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", 
 hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
 javax-inject = { group = "javax.inject", name = "javax.inject", version = "1" }
 json = { group = "org.json", name = "json", version = "20220924" }
-jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+ksoup = { group = "com.fleeksoft.ksoup", name = "ksoup", version.ref = "ksoup" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 koin = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
