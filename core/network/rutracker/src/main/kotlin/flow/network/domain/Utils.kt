@@ -63,20 +63,6 @@ internal fun Elements?.queryParam(key: String): String {
     return requireNotNull(queryParamOrNull(key)) { "query param not found in $this" }
 }
 
-internal fun isTopicExists(html: String): Boolean {
-    return !html.contains("Тема не найдена") &&
-        !html.contains("Тема находится в мусорке") &&
-        !html.contains("Ошибочный запрос: не указан topic_id")
-}
-
-internal fun isBlockedForRegion(html: String): Boolean {
-    return html.contains("Извините, раздача недоступна для вашего региона")
-}
-
-internal fun isTopicModerated(html: String): Boolean {
-    return html.contains("Раздача ожидает проверки модератором")
-}
-
 internal fun getTitle(titleWithTags: String): String {
     return titleWithTags
         .replace("\\[[^]]*]".toRegex(), "")

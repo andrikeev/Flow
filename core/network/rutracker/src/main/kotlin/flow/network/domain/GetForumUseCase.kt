@@ -1,46 +1,18 @@
 package flow.network.domain
 
-import com.fleeksoft.ksoup.Ksoup
 import flow.network.api.RuTrackerInnerApi
-import flow.network.dto.forum.CategoryDto
 import flow.network.dto.forum.ForumDto
 
-internal class GetForumUseCase(private val api: RuTrackerInnerApi) {
+internal class GetForumUseCase(
+    private val api: RuTrackerInnerApi,
+    private val parser: RuTrackerParser,
+) {
 
     suspend operator fun invoke(): ForumDto {
         if (ForumCache.expired()) {
-            ForumCache.cache = System.currentTimeMillis() to parseForumTree(api.forum())
+            ForumCache.cache = System.currentTimeMillis() to parser.parseForum(api.forum())
         }
         return ForumCache.cache!!.second
-    }
-
-    companion object {
-        private fun parseForumTree(html: String): ForumDto {
-            val doc = Ksoup.parse(html)
-            val categories = mutableListOf<CategoryDto>()
-            val treeRoots = doc.select(".tree-root")
-            treeRoots.forEach { categoryElement ->
-                val title = categoryElement.select(".c-title").attr("title")
-                val forums = mutableListOf<CategoryDto>()
-                val forumElements = categoryElement.child(0).child(1).children()
-                forumElements.forEach { forumElement ->
-                    val forumId = forumElement.child(0).select("a").url()
-                    val forumTitle = forumElement.child(0).select("a").toStr()
-                    val subforums = mutableListOf<CategoryDto>()
-                    if (forumElement.children().size > 1) {
-                        val subforumElements = forumElement.child(1).children()
-                        subforumElements.forEach { subforumElement ->
-                            val subforumId = subforumElement.select("a").url()
-                            val subforumTitle = subforumElement.toStr()
-                            subforums.add(CategoryDto(id = subforumId, name = subforumTitle))
-                        }
-                    }
-                    forums.add(CategoryDto(id = forumId, name = forumTitle, children = subforums))
-                }
-                categories.add(CategoryDto(name = title, children = forums))
-            }
-            return ForumDto(categories)
-        }
     }
 
     private object ForumCache {

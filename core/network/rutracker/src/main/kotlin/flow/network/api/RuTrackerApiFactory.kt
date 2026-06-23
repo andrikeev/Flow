@@ -15,10 +15,8 @@ import flow.network.domain.GetTopicUseCase
 import flow.network.domain.GetTorrentFileUseCase
 import flow.network.domain.GetTorrentUseCase
 import flow.network.domain.LoginUseCase
-import flow.network.domain.ParseCommentsPageUseCase
-import flow.network.domain.ParseTopicPageUseCase
-import flow.network.domain.ParseTorrentUseCase
 import flow.network.domain.RemoveFavoriteUseCase
+import flow.network.domain.RuTrackerHtmlParser
 import flow.network.domain.VerifyAuthorisedUseCase
 import flow.network.domain.VerifyTokenUseCase
 import flow.network.domain.WithAuthorisedCheckUseCase
@@ -31,22 +29,23 @@ import io.ktor.client.HttpClient
 object RuTrackerApiFactory {
     fun create(httpClient: HttpClient): NetworkApi {
         val api = RuTrackerInnerApiImpl(httpClient)
+        val parser = RuTrackerHtmlParser()
         val withTokenVerification = WithTokenVerificationUseCase(VerifyTokenUseCase)
         val withAuthorisedCheck = WithAuthorisedCheckUseCase(VerifyAuthorisedUseCase)
         return RuTrackerNetworkApi(
             AddCommentUseCase(api, withTokenVerification, withAuthorisedCheck, WithFormTokenUseCase),
             AddFavoriteUseCase(api, withTokenVerification, withAuthorisedCheck, WithFormTokenUseCase),
             CheckAuthorisedUseCase(api, VerifyAuthorisedUseCase),
-            GetCategoryPageUseCase(api),
-            GetCommentsPageUseCase(api, ParseCommentsPageUseCase),
-            GetFavoritesUseCase(api, withTokenVerification, withAuthorisedCheck),
-            GetForumUseCase(api),
-            GetSearchPageUseCase(api, withTokenVerification, withAuthorisedCheck),
-            GetTopicUseCase(api, ParseTorrentUseCase, ParseCommentsPageUseCase),
-            GetTopicPageUseCase(api, ParseTopicPageUseCase),
+            GetCategoryPageUseCase(api, parser),
+            GetCommentsPageUseCase(api, parser),
+            GetFavoritesUseCase(api, withTokenVerification, withAuthorisedCheck, parser),
+            GetForumUseCase(api, parser),
+            GetSearchPageUseCase(api, withTokenVerification, withAuthorisedCheck, parser),
+            GetTopicUseCase(api, parser),
+            GetTopicPageUseCase(api, parser),
             GetTorrentFileUseCase(api, withTokenVerification),
-            GetTorrentUseCase(api, ParseTorrentUseCase),
-            LoginUseCase(api, GetCurrentProfileUseCase(api, GetProfileUseCase(api))),
+            GetTorrentUseCase(api, parser),
+            LoginUseCase(api, GetCurrentProfileUseCase(api, GetProfileUseCase(api, parser), parser)),
             RemoveFavoriteUseCase(api, withTokenVerification, withAuthorisedCheck, WithFormTokenUseCase),
         )
     }

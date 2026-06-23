@@ -7,7 +7,7 @@ import flow.network.model.NotFound
 
 internal class GetCommentsPageUseCase(
     private val api: RuTrackerInnerApi,
-    private val parseCommentsPageUseCase: ParseCommentsPageUseCase,
+    private val parser: RuTrackerParser,
 ) {
 
     suspend operator fun invoke(
@@ -17,10 +17,10 @@ internal class GetCommentsPageUseCase(
     ): CommentsPageDto {
         val html = api.topic(token, id, page)
         return when {
-            !isTopicExists(html) -> throw NotFound
-            isTopicModerated(html) -> throw Forbidden
-            isBlockedForRegion(html) -> throw Forbidden
-            else -> parseCommentsPageUseCase(html)
+            !parser.isTopicExists(html) -> throw NotFound
+            parser.isTopicModerated(html) -> throw Forbidden
+            parser.isBlockedForRegion(html) -> throw Forbidden
+            else -> parser.parseCommentsPage(html)
         }
     }
 }
