@@ -6,5 +6,5 @@ dependencies {
     api(project(":core:network:api"))
 
     implementation(libs.ktor.client.core)
-    implementation(libs.jsoup)
+    implementation(libs.ksoup)
 }

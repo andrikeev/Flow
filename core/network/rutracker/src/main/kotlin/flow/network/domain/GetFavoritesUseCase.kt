@@ -1,5 +1,6 @@
 package flow.network.domain
 
+import com.fleeksoft.ksoup.Ksoup
 import flow.network.api.RuTrackerInnerApi
 import flow.network.dto.forum.CategoryDto
 import flow.network.dto.topic.AuthorDto
@@ -7,7 +8,6 @@ import flow.network.dto.topic.ForumTopicDto
 import flow.network.dto.topic.TopicDto
 import flow.network.dto.topic.TorrentDto
 import flow.network.dto.user.FavoritesDto
-import org.jsoup.Jsoup
 
 internal class GetFavoritesUseCase(
     private val api: RuTrackerInnerApi,
@@ -34,7 +34,7 @@ internal class GetFavoritesUseCase(
 
     companion object {
         private fun parsePagesCount(html: String): Int {
-            val doc = Jsoup.parse(html)
+            val doc = Ksoup.parse(html)
             val navigation = doc.select("#pagination")
             val currentPage = navigation.select("b").toInt(1)
             return maxOf(
@@ -48,7 +48,7 @@ internal class GetFavoritesUseCase(
         }
 
         private fun parseFavorites(html: String): List<ForumTopicDto> {
-            return Jsoup
+            return Ksoup
                 .parse(html)
                 .select(".hl-tr")
                 .map { element ->

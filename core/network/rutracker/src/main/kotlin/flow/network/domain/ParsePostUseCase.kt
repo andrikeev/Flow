@@ -1,5 +1,9 @@
 package flow.network.domain
 
+import com.fleeksoft.ksoup.nodes.Element
+import com.fleeksoft.ksoup.nodes.Node
+import com.fleeksoft.ksoup.nodes.TextNode
+import com.fleeksoft.ksoup.select.Elements
 import flow.network.dto.topic.Align
 import flow.network.dto.topic.Alignment
 import flow.network.dto.topic.Bold
@@ -23,10 +27,6 @@ import flow.network.dto.topic.Text
 import flow.network.dto.topic.TextAlignment
 import flow.network.dto.topic.UList
 import flow.network.dto.topic.Underscore
-import org.jsoup.nodes.Element
-import org.jsoup.nodes.Node
-import org.jsoup.nodes.TextNode
-import org.jsoup.select.Elements
 import java.util.Locale
 
 private typealias ElementsList = MutableList<PostElementDto>
@@ -104,13 +104,13 @@ internal object ParsePostUseCase {
                     appendElement(node.selectFirst(".q"))
                 }
 
-                node.hasClass("post-hr") || node.tag().name == "hr" -> hr()
+                node.hasClass("post-hr") || node.tag().name() == "hr" -> hr()
                 node.hasClass("post-br") -> postBr()
-                node.tag().name == "br" -> br()
+                node.tag().name() == "br" -> br()
                 else -> appendElement(node)
             }
 
-            is TextNode -> text(node.wholeText)
+            is TextNode -> text(node.getWholeText())
         }
     }
 

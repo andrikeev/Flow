@@ -1,7 +1,7 @@
 package flow.network.domain
 
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
+import com.fleeksoft.ksoup.nodes.Element
+import com.fleeksoft.ksoup.select.Elements
 import java.net.URI
 import java.util.regex.Pattern
 import kotlin.math.ln

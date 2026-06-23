@@ -1,14 +1,14 @@
 package flow.network.domain
 
+import com.fleeksoft.ksoup.Ksoup
 import flow.network.dto.forum.CategoryDto
 import flow.network.dto.topic.AuthorDto
 import flow.network.dto.topic.CommentsPageDto
 import flow.network.dto.topic.PostDto
-import org.jsoup.Jsoup
 
 internal object ParseCommentsPageUseCase {
     operator fun invoke(html: String): CommentsPageDto {
-        val doc = Jsoup.parse(html)
+        val doc = Ksoup.parse(html)
         val id = doc.select("#topic-title").queryParam("t")
         val title = doc.select("#topic-title").toStr()
         val categoryNode = doc.select(".nav.w100.pad_2").select("a")
