@@ -7,8 +7,7 @@ import flow.network.model.NotFound
 
 internal class GetTopicUseCase(
     private val api: RuTrackerInnerApi,
-    private val parseTorrentUseCase: ParseTorrentUseCase,
-    private val parseCommentsPageUseCase: ParseCommentsPageUseCase,
+    private val parser: RuTrackerParser,
 ) {
 
     suspend operator fun invoke(
@@ -18,16 +17,16 @@ internal class GetTopicUseCase(
     ): ForumTopicDto {
         val html = api.topic(token, id, page)
         return when {
-            !isTopicExists(html) -> throw NotFound
-            isTopicModerated(html) -> throw Forbidden
-            isBlockedForRegion(html) -> throw Forbidden
+            !parser.isTopicExists(html) -> throw NotFound
+            parser.isTopicModerated(html) -> throw Forbidden
+            parser.isBlockedForRegion(html) -> throw Forbidden
             else -> parseTopic(html)
         }
     }
 
-    private fun parseTopic(html: String) = if (html.contains("magnet:?")) {
-        parseTorrentUseCase(html)
+    private fun parseTopic(html: String) = if (parser.isTorrentTopic(html)) {
+        parser.parseTorrent(html)
     } else {
-        parseCommentsPageUseCase(html)
+        parser.parseCommentsPage(html)
     }
 }

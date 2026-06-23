@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+<meta charset="Windows-1251">
+
+<title>filolya</title>
+
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#2b5797">
+<meta name="msapplication-TileImage" content="/mstile-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<link rel="search" type="application/opensearchdescription+xml" title="Поиск на RuTracker.org" href="https://static.rutracker.cc/opensearch.xml">
+
+<script>
+window.BB = {
+	cur_domain: location.hostname.replace(/.*?(([a-z0-9-]+\.){1,2}[a-z0-9-]+)$/, '$1'),
+	form_token: '',
+	opt_js: {},
+
+	IS_GUEST: !!'1',
+	IMG_URL: 'https://static.rutracker.cc/templates/v1/images',
+	SMILES_URL: 'https://static.rutracker.cc/smiles',
+	catId: 0,
+	FORUM_ID: 0,
+	parentForumId: 0,
+		COOKIE_MARK: 'bb_mark_read',
+	};
+BB.cookie_defaults = {
+	domain: '.' + BB.cur_domain,
+	path: "/forum/",
+};
+</script>
+<link href="https://static.rutracker.cc/templates/v1/min/eb83350bae3880e4073b81d26294de5d.all.min.css" rel="stylesheet">
+<script src="https://static.rutracker.cc/templates/v1/min/4e695e8ea9cf5a1dcc7aed231b887c51.lib.min.js"></script>
+<script src="https://static.rutracker.cc/templates/v1/min/3b60ab3546ba966484df4c3099b918ab.bb.min.js"></script>
+
+
+
+<style>
+.invisible-el {
+	/* @include element-invisible(); */
+	clip: rect(1px, 1px, 1px, 1px);
+	height: 1px;
+	overflow: hidden;
+	position: absolute !important;
+	width: 1px;
+}
+.hidden, .menu-sub, #ajax-loading, #ajax-error, var.ajax-params, #modal-blocker, .q-post {
+	display: none;
+}
+/**/
+#logo {
+	min-height: auto;
+}
+/**/
+/* temp */
+/* temp end */
+</style>
+
+<noscript>
+	<style>
+	.sp-body {
+		display: block; /* for bots */
+	}
+	</style>
+</noscript>
+
+</head>
+
+<body class="" style="">
+
+<div id="invisible-heap" class="invisible-el"></div>
+<div id="preload" class="invisible-el"></div>
+
+
+
+<div id="body_container">
+
+		<script>
+	if (top != self && !self.location.hostname.match(BB.allowed_translator_hosts)) {
+		$(function () {
+			$('body').html('<h1 style="text-align: center;"><br><br>Похоже, вас пытаются обмануть<br>frame\'s hostname: ' + self.location.hostname + '</h1>');
+			throw new Error('in frame');
+		});
+	}
+		</script>
+
+	<div id="page_container">
+
+		<div id="page_header" class="hide-for-print">
+
+			<div id="main-nav" class="site-nav clearfix">
+				<ul class="inlined middot-separated floatL">
+					<li>
+						<a href="index.php"><b>Главная</b></a>
+					</li>
+					<li>
+													<a href="tracker.php" rel="nofollow"><b>Трекер</b></a>
+											</li>
+					<li>
+						<a href="search.php" rel="nofollow"><b>Поиск</b></a>
+					</li>
+					<li>
+						<a href="groupcp.php" rel="nofollow"><b>Группы</b></a>
+					</li>
+					<li>
+						<a href="https://rutracker.wiki/" target="_blank"><b>FAQ</b></a>
+					</li>
+					<li>
+						<a href="viewtopic.php?t=6812335" style="color: #7b1fa2;"><b>VPN</b></a>
+					</li>
+					<li>
+						<a href="viewtopic.php?t=1045"><b>Правила</b></a>
+					</li>
+					<li>
+						<a href="viewtopic.php?t=6452965" style="color: #880e4f;"><b>Донаты</b></a>
+					</li>
+									</ul>
+											</div>
+			<!--/main-nav-->
+
+			
+			<div id="logo">
+				<table style="">
+				<tr>
+					<td id="logo-td" style="padding: 3px 7px 3px 15px;">
+						<a href="index.php" class="site-logo-link">
+								<img class="site-logo"
+		src="https://static.rutracker.cc/logo/logo-3.svg"
+		style=""
+		alt="logo">
+							</a>
+					</td>
+					<td class="tCenter w100" style="padding: 6px 10px 0 3px;">
+											</td>
+				</tr>
+				</table>
+			</div>
+			<!--/logo-->
+
+						<div class="topmenu">
+				<table class="w100">
+				<tr>
+					
+					<td class="tCenter pad_2 nowrap">
+						<div>
+															<a href="profile.php?mode=register" rel="nofollow"><b>Регистрация</b></a>
+								&nbsp;&#0183;&nbsp;
+								<a href="#" onclick="BB.toggle_top_login(); return false;" tabindex="5"><b>Вход</b></a>
+
+								<div id="top-login-box">
+									<form id="quick-search-guest" method="get" action="tracker.php">
+										<input id="search-text-guest" type="text" name="nm" value="" tabindex="1" accesskey="q">
+										<input type="submit" value="поиск" tabindex="2">
+									</form>
+									<form id="login-form-quick" method="post" action="login.php" style="display: none;">
+																				<input id="top-login-uname" type="text" name="login_username" tabindex="1" accesskey="l" placeholder="имя">
+										<input id="top-login-pwd" type="password" name="login_password" tabindex="2" placeholder="пароль">
+										<label title="Защищенное соединение" class="login-ssl-block" style="display: none;">
+											<input class="login-ssl" type="checkbox" tabindex="3" checked>SSL
+										</label>
+										<input id="top-login-btn" type="submit" name="login" value="вход" tabindex="4">
+									</form>
+								</div>
+
+								<a href="otp.php" rel="nofollow"><b>Забыли имя или пароль?</b></a>
+													</div>
+					</td>
+
+					
+				</tr>
+				</table>
+			</div><!--/topmenu-->
+			
+			
+		</div>
+		<!--/page_header-->
+
+		
+		<div id="page_content">
+			<table style="width: 100%; border: none;">
+			<tr>
+
+				
+				<td id="main_content">
+					<div id="main_content_wrap">
+
+						
+						
+						
+						
+						<!--/page_header.tpl-->
+
+
+
+<style>
+#user-contacts th {
+	text-align: right;
+}
+#user-contacts td {
+	text-align: left;
+	padding: 2px 6px;
+}
+table.user_profile img {
+	vertical-align: text-bottom;
+}
+/**/
+#user-opt {
+	display: table;
+	margin: 0 auto;
+	min-width: 250px;
+}
+/**/
+#user-opt label {
+	display: block;
+	padding: 0;
+}
+#user-opt label:hover {
+	background: #D1D7DC;
+}
+#user-opt ul {
+	margin-bottom: 0;
+}
+#role span.adm, #ban-msg {
+	margin-left: 3px;
+}
+</style>
+
+<h1 class="pagetitle">
+	<span class="normal">Профиль пользователя:</span> <span id="profile-uname" class="highlight-cyrillic" data-uid="227805">filolya</span>
+	</h1>
+
+
+<div class="nav">
+	<p class="floatL">
+		<a href="index.php">Главная</a>
+	</p>
+	<div class="clear"></div>
+</div>
+
+
+<table class="user_profile bordered w100">
+<tr>
+	<th colspan="2" class="thHead">Профиль пользователя</th>
+</tr>
+<tr>
+	<td class="row1 vTop tCenter w30" style="padding: 2px 0 8px;">
+
+		<div id="avatar-img" class="mrg_4 med">
+						<img src="https://static.rutracker.cc/avatars/0/5/227805.gif" alt="avatar">											</div>
+
+				<div id="rank-img" class="mrg_6"><img class="user-rank" src="https://static.rutracker.cc/ranks/1apr_yshla_v_les.gif" alt=""></div>
+				<div class="med mrg_4">Звание:
+						<b>Ушла в лес</b>					</div>
+		
+		<h4 class="cat border bw_TB">Контакты</h4>
+
+		<div class="spacer_4"></div>
+
+		<table id="user-contacts" class="borderless wAuto bCenter">
+						<tr>
+			<th>Посл. активность:</th>
+			<td class="med" title="Посл. визит: 2026-03-10">
+				<img src="https://static.rutracker.cc/templates/v1/images/user_offline.gif" alt=""> &nbsp;2026-03-10			</td>
+		</tr>
+				<tr>
+			<th>Личное сообщ.:</th>
+			<td>
+				<ul class="inlined middot-separated">
+					<li>
+						<a class="txtb" href="privmsg.php?mode=post&amp;u=227805">Отправить</a>
+					</li>
+					<li>
+						<a class="txtb" href="privmsg.php?folder=inbox&amp;filter_uid=227805">Вход.</a>
+					</li>
+					<li>
+						<a class="txtb" href="privmsg.php?folder=sentbox&amp;filter_uid=227805">Отправл.</a>
+					</li>
+				</ul>
+			</td>
+		</tr>
+				</table><!--/user-contacts-->
+
+		<div id="user-opt">
+
+			
+		</div><!--/user-opt-->
+
+		<div class="spacer_4"></div>
+	</td>
+	<td class="row1 w70 vTop" style="padding: 2px 6px 8px;">
+
+		<div class="spacer_4"></div>
+
+		<table class="user_details borderless w100">
+								<tr>
+			<th>Стаж:</th>
+			<td>
+				<b>19 лет 9 месяцев</b>
+			</td>
+		</tr>
+		<tr>
+			<th>Зарегистрирован:</th>
+			<td>
+				<b title="">2006-09-05</b>
+							</td>
+		</tr>
+				<tr>
+			<th>Раздачи:</th>
+			<td class="med">
+				<ul class="inlined middot-separated" style="line-height: 1.8;">
+					<li>
+						<a href="tracker.php?rid=227805" class="med"><b>137</b> раздач <b> &middot; 149.98&nbsp;GB</b></a>
+					</li>
+										<li><span class="tor-icon tor-approved">&radic;</span>137 <b>&middot;</b> <b class="seedmed">149.98&nbsp;GB</b></li>
+																									<li>
+						<span
+							class="a-like"
+							title="Подписка на фиды"
+							onclick="return post2url('feed.php', {mode: 'get_feed_url', type: 'u', id: '227805'});">
+							<img class="feed-small" style="margin: 0 2px 1px 1px;" src="https://static.rutracker.cc/templates/v1/images/feed_1.png" alt="feed">
+							Подписка
+						</span>
+					</li>
+									</ul>
+			</td>
+		</tr>
+						<tr>
+			<th id="del-posts-header">Сообщения:</th>
+			<td>
+				<div id="posts">
+										<ul class="inlined middot-separated">
+						<li>
+							<a href="search.php?uid=227805&amp;search_author" class="med"><b>30,014</b> сообщений</a>
+						</li>
+						<li>
+							<a href="search.php?uid=227805&amp;search_author&amp;only_replies" class="med" title="Без заглавных сообщений">Ответы</a>
+						</li>
+						<li>
+							<a href="search.php?uid=227805&amp;myt=1" class="med topics-started">Начатые темы</a>
+						</li>
+						<li>
+							<a class="med" href="posts.php?page=replies_in_started_topics&amp;u=227805">
+								Ответы в начатых темах
+							</a>
+						</li>
+											</ul>
+									</div>
+							</td>
+		</tr>
+				<tr>
+			<th>Откуда:</th>
+			<td class="med">
+								<img src="https://static.rutracker.cc/flags/199.gif" class="poster-flag" alt="country" title="RuTracker.org">&nbsp;
+							</td>
+		</tr>
+								
+		
+		
+				<tr>
+			<th style="vertical-align: middle;">
+				Статистика отданного:
+							</th>
+			<td>
+
+								<style>
+				#traf-stats-tbl {
+					display: none;
+				}
+				</style>
+				<script>
+				$(function () {
+					$('#load-traf-stat-btn span.a-like').one('click', function () {
+						ajax.get_traf_stats();
+					});
+				});
+				ajax.get_traf_stats = function () {
+					ajax.exec({
+						action: 'get_traf_stats',
+						user_id: '227805',
+					});
+				};
+				ajax.callback.get_traf_stats = function (data) {
+					$.each(data, function (el_id) {
+						$('#' + el_id).html(data[el_id]);
+					});
+					$('#load-traf-stat-btn').remove();
+					$('#traf-stats-tbl').show();
+				};
+				</script>
+				<span id="load-traf-stat-btn" class="med">[ <span class="a-like">показать</span> ]</span>
+				
+				<table id="traf-stats-tbl" class="borderless">
+				<tr class="row3">
+					<th></th>
+					<th>Сегодня</th>
+					<th>Вчера</th>
+					<th title="Всего учтено + Сегодня">Всего</th>
+				</tr>
+				<tr class="row1">
+					<td>Отдано</td>
+					<td id="uploaded_day"><span class="editable"></span></td>
+					<td id="up_yesterday"></td>
+					<td id="uploaded_total" class="bold" title="">
+						<b class="editable" data-editable_value=""></b>
+					</td>
+				</tr>
+				<tr class="row1">
+					<td>На редких</td>
+					<td id="up_rare_day"><span class="editable"></span></td>
+					<td id="up_rare_yesterday"></td>
+					<td id="up_rare_total" class="bold" title="">
+						<b class="editable" data-editable_value=""></b>
+					</td>
+				</tr>
+				</table>
+
+			</td>
+		</tr>
+						
+		</table><!--/user_details-->
+
+				
+	</td>
+</tr>
+</table><!--/user_profile-->
+
+<div class="spacer_8"></div>
+
+<div>
+
+	
+	<h1 class="pagetitle tCenter">
+		Сидируемые раздачи:
+				<span class="normal">нет</span>
+			</h1>
+
+	
+</div>
+
+
+<!--bottom_info-->
+<div class="bottom_info">
+	<br>
+	<div class="spacer_6"></div>
+	<div class="clear"></div>
+</div><!--/bottom_info-->
+
+				</div><!--/main_content_wrap-->
+			</td><!--/main_content-->
+
+		</tr>
+		</table>
+	</div><!--/page_content-->
+
+	<!--page_footer-->
+	<div id="page_footer" class="hide-for-print">
+
+		
+		<div class="clear"></div>
+
+		<nav id="footer-info-links">
+			<div>
+				<a href="info.php?show=user_agreement" rel="nofollow">Условия использования</a>
+				&middot;
+				<a href="info.php?show=advert" rel="nofollow">Реклама на сайте</a>
+				&middot;
+				<a href="info.php?show=copyright_holders" rel="nofollow">Для правообладателей</a>
+				&middot;
+				<a href="info.php?show=press" rel="nofollow">Для прессы</a>
+				&middot;
+				<a href="viewtopic.php?t=2234744">Для провайдеров</a>
+				<!--&middot;-->
+				<!--<a href="http://rutracker.news">Блог</a>-->
+				&middot;
+				<a href="https://rutracker.wiki">Торрентопедия</a>
+			</div>
+			<div>
+				<a href="viewtopic.php?t=1045"><b>Правила</b></a>
+				&middot;
+				<a href="/go/8" rel="nofollow">Кому задать вопрос</a>
+				&middot;
+				<a href="viewforum.php?f=1538">Авторские раздачи</a>
+				&middot;
+				<a href="viewforum.php?f=1289">Конкурсы</a>
+				&middot;
+				<a href="viewforum.php?f=2332">Новости &quot;Хранителей&quot; и &quot;Антикваров&quot;</a>
+				&middot;
+				<a href="#" onclick="return post2url('index.php', {rand_rel: 1});" rel="nofollow">Случайная раздача</a>
+			</div>
+		</nav>
+
+		
+		<div class="tCenter nowrap" style="margin: 18px 4px 4px 4px;">
+								</div>
+
+		<div class="footer-bottom-links">
+			<ul class="inlined middot-separated">
+				<li><a href="groupcp.php?g=104792" rel="nofollow" target="_blank">Администрация</a></li>
+				<li><a href="groupcp.php?g=104787" rel="nofollow" target="_blank">Модераторы</a></li>
+				<li><a href="groupcp.php?g=104841" rel="nofollow" target="_blank">Тех. помощь</a></li>
+				<li><a href="https://t.me/rutracker_news" rel="nofollow" target="_blank">Telegram-канал</a></li>
+			</ul>
+			<div class="wide">
+									<script>
+					$(function () {
+						var title = "";
+						var src = "https://counter.yadro.ru/hit?t44.1;r" + encodeURIComponent(document.referrer) +
+							((typeof (screen) == "undefined") ? "" : ";s" + screen.width + "*" + screen.height + "*" + (screen.colorDepth ? screen.colorDepth : screen.pixelDepth)) +
+							";u" + encodeURIComponent(document.URL) + ";h" + encodeURIComponent(title.substring(0, 80)) + ";" + Math.random();
+						$('<img src="' + src + '" alt="">').on('load', function () {
+							$('#liveinternet').append(this);
+						});
+					});
+					</script>
+					<a id="liveinternet" href="https://www.liveinternet.ru/stat/rutracker.org/index.html?lang=ru" target="_blank"></a>
+							</div>
+			<ul class="inlined middot-separated">
+																							</ul>
+		</div>
+
+	</div><!--/page_footer-->
+</div><!--/page_container-->
+
+
+<div id="ajax-loading"><b>Loading...</b></div>
+<div id="ajax-error"><b>Error</b></div>
+<style>
+#bb-alert-box {
+	width: auto;
+	max-width: 800px;
+	line-height: 18px;
+	display: none;
+}
+#bb-alert-msg {
+	min-width: 400px;
+	max-height: 400px;
+	margin: 50px 20px;
+	padding: 10px;
+	overflow: auto;
+	text-align: center;
+}
+.bb-alert-err {
+	color: #7E0000;
+	background: #FFEEEE;
+	box-shadow: 0 0 20px #B85353;
+	font-weight: bold;
+}
+</style>
+<div id="bb-alert-box">
+	<div id="bb-alert-msg"></div>
+</div>
+<div id="modal-blocker"></div>
+
+<script>
+$(function () {
+	if (!BB.hasET() && BB.getUrlParam('view') !== 'print') {
+		BB.navbar.init();
+	}
+});
+</script>
+<div id="nav-panel" class="nav-hidden-arrow hide-for-print">
+	<div id="nav-up" class="nav-btn" title="Вверх">
+		<span class="nav-icon"></span>
+	</div>
+	<div id="nav-settings" class="nav-btn">
+		<span class="nav-icon" title="Настройки"></span>
+		<ul id="nav-opt-menu">
+			<li class="nav-event" data-event="click">Показывать по клику</li>
+			<li class="nav-event" data-event="mouseenter">Показывать по наведению</li>
+		</ul>
+	</div>
+	<div id="nav-down" class="nav-btn" title="Вниз">
+		<span class="nav-icon"></span>
+	</div>
+	<div class="nav-hidden-overlay"></div>
+</div>
+
+	</div><!--/body_container-->
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a10650fe1af8910e',t:'MTc4MjI0NzMxNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

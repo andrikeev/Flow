@@ -7,4 +7,6 @@ dependencies {
 
     implementation(libs.ktor.client.core)
     implementation(libs.ksoup)
+
+    testImplementation(libs.junit4)
 }

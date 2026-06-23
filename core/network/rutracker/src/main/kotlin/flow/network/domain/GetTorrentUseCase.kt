@@ -7,15 +7,15 @@ import flow.network.model.NotFound
 
 internal class GetTorrentUseCase(
     private val api: RuTrackerInnerApi,
-    private val parseTorrentUseCase: ParseTorrentUseCase,
+    private val parser: RuTrackerParser,
 ) {
     suspend operator fun invoke(token: String, id: String): TorrentDto {
         val html = api.topic(token, id)
         return when {
-            !isTopicExists(html) -> throw NotFound
-            isTopicModerated(html) -> throw Forbidden
-            isBlockedForRegion(html) -> throw Forbidden
-            else -> parseTorrentUseCase(html)
+            !parser.isTopicExists(html) -> throw NotFound
+            parser.isTopicModerated(html) -> throw Forbidden
+            parser.isBlockedForRegion(html) -> throw Forbidden
+            else -> parser.parseTorrent(html)
         }
     }
 }

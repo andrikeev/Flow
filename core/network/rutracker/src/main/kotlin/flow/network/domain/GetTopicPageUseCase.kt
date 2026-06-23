@@ -7,7 +7,7 @@ import flow.network.model.NotFound
 
 internal class GetTopicPageUseCase(
     private val api: RuTrackerInnerApi,
-    private val parseTopicPageUseCase: ParseTopicPageUseCase,
+    private val parser: RuTrackerParser,
 ) {
     suspend operator fun invoke(
         token: String,
@@ -16,10 +16,10 @@ internal class GetTopicPageUseCase(
     ): TopicPageDto {
         val html = api.topic(token, id, page)
         return when {
-            !isTopicExists(html) -> throw NotFound
-            isTopicModerated(html) -> throw Forbidden
-            isBlockedForRegion(html) -> throw Forbidden
-            else -> parseTopicPageUseCase(html)
+            !parser.isTopicExists(html) -> throw NotFound
+            parser.isTopicModerated(html) -> throw Forbidden
+            parser.isBlockedForRegion(html) -> throw Forbidden
+            else -> parser.parseTopicPage(html)
         }
     }
 }

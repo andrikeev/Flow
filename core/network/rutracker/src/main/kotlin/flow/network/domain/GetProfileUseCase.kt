@@ -1,23 +1,13 @@
 package flow.network.domain
 
-import com.fleeksoft.ksoup.Ksoup
 import flow.network.api.RuTrackerInnerApi
 import flow.network.dto.user.ProfileDto
 
-internal class GetProfileUseCase(private val api: RuTrackerInnerApi) {
-
+internal class GetProfileUseCase(
+    private val api: RuTrackerInnerApi,
+    private val parser: RuTrackerParser,
+) {
     suspend operator fun invoke(id: String): ProfileDto {
-        return parseProfile(api.profile(id))
-    }
-
-    companion object {
-        private fun parseProfile(html: String): ProfileDto {
-            val doc = Ksoup.parse(html)
-            return ProfileDto(
-                id = doc.select("#profile-uname").attr("data-uid"),
-                name = doc.select("#profile-uname").toStr(),
-                avatarUrl = doc.select("#avatar-img > img").attr("src"),
-            )
-        }
+        return parser.parseProfile(api.profile(id))
     }
 }
