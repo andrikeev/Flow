@@ -9,8 +9,8 @@ import org.gradle.api.JavaVersion
 internal fun configureKotlinAndroid(commonExtension: CommonExtension) {
     commonExtension.apply {
         compileOptions.apply {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
+            sourceCompatibility = JavaVersion.VERSION_21
+            targetCompatibility = JavaVersion.VERSION_21
         }
     }
 }
