@@ -23,6 +23,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.Parameters
 import io.ktor.http.content.OutgoingContent
 import io.ktor.http.withCharset
+import java.net.HttpCookie
 import java.net.URLEncoder
 
 internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTrackerInnerApi {
@@ -37,21 +38,34 @@ internal class RuTrackerInnerApiImpl(private val httpClient: HttpClient) : RuTra
         captchaSid: String?,
         captchaCode: String?,
         captchaValue: String?,
-    ): Pair<String?, String> = httpClient.submitForm(
-        url = Login,
-        formParameters = Parameters.build {
-            append("login_username", username)
-            append("login_password", password)
-            append("login", "Вход")
-            if (captchaSid != null && captchaCode != null && captchaValue != null) {
-                append("cap_sid", captchaSid)
-                append(captchaCode, captchaValue)
-            }
-        },
-    ).let { response ->
-        val cookie = response.headers.getAll("Set-Cookie").orEmpty()
-        val token = cookie.firstOrNull { !it.contains("bb_ssl") }
-        token to response.bodyAsText()
+    ): Pair<String?, String> {
+        // The session is set on the POST response, before the redirect to the forum.
+        // Keep cookies explicit: a shared cookie jar could mix different accounts.
+        val loginClient = httpClient.config { followRedirects = false }
+        try {
+            val response = loginClient.submitForm(
+                url = Login,
+                formParameters = Parameters.build {
+                    append("login_username", username)
+                    append("login_password", password)
+                    append("login", "Вход")
+                    if (captchaSid != null && captchaCode != null && captchaValue != null) {
+                        append("cap_sid", captchaSid)
+                        append(captchaCode, captchaValue)
+                    }
+                },
+            )
+            val session = response.headers.getAll("Set-Cookie").orEmpty()
+                .flatMap { header ->
+                    runCatching { HttpCookie.parse(header) }.getOrDefault(emptyList())
+                }
+                .lastOrNull { it.name == "bb_session" }
+                ?.takeUnless { it.value.isNullOrBlank() || it.hasExpired() }
+            val token = session?.let { "${it.name}=${it.value}" }
+            return token to response.bodyAsText()
+        } finally {
+            loginClient.close()
+        }
     }
 
     override suspend fun search(
